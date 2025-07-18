@@ -125,8 +125,8 @@ public sealed class CursedSpiritNPC : ModNPC {
     }
 
     public override void OnSpawn(IEntitySource source) {
-        // SpiritType = (SpiritType)Main.rand.Next(0, 3);
-        SpiritType = SpiritType.Exploder;
+        SpiritType = (SpiritType)Main.rand.Next(0, 3);
+        // SpiritType = SpiritType.Exploder;
         switch(SpiritType) {
             case SpiritType.Splitter:
                 _data.Splitter = new()
@@ -168,10 +168,10 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         switch(SpiritType) {
             case SpiritType.Splitter:
-                UpdateSplitter(moveDirection, directionToTarget);
+                UpdateSplitter(moveDirection);
                 break;
             case SpiritType.Exploder:
-                UpdateExploder(moveDirection, directionToTarget);
+                UpdateExploder(moveDirection);
                 break;
             case SpiritType.Ram:
                 UpdateRam(moveDirection, distanceToTarget, directionToTarget, moveSpeed);
@@ -207,15 +207,19 @@ public sealed class CursedSpiritNPC : ModNPC {
         }
     }
 
-    void UpdateSplitter(Vector2 moveDirection, Vector2 directionToTarget) {
+    void UpdateSplitter(Vector2 moveDirection) {
         switch(State<SplitterState>()) {
             case SplitterState.FlyToTarget:
-                FlyToTarget(moveDirection, directionToTarget);
+                FlyToTarget(moveDirection);
                 break;
             case SplitterState.Splitting:
+                UpdateLookDirection(_lookDirection);
+                _lookOffset *= 0.95f;
+
                 if(Timer > SplitterSplitTime && Main.netMode != NetmodeID.MultiplayerClient) {
-                    NPC.life = NPC.lifeMax = (int)(MaxLife / (1f + _data.Splitter.Depth));
                     _data.Splitter.Depth += 1;
+                    NPC.life = NPC.lifeMax = (int)(MaxLife / (1f + _data.Splitter.Depth));
+                    NPC.dontTakeDamage = false;
 
                     var splitNPC = NPC.NewNPCDirect(
                         NPC.GetSource_FromAI(),
@@ -238,13 +242,13 @@ public sealed class CursedSpiritNPC : ModNPC {
         }
     }
 
-    void UpdateExploder(Vector2 moveDirection, Vector2 directionToTarget) {
+    void UpdateExploder(Vector2 moveDirection) {
         switch(State<ExploderState>()) {
             case ExploderState.FlyToTarget:
-                FlyToTarget(moveDirection, directionToTarget);
+                FlyToTarget(moveDirection);
                 break;
             case ExploderState.Exploding:
-                UpdateLookDirection(Vector2.Lerp(_lookDirection, Vector2.UnitX, 0.01f));
+                UpdateLookDirection(_lookDirection);
                 _lookOffset *= 0.95f;
 
                 if(Timer > ExploderExplosionTime) {
@@ -288,12 +292,12 @@ public sealed class CursedSpiritNPC : ModNPC {
                 UpdateLookDirection(directionToTarget);
                 _lookOffset = MathF.Min(_lookOffset + 0.05f, 0.75f);
 
-                const float CirclingRadius = 720;
-                var targetPosition = Target.Center + (Main.GameUpdateCount * 0.04f + NPC.whoAmI).ToRotationVector2() * CirclingRadius;
+                const float CirclingRadius = 520;
+                var targetPosition = PositionAroundTarget(CirclingRadius);
                 NPC.velocity += NPC.Center.DirectionTo(targetPosition) * 0.3f;
                 NPC.velocity *= 0.95f;
 
-                if(Main.netMode != NetmodeID.MultiplayerClient && Timer > 60 * 2 && distanceToTarget < CirclingRadius + 100) {
+                if(Main.netMode != NetmodeID.MultiplayerClient && Timer > 60 * 2 && distanceToTarget < CirclingRadius + 50) {
                     SetState(RamState.Charge);
                 }
 
@@ -334,11 +338,12 @@ public sealed class CursedSpiritNPC : ModNPC {
         }
     }
 
-    void FlyToTarget(Vector2 moveDirection, Vector2 directionToTarget) {
+    void FlyToTarget(Vector2 moveDirection) {
         UpdateLookDirection(moveDirection);
         _lookOffset = MathF.Min(_lookOffset + 0.05f, 0.75f);
 
-        NPC.velocity += directionToTarget * 0.1f;
+        var targetPosition = PositionAroundTarget(100);
+        NPC.velocity += NPC.Center.DirectionTo(targetPosition) * 0.1f;
         NPC.velocity *= 0.98f;
 
         ref float fireballTimer = ref _data.Splitter.FireballTimer;
@@ -362,16 +367,30 @@ public sealed class CursedSpiritNPC : ModNPC {
                 12f
             );
 
-            Projectile.NewProjectile(
-                NPC.GetSource_FromAI(),
-                NPC.Center,
-                velocity,
-                ModContent.ProjectileType<SpiritFireball>(),
-                20,
-                0.3f
-            );
+            for(var i = -1; i < 2; i++) {
+                Projectile.NewProjectile(
+                    NPC.GetSource_FromAI(),
+                    NPC.Center,
+                    velocity.RotatedBy(Math.PI * 0.025f * i),
+                    ModContent.ProjectileType<SpiritFireball>(),
+                    20,
+                    0.3f
+                );
+            }
+
+            var groan1 = new SoundStyle($"{nameof(EvilExpansionMod)}/Assets/Sounds/CursedSpiritGroan1");
+            var groan2 = new SoundStyle($"{nameof(EvilExpansionMod)}/Assets/Sounds/CursedSpiritGroan2");
+
+            SoundEngine.PlaySound(Main.rand.NextFromList(groan1, groan2), NPC.Center);
+            SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot with
+            {
+                Pitch = 2.1f + Main.rand.NextFloatDirection() * 0.3f,
+            }, NPC.Center);
         }
     }
+
+    Vector2 PositionAroundTarget(float radius) =>
+        Target.Center + (Main.GameUpdateCount * 0.04f + NPC.whoAmI).ToRotationVector2() * radius;
 
     void UpdateLookDirection(Vector2 direction) {
         _lookDirection = direction;
@@ -382,7 +401,14 @@ public sealed class CursedSpiritNPC : ModNPC {
 
     public override void HitEffect(NPC.HitInfo hit) {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) return;
-        if(SpiritType == SpiritType.Exploder && State<ExploderState>() != ExploderState.Exploding) return;
+        switch(SpiritType) {
+            case SpiritType.Splitter:
+                if(_data.Splitter.Depth < SplitterMaxDepth) return;
+                break;
+            case SpiritType.Exploder:
+                if(State<ExploderState>() != ExploderState.Exploding) return;
+                break;
+        }
 
         var name = SpiritType switch
         {
@@ -470,7 +496,7 @@ public sealed class CursedSpiritNPC : ModNPC {
             trailEffect.Parameters["scale"].SetValue(0.8f);
             trailEffect.Parameters["texture1"].SetValue(Assets.Assets.Textures.Sample.Pebbles.Value);
             trailEffect.Parameters["texture2"].SetValue(Assets.Assets.Textures.Sample.Noise2.Value);
-            trail.Draw(trailEffect);
+            trail?.Draw(trailEffect);
         }
 
         var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;
@@ -481,14 +507,22 @@ public sealed class CursedSpiritNPC : ModNPC {
         var glowScale = 1f;
         var maskScale = 1f;
 
-        if(SpiritType == SpiritType.Exploder && State<ExploderState>() == ExploderState.Exploding) {
-            var factor = Timer / ExploderExplosionTime;
+        switch(SpiritType) {
+            case SpiritType.Splitter:
+                glowScale /= 1f + _data.Splitter.Depth;
+                break;
+            case SpiritType.Exploder:
+                if(State<ExploderState>() == ExploderState.Exploding) {
+                    var factor = Timer / ExploderExplosionTime;
 
-            bigGlowColor = Color.Lerp(bigGlowColor, Color.Red, factor * 0.7f);
-            smallGlowColor = Color.Lerp(smallGlowColor, Color.Red, factor * 0.6f);
-            glowScale = 1 + 0.75f * factor;
-            maskScale = 1 + 0.3f * MathF.Pow(factor, 2);
+                    bigGlowColor = Color.Lerp(bigGlowColor, Color.Red, factor * 0.7f);
+                    smallGlowColor = Color.Lerp(smallGlowColor, Color.Red, factor * 0.6f);
+                    glowScale = 1 + 0.75f * factor;
+                    maskScale = 1 + 0.3f * MathF.Pow(factor, 2);
+                }
+                break;
         }
+
 
         var snapshot = spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
         spriteBatch.Draw(

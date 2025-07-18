@@ -36,6 +36,8 @@ Mods: {
 			HellbatSpitProjectile.DisplayName: Hellbat Spit Projectile
 			TerrorBatSpit.DisplayName: Terror Bat Spit
 			SpiritFireball.DisplayName: Spirit Fireball
+			GiantShroomCapDummy.DisplayName: Giant Shroom Cap Dummy
+			ExplosionVFXProjectile.DisplayName: Explosion V F X Projectile
 		}
 
 		Biomes: {

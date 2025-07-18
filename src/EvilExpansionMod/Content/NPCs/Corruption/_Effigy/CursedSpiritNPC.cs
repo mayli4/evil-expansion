@@ -26,6 +26,11 @@ public enum SpiritType {
     Ram,
 }
 
+public enum SplitterState {
+    FlyToTarget,
+    Splitting
+}
+
 public enum ExploderState {
     FlyToTarget,
     Exploding
@@ -41,10 +46,18 @@ public enum RamState {
 [StructLayout(LayoutKind.Explicit)]
 public struct SpiritData {
     [FieldOffset(0)]
+    public SplitterData Splitter;
+
+    [FieldOffset(0)]
     public RamData Ram;
 
     [FieldOffset(0)]
     public ExploderData Exploder;
+
+    public struct SplitterData {
+        public float FireballTimer;
+        public int Depth;
+    }
 
     public struct RamData {
         public Vector2 DashDirection;
@@ -57,6 +70,10 @@ public struct SpiritData {
 
 public sealed class CursedSpiritNPC : ModNPC {
     const float ExploderExplosionTime = 120f;
+    const float SplitterSplitTime = 90f;
+    const float SplitterMaxDepth = 1;
+    const int MaxLife = 50;
+
     SpiritType SpiritType {
         get => Unsafe.BitCast<float, SpiritType>(NPC.ai[0]);
         set => NPC.ai[0] = Unsafe.BitCast<SpiritType, float>(value);
@@ -89,7 +106,7 @@ public sealed class CursedSpiritNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 38;
         NPC.height = 38;
-        NPC.lifeMax = 640;
+        NPC.lifeMax = MaxLife;
         NPC.value = 250f;
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
@@ -108,8 +125,16 @@ public sealed class CursedSpiritNPC : ModNPC {
     }
 
     public override void OnSpawn(IEntitySource source) {
-        SpiritType = (SpiritType)Main.rand.Next(0, 3);
+        // SpiritType = (SpiritType)Main.rand.Next(0, 3);
+        SpiritType = SpiritType.Exploder;
         switch(SpiritType) {
+            case SpiritType.Splitter:
+                _data.Splitter = new()
+                {
+                    Depth = 0,
+                    FireballTimer = 0,
+                };
+                break;
             case SpiritType.Exploder:
                 _data.Exploder = new()
                 {
@@ -143,127 +168,13 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         switch(SpiritType) {
             case SpiritType.Splitter:
+                UpdateSplitter(moveDirection, directionToTarget);
                 break;
             case SpiritType.Exploder:
-                switch(State<ExploderState>()) {
-                    case ExploderState.FlyToTarget:
-                        UpdateLookDirection(moveDirection);
-                        _lookOffset = MathF.Min(_lookOffset + 0.05f, 0.75f);
-
-                        NPC.velocity += directionToTarget * 0.1f;
-                        NPC.velocity *= 0.98f;
-
-                        _data.Exploder.FireballTimer += 1;
-                        if(_data.Exploder.FireballTimer > 90 && Target != null) {
-                            _data.Exploder.FireballTimer = 0;
-
-                            var position = NPC.Center;
-                            var velocity = MathUtilities.InitialVelocityRequiredToHitPosition(
-                                position,
-                                Target.Center + Target.velocity * 70f,
-                                SpiritFireball.Gravity,
-                                12f
-                            );
-
-                            Projectile.NewProjectile(
-                                NPC.GetSource_FromAI(),
-                                NPC.Center,
-                                velocity,
-                                ModContent.ProjectileType<SpiritFireball>(),
-                                20,
-                                0.3f
-                            );
-                        }
-
-                        break;
-                    case ExploderState.Exploding:
-                        UpdateLookDirection(Vector2.Lerp(_lookDirection, Vector2.UnitX, 0.01f));
-                        _lookOffset *= 0.95f;
-
-                        if(Timer > ExploderExplosionTime) {
-                            const float ExplosionRange = 200;
-                            if(Main.netMode != NetmodeID.MultiplayerClient) {
-                                MathUtilities.ForEachPlayerInRange(
-                                    NPC.Center,
-                                    ExplosionRange,
-                                    player => player.Hurt(
-                                        PlayerDeathReason.ByNPC(NPC.whoAmI),
-                                        40,
-                                        MathF.Sign(player.Center.X - NPC.Center.X),
-                                        knockback: 8f
-                                    )
-                                );
-
-                                ExplosionVFXProjectile.Spawn(
-                                    NPC.GetSource_Death(),
-                                    NPC.Center,
-                                    Color.Yellow,
-                                    Color.Orange,
-                                    t => Color.Lerp(GhostColor1, Color.Black, t),
-                                    400,
-                                    80
-                                );
-
-                                NPC.StrikeInstantKill();
-                            }
-
-                            Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(12f, 0.96f));
-                            Lighting.AddLight(NPC.Center, GhostColor1.ToVector3() * 3.5f);
-                            SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, NPC.Center);
-                        }
-                        break;
-                }
+                UpdateExploder(moveDirection, directionToTarget);
                 break;
             case SpiritType.Ram:
-                switch(State<RamState>()) {
-                    case RamState.FlyAround:
-                        UpdateLookDirection(directionToTarget);
-                        _lookOffset = MathF.Min(_lookOffset + 0.05f, 0.75f);
-
-                        const float CirclingRadius = 720;
-                        var targetPosition = Target.Center + (Main.GameUpdateCount * 0.04f + NPC.whoAmI).ToRotationVector2() * CirclingRadius;
-                        NPC.velocity += NPC.Center.DirectionTo(targetPosition) * 0.3f;
-                        NPC.velocity *= 0.95f;
-
-                        if(Main.netMode != NetmodeID.MultiplayerClient && Timer > 60 * 2 && distanceToTarget < CirclingRadius + 100) {
-                            SetState(RamState.Charge);
-                        }
-
-                        break;
-                    case RamState.Charge:
-                        UpdateLookDirection(directionToTarget);
-
-                        NPC.velocity *= 0.99f;
-                        if(Timer > 60 * 1.5f && Main.netMode != NetmodeID.MultiplayerClient) {
-                            _data.Ram.DashDirection = directionToTarget;
-                            NPC.velocity = _data.Ram.DashDirection * 0.8f;
-                            SetState(RamState.Dash);
-                        }
-
-                        break;
-                    case RamState.Dash:
-                        UpdateLookDirection(moveDirection);
-                        _lookOffset = MathF.Min(moveSpeed * 0.25f, 1f);
-
-                        NPC.velocity += _data.Ram.DashDirection * 0.7f;
-                        NPC.velocity *= 0.97f;
-
-                        if(Timer > 120) {
-                            SetState(RamState.FlyAround);
-                        }
-
-                        break;
-                    case RamState.Concussion:
-                        NPC.rotation += 1.2f / (Timer * 0.1f + 1f);
-                        _lookOffset = 0f;
-
-                        NPC.velocity *= 0.97f;
-                        if(Timer > 120 && Main.netMode != NetmodeID.MultiplayerClient) {
-                            SetState(RamState.FlyAround);
-                        }
-
-                        break;
-                }
+                UpdateRam(moveDirection, distanceToTarget, directionToTarget, moveSpeed);
                 break;
         }
 
@@ -293,6 +204,172 @@ public sealed class CursedSpiritNPC : ModNPC {
             );
 
             Lighting.AddLight(NPC.Center, GhostColor1.ToVector3() * 0.75f);
+        }
+    }
+
+    void UpdateSplitter(Vector2 moveDirection, Vector2 directionToTarget) {
+        switch(State<SplitterState>()) {
+            case SplitterState.FlyToTarget:
+                FlyToTarget(moveDirection, directionToTarget);
+                break;
+            case SplitterState.Splitting:
+                if(Timer > SplitterSplitTime && Main.netMode != NetmodeID.MultiplayerClient) {
+                    NPC.life = NPC.lifeMax = (int)(MaxLife / (1f + _data.Splitter.Depth));
+                    _data.Splitter.Depth += 1;
+
+                    var splitNPC = NPC.NewNPCDirect(
+                        NPC.GetSource_FromAI(),
+                        (int)NPC.Center.X, (int)NPC.Center.Y,
+                        ModContent.NPCType<CursedSpiritNPC>()
+                    ).ModNPC as CursedSpiritNPC;
+
+                    splitNPC.NPC.life = splitNPC.NPC.lifeMax = NPC.life;
+                    splitNPC.SpiritType = SpiritType.Splitter;
+                    splitNPC._data.Splitter.Depth = _data.Splitter.Depth;
+
+                    const float SplitSpeed = 15f;
+                    NPC.velocity -= Vector2.UnitX * SplitSpeed;
+                    splitNPC.NPC.velocity += Vector2.UnitX * SplitSpeed;
+
+                    SetState(SplitterState.FlyToTarget);
+                    splitNPC.NPC.netUpdate = true;
+                }
+                break;
+        }
+    }
+
+    void UpdateExploder(Vector2 moveDirection, Vector2 directionToTarget) {
+        switch(State<ExploderState>()) {
+            case ExploderState.FlyToTarget:
+                FlyToTarget(moveDirection, directionToTarget);
+                break;
+            case ExploderState.Exploding:
+                UpdateLookDirection(Vector2.Lerp(_lookDirection, Vector2.UnitX, 0.01f));
+                _lookOffset *= 0.95f;
+
+                if(Timer > ExploderExplosionTime) {
+                    const float ExplosionRange = 200;
+                    if(Main.netMode != NetmodeID.MultiplayerClient) {
+                        MathUtilities.ForEachPlayerInRange(
+                            NPC.Center,
+                            ExplosionRange,
+                            player => player.Hurt(
+                                PlayerDeathReason.ByNPC(NPC.whoAmI),
+                                40,
+                                MathF.Sign(player.Center.X - NPC.Center.X),
+                                knockback: 8f
+                            )
+                        );
+
+                        ExplosionVFXProjectile.Spawn(
+                            NPC.GetSource_Death(),
+                            NPC.Center,
+                            Color.Yellow,
+                            Color.Orange,
+                            t => Color.Lerp(GhostColor1, Color.Black, t),
+                            400,
+                            80
+                        );
+
+                        NPC.StrikeInstantKill();
+                    }
+
+                    Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(12f, 0.96f));
+                    Lighting.AddLight(NPC.Center, GhostColor1.ToVector3() * 3.5f);
+                    SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, NPC.Center);
+                }
+                break;
+        }
+    }
+
+    void UpdateRam(Vector2 moveDirection, float distanceToTarget, Vector2 directionToTarget, float moveSpeed) {
+        switch(State<RamState>()) {
+            case RamState.FlyAround:
+                UpdateLookDirection(directionToTarget);
+                _lookOffset = MathF.Min(_lookOffset + 0.05f, 0.75f);
+
+                const float CirclingRadius = 720;
+                var targetPosition = Target.Center + (Main.GameUpdateCount * 0.04f + NPC.whoAmI).ToRotationVector2() * CirclingRadius;
+                NPC.velocity += NPC.Center.DirectionTo(targetPosition) * 0.3f;
+                NPC.velocity *= 0.95f;
+
+                if(Main.netMode != NetmodeID.MultiplayerClient && Timer > 60 * 2 && distanceToTarget < CirclingRadius + 100) {
+                    SetState(RamState.Charge);
+                }
+
+                break;
+            case RamState.Charge:
+                UpdateLookDirection(directionToTarget);
+
+                NPC.velocity *= 0.99f;
+                if(Timer > 60 * 1.5f && Main.netMode != NetmodeID.MultiplayerClient) {
+                    _data.Ram.DashDirection = directionToTarget;
+                    NPC.velocity = _data.Ram.DashDirection * 0.8f;
+                    SetState(RamState.Dash);
+                }
+
+                break;
+            case RamState.Dash:
+                UpdateLookDirection(moveDirection);
+                _lookOffset = MathF.Min(moveSpeed * 0.25f, 1f);
+
+                NPC.velocity += _data.Ram.DashDirection * 0.7f;
+                NPC.velocity *= 0.97f;
+
+                if(Timer > 120) {
+                    SetState(RamState.FlyAround);
+                }
+
+                break;
+            case RamState.Concussion:
+                NPC.rotation += 1.2f / (Timer * 0.1f + 1f);
+                _lookOffset = 0f;
+
+                NPC.velocity *= 0.97f;
+                if(Timer > 120 && Main.netMode != NetmodeID.MultiplayerClient) {
+                    SetState(RamState.FlyAround);
+                }
+
+                break;
+        }
+    }
+
+    void FlyToTarget(Vector2 moveDirection, Vector2 directionToTarget) {
+        UpdateLookDirection(moveDirection);
+        _lookOffset = MathF.Min(_lookOffset + 0.05f, 0.75f);
+
+        NPC.velocity += directionToTarget * 0.1f;
+        NPC.velocity *= 0.98f;
+
+        ref float fireballTimer = ref _data.Splitter.FireballTimer;
+        switch(SpiritType) {
+            case SpiritType.Splitter: break;
+            case SpiritType.Exploder:
+                fireballTimer = ref _data.Exploder.FireballTimer;
+                break;
+            default: throw new Exception();
+        }
+
+        fireballTimer += 1;
+        if(fireballTimer > 90 && Target != null) {
+            fireballTimer = 0;
+
+            var position = NPC.Center;
+            var velocity = MathUtilities.InitialVelocityRequiredToHitPosition(
+                position,
+                Target.Center + Target.velocity * 70f,
+                SpiritFireball.Gravity,
+                12f
+            );
+
+            Projectile.NewProjectile(
+                NPC.GetSource_FromAI(),
+                NPC.Center,
+                velocity,
+                ModContent.ProjectileType<SpiritFireball>(),
+                20,
+                0.3f
+            );
         }
     }
 
@@ -331,11 +408,24 @@ public sealed class CursedSpiritNPC : ModNPC {
     }
 
     public override bool CheckDead() {
-        if(SpiritType == SpiritType.Exploder && State<ExploderState>() != ExploderState.Exploding) {
-            NPC.dontTakeDamage = true;
-            NPC.life = 1;
-            SetState(ExploderState.Exploding);
-            return false;
+        switch(SpiritType) {
+            case SpiritType.Splitter:
+                if(_data.Splitter.Depth == SplitterMaxDepth) return true;
+                if(State<SplitterState>() == SplitterState.Splitting) return false;
+
+                NPC.dontTakeDamage = true;
+                NPC.life = 1;
+                SetState(SplitterState.Splitting);
+
+                return false;
+            case SpiritType.Exploder:
+                if(State<ExploderState>() == ExploderState.Exploding) return false;
+
+                NPC.dontTakeDamage = true;
+                NPC.life = 1;
+                SetState(ExploderState.Exploding);
+
+                return false;
         }
 
         return true;

@@ -1,0 +1,7 @@
+﻿displayName = Evil Expansion
+author = me
+version = 0.1.0
+hideCode = false
+hideResources = true
+includeSource = true
+includePDB = true

@@ -1,0 +1,69 @@
+Mods: {
+	EvilExpansionMod: {
+		Items: {
+			CorruptAshItem: {
+				DisplayName: Corrupt Ash Item
+				Tooltip: ""
+			}
+
+			CrimsonAshItem: {
+				DisplayName: Crimson Ash Item
+				Tooltip: ""
+			}
+
+			UnderworldDemoniteItem: {
+				DisplayName: Underworld Demonite Item
+				Tooltip: ""
+			}
+
+			DevilOWarHeartPickup: {
+				DisplayName: Devil O War Heart Pickup
+				Tooltip: ""
+			}
+		}
+
+		NPCs: {
+			DevilOWarNPC.DisplayName: Devil O' War
+			TerrorBatNPC.DisplayName: Terror Bat
+			CursedSpiritNPC.DisplayName: Cursed Spirit
+			EffigyNPC.DisplayName: Effigy
+			PusCarrierGrubNPC.DisplayName: Pus Carrier Grub N P C
+		}
+
+		Projectiles: {
+			DevilOWarStingerProjectile.DisplayName: Devil O War Stinger Projectile
+			HellbatSpit.DisplayName: Hellbat Spit
+			HellbatSpitProjectile.DisplayName: Hellbat Spit Projectile
+			TerrorBatSpit.DisplayName: Terror Bat Spit
+			SpiritFireball.DisplayName: Spirit Fireball
+		}
+
+		Biomes: {
+			UnderworldCorruptionBiome: {
+				DisplayName: Underworld Corruption Biome
+				TownNPCDialogueName: The Underworld Corruption Biome
+			}
+
+			UnderworldCorruption: {
+				DisplayName: Underworld Corruption
+				TownNPCDialogueName: the Underworld Corruption
+			}
+
+			UnderworldCrimsonBiome: {
+				DisplayName: Underworld Crimson Biome
+				TownNPCDialogueName: the Underworld Crimson Biome
+			}
+		}
+
+		Tiles: {
+			UnderworldDemonite.MapEntry: Underworld Demonite
+			UnderworldCorruptLavaDropletSource.MapEntry: Lava Dripping
+		}
+
+		Bestiary: {
+			DevilOWarNPCBestiary: Marine life in the underworld? this organism uses hot gases to float in the air, and a sharp stinger to feed off its prey!
+			TerrorBatNPCBestiary: The terror bat grooves and dives in the air, while also using its acidic spit as a weapon that you wouldn't want to stain your clothes!
+			PusCarrierGrubNPCBestiary: ""
+		}
+	}
+}

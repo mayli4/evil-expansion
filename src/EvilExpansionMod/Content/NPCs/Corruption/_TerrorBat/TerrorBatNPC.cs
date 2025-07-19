@@ -17,7 +17,7 @@ using Terraria.ModLoader.Utilities;
 
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
-//todo: natural spawning
+//todo: better natural spawning, better vfx
 
 [SpawnPack(4)]
 public class TerrorBatNPC : ModNPC {

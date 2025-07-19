@@ -7,10 +7,12 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.NPCs.Corruption;
+
 public sealed class EffigyNPC : ModNPC {
     byte _spawnedSprits = 0;
 
     public override string Texture => Assets.Assets.Textures.NPCs.Corruption.Effigy.KEY_EffigyNPC;
+    
     public override void SetDefaults() {
         NPC.width = 36;
         NPC.height = 90;

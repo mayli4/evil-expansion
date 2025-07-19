@@ -1,7 +1,6 @@
 ﻿using EvilExpansionMod.Common.PrimitiveDrawing;
 using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.CameraModifiers;
-using EvilExpansionMod.Content.NPCs.Corruption._Effigy;
 using EvilExpansionMod.Content.Projectiles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;

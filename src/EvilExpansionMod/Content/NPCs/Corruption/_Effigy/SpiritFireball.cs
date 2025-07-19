@@ -8,7 +8,8 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Content.NPCs.Corruption._Effigy;
+namespace EvilExpansionMod.Content.NPCs.Corruption;
+
 internal class SpiritFireball : ModProjectile {
     public override string Texture => "Terraria/Images/Item_0";
 

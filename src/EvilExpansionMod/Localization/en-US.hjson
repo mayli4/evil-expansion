@@ -28,6 +28,8 @@ Mods: {
 			CursedSpiritNPC.DisplayName: Cursed Spirit
 			EffigyNPC.DisplayName: Effigy
 			PusCarrierGrubNPC.DisplayName: Pus Carrier Grub N P C
+			CursehoundNPC.DisplayName: Cursehound N P C
+			TestStateNPC.DisplayName: Test State N P C
 		}
 
 		Projectiles: {

@@ -29,7 +29,7 @@ public class UnderworldCorruptModLava : ModLavaStyle {
 
     public override void SelectLightColor(ref Color initialLightColor) {
         initialLightColor = Color.Yellow;
-        initialLightColor.A = 255;
+        initialLightColor.A = 200;
     }
     
     public override void ModifyVertexColors(int x, int y, ref VertexColors colors) {

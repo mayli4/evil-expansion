@@ -102,4 +102,23 @@ public static class MathUtilities {
         player = closest.Value.player;
         return closest.Value.distance;
     }
+    
+    public static bool HoleAtPosition(NPC npc, float xPosition) {
+        int tileWidth = npc.width / 16;
+        xPosition = (int)(xPosition / 16f) - tileWidth;
+        if (npc.velocity.X > 0)
+            xPosition += tileWidth;
+
+        int tileY = (int)((npc.position.Y + npc.height) / 16f);
+        for (int y = tileY; y < tileY + 2; y++)
+        {
+            for (int x = (int)xPosition; x < xPosition + tileWidth; x++)
+            {
+                if (Main.tile[x, y].HasTile)
+                    return false;
+            }
+        }
+
+        return true;
+    }
 }

@@ -21,6 +21,7 @@ public sealed class CursehoundNPC : ModNPC {
         MaceSpinning,
         MaceAttacking,
         MaceRetracting,
+        RoarTelegraph,
         Roaring,
         RoarDowntime
     }
@@ -42,19 +43,24 @@ public sealed class CursehoundNPC : ModNPC {
         public ref float RoarAttackCooldown => ref npc.ai[3];
     }
     
+    private const int roar_telegraph_duration = (int)(0.5 * 60);
     private const int roar_duration = 2 * 60;
     private const int roar_downtime_duration = 1 * 60;
     
-    private const int MaceSpinDuration = 1 * 60;
-    private const int MaceAttackDuration = (int)(0.5f * 60);
+    private const int mace_spin_duration = 1 * 60;
+    private const int mace_duration = (int)(0.5f * 60);
     private const int MaceRetractDuration = 1 * 60;
 
-    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.Cursehound.KEY_Cursehound_Bestiary;
+    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.Cursehound.KEY_CursehoundNPC;
 
     public Player Target => Main.player[NPC.target];
     
     private float _timeGrounded;
     private const int ground_time_for_attack = 1 * 60;
+
+    public override void SetStaticDefaults() {
+        Main.npcFrameCount[Type] = 31;
+    }
 
     public override void SetDefaults() {
         (NPC.width, NPC.height) = (150, 150);
@@ -135,6 +141,9 @@ public sealed class CursehoundNPC : ModNPC {
             case State.MaceRetracting:
                 MaceRetracting(ref ai);
                 break;
+            case State.RoarTelegraph:
+                RoarTelegraph(ref ai, target);
+                break;
             case State.Roaring:
                 Roar(ref ai, target);
                 break;
@@ -158,8 +167,8 @@ public sealed class CursehoundNPC : ModNPC {
         float dynamicJumpVelocity = -(baseJumpPower + Math.Max(0, verticalDifference) * jumpScaleFactor);
         dynamicJumpVelocity = MathHelper.Clamp(dynamicJumpVelocity, -maxJumpPower, -baseJumpPower);
 
-        if (ai.RoarAttackCooldown <= 0 && broadLineOfSight && distanceToTarget >= roarAttackMinRange && distanceToTarget <= roarAttackMaxRange && _timeGrounded >= ground_time_for_attack) {
-            ai.CurrentState = State.Roaring;
+        if (NPC.velocity.Y == 0 && _timeGrounded >= ground_time_for_attack && ai.RoarAttackCooldown <= 0 && broadLineOfSight && distanceToTarget >= roarAttackMinRange && distanceToTarget <= roarAttackMaxRange) {
+            ai.CurrentState = State.RoarTelegraph;
             ai.RoarAttackCooldown = 60 * 15;
             return;
         }
@@ -214,7 +223,7 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.velocity.X *= 0.9f;
         ai.Timer++;
 
-        if (ai.Timer >= MaceSpinDuration) {
+        if (ai.Timer >= mace_spin_duration) {
             ai.CurrentState = State.MaceAttacking;
         }
     }
@@ -238,7 +247,7 @@ public sealed class CursehoundNPC : ModNPC {
             //     );
         }
 
-        if (ai.Timer >= MaceAttackDuration) {
+        if (ai.Timer >= mace_duration) {
             ai.CurrentState = State.MaceRetracting;
         }
     }
@@ -302,6 +311,15 @@ public sealed class CursehoundNPC : ModNPC {
             ai.CurrentState = State.RoarDowntime;
         }
     }
+    
+    private void RoarTelegraph(ref MappedAI ai, Player target) {
+        NPC.velocity.X *= 0.8f;
+        ai.Timer++;
+
+        if (ai.Timer >= roar_telegraph_duration) {
+            ai.CurrentState = State.Roaring;
+        }
+    }
 
     private void HandleRoarDowntime(ref MappedAI ai) {
         NPC.velocity.X *= 0.5f;
@@ -309,6 +327,97 @@ public sealed class CursehoundNPC : ModNPC {
 
         if (ai.Timer >= roar_downtime_duration) {
             ai.CurrentState = State.Walking;
+        }
+    }
+    
+    public override void FindFrame(int frameHeight) {
+        var ai = new MappedAI(NPC);
+
+        if (NPC.velocity.Y == 0 && ai.CurrentState != State.MaceAttacking && ai.CurrentState != State.Roaring) {
+            NPC.rotation = 0;
+        }
+        
+        if (NPC.velocity.Y != 0) {
+            NPC.frame.Y = 30 * frameHeight;
+            NPC.spriteDirection = NPC.direction;
+            return;
+        }
+
+        NPC.spriteDirection = NPC.direction;
+
+        switch (ai.CurrentState) {
+            case State.Idle:
+                NPC.frameCounter += 0.15f;
+                if (NPC.frameCounter >= 3)
+                {
+                    NPC.frameCounter = 0;
+                }
+                NPC.frame.Y = (int)NPC.frameCounter * frameHeight;
+                break;
+
+            case State.Walking:
+                NPC.frameCounter += 0.2f;
+                if (NPC.frameCounter >= 9) {
+                    NPC.frameCounter = 0;
+                }
+                NPC.frame.Y = (14 + (int)NPC.frameCounter) * frameHeight;
+                break;
+
+            case State.Running:
+                NPC.frameCounter += 0.2f;
+                if (NPC.frameCounter >= 6) {
+                    NPC.frameCounter = 0;
+                }
+                NPC.frame.Y = (23 + (int)NPC.frameCounter) * frameHeight;
+                break;
+
+            case State.MaceSpinning:
+                float loops = 3f;
+                float maceSpinAnimationSpeed = (3 * loops) / mace_spin_duration;
+
+                NPC.frameCounter += maceSpinAnimationSpeed;
+
+                if (NPC.frameCounter >= loops) {
+                    NPC.frameCounter -= loops;
+                }
+                NPC.frame.Y = (3 + (int)NPC.frameCounter) * frameHeight;
+                break;
+
+            case State.MaceAttacking:
+                NPC.frameCounter = ai.Timer / (mace_duration / 3f);
+                if (NPC.frameCounter >= 3) {
+                    NPC.frameCounter = 2;
+                }
+                NPC.frame.Y = (6 + (int)NPC.frameCounter) * frameHeight;
+                break;
+
+            case State.MaceRetracting:
+                NPC.frame.Y = 8 * frameHeight;
+                break;
+
+            case State.RoarTelegraph:
+                NPC.frameCounter = ai.Timer / (roar_telegraph_duration / 3f);
+                if (NPC.frameCounter >= 3) {
+                    NPC.frameCounter = 2;
+                }
+                NPC.frame.Y = (9 + (int)NPC.frameCounter) * frameHeight;
+                break;
+
+            case State.Roaring:
+                NPC.frameCounter += 0.25f;
+                if (NPC.frameCounter >= 2) {
+                    NPC.frameCounter = 0;
+                }
+                NPC.frame.Y = (12 + (int)NPC.frameCounter) * frameHeight;
+                break;
+
+            case State.RoarDowntime:
+                NPC.frameCounter += 0.15f;
+                if (NPC.frameCounter >= 3) {
+                    NPC.frameCounter = 0;
+                }
+                NPC.frame.Y = (int)NPC.frameCounter * frameHeight;
+                break;
         }
     }
 }

@@ -53,7 +53,7 @@ internal class SpiritFireball : ModProjectile {
             Projectile.position,
             Projectile.width,
             Projectile.height,
-            DustID.Pixie,
+            DustID.CursedTorch,
             newColor: Main.rand.NextFromList(CursedSpiritNPC.GhostColor1, CursedSpiritNPC.GhostColor2)
         );
     }

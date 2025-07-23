@@ -14,7 +14,7 @@ using Terraria.Graphics.Effects;
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
 public sealed class CursehoundNPC : ModNPC {
-    private enum State {
+    public enum State {
         Idle,
         Walking,
         Running,
@@ -26,7 +26,7 @@ public sealed class CursehoundNPC : ModNPC {
         RoarDowntime
     }
 
-    private ref struct MappedAI(NPC npc) {
+    public ref struct MappedAI(NPC npc) {
         public State CurrentState {
             get => (State)npc.ai[0];
             set {
@@ -236,15 +236,15 @@ public sealed class CursehoundNPC : ModNPC {
             SoundEngine.PlaySound(SoundID.DD2_OgreGroundPound with { Volume = 0.7f, Pitch = 0.5f }, NPC.Center);
             CombatText.NewText(NPC.Hitbox, Color.White, "mace");
 
-            // Projectile.NewProjectile(
-            //     NPC.GetSource_FromAI(),
-            //     NPC.Center + new Vector2(NPC.direction * 70, -30),
-            //     new Vector2(NPC.direction * 5, 0),
-            //     ProjectileID.DD2OgreSmash,
-            //     NPC.damage,
-            //     0,
-            //     Target.whoAmI
-            //     );
+            Projectile.NewProjectile(
+                NPC.GetSource_FromAI(),
+                NPC.Center + new Vector2(NPC.direction * 70, -30),
+                new Vector2(NPC.direction * 5, 0),
+                ModContent.ProjectileType<CursehoundMace>(),
+                NPC.damage,
+                0,
+                Target.whoAmI
+                );
         }
 
         if (ai.Timer >= mace_duration) {

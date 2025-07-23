@@ -18,6 +18,12 @@ public class TerrorBatSpit : ModProjectile {
     private PositionCache positionCache;
     private bool trailInit;
 
+    public const int TRAIL_SIZE = 20;
+    
+    public static readonly int MaxTimeLeft = 300;
+    
+    float Scale => 1f - MathF.Pow((float)(MaxTimeLeft - Projectile.timeLeft) / MaxTimeLeft, 2);
+
     public override void SetStaticDefaults() {
         ProjectileID.Sets.TrailCacheLength[Type] = 20;
         ProjectileID.Sets.TrailingMode[Type] = 2;
@@ -31,7 +37,7 @@ public class TerrorBatSpit : ModProjectile {
         Projectile.DamageType = DamageClass.Ranged;
         Projectile.tileCollide = true;
         Projectile.ignoreWater = false;
-        Projectile.timeLeft = 300;
+        Projectile.timeLeft = MaxTimeLeft;
 
         Projectile.penetrate = 2;
 
@@ -41,12 +47,8 @@ public class TerrorBatSpit : ModProjectile {
         positionCache = new(30);
         sparkleTrail = new PrimitiveTrail(
             positionCache.Positions,
-            factor => (-MathF.Pow(factor - 1f, 4) + 1f) * 40,
-            factor => Color.Lerp(
-                Color.Lerp(new Color(72, 96, 36, 255), Color.Transparent, factor * 1.2f),
-                Color.Black,
-                (MathF.Sin(Main.GameUpdateCount * 0.25f + factor * 10f) + 1f) * 0.1f
-            ) * 0.9f
+            _ => TRAIL_SIZE * Scale,
+            _ => new Color(72, 96, 36, 255)
         );
     }
 
@@ -92,17 +94,37 @@ public class TerrorBatSpit : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var shader = Assets.Assets.Effects.Compiled.Trail.Fire.Value;
+        var shader = Assets.Assets.Effects.Compiled.Trail.CursedSpiritFire.Value;
         
-        shader.Parameters["transformationMatrix"].SetValue(MathUtilities.WorldTransformationMatrix);
-        shader.Parameters["amp"].SetValue(0.15f);
-        shader.Parameters["time"].SetValue(Main.GameUpdateCount * 0.02f);
-        shader.Parameters["smooth"].SetValue(0.45f);
-        shader.Parameters["sampleTexture"].SetValue(Assets.Assets.Textures.Sample.Noise2.Value);
-        
-        Main.graphics.GraphicsDevice.BlendState = BlendState.AlphaBlend;
+        shader.Parameters["time"].SetValue(0.025f * Main.GameUpdateCount);
+        shader.Parameters["mat"].SetValue(MathUtilities.WorldTransformationMatrix);
+        shader.Parameters["stepY"].SetValue(0.25f);
+        shader.Parameters["scale"].SetValue(0.25f);
+        shader.Parameters["texture1"].SetValue(Assets.Assets.Textures.Sample.Pebbles.Value);
+        shader.Parameters["texture2"].SetValue(Assets.Assets.Textures.Sample.Noise2.Value);
         
         sparkleTrail.Draw(shader);
-        return true;
+        
+        var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;
+        
+        var fade = (MathF.Sin(0.1f * Main.GameUpdateCount + 23.2f * Projectile.whoAmI) + MathF.Cos(0.06f * Main.GameUpdateCount) + 2f) / 4f;
+        var glowColor = new Color(72, 96, 36, 255) * (0.3f + 0.3f * fade);
+        
+        var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
+        Main.spriteBatch.Draw(
+            glowTexture,
+            Projectile.Center - Main.screenPosition - Projectile.velocity * 0.6f,
+            null,
+            glowColor,
+            0f,
+            glowTexture.Size() * 0.5f,
+            0.3f * Scale,
+            SpriteEffects.None,
+            0
+        );
+        
+        Main.spriteBatch.EndBegin(snapshot);
+        
+        return false;
     }
 }

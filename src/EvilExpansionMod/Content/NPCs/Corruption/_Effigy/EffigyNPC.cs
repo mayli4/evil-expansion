@@ -13,6 +13,10 @@ public sealed class EffigyNPC : ModNPC {
 
     public override string Texture => Assets.Assets.Textures.NPCs.Corruption.Effigy.KEY_EffigyNPC;
     
+    public override void SetStaticDefaults() {
+        Main.npcFrameCount[Type] = 18;
+    }
+    
     public override void SetDefaults() {
         NPC.width = 36;
         NPC.height = 90;
@@ -39,6 +43,8 @@ public sealed class EffigyNPC : ModNPC {
     void SpawnSpirit(Entity attacker) {
         var position = NPC.position + Vector2.UnitX * NPC.width / 2f;
         NPC.NewNPC(NPC.GetSource_OnHurt(attacker), (int)position.X, (int)position.Y, ModContent.NPCType<CursedSpiritNPC>());
+
+        _spawnedSprits++;
     }
 
     public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone) {

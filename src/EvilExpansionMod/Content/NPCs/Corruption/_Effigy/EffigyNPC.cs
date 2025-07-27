@@ -21,6 +21,8 @@ public sealed class EffigyNPC : ModNPC {
     
     public int DEATH_TIME = 5 * 60;
 
+    private int _spawnTimer;
+
     private Color _glowColor = new Color(230, 254, 6);
     
     public override void SetStaticDefaults() {
@@ -60,6 +62,20 @@ public sealed class EffigyNPC : ModNPC {
                 NPC.active = false;
             }
         }
+
+        if(_spawnedSprits >= 3) {
+            _dead = true;
+        }
+
+        // _spawnTimer++;
+        //
+        // if(_spawnTimer >= 100) {
+        //     if(Main.rand.NextBool(50)) {
+        //         SpawnSpirit(NPC);
+        //
+        //         _spawnTimer = 0;
+        //     }   
+        // }
     }
 
     void SpawnSpirit(Entity attacker) {
@@ -70,11 +86,15 @@ public sealed class EffigyNPC : ModNPC {
     }
 
     public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone) {
-        //SpawnSpirit(projectile);
+        if(Main.rand.NextBool(5)) {
+            SpawnSpirit(projectile);
+        }
     }
 
     public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone) {
-        //SpawnSpirit(player);
+        if(Main.rand.NextBool(5)) {
+            SpawnSpirit(player);
+        }
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {

@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -59,19 +60,10 @@ internal class SpiritFireball : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var trailEffect = Assets.Assets.Effects.Compiled.Trail.CursedSpiritFire.Value;
-        trailEffect.Parameters["time"].SetValue(0.025f * Main.GameUpdateCount);
-        trailEffect.Parameters["mat"].SetValue(MathUtilities.WorldTransformationMatrix);
-        trailEffect.Parameters["stepY"].SetValue(0.25f);
-        trailEffect.Parameters["scale"].SetValue(0.25f);
-        trailEffect.Parameters["texture1"].SetValue(Assets.Assets.Textures.Sample.Pebbles.Value);
-        trailEffect.Parameters["texture2"].SetValue(Assets.Assets.Textures.Sample.Noise2.Value);
-        trail.Draw(trailEffect);
-
         var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;
         var blinker = (MathF.Sin(0.1f * Main.GameUpdateCount + 23.2f * Projectile.whoAmI) +
             MathF.Cos(0.06f * Main.GameUpdateCount) + 2f) / 4f;
-        var bigGlowColor = CursedSpiritNPC.GhostColor2 * (0.3f + 0.3f * blinker);
+        var bigGlowColor = CursedSpiritNPC.GhostColor2 * (0.25f + 0.25f * blinker);
         var smallGlowColor = CursedSpiritNPC.GhostColor1;
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
@@ -86,19 +78,33 @@ internal class SpiritFireball : ModProjectile {
             SpriteEffects.None,
             0
         );
-
-        Main.spriteBatch.Draw(
-            glowTexture,
-            Projectile.Center - Main.screenPosition,
-            null,
-            smallGlowColor,
-            0f,
-            glowTexture.Size() * 0.5f,
-            0.1f * Scale,
-            SpriteEffects.None,
-            0
-        );
         Main.spriteBatch.EndBegin(snapshot);
+
+        RenderingUtilities.DrawVFX(() =>
+        {
+            var trailEffect = Assets.Assets.Effects.Compiled.Trail.CursedSpiritFire.Value;
+            trailEffect.Parameters["time"].SetValue(0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.1f);
+            trailEffect.Parameters["mat"].SetValue(MathUtilities.WorldTransformationMatrix);
+            trailEffect.Parameters["stepY"].SetValue(0.25f);
+            trailEffect.Parameters["scale"].SetValue(0.25f);
+            trailEffect.Parameters["texture1"].SetValue(Assets.Assets.Textures.Sample.Pebbles.Value);
+            trailEffect.Parameters["texture2"].SetValue(Assets.Assets.Textures.Sample.Noise2.Value);
+            trail.Draw(trailEffect);
+
+            Main.spriteBatch.Begin(new());
+            Main.spriteBatch.Draw(
+                TextureAssets.MagicPixel.Value,
+                (Projectile.Center - Main.screenPosition) / 2f,
+                new(0, 0, 1, 1),
+                smallGlowColor,
+                0,
+                0.5f * Vector2.One,
+                4f * Scale,
+                SpriteEffects.None,
+                0
+            );
+            Main.spriteBatch.End();
+        }, CursedSpiritNPC.GhostColor1);
 
         return false;
     }

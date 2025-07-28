@@ -1,10 +1,13 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EvilExpansionMod.Utilities;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 
 namespace EvilExpansionMod.Common.Graphics;
 public struct SwapTarget(int width, int height) : IDisposable {
+    static bool _spriteBatchBeginCalled = false;
+    static SpriteBatchSnapshot _cachedSnapshot;
     static RenderTargetBinding[] _cachedBindings;
     static RenderTargetUsage _cachedUsage;
 
@@ -20,6 +23,10 @@ public struct SwapTarget(int width, int height) : IDisposable {
 
         ((RenderTarget2D)_cachedBindings[0].renderTarget).RenderTargetUsage = RenderTargetUsage.PreserveContents;
 
+        if(Main.spriteBatch.beginCalled) {
+            Main.spriteBatch.End(out _cachedSnapshot);
+            _spriteBatchBeginCalled = true;
+        }
         Main.graphics.GraphicsDevice.SetRenderTarget(_activeTarget);
         Main.graphics.GraphicsDevice.Clear(Color.Transparent);
     }
@@ -27,6 +34,11 @@ public struct SwapTarget(int width, int height) : IDisposable {
     public readonly Texture2D End() {
         Main.graphics.GraphicsDevice.SetRenderTargets(_cachedBindings);
         ((RenderTarget2D)_cachedBindings[0].RenderTarget).RenderTargetUsage = _cachedUsage;
+        if(_spriteBatchBeginCalled) {
+            Main.spriteBatch.Begin(_cachedSnapshot);
+            _spriteBatchBeginCalled = false;
+        }
+
         return _activeTarget;
     }
 

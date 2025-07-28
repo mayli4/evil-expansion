@@ -5,31 +5,26 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Common.Graphics;
 
 public class HalfScreenTargetSystem : ModSystem {
-    static SwapTarget _target;
-    public static SwapTarget Target => _target;
+    public static SwapTarget Target { get; private set; }
 
     public override void Load() {
-        Main.QueueMainThreadAction(
-            () =>
-            {
-                _target = new(Main.screenWidth / 2, Main.screenHeight / 2);
-            }
-        );
+        Main.QueueMainThreadAction(() =>
+        {
+            Target = new(Main.screenWidth / 2, Main.screenHeight / 2);
+        });
     }
 
     public override void Unload() {
-        _target.Dispose();
+        Target.Dispose();
     }
 
     public override void UpdateUI(GameTime gameTime) {
-        if(_target.Width != Main.screenWidth / 2 || _target.Height != Main.screenHeight / 2) {
-            Main.QueueMainThreadAction(
-                () =>
-                {
-                    _target.Dispose();
-                    _target = new(Main.screenWidth / 2, Main.screenHeight / 2);
-                }
-            );
+        if(Target.Width != Main.screenWidth / 2 || Target.Height != Main.screenHeight / 2) {
+            Main.QueueMainThreadAction(() =>
+            {
+                Target.Dispose();
+                Target = new(Main.screenWidth / 2, Main.screenHeight / 2);
+            });
         }
     }
 }

@@ -22,15 +22,15 @@
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Krafs.Publicizer" Version="2.3.0" PrivateAssets="all" ExcludeAssets="runtime"/>
+        <PackageReference Include="Krafs.Publicizer" Version="2.3.0" PrivateAssets="all" ExcludeAssets="runtime" />
     </ItemGroup>
 
     <ItemGroup Label="Publicized assemblies">
         <!-- It's reasonable to publicize tModLoader.  Don't include
              compiler-generated members since it breaks events and some other
              stuff. -->
-        <Publicize Include="tModLoader" IncludeCompilerGeneratedMembers="false"/>
-        <Publicize Include="FNA" IncludeCompilerGeneratedMembers="false"/>
+        <Publicize Include="tModLoader" IncludeCompilerGeneratedMembers="false" />
+        <Publicize Include="FNA" IncludeCompilerGeneratedMembers="false" />
     </ItemGroup>
 
     <ItemGroup>
@@ -43,6 +43,10 @@
         <AdditionalFiles Include="Assets/**/*.wav" />
         <AdditionalFiles Include="Assets/**/*.ogg" />
         <AdditionalFiles Include="Assets/**/*.mp3" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Common\_Graphics\" />
     </ItemGroup>
     
 </Project>

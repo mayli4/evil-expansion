@@ -1,4 +1,4 @@
-using EvilExpansionMod.Common.PrimitiveDrawing;
+using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

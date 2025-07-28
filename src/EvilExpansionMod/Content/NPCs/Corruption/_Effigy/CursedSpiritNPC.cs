@@ -1,4 +1,4 @@
-﻿using EvilExpansionMod.Common.PrimitiveDrawing;
+﻿using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Projectiles;

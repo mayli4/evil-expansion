@@ -5,7 +5,7 @@ using System;
 using System.Collections.Immutable;
 using Terraria;
 
-namespace EvilExpansionMod.Common.PrimitiveDrawing; 
+namespace EvilExpansionMod.Common.Graphics; 
 
 internal class DefaultTrailStyle : ITrailStyle {
     public int VertexCount(int trailPositionCount) => trailPositionCount * 2;

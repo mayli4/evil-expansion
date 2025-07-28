@@ -5,7 +5,7 @@ using System;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
-using EvilExpansionMod.Common.PrimitiveDrawing;
+using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Utilities;

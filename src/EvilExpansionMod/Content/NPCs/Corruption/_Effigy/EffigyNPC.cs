@@ -19,7 +19,7 @@ public sealed class EffigyNPC : ModNPC {
     private int _deadTimer;
     private int _animCounter;
     
-    public int DEATH_TIME = 5 * 60;
+    public const int DEATH_TIME = 5 * 60;
 
     private int _spawnTimer;
 

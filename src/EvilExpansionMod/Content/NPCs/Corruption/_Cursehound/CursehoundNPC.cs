@@ -48,7 +48,7 @@ public sealed class CursehoundNPC : ModNPC {
     private const int roar_downtime_duration = 1 * 60;
     
     private const int mace_spin_duration = 1 * 60;
-    private const int mace_duration = (int)(0.5f * 60);
+    private const int mace_duration = (int)(2.5f * 60);
     private const int MaceRetractDuration = 1 * 60;
 
     public override string Texture => Assets.Assets.Textures.NPCs.Corruption.Cursehound.KEY_CursehoundNPC;
@@ -236,15 +236,45 @@ public sealed class CursehoundNPC : ModNPC {
             SoundEngine.PlaySound(SoundID.DD2_OgreGroundPound with { Volume = 0.7f, Pitch = 0.5f }, NPC.Center);
             CombatText.NewText(NPC.Hitbox, Color.White, "mace");
 
+            Vector2 launchOrigin = NPC.Center + new Vector2(NPC.direction * 50, -40);
+
+            float horizontalSpeed = 16f;
+            float gravity = 0.4f;
+
+            Vector2 targetPosition = target.Center;
+
+            float dx = targetPosition.X - launchOrigin.X;
+            float dy = targetPosition.Y - launchOrigin.Y;
+
+            float initialVx = horizontalSpeed * NPC.direction;
+        
+            float timeToTarget = Math.Abs(initialVx) > 0.01f ? dx / initialVx : 0;
+        
+            if (timeToTarget <= 0.1f) {
+                timeToTarget = 0.5f;
+                initialVx = NPC.direction * horizontalSpeed;
+            }
+        
+            float initialVy = (dy - 0.5f * gravity * timeToTarget * timeToTarget) / timeToTarget;
+        
+            float maxInitialVy = -20f;
+            float minInitialVy = 15f;
+            initialVy = MathHelper.Clamp(initialVy, maxInitialVy, minInitialVy);
+
             Projectile.NewProjectile(
                 NPC.GetSource_FromAI(),
-                NPC.Center + new Vector2(NPC.direction * 70, -30),
-                new Vector2(NPC.direction * 5, 0),
+                launchOrigin.X,
+                launchOrigin.Y,
+                initialVx,
+                initialVy,
                 ModContent.ProjectileType<CursehoundMace>(),
                 NPC.damage,
+                5f,
+                Main.myPlayer,
+                (int)CursehoundMace.AIState.Launched,
                 0,
-                Target.whoAmI
-                );
+                NPC.whoAmI
+            );
         }
 
         if (ai.Timer >= mace_duration) {

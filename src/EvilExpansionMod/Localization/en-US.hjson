@@ -41,6 +41,7 @@ Mods: {
 			GiantShroomCapDummy.DisplayName: Giant Shroom Cap Dummy
 			ExplosionVFXProjectile.DisplayName: Explosion V F X Projectile
 			CursehoundMace.DisplayName: Cursehound Mace
+			MaceCrack.DisplayName: Mace Crack
 		}
 
 		Biomes: {

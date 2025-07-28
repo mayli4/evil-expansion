@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EvilExpansionMod.Content.CameraModifiers;
+using EvilExpansionMod.Content.Dusts;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -115,7 +117,8 @@ public sealed class CursehoundMace : ModProjectile
     public override bool OnTileCollide(Vector2 oldVelocity) {
         if (CurrentAIState == AIState.Launched) {
             CurrentAIState = AIState.Embedded;
-            SoundEngine.PlaySound(SoundID.Roar, Projectile.Center);
+            SoundEngine.PlaySound(SoundID.DD2_OgreGroundPound with { Volume = 0.7f, Pitch = 0.5f }, Projectile.Center);
+            
             for (int i = 0; i < 5; i++) {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Stone);
             }
@@ -126,6 +129,39 @@ public sealed class CursehoundMace : ModProjectile
         
         for (int k = 0; k < amount; k++) {
             Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * Main.rand.NextFloat(4f, 8f), ModContent.ProjectileType<MaceShard>(), Projectile.damage / 2, 0, Projectile.owner);
+        }
+        
+        Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(12f, 0.6f));
+
+        for (int i = 0; i < 16; i++) {
+            Vector2 dustPos = Projectile.Center + Main.rand.NextVector2Circular(120f, 20f);
+            Vector2 dustVelocity = -Vector2.UnitY * Main.rand.NextFloat(3f, 6f);
+            dustVelocity += Projectile.Center.DirectionTo(dustPos) * 5f;
+            dustPos += Vector2.UnitY * Projectile.height * 1.5f;
+
+            Color dustColorStart = new Color(133, 122, 94);
+            Color dustColorFade = dustColorStart * 0.4f;
+
+            var newDustData = new Smoke.Data() {
+                InitialLifetime = 40,
+                ElapsedFrames = 0,
+                InitialOpacity = 0.8f,
+                ColorStart = dustColorStart,
+                ColorFade = dustColorFade,
+                Spin = 0.03f,
+                InitialScale = Main.rand.NextFloat(1f, 2f)
+            };
+
+            var newDust = Dust.NewDustPerfect(
+                dustPos,
+                ModContent.DustType<Smoke>(),
+                dustVelocity,
+                0,
+                newColor: Color.White,
+                newDustData.InitialScale
+            );
+
+            newDust.customData = newDustData;
         }
         
         return false;

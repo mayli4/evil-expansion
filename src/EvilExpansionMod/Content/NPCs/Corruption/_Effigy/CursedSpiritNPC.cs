@@ -360,7 +360,7 @@ public sealed class CursedSpiritNPC : ModNPC {
             var position = NPC.Center;
             var velocity = MathUtilities.InitialVelocityRequiredToHitPosition(
                 position,
-                Target.Center + Target.velocity * 70f,
+                Target.Center + Target.velocity * 40f + 40f * Vector2.UnitX * Main.rand.NextFloatDirection(),
                 SpiritFireball.Gravity,
                 12f
             );
@@ -369,7 +369,7 @@ public sealed class CursedSpiritNPC : ModNPC {
                 Projectile.NewProjectile(
                     NPC.GetSource_FromAI(),
                     NPC.Center,
-                    velocity.RotatedBy(Math.PI * 0.025f * i),
+                    velocity.RotatedBy(Math.PI * Main.rand.NextFloat(0.015f, 0.03f) * i),
                     ModContent.ProjectileType<SpiritFireball>(),
                     20,
                     0.3f
@@ -539,13 +539,13 @@ public sealed class CursedSpiritNPC : ModNPC {
 
                 Main.spriteBatch.Begin(new());
                 Main.spriteBatch.Draw(
-                    TextureAssets.MagicPixel.Value,
+                    Assets.Assets.Textures.Misc.Circle.Value,
                     (NPC.Center - Main.screenPosition) / 2f,
-                    new(0, 0, 1, 1),
+                    null,
                     smallGlowColor,
-                    Main.GameUpdateCount * 0.01f + NPC.whoAmI * 4.3f,
-                    0.5f * Vector2.One,
-                    11f,
+                    0,
+                    16f * Vector2.One,
+                    0.4f,
                     SpriteEffects.None,
                     0
                 );

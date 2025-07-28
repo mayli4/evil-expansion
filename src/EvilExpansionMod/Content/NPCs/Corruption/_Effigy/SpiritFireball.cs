@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -93,16 +92,17 @@ internal class SpiritFireball : ModProjectile {
 
             Main.spriteBatch.Begin(new());
             Main.spriteBatch.Draw(
-                TextureAssets.MagicPixel.Value,
+                Assets.Assets.Textures.Misc.Circle.Value,
                 (Projectile.Center - Main.screenPosition) / 2f,
-                new(0, 0, 1, 1),
+                null,
                 smallGlowColor,
                 0,
-                0.5f * Vector2.One,
-                4f * Scale,
+                16f * Vector2.One,
+                0.15f,
                 SpriteEffects.None,
                 0
             );
+
             Main.spriteBatch.End();
         }, CursedSpiritNPC.GhostColor1);
 

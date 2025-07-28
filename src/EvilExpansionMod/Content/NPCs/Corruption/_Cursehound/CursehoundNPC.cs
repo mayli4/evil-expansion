@@ -234,7 +234,6 @@ public sealed class CursehoundNPC : ModNPC {
 
         if (ai.Timer == 1) {
             SoundEngine.PlaySound(SoundID.DD2_OgreGroundPound with { Volume = 0.7f, Pitch = 0.5f }, NPC.Center);
-            CombatText.NewText(NPC.Hitbox, Color.White, "mace");
 
             Vector2 launchOrigin = NPC.Center + new Vector2(NPC.direction * 50, -40);
 

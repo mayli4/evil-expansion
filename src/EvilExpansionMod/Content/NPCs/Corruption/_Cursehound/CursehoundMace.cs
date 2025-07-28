@@ -117,10 +117,16 @@ public sealed class CursehoundMace : ModProjectile
             CurrentAIState = AIState.Embedded;
             SoundEngine.PlaySound(SoundID.Roar, Projectile.Center);
             for (int i = 0; i < 5; i++) {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Stone, 0f, 0f, 0, default, 1f);
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Stone);
             }
         }
         Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + Vector2.UnitY * 8, Vector2.Zero, ModContent.ProjectileType<MaceCrack>(), 0, 0);
+        
+        int amount = Main.rand.Next(4, 8);
+        
+        for (int k = 0; k < amount; k++) {
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * Main.rand.NextFloat(4f, 8f), ModContent.ProjectileType<MaceShard>(), Projectile.damage / 2, 0, Projectile.owner);
+        }
         
         return false;
     }
@@ -142,17 +148,63 @@ public sealed class CursehoundMace : ModProjectile
             
             var chainTexture = Assets.Assets.Textures.NPCs.Corruption.Cursehound.CursehoundMace_Chain.Value;
 
-            float drawLength = chainTexture.Height;
+            var chainRect = new Rectangle(0, 0, 10, 12);
+            var baseRect = new Rectangle(0, 14, 10, 10);
+
+            float drawLength = chainRect.Height;
             for (float i = 0f; i < length; i += drawLength) {
                 Vector2 drawPos = chainOrigin + unit * i - Main.screenPosition;
-                Main.EntitySpriteDraw(chainTexture, drawPos, null, lightColor, rotation, chainTexture.Size() / 2f, 1f, SpriteEffects.None, 0);
+                Main.EntitySpriteDraw(chainTexture, drawPos, chainRect, lightColor, rotation, chainRect.Size() / 2f, 1f, SpriteEffects.None, 0);
             }
+            
+            Main.EntitySpriteDraw(chainTexture, chainOrigin, baseRect, lightColor, 0, baseRect.Size() / 2f, 1f, SpriteEffects.None, 0);
         }
 
         Texture2D maceTexture = TextureAssets.Projectile[Type].Value;
+        Texture2D maceGlow = Assets.Assets.Textures.NPCs.Corruption.Cursehound.CursehoundMace_Glow.Value;
         Vector2 drawOrigin = maceTexture.Size() / 2f;
         Main.EntitySpriteDraw(maceTexture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
+        Main.EntitySpriteDraw(maceGlow, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
 
         return false;
     }
+}
+
+internal class MaceShard : ModProjectile {
+    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.Cursehound.KEY_CursehoundMace_Chain;
+
+    public override void SetDefaults() {
+        Projectile.width = 18;
+        Projectile.height = 18;
+        Projectile.tileCollide = true;
+        Projectile.timeLeft = 320;
+        Projectile.friendly = false;
+        Projectile.hostile = true;
+        Projectile.damage = 15;
+        Projectile.aiStyle = -1;
+        Projectile.penetrate = 15;
+    }
+
+    public override void AI() {
+        Projectile.velocity.Y += 0.3f;
+        Projectile.rotation += Projectile.velocity.X * 0.1f;
+
+        Projectile.velocity.X *= 0.99f;
+
+        if (Projectile.timeLeft < 30)
+            Projectile.alpha = (int)((1 - Projectile.timeLeft / 30f) * 255);
+    }
+
+    public override bool OnTileCollide(Vector2 oldVelocity) {
+        if (Projectile.penetrate <= 0)
+            return true;
+
+        Projectile.velocity.Y += oldVelocity.Y * -0.8f;
+
+        return false;
+    }
+
+    // public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+    //     target.AddBuff(BuffID.Cursed, 60);
+    // }
 }

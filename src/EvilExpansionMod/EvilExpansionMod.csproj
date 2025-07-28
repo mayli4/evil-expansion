@@ -44,9 +44,5 @@
         <AdditionalFiles Include="Assets/**/*.ogg" />
         <AdditionalFiles Include="Assets/**/*.mp3" />
     </ItemGroup>
-
-    <ItemGroup>
-      <Folder Include="Common\_Graphics\" />
-    </ItemGroup>
     
 </Project>

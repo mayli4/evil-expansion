@@ -102,6 +102,7 @@ public sealed class CursedSpiritNPC : ModNPC {
     public readonly static Color GhostColor1 = new(214, 237, 5);
     public readonly static Color GhostColor2 = new(181, 200, 4);
 
+
     public override void SetDefaults() {
         NPC.width = 38;
         NPC.height = 38;
@@ -191,7 +192,7 @@ public sealed class CursedSpiritNPC : ModNPC {
             trail.Positions[i] = trail.Positions[i - 1];
             i -= 1;
         }
-        trail.Positions[0] = NPC.Center;
+        trail.Positions[0] = NPC.Center + NPC.velocity;
 
         if(!Main.dedServ) {
             if(Main.rand.NextBool(7)) Dust.NewDust(
@@ -488,6 +489,9 @@ public sealed class CursedSpiritNPC : ModNPC {
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         if(!NPC.IsABestiaryIconDummy) {
+            var target = SwapTarget.HalfScreen;
+            target.Begin();
+
             var trailEffect = Assets.Assets.Effects.Compiled.Trail.CursedSpiritFire.Value;
             trailEffect.Parameters["time"].SetValue(0.025f * Main.GameUpdateCount);
             trailEffect.Parameters["mat"].SetValue(MathUtilities.WorldTransformationMatrix);
@@ -496,6 +500,9 @@ public sealed class CursedSpiritNPC : ModNPC {
             trailEffect.Parameters["texture1"].SetValue(Assets.Assets.Textures.Sample.Pebbles.Value);
             trailEffect.Parameters["texture2"].SetValue(Assets.Assets.Textures.Sample.Noise2.Value);
             trail?.Draw(trailEffect);
+
+            var targetTexture = target.End();
+            spriteBatch.Draw(targetTexture, Vector2.Zero, null, Color.White, 0, new Vector2(0, 0), 2f, SpriteEffects.None, 0);
         }
 
         var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;

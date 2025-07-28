@@ -1,6 +1,7 @@
 using EvilExpansionMod.Common;
 using EvilExpansionMod.Common.Bestiary;
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Tiles.Banners;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -92,6 +93,9 @@ public class TerrorBatNPC : ModNPC {
         NPC.buffImmune[BuffID.CursedInferno] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
+        
+        Banner = NPC.type;
+        BannerItem = ModContent.ItemType<TerrorbatBannerItem>();
     }
     
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {

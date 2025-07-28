@@ -1,4 +1,5 @@
 ﻿using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -49,6 +50,9 @@ public sealed class EffigyNPC : ModNPC {
         NPC.buffImmune[BuffID.CursedInferno] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
+        
+        Banner = NPC.type;
+        BannerItem = ModContent.ItemType<EffigyBannerItem>();
     }
 
     public override void AI() {
@@ -66,16 +70,6 @@ public sealed class EffigyNPC : ModNPC {
         if(_spawnedSprits >= 3) {
             _dead = true;
         }
-
-        // _spawnTimer++;
-        //
-        // if(_spawnTimer >= 100) {
-        //     if(Main.rand.NextBool(50)) {
-        //         SpawnSpirit(NPC);
-        //
-        //         _spawnTimer = 0;
-        //     }   
-        // }
     }
 
     void SpawnSpirit(Entity attacker) {

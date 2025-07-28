@@ -8,6 +8,7 @@ using Terraria.ModLoader;
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.Dusts;
+using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using System.Linq;
 using Terraria.DataStructures;
@@ -67,6 +68,9 @@ public sealed class DevilOWarNPC : ModNPC {
         NPC.buffImmune[BuffID.CursedInferno] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
+        
+        Banner = NPC.type;
+        BannerItem = ModContent.ItemType<DevilOWarBannerItem>();
     }
     
     public override void Load() {
@@ -253,7 +257,6 @@ public sealed class DevilOWarNPC : ModNPC {
             _activeStingerTrail = null;
         }   
     }
-    
 
     public override void HitEffect(NPC.HitInfo hit) {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) {

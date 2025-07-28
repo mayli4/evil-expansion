@@ -1,5 +1,6 @@
 ﻿using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.CameraModifiers;
+using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using System;
@@ -82,6 +83,9 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.buffImmune[BuffID.CursedInferno] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
+        
+        Banner = NPC.type;
+        BannerItem = ModContent.ItemType<CursehoundBannerItem>();
     }
 
     public override void AI() {

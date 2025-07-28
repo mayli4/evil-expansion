@@ -102,7 +102,6 @@ public sealed class CursedSpiritNPC : ModNPC {
     public readonly static Color GhostColor1 = new(214, 237, 5);
     public readonly static Color GhostColor2 = new(181, 200, 4);
 
-
     public override void SetDefaults() {
         NPC.width = 38;
         NPC.height = 38;
@@ -126,7 +125,7 @@ public sealed class CursedSpiritNPC : ModNPC {
 
     public override void OnSpawn(IEntitySource source) {
         SpiritType = (SpiritType)Main.rand.Next(0, 3);
-        // SpiritType = SpiritType.Exploder;
+        SpiritType = SpiritType.Ram;
         switch(SpiritType) {
             case SpiritType.Splitter:
                 _data.Splitter = new()
@@ -501,7 +500,18 @@ public sealed class CursedSpiritNPC : ModNPC {
             trailEffect.Parameters["texture2"].SetValue(Assets.Assets.Textures.Sample.Noise2.Value);
             trail?.Draw(trailEffect);
 
-            var targetTexture = target.End();
+            var targetTexture = target.Swap();
+            var outlineEffect = Assets.Assets.Effects.Compiled.Pixel.Outline.Value;
+            outlineEffect.Parameters["size"].SetValue(targetTexture.Size());
+            outlineEffect.Parameters["color"].SetValue(Color.White.ToVector3());
+            var snap = spriteBatch.CaptureEndBegin(new()
+            {
+                CustomEffect = outlineEffect,
+            });
+            spriteBatch.Draw(targetTexture, Vector2.Zero, Color.White);
+            spriteBatch.EndBegin(snap);
+
+            targetTexture = target.End();
             spriteBatch.Draw(targetTexture, Vector2.Zero, null, Color.White, 0, new Vector2(0, 0), 2f, SpriteEffects.None, 0);
         }
 

@@ -223,6 +223,10 @@ public class LavaStyleLoader : ModSystem {
             }
         }
 
+        if(Main.LocalPlayer.ZoneCorrupt) {
+            _cachedModLavaStyle = ModContent.GetInstance<UnderworldCorruptLavaStyle>();
+        }
+
         orig(self);
     }
 
@@ -282,8 +286,8 @@ public class LavaStyleLoader : ModSystem {
         cursor.Emit(OpCodes.Ldloc, 4);
         
         cursor.EmitDelegate<Func<VertexColors, Texture2D, int, int, int, VertexColors>>((initialColor, initialTexture, liquidType, x, y) => {
-            if (_cachedModLavaStyle != default) {
-                initialColor = SelectLavaQuadColor(initialTexture, ref initialColor, liquidType == 1);
+            if (liquidType == LiquidID.Lava && _cachedModLavaStyle != default) {
+                initialColor = SelectLavaQuadColor(initialTexture, ref initialColor);
                 _cachedModLavaStyle.ModifyVertexColors(x, y, ref initialColor);
             }
             

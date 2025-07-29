@@ -17,6 +17,8 @@ namespace EvilExpansionMod.Core.World;
 
 //there are a few bugs  with this, and id like to rewrite it again later on but no promises (bugs will get fixed thouhg)
 
+//WILL BE REWRITTEN ANYWYAYYYSSSS WHEN NEW BG SPRITED
+
 public class UnderworldCorruptionBackground : ModSystem {
     public Asset<Texture2D>[] BackgroundTextures = new Asset<Texture2D>[5];
 

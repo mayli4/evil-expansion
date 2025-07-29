@@ -1,13 +1,16 @@
 ﻿using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.CameraModifiers;
+using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using Terraria.GameContent;
 using Terraria.GameContent.Shaders;
 using Terraria.Graphics.Effects;
 
@@ -59,7 +62,7 @@ public sealed class CursehoundNPC : ModNPC {
     private const int ground_time_for_attack = 1 * 60;
 
     public override void SetStaticDefaults() {
-        Main.npcFrameCount[Type] = 31;
+        Main.npcFrameCount[Type] = 29;
     }
 
     public override void SetDefaults() {
@@ -82,6 +85,9 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.buffImmune[BuffID.CursedInferno] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
+        
+        Banner = NPC.type;
+        BannerItem = ModContent.ItemType<CursehoundBannerItem>();
     }
 
     public override void AI() {
@@ -136,16 +142,16 @@ public sealed class CursehoundNPC : ModNPC {
                 MaceSpinning(ref ai);
                 break;
             case State.MaceAttacking:
-                MaceAttack(ref ai, target);
+                MaceAttack(ref ai, ref target);
                 break;
             case State.MaceRetracting:
                 MaceRetracting(ref ai);
                 break;
             case State.RoarTelegraph:
-                RoarTelegraph(ref ai, target);
+                RoarTelegraph(ref ai, ref target);
                 break;
             case State.Roaring:
-                Roar(ref ai, target);
+                Roar(ref ai, ref target);
                 break;
             case State.RoarDowntime:
                 HandleRoarDowntime(ref ai);
@@ -227,17 +233,22 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.velocity.X *= 0.9f;
         ai.Timer++;
 
+        if(ai.Timer == 1) {
+            SoundEngine.PlaySound(Assets.Assets.Sounds.Cursehound.MaceSwing, NPC.Center);
+        }
+        
         if (ai.Timer >= mace_spin_duration) {
             ai.CurrentState = State.MaceAttacking;
         }
     }
 
-    private void MaceAttack(ref MappedAI ai, Player target) {
+    private void MaceAttack(ref MappedAI ai, ref Player _) {
         NPC.velocity.X *= 0.5f;
         ai.Timer++;
 
         if (ai.Timer == 1) {
             Vector2 launchOrigin = NPC.Center + new Vector2(NPC.direction * 50, -40);
+            SoundEngine.PlaySound(Assets.Assets.Sounds.Cursehound.MaceThrow, NPC.Center);
 
             float gravity = 0.4f;
             
@@ -278,7 +289,7 @@ public sealed class CursehoundNPC : ModNPC {
         }
     }
 
-    private void Roar(ref MappedAI ai, Player target) {
+    private void Roar(ref MappedAI ai, ref Player _) {
         NPC.velocity.X *= 0.1f;
         ai.Timer++;
 
@@ -328,7 +339,7 @@ public sealed class CursehoundNPC : ModNPC {
         }
     }
     
-    private void RoarTelegraph(ref MappedAI ai, Player target) {
+    private void RoarTelegraph(ref MappedAI ai, ref Player _) {
         NPC.velocity.X *= 0.8f;
         ai.Timer++;
 
@@ -345,7 +356,43 @@ public sealed class CursehoundNPC : ModNPC {
             ai.CurrentState = State.Walking;
         }
     }
-    
+
+    public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
+        var tex = TextureAssets.Npc[Type].Value;
+        
+        var drawPosition = NPC.Center - screenPos + new Vector2(0, NPC.gfxOffY);
+
+        var frame = NPC.frame;
+
+        var effects = NPC.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+
+        spriteBatch.Draw(
+            tex,
+            drawPosition,
+            frame,
+            drawColor,
+            NPC.rotation,
+            frame.Size() / 2f,
+            NPC.scale,
+            effects,
+            0f
+        );
+        
+        spriteBatch.Draw(
+            Assets.Assets.Textures.NPCs.Corruption.Cursehound.CursehoundNPC_Glow.Value,
+            drawPosition,
+            frame,
+            Color.White,
+            NPC.rotation,
+            frame.Size() / 2f,
+            NPC.scale,
+            effects,
+            0f
+        );
+
+        return false;
+    }
+
     public override void FindFrame(int frameHeight) {
         var ai = new MappedAI(NPC);
 
@@ -354,7 +401,7 @@ public sealed class CursehoundNPC : ModNPC {
         }
         
         if (NPC.velocity.Y != 0) {
-            NPC.frame.Y = 30 * frameHeight;
+            NPC.frame.Y = 27 * frameHeight;
             NPC.spriteDirection = NPC.direction;
             return;
         }

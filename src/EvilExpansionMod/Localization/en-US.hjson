@@ -20,6 +20,31 @@ Mods: {
 				DisplayName: Devil O War Heart Pickup
 				Tooltip: ""
 			}
+
+			CursedSpiritBannerItem: {
+				DisplayName: Cursed Spirit Banner Item
+				Tooltip: ""
+			}
+
+			CursehoundBannerItem: {
+				DisplayName: Cursehound Banner Item
+				Tooltip: ""
+			}
+
+			DevilOWarBannerItem: {
+				DisplayName: Devil O War Banner Item
+				Tooltip: ""
+			}
+
+			EffigyBannerItem: {
+				DisplayName: Effigy Banner Item
+				Tooltip: ""
+			}
+
+			TerrorbatBannerItem: {
+				DisplayName: Terrorbat Banner Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -43,6 +68,7 @@ Mods: {
 			CursehoundMace.DisplayName: Cursehound Mace
 			MaceCrack.DisplayName: Mace Crack
 			MaceShard.DisplayName: Mace Shard
+			EffigyRootProjectile.DisplayName: Effigy Root Projectile
 		}
 
 		Biomes: {
@@ -71,6 +97,7 @@ Mods: {
 			DevilOWarNPCBestiary: Marine life in the underworld? this organism uses hot gases to float in the air, and a sharp stinger to feed off its prey!
 			TerrorBatNPCBestiary: The terror bat grooves and dives in the air, while also using its acidic spit as a weapon that you wouldn't want to stain your clothes!
 			PusCarrierGrubNPCBestiary: ""
+			CursedSpiritNPCBestiary: ""
 		}
 	}
 }

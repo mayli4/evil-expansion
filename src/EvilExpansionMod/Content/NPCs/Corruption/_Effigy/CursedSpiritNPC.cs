@@ -1,7 +1,9 @@
-﻿using EvilExpansionMod.Common.Graphics;
+﻿using EvilExpansionMod.Common.Bestiary;
+using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Projectiles;
+using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -14,6 +16,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -121,6 +124,15 @@ public sealed class CursedSpiritNPC : ModNPC {
         NPC.buffImmune[BuffID.CursedInferno] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
+        
+        Banner = NPC.type;
+        BannerItem = ModContent.ItemType<CursedSpiritBannerItem>();
+    }
+    
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
+    
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+        return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.4f : 0;
     }
 
     public override void OnSpawn(IEntitySource source) {

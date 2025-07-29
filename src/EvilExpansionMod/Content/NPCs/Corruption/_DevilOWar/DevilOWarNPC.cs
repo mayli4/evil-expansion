@@ -1,5 +1,3 @@
-// This file remains exactly as provided in the previous correct output.
-// The changes were all within Renderer.cs to make the scheduling work.
 using EvilExpansionMod.Common.Bestiary;
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
@@ -9,7 +7,6 @@ using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
-using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;

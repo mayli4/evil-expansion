@@ -25,14 +25,14 @@ public readonly record struct AssetFile(string Path, string Folder, string Name,
 public sealed class AssetGenerator : IIncrementalGenerator {
     private const string image_extension = ".png";
     private const string effect_extension = ".fxc";
-    private const string sound_extension = ".ogg"; // 2. Defined constant for .ogg extension
+    private const string xnb_extension = ".fxc";
+    private const string sound_extension = ".ogg";
 
     private const string build_manifest_filename = "build.txt";
 
     private const string mod_name = "EvilExpansionMod";
 
-    // 3. Included .ogg in supported_extensions
-    private static readonly string[] supported_extensions = new[] { image_extension, effect_extension, sound_extension };
+    private static readonly string[] supported_extensions = new[] { image_extension, effect_extension, sound_extension, xnb_extension };
 
     private static readonly string initial_file_header;
 

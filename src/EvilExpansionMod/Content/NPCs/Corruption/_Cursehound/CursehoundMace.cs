@@ -22,7 +22,7 @@ public sealed class CursehoundMace : ModProjectile
         Retracting
     }
 
-    private AIState CurrentAIState {
+    private AIState CurrentState {
         get => (AIState)Projectile.ai[0];
         set {
             if (Projectile.ai[0] != (float)value)
@@ -59,14 +59,14 @@ public sealed class CursehoundMace : ModProjectile
 
     public override void OnSpawn(IEntitySource source) { }
 
-    public override bool ShouldUpdatePosition() => CurrentAIState == AIState.Launched || CurrentAIState == AIState.Retracting;
+    public override bool ShouldUpdatePosition() => CurrentState == AIState.Launched || CurrentState == AIState.Retracting;
 
     public override void AI() {
         NPC owningNPC = Main.npc[(int)OwningNPCWhoAmI];
 
         if (!owningNPC.active || owningNPC.type != ModContent.NPCType<CursehoundNPC>()) {
-            if (CurrentAIState != AIState.Retracting) {
-                CurrentAIState = AIState.Retracting;
+            if (CurrentState != AIState.Retracting) {
+                CurrentState = AIState.Retracting;
                 Projectile.tileCollide = false;
                 Projectile.friendly = false;
                 Projectile.extraUpdates = 1;
@@ -75,7 +75,7 @@ public sealed class CursehoundMace : ModProjectile
         }
 
 
-        switch (CurrentAIState) {
+        switch (CurrentState) {
             case AIState.Launched:
                 Projectile.velocity.Y += 0.5f;
 
@@ -92,7 +92,7 @@ public sealed class CursehoundMace : ModProjectile
                 Timer++;
 
                 if (Timer >= EmbeddedDuration + 60) {
-                    CurrentAIState = AIState.Retracting;
+                    CurrentState = AIState.Retracting;
                     Projectile.tileCollide = false;
                 }
                 break;
@@ -115,8 +115,8 @@ public sealed class CursehoundMace : ModProjectile
     }
 
     public override bool OnTileCollide(Vector2 oldVelocity) {
-        if (CurrentAIState == AIState.Launched) {
-            CurrentAIState = AIState.Embedded;
+        if (CurrentState == AIState.Launched) {
+            CurrentState = AIState.Embedded;
             SoundEngine.PlaySound(SoundID.DD2_OgreGroundPound with { Volume = 0.7f, Pitch = 0.5f }, Projectile.Center);
             
             for (int i = 0; i < 5; i++) {
@@ -203,6 +203,17 @@ public sealed class CursehoundMace : ModProjectile
         Main.EntitySpriteDraw(maceGlow, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
 
         return false;
+    }
+    
+    public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac) {
+        if (Projectile.velocity.Y > 0 && CurrentState == AIState.Launched) {
+            fallThrough = false;
+        }
+        else {
+            fallThrough = true;
+        }
+
+        return base.TileCollideStyle(ref width, ref height, ref fallThrough, ref hitboxCenterFrac);
     }
 }
 

@@ -269,7 +269,7 @@ public sealed class CursehoundNPC : ModNPC {
                 NPC.damage,
                 5f,
                 Main.myPlayer,
-                (int)CursehoundMace.AIState.Launched,
+                (int)CursehoundMace.State.Launched,
                 0,
                 NPC.whoAmI
             );
@@ -301,7 +301,7 @@ public sealed class CursehoundNPC : ModNPC {
         }
 
         if (ai.Timer > 30 && ai.Timer < 90 && ai.Timer % 10 == 0) {
-            var searchRadiusTiles = 20;
+            var searchRadiusTiles = 40;
             List<Point> lavaTiles = new();
 
             int startTileX = (int)((Target.Center.X - searchRadiusTiles * 16) / 16f);

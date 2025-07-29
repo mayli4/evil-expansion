@@ -12,18 +12,17 @@ using Terraria.GameContent; // For TextureAssets
 
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
-public sealed class CursehoundMace : ModProjectile
-{
+public sealed class CursehoundMace : ModProjectile {
     public override string Texture => Assets.Assets.Textures.NPCs.Corruption.Cursehound.KEY_CursehoundMace;
 
-    public enum AIState {
+    public enum State {
         Launched,
         Embedded,
         Retracting
     }
 
-    private AIState CurrentState {
-        get => (AIState)Projectile.ai[0];
+    private State CurrentState {
+        get => (State)Projectile.ai[0];
         set {
             if (Projectile.ai[0] != (float)value)
             {
@@ -59,24 +58,23 @@ public sealed class CursehoundMace : ModProjectile
 
     public override void OnSpawn(IEntitySource source) { }
 
-    public override bool ShouldUpdatePosition() => CurrentState == AIState.Launched || CurrentState == AIState.Retracting;
+    public override bool ShouldUpdatePosition() => CurrentState == State.Launched || CurrentState == State.Retracting;
 
     public override void AI() {
         NPC owningNPC = Main.npc[(int)OwningNPCWhoAmI];
 
         if (!owningNPC.active || owningNPC.type != ModContent.NPCType<CursehoundNPC>()) {
-            if (CurrentState != AIState.Retracting) {
-                CurrentState = AIState.Retracting;
+            if (CurrentState != State.Retracting) {
+                CurrentState = State.Retracting;
                 Projectile.tileCollide = false;
                 Projectile.friendly = false;
                 Projectile.extraUpdates = 1;
             }
             if (!owningNPC.active) Projectile.timeLeft = Math.Min(Projectile.timeLeft, 60);
-        }
-
+        } 
 
         switch (CurrentState) {
-            case AIState.Launched:
+            case State.Launched:
                 Projectile.velocity.Y += 0.5f;
 
                 Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
@@ -86,18 +84,18 @@ public sealed class CursehoundMace : ModProjectile
                 }
                 break;
 
-            case AIState.Embedded:
+            case State.Embedded:
                 Projectile.velocity = Vector2.Zero;
                 Projectile.tileCollide = false;
                 Timer++;
 
                 if (Timer >= EmbeddedDuration + 60) {
-                    CurrentState = AIState.Retracting;
+                    CurrentState = State.Retracting;
                     Projectile.tileCollide = false;
                 }
                 break;
 
-            case AIState.Retracting:
+            case State.Retracting:
                 Vector2 targetPosition = owningNPC.Center + new Vector2(owningNPC.direction * 70, -30);
 
                 if (Projectile.Distance(targetPosition) < RetractSpeed) {
@@ -115,8 +113,8 @@ public sealed class CursehoundMace : ModProjectile
     }
 
     public override bool OnTileCollide(Vector2 oldVelocity) {
-        if (CurrentState == AIState.Launched) {
-            CurrentState = AIState.Embedded;
+        if (CurrentState == State.Launched) {
+            CurrentState = State.Embedded;
             SoundEngine.PlaySound(Assets.Assets.Sounds.Cursehound.MaceSlam, Vector2.Lerp(Main.LocalPlayer.Center, Projectile.Center, 0.7f));
             
             for (int i = 0; i < 5; i++) {
@@ -206,7 +204,7 @@ public sealed class CursehoundMace : ModProjectile
     }
     
     public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac) {
-        if (Projectile.velocity.Y > 0 && CurrentState == AIState.Launched) {
+        if (Projectile.velocity.Y > 0 && CurrentState == State.Launched) {
             fallThrough = false;
         }
         else {

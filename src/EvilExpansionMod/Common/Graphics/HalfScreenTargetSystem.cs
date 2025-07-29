@@ -15,7 +15,8 @@ public class HalfScreenTargetSystem : ModSystem {
     }
 
     public override void Unload() {
-        Main.QueueMainThreadAction(() => {
+        Main.QueueMainThreadAction(() =>
+        {
             Target.Dispose();
         });
     }

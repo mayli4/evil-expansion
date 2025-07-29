@@ -136,8 +136,12 @@ public sealed class CursedSpiritNPC : ModNPC {
     }
 
     public override void OnSpawn(IEntitySource source) {
+        _trailPositions = new Vector2[12];
+        for(int i = 0; i < _trailPositions.Length; i++) {
+            _trailPositions[i] = NPC.Center;
+        }
+
         SpiritType = (SpiritType)Main.rand.Next(0, 3);
-        SpiritType = SpiritType.Ram;
         switch(SpiritType) {
             case SpiritType.Splitter:
                 _data.Splitter = new()

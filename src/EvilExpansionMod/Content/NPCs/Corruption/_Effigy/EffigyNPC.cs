@@ -1,4 +1,4 @@
-﻿using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;

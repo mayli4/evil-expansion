@@ -49,6 +49,7 @@ public class Renderer : ModSystem {
         Trail,
         Sprite,
 
+
         Begin,
         End,
 

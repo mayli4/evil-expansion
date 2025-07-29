@@ -6,7 +6,8 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Core.World;
 
-internal sealed class HellBiomeExclusionGlobalNPC : ModSystem {
+//would be nice to be able to include modded npcs, but idk
+internal sealed class HellBiomeExclusionSystem : ModSystem {
     public override void Load() {
         IL_NPC.SpawnNPC += NPCSpawningEdit;
     }
@@ -14,7 +15,7 @@ internal sealed class HellBiomeExclusionGlobalNPC : ModSystem {
     public override void Unload() {
         IL_NPC.SpawnNPC -= NPCSpawningEdit;
     }
-    
+
     //removes vanilla npcs from hell spawn pool while in an evil biome
     private void NPCSpawningEdit(ILContext il) {
         ILCursor c = new ILCursor(il);
@@ -26,7 +27,7 @@ internal sealed class HellBiomeExclusionGlobalNPC : ModSystem {
             i => i.MatchLdcI4(190),
             i => i.MatchSub(),
             i => i.MatchBle(out IL_10d3d));
-        
+
         c.EmitLdloc(14);
         c.EmitDelegate((int k) =>
         {

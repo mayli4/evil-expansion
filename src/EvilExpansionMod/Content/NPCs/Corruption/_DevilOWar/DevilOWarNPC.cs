@@ -421,6 +421,7 @@ public sealed class DevilOWarNPC : ModNPC {
         Vector2 bodyWorldPositionForTrails = NPC.Center + offsetForTrails;
 
         PopulateTrails(pipeline, bodyWorldPositionForTrails, drawColor);
+        pipeline.Flush();
 
         var fluidEffect = Assets.Assets.Effects.Compiled.Pixel.DevilOWarFluid.Value;
 
@@ -436,8 +437,6 @@ public sealed class DevilOWarNPC : ModNPC {
         fluidEffect.Parameters["uNoise2Scale"].SetValue(1.0f);
 
         Main.spriteBatch.Draw(insidesTexture, NPC.Center + new Vector2(0, 19) - screenPos, null, drawColor, NPC.rotation, insidesTexture.Size() / 2, 1f, effects, 0f);
-        
-        pipeline.Flush();
         var snapshot = Main.spriteBatch.CaptureEndBegin(new SpriteBatchSnapshot() with { CustomEffect = fluidEffect});
         Main.spriteBatch.Draw(headUnderTexture, NPC.Center - new Vector2(0, 4) - screenPos, null, glowColor * 0.8f, NPC.rotation, origin, finalDrawScale, effects, 0f);
         Main.spriteBatch.EndBegin(snapshot);

@@ -178,7 +178,7 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         Timer += 1;
 
-        const float TrailSize = 55;
+        const float TrailSize = 50;
         trail ??= new(
             [.. Enumerable.Repeat(NPC.Center, 12)],
             static t => TrailSize,
@@ -528,24 +528,29 @@ public sealed class CursedSpiritNPC : ModNPC {
         if(!NPC.IsABestiaryIconDummy) {
             RenderingUtilities.DrawVFX(() =>
             {
+                var matrix = RenderingUtilities.VFXMatrix;
+
                 var trailEffect = Assets.Assets.Effects.Compiled.Trail.CursedSpiritFire.Value;
                 trailEffect.Parameters["time"].SetValue(0.025f * Main.GameUpdateCount + NPC.whoAmI * 3.432f);
-                trailEffect.Parameters["mat"].SetValue(MathUtilities.WorldTransformationMatrix);
+                trailEffect.Parameters["mat"].SetValue(matrix.effect);
                 trailEffect.Parameters["stepY"].SetValue(0.25f);
                 trailEffect.Parameters["scale"].SetValue(0.8f);
                 trailEffect.Parameters["texture1"].SetValue(Assets.Assets.Textures.Sample.Pebbles.Value);
                 trailEffect.Parameters["texture2"].SetValue(Assets.Assets.Textures.Sample.Noise2.Value);
                 trail?.Draw(trailEffect);
 
-                Main.spriteBatch.Begin(new());
+                Main.spriteBatch.Begin(new()
+                {
+                    TransformMatrix = matrix.batch,
+                });
                 Main.spriteBatch.Draw(
                     Assets.Assets.Textures.Misc.Circle.Value,
-                    (NPC.Center - Main.screenPosition) / 2f,
+                    NPC.Center,
                     null,
                     smallGlowColor,
                     0,
                     16f * Vector2.One,
-                    0.4f,
+                    0.8f,
                     SpriteEffects.None,
                     0
                 );

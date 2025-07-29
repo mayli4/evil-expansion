@@ -18,6 +18,13 @@ public static class RenderingUtilities {
         return true;
     }
 
+    public static (Matrix batch, Matrix effect) VFXMatrix {
+        get {
+            var batch = Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f) * Matrix.CreateScale(0.5f);
+            return (batch, batch * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth / 2f, Main.screenHeight / 2f, 0, -1, 1));
+        }
+    }
+
     public static void DrawVFX(Action action, Color? outlineColor = null) {
         var target = SwapTarget.HalfScreen;
         target.Begin();
@@ -36,6 +43,12 @@ public static class RenderingUtilities {
         Main.spriteBatch.End();
 
         targetTexture = target.End();
-        Main.spriteBatch.Draw(targetTexture, Vector2.Zero, null, Color.White, 0, new Vector2(0, 0), 2f, SpriteEffects.None, 0);
+
+        var snaphot = Main.spriteBatch.CaptureEndBegin(new()
+        {
+            TransformMatrix = Matrix.CreateScale(2f),
+        });
+        Main.spriteBatch.Draw(targetTexture, Vector2.Zero, Color.White);
+        Main.spriteBatch.EndBegin(snaphot);
     }
 }

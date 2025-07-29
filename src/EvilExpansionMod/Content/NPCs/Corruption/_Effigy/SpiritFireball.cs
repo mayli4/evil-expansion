@@ -13,7 +13,7 @@ namespace EvilExpansionMod.Content.NPCs.Corruption;
 internal class SpiritFireball : ModProjectile {
     public override string Texture => "Terraria/Images/Item_0";
 
-    PrimitiveTrail trail;
+    Vector2[] _trailPositions;
     public static readonly float Gravity = 0.3f;
     public static readonly int MaxTimeLeft = 130;
 
@@ -33,19 +33,13 @@ internal class SpiritFireball : ModProjectile {
     }
 
     public override void AI() {
-        const float TrailSize = 28f;
-        trail ??= new(
-            [.. Enumerable.Repeat(Projectile.Center, 7)],
-            t => TrailSize * Scale,
-            static t => Color.Lerp(CursedSpiritNPC.GhostColor1, CursedSpiritNPC.GhostColor2, t + 0.7f)
-        );
-
-        var i = trail.Positions.Length - 1;
+        _trailPositions ??= [.. Enumerable.Repeat(Projectile.Center, 7)];
+        var i = _trailPositions.Length - 1;
         while(i > 0) {
-            trail.Positions[i] = trail.Positions[i - 1];
+            _trailPositions[i] = _trailPositions[i - 1];
             i -= 1;
         }
-        trail.Positions[0] = Projectile.Center + Projectile.velocity;
+        _trailPositions[0] = Projectile.Center + Projectile.velocity;
 
         Projectile.velocity.Y += Gravity;
 
@@ -79,34 +73,31 @@ internal class SpiritFireball : ModProjectile {
         );
         Main.spriteBatch.EndBegin(snapshot);
 
-        RenderingUtilities.DrawVFX(() =>
-        {
-            var matrix = RenderingUtilities.VFXMatrix;
-
-            var trailEffect = Assets.Assets.Effects.Compiled.Trail.CursedSpiritFire.Value;
-            trailEffect.Parameters["time"].SetValue(0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.1f);
-            trailEffect.Parameters["mat"].SetValue(matrix.effect);
-            trailEffect.Parameters["stepY"].SetValue(0.25f);
-            trailEffect.Parameters["scale"].SetValue(0.25f);
-            trailEffect.Parameters["texture1"].SetValue(Assets.Assets.Textures.Sample.Pebbles.Value);
-            trailEffect.Parameters["texture2"].SetValue(Assets.Assets.Textures.Sample.Noise2.Value);
-            trail.Draw(trailEffect);
-
-            Main.spriteBatch.Begin(new() { TransformMatrix = matrix.batch });
-            Main.spriteBatch.Draw(
+        var trailEffect = Assets.Assets.Effects.Compiled.Trail.CursedSpiritFire.Value;
+        new Renderer.Pipeline()
+            .BeginPixelate()
+            .DrawTrail(
+                _trailPositions,
+                static _ => 14f,
+                static t => Color.Lerp(CursedSpiritNPC.GhostColor1, CursedSpiritNPC.GhostColor2, t + 0.7f),
+                trailEffect,
+                ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
+                ("mat", Renderer.PixelateEffectMatrix),
+                ("stepY", 0.25f),
+                ("scale", 0.25f),
+                ("texture1", Assets.Assets.Textures.Sample.Pebbles.Value),
+                ("texture2", Assets.Assets.Textures.Sample.Noise2.Value)
+            )
+            .DrawSprite(
                 Assets.Assets.Textures.Misc.Circle.Value,
-                Projectile.Center,
-                null,
-                smallGlowColor,
-                0,
-                16f * Vector2.One,
-                0.3f,
-                SpriteEffects.None,
-                0
-            );
-
-            Main.spriteBatch.End();
-        }, CursedSpiritNPC.GhostColor1);
+                Projectile.Center - Main.screenPosition,
+                color: smallGlowColor,
+                origin: 16f * Vector2.One,
+                scale: Vector2.One * 0.3f
+            )
+            .ApplyOutline(CursedSpiritNPC.GhostColor1)
+            .EndPixelate()
+            .Flush();
 
         return false;
     }

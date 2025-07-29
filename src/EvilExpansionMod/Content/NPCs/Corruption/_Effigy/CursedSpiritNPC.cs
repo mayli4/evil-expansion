@@ -84,7 +84,7 @@ public sealed class CursedSpiritNPC : ModNPC {
 
     ref float Timer => ref NPC.ai[1];
 
-    PrimitiveTrail trail;
+    Vector2[] _trailPositions;
 
     float _lookOffset;
     Vector2 _lookDirection;
@@ -124,19 +124,20 @@ public sealed class CursedSpiritNPC : ModNPC {
         NPC.buffImmune[BuffID.CursedInferno] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
-        
+
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<CursedSpiritBannerItem>();
     }
-    
+
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
-    
+
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.4f : 0;
     }
 
     public override void OnSpawn(IEntitySource source) {
         SpiritType = (SpiritType)Main.rand.Next(0, 3);
+        SpiritType = SpiritType.Ram;
         switch(SpiritType) {
             case SpiritType.Splitter:
                 _data.Splitter = new()
@@ -190,19 +191,14 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         Timer += 1;
 
-        const float TrailSize = 50;
-        trail ??= new(
-            [.. Enumerable.Repeat(NPC.Center, 12)],
-            static t => TrailSize,
-            static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f)
-        );
+        _trailPositions ??= [.. Enumerable.Repeat(NPC.Center, 12)];
 
-        var i = trail.Positions.Length - 1;
+        var i = _trailPositions.Length - 1;
         while(i > 0) {
-            trail.Positions[i] = trail.Positions[i - 1];
+            _trailPositions[i] = _trailPositions[i - 1];
             i -= 1;
         }
-        trail.Positions[0] = NPC.Center + NPC.velocity;
+        _trailPositions[0] = NPC.Center + NPC.velocity;
 
         if(!Main.dedServ) {
             if(Main.rand.NextBool(7)) Dust.NewDust(
@@ -538,36 +534,62 @@ public sealed class CursedSpiritNPC : ModNPC {
         spriteBatch.EndBegin(initialSnapshot);
 
         if(!NPC.IsABestiaryIconDummy) {
-            RenderingUtilities.DrawVFX(() =>
-            {
-                var matrix = RenderingUtilities.VFXMatrix;
-
-                var trailEffect = Assets.Assets.Effects.Compiled.Trail.CursedSpiritFire.Value;
-                trailEffect.Parameters["time"].SetValue(0.025f * Main.GameUpdateCount + NPC.whoAmI * 3.432f);
-                trailEffect.Parameters["mat"].SetValue(matrix.effect);
-                trailEffect.Parameters["stepY"].SetValue(0.25f);
-                trailEffect.Parameters["scale"].SetValue(0.8f);
-                trailEffect.Parameters["texture1"].SetValue(Assets.Assets.Textures.Sample.Pebbles.Value);
-                trailEffect.Parameters["texture2"].SetValue(Assets.Assets.Textures.Sample.Noise2.Value);
-                trail?.Draw(trailEffect);
-
-                Main.spriteBatch.Begin(new()
-                {
-                    TransformMatrix = matrix.batch,
-                });
-                Main.spriteBatch.Draw(
+            var trailEffect = Assets.Assets.Effects.Compiled.Trail.CursedSpiritFire.Value;
+            new Renderer.Pipeline()
+                .BeginPixelate()
+                .DrawTrail(
+                    _trailPositions,
+                    static _ => 50,
+                    static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f),
+                    trailEffect,
+                    ("time", 0.025f * Main.GameUpdateCount + NPC.whoAmI * 3.432f),
+                    ("mat", Renderer.PixelateEffectMatrix),
+                    ("stepY", 0.25f),
+                    ("scale", 0.8f),
+                    ("texture1", Assets.Assets.Textures.Sample.Pebbles.Value),
+                    ("texture2", Assets.Assets.Textures.Sample.Noise2.Value)
+                )
+                .DrawSprite(
                     Assets.Assets.Textures.Misc.Circle.Value,
-                    NPC.Center,
-                    null,
-                    smallGlowColor,
-                    0,
-                    16f * Vector2.One,
-                    0.8f,
-                    SpriteEffects.None,
-                    0
-                );
-                Main.spriteBatch.End();
-            }, GhostColor1);
+                    NPC.Center - Main.screenPosition,
+                    color: smallGlowColor,
+                    origin: 16f * Vector2.One,
+                    scale: Vector2.One * 0.8f
+                )
+                .ApplyOutline(GhostColor1)
+                .EndPixelate()
+                .Flush();
+
+            // RenderingUtilities.DrawVFX(() =>
+            // {
+            //     var matrix = RenderingUtilities.VFXMatrix;
+
+            //     var trailEffect = Assets.Assets.Effects.Compiled.Trail.CursedSpiritFire.Value;
+            //     trailEffect.Parameters["time"].SetValue(0.025f * Main.GameUpdateCount + NPC.whoAmI * 3.432f);
+            //     trailEffect.Parameters["mat"].SetValue(matrix.effect);
+            //     trailEffect.Parameters["stepY"].SetValue(0.25f);
+            //     trailEffect.Parameters["scale"].SetValue(0.8f);
+            //     trailEffect.Parameters["texture1"].SetValue(Assets.Assets.Textures.Sample.Pebbles.Value);
+            //     trailEffect.Parameters["texture2"].SetValue(Assets.Assets.Textures.Sample.Noise2.Value);
+            //     trail?.Draw(trailEffect);
+
+            //     Main.spriteBatch.Begin(new()
+            //     {
+            //         TransformMatrix = matrix.batch,
+            //     });
+            //     Main.spriteBatch.Draw(
+            //         Assets.Assets.Textures.Misc.Circle.Value,
+            //         NPC.Center,
+            //         null,
+            //         smallGlowColor,
+            //         0,
+            //         16f * Vector2.One,
+            //         0.8f,
+            //         SpriteEffects.None,
+            //         0
+            //     );
+            //     Main.spriteBatch.End();
+            // }, GhostColor1);
         }
 
         var maskShake = 0f;

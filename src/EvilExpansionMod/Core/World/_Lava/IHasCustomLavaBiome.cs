@@ -9,5 +9,5 @@ public interface IHasCustomLavaBiome {
     /// <summary>
     ///     The custom lava style of this biome.
     /// </summary>
-    public ModLavaStyle ModLavaStyle { get; } 
+    public ModLavaStyle ModLavaStyle { get; }
 }

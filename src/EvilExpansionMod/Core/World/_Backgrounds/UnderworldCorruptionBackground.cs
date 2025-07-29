@@ -23,10 +23,10 @@ public class UnderworldCorruptionBackground : ModSystem {
     public Asset<Texture2D>[] BackgroundTextures = new Asset<Texture2D>[5];
 
     public override void PostSetupContent() {
-        if (Main.dedServ)
+        if(Main.dedServ)
             return;
-        
-        for (int i = 0; i < BackgroundTextures.Length; i++) {
+
+        for(int i = 0; i < BackgroundTextures.Length; i++) {
             BackgroundTextures[i] = ModContent.Request<Texture2D>("EvilExpansionMod/Assets/Textures/Backgrounds/UnderworldCorruption/UnderworldCorruptionBackground_" + i);
         }
     }
@@ -44,7 +44,8 @@ public class UnderworldCorruptionBackground : ModSystem {
             i => i.MatchLdcI4(0),
             i => i.MatchCall<Main>("DrawUnderworldBackground")
         );
-        c.EmitDelegate(() => {
+        c.EmitDelegate(() =>
+        {
             DrawCorruptionUnderworldBackground(false);
         });
     }
@@ -57,27 +58,28 @@ public class UnderworldCorruptionBackground : ModSystem {
             i => i.MatchLdcI4(1),
             i => i.MatchCall<Main>("DrawUnderworldBackground")
         );
-        c.EmitDelegate(() => {
+        c.EmitDelegate(() =>
+        {
             DrawCorruptionUnderworldBackground(true);
         });
     }
 
     protected void DrawCorruptionUnderworldBackground(bool flat) {
-        if (!Main.LocalPlayer.InModBiome<UnderworldCorruptionBiome>())
+        if(!Main.LocalPlayer.InModBiome<UnderworldCorruptionBiome>())
             return;
 
-        if (!(Main.screenPosition.Y + Main.screenHeight < (Main.maxTilesY - 220) * 16f)) {
+        if(!(Main.screenPosition.Y + Main.screenHeight < (Main.maxTilesY - 220) * 16f)) {
             Vector2 screenOffset = Main.screenPosition + new Vector2(
                 (Main.screenWidth >> 1),
                 (Main.screenHeight >> 1)
             );
-            
+
             float pushUp = (Main.GameViewMatrix.Zoom.Y - 1f) * 0.5f * 200f;
             SkyManager.Instance.ResetDepthTracker();
 
             int[] drawOrder = { 0, 1, 2, 3, 4 };
 
-            foreach (int textureIndex in drawOrder) {
+            foreach(int textureIndex in drawOrder) {
                 DrawCorruptionUnderworldBackgroundLayer(
                     flat,
                     screenOffset,
@@ -87,7 +89,7 @@ public class UnderworldCorruptionBackground : ModSystem {
                 );
             }
 
-            if (!Main.mapFullscreen) {
+            if(!Main.mapFullscreen) {
                 SkyManager.Instance.DrawRemainingDepth(Main.spriteBatch);
             }
         }
@@ -102,11 +104,11 @@ public class UnderworldCorruptionBackground : ModSystem {
         Vector2 positionOffset = Vector2.Zero;
 
         int effectiveOldIndex = layerTextureIndex + 4;
-        
+
         float parallaxFactor = (flat ? 1f : (effectiveOldIndex * 2 + 3f));
         Vector2 inverseParallax = new(1f / parallaxFactor);
 
-        switch (layerTextureIndex) {
+        switch(layerTextureIndex) {
             case 0:
                 scaleFactor = 0.5f;
                 positionOffset.Y -= 0f;
@@ -122,8 +124,7 @@ public class UnderworldCorruptionBackground : ModSystem {
                 textureCenter = new Vector2(sourceRectangle.Width, sourceRectangle.Height) * 0.5f;
                 positionOffset.Y += 90f;
                 break;
-            case 2:
-                {
+            case 2: {
                     int num13 = (int)(Main.GlobalTimeWrappedHourly * 8f) % 4;
                     sourceRectangle = new(
                         num13 % 2 * (value.Width >> 1),
@@ -135,8 +136,7 @@ public class UnderworldCorruptionBackground : ModSystem {
                     positionOffset.Y += 90f;
                     break;
                 }
-            case 3:
-                {
+            case 3: {
                     int num12 = (int)(Main.GlobalTimeWrappedHourly * 8f) % 4;
                     sourceRectangle = new(
                         num12 % 2 * (value.Width >> 1),
@@ -149,8 +149,7 @@ public class UnderworldCorruptionBackground : ModSystem {
                     positionOffset.Y -= 90f;
                     break;
                 }
-            case 4:
-                {
+            case 4: {
                     int num11 = (int)(Main.GlobalTimeWrappedHourly * 8f) % 4;
                     sourceRectangle = new(
                         num11 % 2 * (value.Width >> 1),
@@ -163,16 +162,16 @@ public class UnderworldCorruptionBackground : ModSystem {
                     break;
                 }
         }
-        
-        if (flat) {
+
+        if(flat) {
             scaleFactor *= 1.5f;
         }
-        
-        textureCenter *= scaleFactor; 
+
+        textureCenter *= scaleFactor;
 
         SkyManager.Instance.DrawToDepth(Main.spriteBatch, 1f / inverseParallax.X);
 
-        if (flat) {
+        if(flat) {
             positionOffset.Y += (BackgroundTextures[0].Height() >> 1) * 1.3f - textureCenter.Y;
         }
 
@@ -186,21 +185,21 @@ public class UnderworldCorruptionBackground : ModSystem {
 
         var tilesToDraw = (int)Math.Ceiling(Main.screenWidth / scaledWidth) + 2;
 
-        var drawPosition = (new Vector2(startTileX * scaledWidth, Main.UnderworldLayer * 16f) 
-            + textureCenter - screenOffset) 
-            * inverseParallax 
-            + screenOffset 
-            - Main.screenPosition - textureCenter 
+        var drawPosition = (new Vector2(startTileX * scaledWidth, Main.UnderworldLayer * 16f)
+            + textureCenter - screenOffset)
+            * inverseParallax
+            + screenOffset
+            - Main.screenPosition - textureCenter
             + positionOffset;
 
         drawPosition = drawPosition.Floor();
 
-        while (drawPosition.X + scaledWidth < 0f) {
+        while(drawPosition.X + scaledWidth < 0f) {
             startTileX++;
             drawPosition.X += scaledWidth;
         }
 
-        for (int i = startTileX - 2; i <= startTileX + tilesToDraw + 2; i++) {
+        for(int i = startTileX - 2; i <= startTileX + tilesToDraw + 2; i++) {
             Color textureColor = Color.White * alpha;
 
             Main.spriteBatch.Draw(

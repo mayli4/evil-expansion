@@ -31,7 +31,7 @@ public class UnderworldCorruptLavaStyle : ModLavaStyle {
         initialLightColor = Color.Yellow;
         initialLightColor.A = 200;
     }
-    
+
     public override void ModifyVertexColors(int x, int y, ref VertexColors colors) {
         var bottomColor = Color.Yellow;
         var topColor = new Color(170, 143, 36, 255);
@@ -40,24 +40,26 @@ public class UnderworldCorruptLavaStyle : ModLavaStyle {
         int solidTilesPassedAboveLiquid = 0;
 
         int currentScanY = y;
-        const int max_scan_range = 250; 
+        const int max_scan_range = 250;
         const int max_solid_tiles_per_scan = 5;
 
-        for (int i = 0; i < max_scan_range; i++) {
+        for(int i = 0; i < max_scan_range; i++) {
 
             Tile scanTile = Main.tile[x, currentScanY];
 
-            if (scanTile.LiquidType == LiquidID.Lava && scanTile.LiquidAmount > 0) {
+            if(scanTile.LiquidType == LiquidID.Lava && scanTile.LiquidAmount > 0) {
                 solidTilesPassedAboveLiquid = 0;
                 topOfActualLiquidSurfaceY = currentScanY;
-            } else if (scanTile.HasTile) {
+            }
+            else if(scanTile.HasTile) {
                 // found a solid tile thats not lava, increment passed solid tiles
                 solidTilesPassedAboveLiquid++;
-                if (solidTilesPassedAboveLiquid > max_solid_tiles_per_scan) {
+                if(solidTilesPassedAboveLiquid > max_solid_tiles_per_scan) {
                     // max solid  tiles passthrogh exceeded, top of pool found
                     break;
                 }
-            } else {
+            }
+            else {
                 // top of pool found
                 break;
             }
@@ -67,9 +69,9 @@ public class UnderworldCorruptLavaStyle : ModLavaStyle {
 
         float potencyFactor = 1f - ((float)solidTilesPassedAboveLiquid / (max_solid_tiles_per_scan + 1));
         potencyFactor = MathHelper.Clamp(potencyFactor, 0f, 1f);
-        
+
         var effectiveTopColor = Color.Lerp(bottomColor, topColor, potencyFactor);
-        
+
         float maxGradientPixelDepth = 3 * 100;
 
         float tileTopYPixel = y * 16f;
@@ -92,7 +94,7 @@ public class UnderworldCorruptLavaStyle : ModLavaStyle {
 
         // lerpolate
         var finalColorForTop = Color.Lerp(bottomColor, effectiveTopColor, lerpFactorForTop);
-        var  finalColorForBottom = Color.Lerp(bottomColor, effectiveTopColor, lerpFactorForBottom);
+        var finalColorForBottom = Color.Lerp(bottomColor, effectiveTopColor, lerpFactorForBottom);
 
         colors.TopLeftColor = finalColorForTop;
         colors.TopRightColor = finalColorForTop;
@@ -103,5 +105,5 @@ public class UnderworldCorruptLavaStyle : ModLavaStyle {
         colors.TopRightColor.A = originalTopRightAlpha;
         colors.BottomLeftColor.A = originalBottomLeftAlpha;
         colors.BottomRightColor.A = originalBottomRightAlpha;
-    }   
+    }
 }

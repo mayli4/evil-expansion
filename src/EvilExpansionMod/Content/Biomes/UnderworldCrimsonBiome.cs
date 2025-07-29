@@ -12,7 +12,7 @@ public sealed class UnderworldCrimsonBiome : ModBiome, IHasCustomLavaBiome {
     public override int Music => MusicID.UndergroundCrimson;
 
     public ModLavaStyle ModLavaStyle => ModContent.GetInstance<IchorLavaStyle>();
-    
+
     public override bool IsBiomeActive(Player player) {
         var underworld = player.ZoneUnderworldHeight;
         return EvilTileCountSystem.InUnderworldCrimson && underworld;

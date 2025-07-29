@@ -1,18 +1,18 @@
 using EvilExpansionMod.Common.Bestiary;
-using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Linq;
+using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
+using Terraria.ID;
+using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
@@ -22,7 +22,7 @@ public sealed class DevilOWarNPC : ModNPC {
         Charging,
         AttackCooldown,
     }
-    
+
     public override string Texture => Assets.Assets.Textures.NPCs.Corruption.DevilOWar.KEY_DevilOWarHead;
 
     public State CurrentState {
@@ -42,9 +42,9 @@ public sealed class DevilOWarNPC : ModNPC {
 
     private PrimitiveTrail _activeStingerTrail;
     private const int tentacle_segment_count = 8;
-    
+
     private PrimitiveTrail[] _tentacleTrails;
-    
+
     public Vector2 DrawScale = Vector2.One;
     public float Pulsation;
 
@@ -62,19 +62,19 @@ public sealed class DevilOWarNPC : ModNPC {
         NPC.friendly = false;
 
         NPC.HitSound = SoundID.NPCHit23;
-        
+
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
-        
+
         NPC.buffImmune[BuffID.CursedInferno] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
-        
+
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<DevilOWarBannerItem>();
     }
-    
+
     public override void Load() {
-        for (int j = 1; j <= 5; j++)
+        for(int j = 1; j <= 5; j++)
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/DevilOWarGore" + j);
     }
 
@@ -84,17 +84,17 @@ public sealed class DevilOWarNPC : ModNPC {
             _tentacleTrails[i] = new(new Vector2[8], _ => 10);
         }
     }
-    
+
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
-    
+
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.2f : 0;
     }
 
     public override void AI() {
         NPC.TargetClosest();
-        if (Target != null && Target.active && !Target.dead) {
-            if (Target.Center.X < NPC.Center.X) {
+        if(Target != null && Target.active && !Target.dead) {
+            if(Target.Center.X < NPC.Center.X) {
                 NPC.direction = -1;
             }
             else {
@@ -104,17 +104,17 @@ public sealed class DevilOWarNPC : ModNPC {
 
         NPC.rotation = NPC.velocity.X * 0.1f;
 
-        if (_stingerProjectileId != -1) {
+        if(_stingerProjectileId != -1) {
             Projectile stingerProj = Main.projectile[_stingerProjectileId];
-            if (!stingerProj.active || stingerProj.type != ModContent.ProjectileType<DevilOWarStingerProjectile>()) {
+            if(!stingerProj.active || stingerProj.type != ModContent.ProjectileType<DevilOWarStingerProjectile>()) {
                 _stingerProjectileId = -1;
                 _activeStingerTrail = null;
             }
-            else if (_activeStingerTrail == null) {
+            else if(_activeStingerTrail == null) {
                 _activeStingerTrail = new PrimitiveTrail(new Vector2[tentacle_segment_count], _ => 10, initPosition: stingerProj.Center);
             }
-            
-            if (stingerProj.active && stingerProj.ModProjectile is DevilOWarStingerProjectile stinger && stinger.AttachedToPlayer) {
+
+            if(stingerProj.active && stingerProj.ModProjectile is DevilOWarStingerProjectile stinger && stinger.AttachedToPlayer) {
                 Pulsation = (float)Math.Sin(Main.GameUpdateCount * 0.15f) * 0.5f + 0.5f;
 
                 float minScale = 0.95f;
@@ -124,7 +124,8 @@ public sealed class DevilOWarNPC : ModNPC {
                 float scaleY = MathHelper.Lerp(maxScale, minScale, Pulsation);
 
                 DrawScale = new Vector2(scaleX, scaleY);
-            } else {
+            }
+            else {
                 Pulsation = 0f;
                 DrawScale = Vector2.One;
             }
@@ -135,22 +136,22 @@ public sealed class DevilOWarNPC : ModNPC {
             DrawScale = Vector2.One;
         }
 
-        if (_activeStingerTrail != null && _stingerProjectileId != -1) {
+        if(_activeStingerTrail != null && _stingerProjectileId != -1) {
             var stingerProj = Main.projectile[_stingerProjectileId];
-            if (stingerProj.active && stingerProj.ModProjectile is DevilOWarStingerProjectile stinger && !stinger.IsRetracting) {
+            if(stingerProj.active && stingerProj.ModProjectile is DevilOWarStingerProjectile stinger && !stinger.IsRetracting) {
                 var activeStingerStart = NPC.Center;
                 var activeStingerPoints = new Vector2[tentacle_segment_count];
                 activeStingerPoints[0] = activeStingerStart;
                 GenerateWavyTentaclePoints(activeStingerPoints, activeStingerStart, stingerProj.Center, tentacle_segment_count, 0.5f, 0.1f, 15f);
-                
+
                 _activeStingerTrail.Positions = activeStingerPoints.Select(p => p - Main.screenPosition).ToArray();
             }
-            else if (stingerProj.active && stingerProj.ModProjectile is DevilOWarStingerProjectile retractingStinger && retractingStinger.IsRetracting) {
+            else if(stingerProj.active && stingerProj.ModProjectile is DevilOWarStingerProjectile retractingStinger && retractingStinger.IsRetracting) {
                 var retractingStingerStart = NPC.Center;
                 var retractingStingerPoints = new Vector2[tentacle_segment_count];
                 retractingStingerPoints[0] = retractingStingerStart;
                 GenerateWavyTentaclePoints(retractingStingerPoints, retractingStingerStart, retractingStinger.Projectile.Center, tentacle_segment_count, 0.5f, 0.1f, 15f);
-                
+
                 _activeStingerTrail.Positions = retractingStingerPoints.Select(p => p - Main.screenPosition).ToArray();
             }
             else {
@@ -160,11 +161,11 @@ public sealed class DevilOWarNPC : ModNPC {
         }
 
 
-        switch (CurrentState) {
+        switch(CurrentState) {
             case State.Idle:
-                if (NPC.Center.Distance(Target!.Center) < follow_range) {
+                if(NPC.Center.Distance(Target!.Center) < follow_range) {
                     NPC.velocity += 0.05f * NPC.Center.DirectionTo(Target.Center);
-                    if (NPC.velocity.Length() > 2f) {
+                    if(NPC.velocity.Length() > 2f) {
                         NPC.velocity = Vector2.Normalize(NPC.velocity) * 2f;
                     }
                 }
@@ -172,23 +173,23 @@ public sealed class DevilOWarNPC : ModNPC {
                     NPC.velocity *= 0.98f;
                 }
 
-                if (_stingerProjectileId == -1 && NPC.Center.Distance(Target.Center) < charging_radius) {
+                if(_stingerProjectileId == -1 && NPC.Center.Distance(Target.Center) < charging_radius) {
                     FireStinger();
                     CurrentState = State.Charging;
                 }
                 break;
 
             case State.Charging:
-                if (_stingerProjectileId != -1 
-                    && Main.projectile[_stingerProjectileId].active 
+                if(_stingerProjectileId != -1
+                    && Main.projectile[_stingerProjectileId].active
                     && Main.projectile[_stingerProjectileId].ModProjectile is DevilOWarStingerProjectile stinger) {
-                    if (!stinger.IsRetracting) {
+                    if(!stinger.IsRetracting) {
                         NPC.velocity += 0.02f * NPC.Center.DirectionTo(Target!.Center);
-                        if (NPC.velocity.Length() > 1.5f) {
+                        if(NPC.velocity.Length() > 1.5f) {
                             NPC.velocity = Vector2.Normalize(NPC.velocity) * 1.5f;
                         }
 
-                        if (NPC.Center.Distance(Target.Center) >= charging_radius + 16 * 2) {
+                        if(NPC.Center.Distance(Target.Center) >= charging_radius + 16 * 2) {
                             RetractStinger();
                         }
                     }
@@ -197,8 +198,7 @@ public sealed class DevilOWarNPC : ModNPC {
                         _attackCooldownTimer = attack_cooldown_time;
                     }
                 }
-                else
-                {
+                else {
                     CurrentState = State.AttackCooldown;
                     _attackCooldownTimer = attack_cooldown_time;
                 }
@@ -207,8 +207,7 @@ public sealed class DevilOWarNPC : ModNPC {
             case State.AttackCooldown:
                 NPC.velocity *= 0.95f;
                 _attackCooldownTimer--;
-                if (_attackCooldownTimer <= 0)
-                {
+                if(_attackCooldownTimer <= 0) {
                     CurrentState = State.Idle;
                 }
                 break;
@@ -216,7 +215,7 @@ public sealed class DevilOWarNPC : ModNPC {
     }
 
     private void FireStinger() {
-        if (_stingerProjectileId == -1) {
+        if(_stingerProjectileId == -1) {
             var proj = Projectile.NewProjectile(
                 NPC.GetSource_FromAI(),
                 NPC.Center,
@@ -229,7 +228,7 @@ public sealed class DevilOWarNPC : ModNPC {
                 NPC.whoAmI
             );
 
-            if (proj != -1 && Main.projectile[proj].active) {
+            if(proj != -1 && Main.projectile[proj].active) {
                 _stingerProjectileId = proj;
             }
             else {
@@ -243,27 +242,27 @@ public sealed class DevilOWarNPC : ModNPC {
 
 
     public void RetractStinger() {
-        if (_stingerProjectileId != -1 && Main.projectile[_stingerProjectileId].active && Main.projectile[_stingerProjectileId].ModProjectile is DevilOWarStingerProjectile stinger) {
-            if (!stinger.IsRetracting) {
+        if(_stingerProjectileId != -1 && Main.projectile[_stingerProjectileId].active && Main.projectile[_stingerProjectileId].ModProjectile is DevilOWarStingerProjectile stinger) {
+            if(!stinger.IsRetracting) {
                 stinger.StartRetraction();
             }
         }
     }
 
     public override void OnKill() {
-        if (_stingerProjectileId != -1 && Main.projectile[_stingerProjectileId].active && Main.projectile[_stingerProjectileId].ModProjectile is DevilOWarStingerProjectile stinger) {
+        if(_stingerProjectileId != -1 && Main.projectile[_stingerProjectileId].active && Main.projectile[_stingerProjectileId].ModProjectile is DevilOWarStingerProjectile stinger) {
             stinger.StartRetraction();
             _stingerProjectileId = -1;
             _activeStingerTrail = null;
-        }   
+        }
     }
 
     public override void HitEffect(NPC.HitInfo hit) {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) {
             return;
         }
-        
-        for (int i = 1; i <= 3; i++) {
+
+        for(int i = 1; i <= 3; i++) {
             Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("DevilOWarGore" + i).Type);
         }
 
@@ -271,10 +270,10 @@ public sealed class DevilOWarNPC : ModNPC {
             Dust.NewDustDirect(NPC.Center, 5, 5, ModContent.DustType<Gas>(), 0, 0, 1, new Color(61, 54, 138, 255));
         }
 
-        if (_tentacleTrails != null) {
-            foreach (var trail in _tentacleTrails) {
-                if (trail.Positions != null && trail.Positions.Length > 0) {
-                    for (int i = 0; i < trail.Positions.Length - 1; i += 2) {
+        if(_tentacleTrails != null) {
+            foreach(var trail in _tentacleTrails) {
+                if(trail.Positions != null && trail.Positions.Length > 0) {
+                    for(int i = 0; i < trail.Positions.Length - 1; i += 2) {
                         var gorePosition = trail.Positions[i] + Main.screenPosition;
                         var goreVelocity = Main.rand.NextVector2Circular(3, 3);
 
@@ -284,20 +283,20 @@ public sealed class DevilOWarNPC : ModNPC {
 
                     var tipPosition = trail.Positions[trail.Positions.Length - 1] + Main.screenPosition;
                     var tipVelocity = Main.rand.NextVector2Circular(2, 2);
-                        
+
                     var tipGoreType = Mod.Find<ModGore>("DevilOWarGore5").Type;
                     Gore.NewGoreDirect(NPC.GetSource_Death(), tipPosition, tipVelocity, tipGoreType);
                 }
             }
         }
     }
-    
+
     private void DrawTrails(Vector2 bodyDrawPosition, Color drawColor) {
         float Equation(float x) {
             return 0.2f * MathF.Sin(x) + 0.8f * MathF.Cos(x + MathHelper.PiOver4);
         }
-        
-        var initialPositions =  new[] {
+
+        var initialPositions = new[] {
             new Vector2(-1, 1),
             new Vector2(-2, 1),
             new Vector2(2, 1),
@@ -325,37 +324,37 @@ public sealed class DevilOWarNPC : ModNPC {
             _tentacleTrails[i].Draw(tentacleTexture, drawColor, transformationMatrix);
         }
     }
-    
+
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var headTexture = Assets.Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarHead.Value;
         var insidesTexture = Assets.Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarInsides.Value;
-        
+
         var glowColor = Color.Lerp(drawColor, new Color(114, 109, 27, 200), Pulsation);
-        
+
         var flipped = NPC.direction != -1;
         var effects = flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-        
+
         if(!NPC.IsABestiaryIconDummy) {
             var offset = flipped ? new Vector2(-10, 30) : new Vector2(10, 30);
-            
+
             Vector2 bodyDrawPosition = NPC.Center + offset - Main.screenPosition;
-            
+
             SpriteBatchSnapshot capture = spriteBatch.Capture();
             spriteBatch.End();
             spriteBatch.Begin(capture);
 
-            DrawTrails(bodyDrawPosition, drawColor);  
+            DrawTrails(bodyDrawPosition, drawColor);
         }
-        
+
         Vector2 origin = new Vector2(headTexture.Width, headTexture.Height) / 2;
         origin.X = flipped ? headTexture.Width - origin.X : origin.X;
-        
+
         Main.spriteBatch.Draw(insidesTexture, NPC.Center + new Vector2(0, 19) - Main.screenPosition, null, drawColor, NPC.rotation, insidesTexture.Size() / 2, 1f, effects, 0f);
         Main.spriteBatch.Draw(headTexture, NPC.Center - new Vector2(0, 4) - Main.screenPosition, null, glowColor * 0.8f, NPC.rotation, origin, DrawScale, effects, 0f);
 
         var transformationMatrix = Main.GameViewMatrix.TransformationMatrix * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
 
-        if (_activeStingerTrail != null) {
+        if(_activeStingerTrail != null) {
             var stingerColor = Color.Lerp(drawColor, Color.Yellow, 0.5f + MathF.Sin(Main.GameUpdateCount * 0.1f) * 0.2f);
             _activeStingerTrail.Draw(Assets.Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarTentacle.Value, stingerColor, transformationMatrix);
         }
@@ -371,18 +370,18 @@ public sealed class DevilOWarNPC : ModNPC {
         pointsArray[0] = start;
 
         var direction = Vector2.Zero;
-        if (Vector2.DistanceSquared(start, end) > 0.001f) {
+        if(Vector2.DistanceSquared(start, end) > 0.001f) {
             direction = Vector2.Normalize(end - start);
         }
         else {
             direction = Vector2.UnitY;
         }
-        
+
         Vector2 perpendicular = new Vector2(-direction.Y, direction.X);
 
         float instancePhaseOffset = Main.GameUpdateCount * waveSpeed + phaseOffset;
 
-        for (int i = 1; i < segments; i++) {
+        for(int i = 1; i < segments; i++) {
             float t = (float)i / (segments - 1);
             var basePoint = Vector2.Lerp(start, end, t);
 

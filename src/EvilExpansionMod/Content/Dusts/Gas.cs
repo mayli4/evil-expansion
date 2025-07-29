@@ -2,11 +2,11 @@ using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Content.Dusts; 
+namespace EvilExpansionMod.Content.Dusts;
 
 internal class Gas : ModDust {
     public override string Texture => Assets.Assets.Textures.Dusts.KEY_Gas;
-    
+
     public override void OnSpawn(Dust dust) {
         dust.frame = new Rectangle(0, 32 * Main.rand.Next(3), 32, 32);
         dust.fadeIn = Main.rand.Next(120, 250);

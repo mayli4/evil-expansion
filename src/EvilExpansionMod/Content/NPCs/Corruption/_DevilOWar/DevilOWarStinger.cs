@@ -36,33 +36,33 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
     }
 
     public override void AI() {
-        if (!ParentNPC.active || ParentNPC.life <= 0 || ParentNPC.type != ModContent.NPCType<DevilOWarNPC>()) {
+        if(!ParentNPC.active || ParentNPC.life <= 0 || ParentNPC.type != ModContent.NPCType<DevilOWarNPC>()) {
             Projectile.Kill();
             return;
         }
 
-        if (!TargetPlayer.active || TargetPlayer.dead) {
+        if(!TargetPlayer.active || TargetPlayer.dead) {
             IsRetracting = true;
             AttachedToPlayer = false;
         }
 
-        if (IsRetracting) {
+        if(IsRetracting) {
             AttachedToPlayer = false;
             Vector2 directionToNPC = Projectile.DirectionTo(ParentNPC.Center);
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, directionToNPC * 20f, 0.1f);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            if (Projectile.Distance(ParentNPC.Center) < 20f) {
+            if(Projectile.Distance(ParentNPC.Center) < 20f) {
                 DespawnIntoDangling();
             }
             return;
         }
 
-        if (!AttachedToPlayer) {
+        if(!AttachedToPlayer) {
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(TargetPlayer.Center) * 15f, 0.1f);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
-            if (Projectile.Hitbox.Intersects(TargetPlayer.Hitbox)) {
+            if(Projectile.Hitbox.Intersects(TargetPlayer.Hitbox)) {
                 AttachedToPlayer = true;
                 Projectile.velocity = Vector2.Zero;
                 _stingerDuration = 0;
@@ -76,36 +76,36 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
             _stingerDuration++;
 
             _healthDrainTimer++;
-            if (_healthDrainTimer >= health_drain_interval) {
+            if(_healthDrainTimer >= health_drain_interval) {
                 int actualDrain = Math.Min(health_drain_amount, Math.Max(0, TargetPlayer.statLife - 1));
-                if (actualDrain > 0) {
+                if(actualDrain > 0) {
                     TargetPlayer.statLife -= actualDrain;
                     _healthDrained += actualDrain;
                     //TargetPlayer.HealEffect(-actualDrain, true);
-                    
+
                     CombatText.NewText(TargetPlayer.Hitbox, CombatText.DamagedHostile, actualDrain, true, false);
                     _healthDrainTimer = 0;
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item3, Projectile.position);
                 }
             }
 
-            if (_stingerDuration >= DevilOWarNPC.stinger_duration_max || ParentNPC.Center.Distance(TargetPlayer.Center) >= DevilOWarNPC.charging_radius + 16 * 2) {
+            if(_stingerDuration >= DevilOWarNPC.stinger_duration_max || ParentNPC.Center.Distance(TargetPlayer.Center) >= DevilOWarNPC.charging_radius + 16 * 2) {
                 StartRetraction();
             }
         }
     }
 
     public void StartRetraction() {
-        if (!IsRetracting) {
+        if(!IsRetracting) {
             IsRetracting = true;
             AttachedToPlayer = false;
         }
     }
 
     private void DespawnIntoDangling() {
-        if (ParentNPC.active 
+        if(ParentNPC.active
             && ParentNPC.ModNPC is DevilOWarNPC devilOWarNPC) {
-            if (devilOWarNPC._stingerProjectileId == Projectile.whoAmI) {
+            if(devilOWarNPC._stingerProjectileId == Projectile.whoAmI) {
                 devilOWarNPC._stingerProjectileId = -1;
             }
         }
@@ -115,9 +115,9 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
 
 
     public override void OnKill(int timeLeft) {
-        if (_healthDrained > 0 && TargetPlayer.active) {
+        if(_healthDrained > 0 && TargetPlayer.active) {
             int healthToReturn = (int)(_healthDrained * health_return_percentage);
-            if (healthToReturn > 0) {
+            if(healthToReturn > 0) {
                 int newItemIndex = Item.NewItem(
                     Projectile.GetSource_OnHit(TargetPlayer),
                     ParentNPC.Center,
@@ -126,14 +126,14 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
                     ModContent.ItemType<DevilOWarHeartPickup>()
                 );
 
-                if (newItemIndex != -1) {
+                if(newItemIndex != -1) {
                     Main.item[newItemIndex].damage = healthToReturn;
                 }
             }
         }
 
-        if (ParentNPC.active 
-            && ParentNPC.ModNPC is DevilOWarNPC devilOWarNPC 
+        if(ParentNPC.active
+            && ParentNPC.ModNPC is DevilOWarNPC devilOWarNPC
             && devilOWarNPC._stingerProjectileId == Projectile.whoAmI) {
             devilOWarNPC._stingerProjectileId = -1;
         }

@@ -9,8 +9,8 @@ namespace EvilExpansionMod.Content.Tiles.Crimson;
 
 public class CrimsonAshGrass : ModTile {
     public override string Texture => Assets.Assets.Textures.Tiles.Crimson.KEY_CrimsonAshGrassTile;
-    
-        public override void SetStaticDefaults() {
+
+    public override void SetStaticDefaults() {
         Main.tileMergeDirt[Type] = true;
         Main.tileBlockLight[Type] = true;
         Main.tileSolid[Type] = true;
@@ -20,25 +20,25 @@ public class CrimsonAshGrass : ModTile {
         TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Grass"]);
 
         DustType = DustID.Crimson;
-        
+
         AddMapEntry(new Color(170, 64, 63));
-        
+
         TileID.Sets.NeedsGrassFraming[Type] = true;
         TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<CrimsonAsh>();
         TileID.Sets.CanBeDugByShovel[Type] = true;
-        
+
         Main.tileMerge[Type][ModContent.TileType<CrimsonAsh>()] = true;
-        
+
         TileLoader.RegisterConversion(TileID.AshGrass, BiomeConversionID.Crimson, ConvertToCrimson);
     }
-    
+
     public bool ConvertToCrimson(int i, int j, int type, int conversionType) {
         WorldGen.ConvertTile(i, j, Type);
         return false;
     }
 
     public override void Convert(int i, int j, int conversionType) {
-        switch (conversionType) {
+        switch(conversionType) {
             case BiomeConversionID.Chlorophyte:
             case BiomeConversionID.Purity:
                 WorldGen.ConvertTile(i, j, TileID.AshGrass);
@@ -47,14 +47,14 @@ public class CrimsonAshGrass : ModTile {
             case BiomeConversionID.Crimson:
                 WorldGen.ConvertTile(i, j, ModContent.TileType<CrimsonAshGrass>());
                 return;
-            
+
         }
     }
 
     public override void RandomUpdate(int i, int j) {
         WorldGen.SpreadInfectionToNearbyTile(i, j, BiomeConversionID.Corruption);
-            
-        if (SpreadUtilities.Spread(i, j, Type, 2, ModContent.TileType<CrimsonAsh>()))
+
+        if(SpreadUtilities.Spread(i, j, Type, 2, ModContent.TileType<CrimsonAsh>()))
             NetMessage.SendTileSquare(-1, i, j, 3); // try spread grass
 
         GrowTiles(i, j);
@@ -63,7 +63,7 @@ public class CrimsonAshGrass : ModTile {
     public override void ModifyFrameMerge(int i, int j, ref int up, ref int down, ref int left, ref int right, ref int upLeft, ref int upRight, ref int downLeft, ref int downRight) {
         WorldGen.TileMergeAttempt(-2, TileID.Ash, ref up, ref down, ref left, ref right, ref upLeft, ref upRight, ref downLeft, ref downRight);
     }
-    
+
     public override bool IsTileBiomeSightable(int i, int j, ref Color sightColor) {
         sightColor = Color.Yellow;
         return true;

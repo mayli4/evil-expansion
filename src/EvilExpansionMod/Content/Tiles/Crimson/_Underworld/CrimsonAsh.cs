@@ -14,25 +14,25 @@ public class CrimsonAsh : ModTile {
         Main.tileSolid[Type] = true;
 
         DustType = DustID.Crimson;
-        
+
         AddMapEntry(new Color(107, 66, 63));
         Main.tileMerge[Type][ModContent.TileType<CrimsonAshGrass>()] = true;
-        
+
         TileLoader.RegisterConversion(TileID.Ash, BiomeConversionID.Crimson, ConvertToCrimson);
     }
-    
+
     public override bool IsTileBiomeSightable(int i, int j, ref Color sightColor) {
         sightColor = Color.Yellow;
         return true;
     }
-        
+
     public bool ConvertToCrimson(int i, int j, int type, int conversionType) {
         WorldGen.ConvertTile(i, j, Type);
         return false;
     }
 
     public override void Convert(int i, int j, int conversionType) {
-        switch (conversionType) {
+        switch(conversionType) {
             case BiomeConversionID.Chlorophyte:
             case BiomeConversionID.Purity:
                 WorldGen.ConvertTile(i, j, TileID.Ash);
@@ -62,7 +62,7 @@ public class CrimsonAshItem : ModItem {
         Item.width = 16;
         Item.height = 16;
         Item.value = 5;
-        
+
         Item.useStyle = ItemUseStyleID.Swing;
         Item.useTurn = true;
         Item.autoReuse = true;

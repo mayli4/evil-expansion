@@ -19,21 +19,21 @@ public sealed class EffigyNPC : ModNPC {
     private bool _dead;
     private int _deadTimer;
     private int _animCounter;
-    
+
     public const int DEATH_TIME = 5 * 60;
 
     private int _spawnTimer;
 
     private Color _glowColor = new Color(230, 254, 6);
-    
+
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 18;
     }
-    
+
     public override void SetDefaults() {
         NPC.width = 60;
         NPC.height = 90;
-        
+
         NPC.lifeMax = 640;
         NPC.value = 250f;
         NPC.noTileCollide = false;
@@ -50,7 +50,7 @@ public sealed class EffigyNPC : ModNPC {
         NPC.buffImmune[BuffID.CursedInferno] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
-        
+
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<EffigyBannerItem>();
     }
@@ -60,7 +60,7 @@ public sealed class EffigyNPC : ModNPC {
             _deadTimer++;
             _animCounter++;
             Lighting.AddLight(NPC.Center, _glowColor.ToVector3());
-            
+
             if(_deadTimer >= DEATH_TIME) {
                 NPC.life = 0;
                 NPC.active = false;
@@ -94,28 +94,29 @@ public sealed class EffigyNPC : ModNPC {
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var texture = TextureAssets.Npc[Type].Value;
         var glowTex = Assets.Assets.Textures.NPCs.Corruption.Effigy.EffigyNPC_Glow.Value;
-        
+
         var offset = new Vector2(0, -77); //cause frame very big! yes
 
         var shader = Assets.Assets.Effects.Compiled.Pixel.EffigyDecay.Value;
 
         float progValue = 1.5f;
-        
-        if (NPC.frameCounter == 17) {
+
+        if(NPC.frameCounter == 17) {
             if(_animCounter >= 1.5f * 60) {
                 float deathProgress = MathHelper.Clamp((float)_deadTimer / DEATH_TIME, 0f, 1f);
                 progValue = MathHelper.Lerp(1.1f, 0.0f, deathProgress);
             }
-        } else {
+        }
+        else {
             progValue = 1.5f;
         }
-        
+
         shader.Parameters["prog"].SetValue(progValue);
         shader.Parameters["edgeColor"].SetValue(Color.Black.ToVector3());
         shader.Parameters["ashColor"].SetValue(_glowColor.ToVector3());
         shader.Parameters["noisetex"].SetValue(Assets.Assets.Textures.Sample.DissolveNoise.Value);
         shader.Parameters["sampleColor"].SetValue(drawColor.ToVector4());
-        
+
         var noiseTexture = Assets.Assets.Textures.Sample.DissolveNoise.Value;
         float noiseAspect = (float)noiseTexture.Width / noiseTexture.Height;
         float frameAspect = (float)NPC.frame.Width / NPC.frame.Height;
@@ -123,9 +124,9 @@ public sealed class EffigyNPC : ModNPC {
         shader.Parameters["noiseTexelAspect"].SetValue(noiseAspect + 200);
         shader.Parameters["frameTexelAspect"].SetValue(frameAspect + 2000);
         shader.Parameters["texSize"].SetValue(new Vector2(NPC.frame.Width, NPC.frame.Height));
-        
+
         var shaderSnapshot = spriteBatch.CaptureEndBegin(new() { CustomEffect = shader });
-        
+
         spriteBatch.Draw(
             texture,
             NPC.Center + offset - screenPos,
@@ -138,8 +139,8 @@ public sealed class EffigyNPC : ModNPC {
             0
         );
         spriteBatch.EndBegin(shaderSnapshot);
-        
-        var snapshot = spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive, SamplerState = SamplerState.PointClamp});
+
+        var snapshot = spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive, SamplerState = SamplerState.PointClamp });
         spriteBatch.Draw(
             glowTex,
             NPC.Center + offset - screenPos,
@@ -152,7 +153,7 @@ public sealed class EffigyNPC : ModNPC {
             0
         );
         spriteBatch.EndBegin(snapshot);
-        
+
         return false;
     }
 
@@ -161,7 +162,7 @@ public sealed class EffigyNPC : ModNPC {
 
         _dead = true;
         _deadTimer = 0;
-        
+
         NPC.dontTakeDamage = true;
         NPC.life = 1;
 
@@ -171,12 +172,12 @@ public sealed class EffigyNPC : ModNPC {
     public override void FindFrame(int frameHeight) {
         if(_dead) {
             NPC.frameCounter += 0.20f;
-            if (NPC.frameCounter >= 17)
+            if(NPC.frameCounter >= 17)
                 NPC.frameCounter = 17;
         }
         else {
             NPC.frameCounter += 0.15f;
-            if (NPC.frameCounter >= 3)
+            if(NPC.frameCounter >= 3)
                 NPC.frameCounter = 0;
         }
         NPC.frame.Y = (int)NPC.frameCounter * frameHeight;

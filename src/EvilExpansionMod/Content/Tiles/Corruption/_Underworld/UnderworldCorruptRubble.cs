@@ -23,7 +23,7 @@ public class UnderworldCorruptRubble : ModTile {
         TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
         TileObjectData.newTile.StyleHorizontal = true;
         TileObjectData.newTile.RandomStyleRange = 3;
-        TileObjectData.newTile.AnchorValidTiles = new int[] { ModContent.TileType<CorruptAsh>(), ModContent.TileType<OvergrownCorruptAsh>() }; 
+        TileObjectData.newTile.AnchorValidTiles = new int[] { ModContent.TileType<CorruptAsh>(), ModContent.TileType<OvergrownCorruptAsh>() };
         TileObjectData.addTile(Type);
 
         DustType = DustID.Corruption;

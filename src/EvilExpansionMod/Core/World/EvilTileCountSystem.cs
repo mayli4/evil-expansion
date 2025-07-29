@@ -24,10 +24,10 @@ public class EvilTileCountSystem : ModSystem {
         _corruptCount = 0;
         _crimsonCount = 0;
 
-        foreach (int type in CorruptTypes)
+        foreach(int type in CorruptTypes)
             _corruptCount += tileCounts[type];
-        
-        foreach (int type in CrimsonTypes)
+
+        foreach(int type in CrimsonTypes)
             _crimsonCount += tileCounts[type];
     }
 }

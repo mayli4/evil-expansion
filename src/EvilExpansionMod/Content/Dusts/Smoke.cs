@@ -3,7 +3,7 @@ using System;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Content.Dusts; 
+namespace EvilExpansionMod.Content.Dusts;
 
 public sealed class Smoke : ModDust {
     internal struct Data {
@@ -15,7 +15,7 @@ public sealed class Smoke : ModDust {
         public float Spin;
         public float InitialScale;
     }
-    
+
     public override string Texture => Assets.Assets.Textures.Dusts.KEY_Gas;
 
     public override void OnSpawn(Dust dust) {
@@ -24,16 +24,16 @@ public sealed class Smoke : ModDust {
     }
 
     public override bool Update(Dust dust) {
-        if (dust.customData is not Data data) {
+        if(dust.customData is not Data data) {
             dust.active = false;
             return false;
         }
-        
+
         data.ElapsedFrames++;
 
         float lifetimeCompletion = (float)data.ElapsedFrames / data.InitialLifetime;
 
-        if (data.ElapsedFrames >= data.InitialLifetime) {
+        if(data.ElapsedFrames >= data.InitialLifetime) {
             dust.active = false;
             return false;
         }
@@ -41,9 +41,10 @@ public sealed class Smoke : ModDust {
 
         dust.velocity *= 0.85f;
 
-        if (lifetimeCompletion < 0.84f) {
+        if(lifetimeCompletion < 0.84f) {
             dust.scale = data.InitialScale + (0.01f * data.ElapsedFrames);
-        } else {
+        }
+        else {
             dust.scale *= 0.975f;
         }
 

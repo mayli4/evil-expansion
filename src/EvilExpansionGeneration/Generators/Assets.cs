@@ -42,13 +42,13 @@ public sealed class AssetGenerator : IIncrementalGenerator {
         writer.WriteLine(@"
 using ReLogic.Content;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Audio; // Added using statement for audio
+using Microsoft.Xna.Framework.Audio;
 using Terraria.ModLoader;
 using System;
 
 using ImageAsset = ReLogic.Content.Asset<Microsoft.Xna.Framework.Graphics.Texture2D>;
 using EffectAsset = ReLogic.Content.Asset<Microsoft.Xna.Framework.Graphics.Effect>;
-using SoundEffectAsset = Terraria.Audio.SoundStyle; // Added SoundEffect asset alias
+using SoundEffectAsset = Terraria.Audio.SoundStyle;
 ");
 
         writer.WriteLine($"namespace {mod_name}.Assets;");
@@ -62,7 +62,7 @@ using SoundEffectAsset = Terraria.Audio.SoundStyle; // Added SoundEffect asset a
             .Select(static (files, _) =>
             {
                 var directory = Path.GetDirectoryName(files.FirstOrDefault()?.Path)?.Replace('\\', '/');
-                if (string.IsNullOrWhiteSpace(directory))
+                if(string.IsNullOrWhiteSpace(directory))
                     return null;
 
                 return directory;
@@ -99,13 +99,13 @@ using SoundEffectAsset = Terraria.Audio.SoundStyle; // Added SoundEffect asset a
                 string extension = Path.GetExtension(fullPath);
 
 
-                if (folder.StartsWith("Assets/", StringComparison.OrdinalIgnoreCase))
+                if(folder.StartsWith("Assets/", StringComparison.OrdinalIgnoreCase))
                     folder = folder.Substring("Assets/".Length);
 
                 //determine asset type based on file extension
                 //exception should never be thrown in any case, but defensive anyways
                 AssetType assetType = extension.Equals(image_extension, StringComparison.OrdinalIgnoreCase) ? AssetType.Texture2D
-                    : extension.Equals(effect_extension, StringComparison.OrdinalIgnoreCase) ? AssetType.Effect 
+                    : extension.Equals(effect_extension, StringComparison.OrdinalIgnoreCase) ? AssetType.Effect
                     : extension.Equals(sound_extension, StringComparison.OrdinalIgnoreCase) ? AssetType.SoundEffect
                             : throw new InvalidOperationException("how");
 
@@ -127,7 +127,8 @@ using SoundEffectAsset = Terraria.Audio.SoundStyle; // Added SoundEffect asset a
 
         context.RegisterSourceOutput(
             contents,
-            (sourceContext, contentTuple) => {
+            (sourceContext, contentTuple) =>
+            {
                 var (folder, assetFiles) = contentTuple;
 
                 sourceContext.CancellationToken.ThrowIfCancellationRequested();
@@ -137,25 +138,27 @@ using SoundEffectAsset = Terraria.Audio.SoundStyle; // Added SoundEffect asset a
 
                 writer.WriteLine($@"partial class Assets {{");
                 writer.Indent++;
-                foreach (string part in folder.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries)) {
+                foreach(string part in folder.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries)) {
                     writer.WriteLine($"public partial class {part} {{   ");
                     writer.Indent++;
                 }
 
-                foreach (var file in assetFiles) {
+                foreach(var file in assetFiles) {
                     string assetPath = $"{mod_name}/{file.Path}";
 
                     writer.WriteLine($"public const string KEY_{file.Name} = \"{assetPath}\";");
 
                     // 6. Modified asset generation logic for SoundEffect
-                    string typeLazy = file.AssetType switch {
+                    string typeLazy = file.AssetType switch
+                    {
                         AssetType.Texture2D => $"public readonly static Lazy<ImageAsset> {file.Name}_lazy = new(() => ModContent.Request<Texture2D>(\"{assetPath}\"));",
                         AssetType.Effect => $"public readonly static Lazy<EffectAsset> {file.Name}_lazy = new(() => ModContent.Request<Effect>(\"{assetPath}\", AssetRequestMode.ImmediateLoad));",
                         AssetType.SoundEffect => $"public readonly static Lazy<SoundEffectAsset> {file.Name}_lazy = new(() => new SoundEffectAsset(\"{assetPath}\"));",
                         _ => throw new ArgumentOutOfRangeException()
                     };
 
-                    string type = file.AssetType switch {
+                    string type = file.AssetType switch
+                    {
                         AssetType.Texture2D => $"public static ImageAsset {file.Name} {{ get; }} = {file.Name}_lazy.Value;",
                         AssetType.Effect => $"public static EffectAsset {file.Name} {{ get; }} = ModContent.Request<Effect>(\"{assetPath}\", AssetRequestMode.ImmediateLoad);",
                         AssetType.SoundEffect => $"public static SoundEffectAsset {file.Name} {{ get; }} = {file.Name}_lazy.Value;",
@@ -166,7 +169,7 @@ using SoundEffectAsset = Terraria.Audio.SoundStyle; // Added SoundEffect asset a
                     writer.WriteLine(type);
                 }
 
-                foreach (string _ in folder.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries)) {
+                foreach(string _ in folder.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries)) {
                     writer.Indent--;
                     writer.WriteLine("}");
                 }
@@ -179,7 +182,7 @@ using SoundEffectAsset = Terraria.Audio.SoundStyle; // Added SoundEffect asset a
                 writer.Write($"Assets.{folder}.cs");
                 writer.Builder.Replace('/', '.');
                 string fileName = writer.ToString();
-                if (fileName.Equals("Assets..cs", StringComparison.Ordinal)) {
+                if(fileName.Equals("Assets..cs", StringComparison.Ordinal)) {
                     fileName = "Assets.g.cs";
                 }
 

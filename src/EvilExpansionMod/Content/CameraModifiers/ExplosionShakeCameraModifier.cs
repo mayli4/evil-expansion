@@ -3,7 +3,7 @@ using System;
 using Terraria;
 using Terraria.Graphics.CameraModifiers;
 
-namespace EvilExpansionMod.Content.CameraModifiers; 
+namespace EvilExpansionMod.Content.CameraModifiers;
 
 internal class ExplosionShakeCameraModifier : ICameraModifier {
     private float strength;

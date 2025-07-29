@@ -8,7 +8,7 @@ public static class MathUtilities {
     public static Matrix WorldTransformationMatrix => Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f)
                                                       * Main.GameViewMatrix.TransformationMatrix
                                                       * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
-    
+
     public static float Lerp3(float a, float b, float c, float progress, float upperBound = 0.5f) {
         if(progress < upperBound) {
             return MathHelper.Lerp(a, b, progress / upperBound);
@@ -16,16 +16,16 @@ public static class MathUtilities {
 
         return MathHelper.Lerp(b, c, (progress - upperBound) / (1f - upperBound));
     }
-    
-        public static void NewDustCircular(
-        Vector2 center,
-        float radius,
-        Func<int, int> dustType,
-        int count,
-        (float min, float max) speed,
-        float rotation = 0f,
-        Action<Dust> action = null
-    ) {
+
+    public static void NewDustCircular(
+    Vector2 center,
+    float radius,
+    Func<int, int> dustType,
+    int count,
+    (float min, float max) speed,
+    float rotation = 0f,
+    Action<Dust> action = null
+) {
         Vector2[] positions = center.PositionsAround(count, radius, rotation);
         for(int i = 0; i < positions.Length; i++) {
             Vector2 velocity = center.DirectionTo(positions[i]) * Main.rand.NextFloat(speed.min, speed.max);
@@ -102,19 +102,17 @@ public static class MathUtilities {
         player = closest.Value.player;
         return closest.Value.distance;
     }
-    
+
     public static bool HoleAtPosition(NPC npc, float xPosition) {
         int tileWidth = npc.width / 16;
         xPosition = (int)(xPosition / 16f) - tileWidth;
-        if (npc.velocity.X > 0)
+        if(npc.velocity.X > 0)
             xPosition += tileWidth;
 
         int tileY = (int)((npc.position.Y + npc.height) / 16f);
-        for (int y = tileY; y < tileY + 2; y++)
-        {
-            for (int x = (int)xPosition; x < xPosition + tileWidth; x++)
-            {
-                if (Main.tile[x, y].HasTile)
+        for(int y = tileY; y < tileY + 2; y++) {
+            for(int x = (int)xPosition; x < xPosition + tileWidth; x++) {
+                if(Main.tile[x, y].HasTile)
                     return false;
             }
         }

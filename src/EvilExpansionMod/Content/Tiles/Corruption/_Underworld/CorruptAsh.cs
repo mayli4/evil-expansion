@@ -16,25 +16,25 @@ public class CorruptAsh : ModTile {
         Main.tileSolid[Type] = true;
 
         DustType = DustID.Corruption;
-        
+
         AddMapEntry(new Color(53, 37, 62));
         Main.tileMerge[Type][ModContent.TileType<OvergrownCorruptAsh>()] = true;
-        
+
         TileLoader.RegisterConversion(TileID.Ash, BiomeConversionID.Corruption, ConvertToCorruption);
     }
-    
+
     public override bool IsTileBiomeSightable(int i, int j, ref Color sightColor) {
         sightColor = Color.Yellow;
         return true;
     }
-        
+
     public bool ConvertToCorruption(int i, int j, int type, int conversionType) {
         WorldGen.ConvertTile(i, j, Type);
         return false;
     }
 
     public override void Convert(int i, int j, int conversionType) {
-        switch (conversionType) {
+        switch(conversionType) {
             case BiomeConversionID.Chlorophyte:
             case BiomeConversionID.Purity:
                 WorldGen.ConvertTile(i, j, TileID.Ash);
@@ -64,7 +64,7 @@ public class CorruptAshItem : ModItem {
         Item.width = 16;
         Item.height = 16;
         Item.value = 5;
-        
+
         Item.useStyle = ItemUseStyleID.Swing;
         Item.useTurn = true;
         Item.autoReuse = true;

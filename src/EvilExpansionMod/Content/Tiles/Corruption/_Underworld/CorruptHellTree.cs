@@ -14,8 +14,9 @@ using Terraria.ObjectData;
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
 public class CorruptHellTree : ModTree {
-    
-    public override TreePaintingSettings TreeShaderSettings => new TreePaintingSettings {
+
+    public override TreePaintingSettings TreeShaderSettings => new TreePaintingSettings
+    {
         UseSpecialGroups = true,
         SpecialGroupMinimalHueValue = 11f / 72f,
         SpecialGroupMaximumHueValue = 0.25f,
@@ -105,7 +106,7 @@ public class CorruptHellTreeSapling : ModTile {
     }
 
     public override void SetSpriteEffects(int i, int j, ref SpriteEffects effects) {
-        if (i % 2 == 0) {
+        if(i % 2 == 0) {
             effects = SpriteEffects.FlipHorizontally;
         }
     }

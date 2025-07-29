@@ -12,13 +12,13 @@ namespace EvilExpansionMod.Content.Tiles.Corruption;
 
 public class OvergrownCorruptAshFoliage : ModTile {
     public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_OvergrownCorruptAshFoliage;
-    
+
     public override void SetStaticDefaults() {
         Main.tileCut[Type] = true;
         Main.tileFrameImportant[Type] = true;
         Main.tileNoFail[Type] = true;
         Main.tileObsidianKill[Type] = true;
-        
+
         TileID.Sets.SwaysInWindBasic[Type] = true;
         TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
         TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<OvergrownCorruptAsh>()];
@@ -33,9 +33,9 @@ public class OvergrownCorruptAshFoliage : ModTile {
 
         AddMapEntry(new Color(69, 68, 114));
     }
-    
+
     public override IEnumerable<Item> GetItemDrops(int i, int j) {
-        if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HeldItem.type == ItemID.Sickle)
+        if(Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HeldItem.type == ItemID.Sickle)
             yield return new Item(ItemID.Hay, Main.rand.Next(1, 3));
     }
 }

@@ -32,7 +32,7 @@ public class TerrorBatNPC : ModNPC {
         Dashing,
         Spitting,
     }
-    
+
     public State CurrentState {
         get => (State)NPC.ai[0];
         set => NPC.ai[0] = (float)value;
@@ -65,7 +65,7 @@ public class TerrorBatNPC : ModNPC {
     private const int spit_cooldown_time = 180;
 
     private const float rotation_factor = 0.08f;
-    
+
     private int _sleepDustSpawnTimer;
     private int _currentSleepDustIndex;
 
@@ -87,17 +87,17 @@ public class TerrorBatNPC : ModNPC {
         NPC.friendly = false;
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath2;
-        
+
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
-        
+
         NPC.buffImmune[BuffID.CursedInferno] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
-        
+
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<TerrorbatBannerItem>();
     }
-    
+
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.5f : 0;
     }
@@ -107,16 +107,16 @@ public class TerrorBatNPC : ModNPC {
         int startY = (int)(NPC.Center.Y / 16f);
         int searchRange = 30;
 
-        for (int j = 0; j < searchRange; j++) {
+        for(int j = 0; j < searchRange; j++) {
             int checkY = startY - j;
 
-            if (checkY < 10) {
+            if(checkY < 10) {
                 break;
             }
 
             var ceilingTile = Main.tile[startX, checkY];
-            if (ceilingTile.HasTile 
-                && Main.tileSolid[ceilingTile.TileType] 
+            if(ceilingTile.HasTile
+                && Main.tileSolid[ceilingTile.TileType]
                 && !TileID.Sets.Platforms[ceilingTile.TileType]) {
                 var newPosition = new Vector2(startX * 16f, (checkY + 2) * 16f);
 
@@ -128,22 +128,22 @@ public class TerrorBatNPC : ModNPC {
                 return;
             }
         }
-        
+
         //if the loop completes and doesnt find a valid ceiling, just despawn so its not floating awkwardly
         NPC.active = false;
     }
-    
+
     public override void Load() {
-        for (int j = 0; j <= 3; j++)
+        for(int j = 0; j <= 3; j++)
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/TerrorBatGore" + j);
     }
-    
+
     public override void HitEffect(NPC.HitInfo hit) {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) {
             return;
         }
-        
-        for (int i = 0; i <= 3; i++) {
+
+        for(int i = 0; i <= 3; i++) {
             Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("TerrorBatGore" + i).Type);
         }
     }
@@ -152,27 +152,27 @@ public class TerrorBatNPC : ModNPC {
         NPC.TargetClosest();
         Player targetPlayer = Main.player[NPC.target];
 
-        if (!targetPlayer.active || targetPlayer.dead) {
+        if(!targetPlayer.active || targetPlayer.dead) {
             CurrentState = State.Awake; //todo make bat search for a place to perch after player is dead
             NPC.netUpdate = true;
             return;
         }
-        
-        if (DashCooldown > 0) {
+
+        if(DashCooldown > 0) {
             DashCooldown--;
         }
-        if (SpitCooldown > 0) {
+        if(SpitCooldown > 0) {
             SpitCooldown--;
         }
 
-        switch (CurrentState) {
+        switch(CurrentState) {
             case State.IdleOnCeiling:
                 NPC.velocity = Vector2.Zero;
                 NPC.rotation = 0f;
                 NPC.noTileCollide = false;
 
                 _sleepDustSpawnTimer--;
-                if (_sleepDustSpawnTimer <= 0) {
+                if(_sleepDustSpawnTimer <= 0) {
                     Dust.NewDustPerfect(
                         NPC.Center + new Vector2(0f, -NPC.height / 2f - 4f - (_currentSleepDustIndex * 6f)),
                         ModContent.DustType<Sleep>(),
@@ -180,15 +180,16 @@ public class TerrorBatNPC : ModNPC {
                     ).fadeIn = 60;
                     _currentSleepDustIndex++;
 
-                    if (_currentSleepDustIndex < 3) {
+                    if(_currentSleepDustIndex < 3) {
                         _sleepDustSpawnTimer = Main.rand.Next(8, 12);
-                    } else {
+                    }
+                    else {
                         _sleepDustSpawnTimer = Main.rand.Next(90, 150);
                         _currentSleepDustIndex = 0;
                     }
                 }
 
-                if (Vector2.Distance(NPC.Center, targetPlayer.Center) < wake_up_detection_range) {
+                if(Vector2.Distance(NPC.Center, targetPlayer.Center) < wake_up_detection_range) {
                     CurrentState = State.WakingUp;
                     StateTimer = waking_up_time;
                     NPC.netUpdate = true;
@@ -225,13 +226,13 @@ public class TerrorBatNPC : ModNPC {
             SoundEngine.PlaySound(SoundID.DD2_WyvernScream, NPC.Center);
         }
 
-        if (StateTimer == waking_up_time - 60) {
+        if(StateTimer == waking_up_time - 60) {
             //WAKE UP other bats
-            for (int i = 0; i < Main.npc.Length; i++) {
+            for(int i = 0; i < Main.npc.Length; i++) {
                 var otherNpc = Main.npc[i];
-                if (otherNpc.active && otherNpc.type == Type && otherNpc.whoAmI != NPC.whoAmI) {
+                if(otherNpc.active && otherNpc.type == Type && otherNpc.whoAmI != NPC.whoAmI) {
                     var otherBat = otherNpc.ModNPC as TerrorBatNPC;
-                    if (otherBat != null && otherBat.CurrentState == State.IdleOnCeiling) {
+                    if(otherBat != null && otherBat.CurrentState == State.IdleOnCeiling) {
                         otherBat.CurrentState = State.Awake;
                         otherNpc.netUpdate = true;
                     }
@@ -240,7 +241,7 @@ public class TerrorBatNPC : ModNPC {
         }
 
         StateTimer--;
-        if (StateTimer <= 0) {
+        if(StateTimer <= 0) {
             CurrentState = State.Awake;
             NPC.noTileCollide = true;
             NPC.netUpdate = true;
@@ -262,13 +263,13 @@ public class TerrorBatNPC : ModNPC {
         NPC.velocity.Y += Main.rand.NextFloat(-0.05f, 0.05f);
 
         NPC.rotation = NPC.velocity.X * rotation_factor;
-                
-        if (DashCooldown <= 0 && Vector2.Distance(NPC.Center, targetPlayer.Center) > 100f && Main.rand.NextBool(100)) {
+
+        if(DashCooldown <= 0 && Vector2.Distance(NPC.Center, targetPlayer.Center) > 100f && Main.rand.NextBool(100)) {
             CurrentState = State.DashTelegraph;
             StateTimer = 25;
             NPC.netUpdate = true;
         }
-        else if (SpitCooldown <= 0 && Vector2.Distance(NPC.Center, targetPlayer.Center) < 400f && Main.rand.NextBool(180)) {
+        else if(SpitCooldown <= 0 && Vector2.Distance(NPC.Center, targetPlayer.Center) < 400f && Main.rand.NextBool(180)) {
             CurrentState = State.Spitting;
             StateTimer = spit_duration;
             NPC.netUpdate = true;
@@ -285,7 +286,7 @@ public class TerrorBatNPC : ModNPC {
         NPC.rotation = NPC.velocity.X * rotation_factor;
 
         StateTimer--;
-        if (StateTimer <= 0) {
+        if(StateTimer <= 0) {
             CurrentState = State.Dashing;
             StateTimer = dash_duration;
             NPC.netUpdate = true;
@@ -296,7 +297,7 @@ public class TerrorBatNPC : ModNPC {
     public void Dash(Player targetPlayer) {
         NPC.noTileCollide = true;
 
-        if (StateTimer == dash_duration) {
+        if(StateTimer == dash_duration) {
             Vector2 dashDirection = Vector2.Normalize(targetPlayer.Center - NPC.Center);
             NPC.velocity = dashDirection * dash_speed;
         }
@@ -304,8 +305,7 @@ public class TerrorBatNPC : ModNPC {
         NPC.rotation = NPC.velocity.X * rotation_factor;
 
         StateTimer--;
-        if (StateTimer <= 0)
-        {
+        if(StateTimer <= 0) {
             CurrentState = State.Awake;
             NPC.velocity *= 0.5f;
             NPC.netUpdate = true;
@@ -317,7 +317,7 @@ public class TerrorBatNPC : ModNPC {
         NPC.noTileCollide = true;
         NPC.direction = NPC.spriteDirection = (targetPlayer.Center.X < NPC.Center.X) ? -1 : 1;
 
-        if (StateTimer == (spit_duration / 2)) {
+        if(StateTimer == (spit_duration / 2)) {
             var projectileVelocity = Vector2.Normalize(targetPlayer.Center - NPC.Center) * 8f;
             Projectile.NewProjectile(
                 NPC.GetSource_FromAI(),
@@ -334,10 +334,10 @@ public class TerrorBatNPC : ModNPC {
         NPC.rotation = NPC.velocity.X * rotation_factor;
 
         StateTimer--;
-        if (StateTimer <= 0) {
+        if(StateTimer <= 0) {
             CurrentState = State.Awake;
             NPC.netUpdate = true;
-        }        
+        }
     }
 
     public override void FindFrame(int frameHeight) {
@@ -345,7 +345,7 @@ public class TerrorBatNPC : ModNPC {
 
         NPC.frameCounter++;
 
-        switch (CurrentState) {
+        switch(CurrentState) {
             case State.IdleOnCeiling:
                 NPC.frame.Y = 0 * frameHeight;
                 break;
@@ -361,16 +361,16 @@ public class TerrorBatNPC : ModNPC {
                 break;
 
             case State.Spitting:
-                if (NPC.frameCounter < 10) {
+                if(NPC.frameCounter < 10) {
                     NPC.frame.Y = 6 * frameHeight;
                 }
-                else if (NPC.frameCounter < 20) {
+                else if(NPC.frameCounter < 20) {
                     NPC.frame.Y = 7 * frameHeight;
                 }
-                else if (NPC.frameCounter < 30) {
+                else if(NPC.frameCounter < 30) {
                     NPC.frame.Y = 8 * frameHeight;
                 }
-                else if (NPC.frameCounter < 40) {
+                else if(NPC.frameCounter < 40) {
                     NPC.frame.Y = 9 * frameHeight;
                 }
                 else {
@@ -379,18 +379,18 @@ public class TerrorBatNPC : ModNPC {
                 break;
         }
     }
-    
+
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
-        if (CurrentState == State.IdleOnCeiling || CurrentState == State.WakingUp) {
+        if(CurrentState == State.IdleOnCeiling || CurrentState == State.WakingUp) {
             var effects = NPC.spriteDirection == 1 ? SpriteEffects.FlipVertically : (SpriteEffects.FlipVertically | SpriteEffects.FlipHorizontally);
             var texture = ModContent.Request<Texture2D>(Texture).Value;
             var frame = NPC.frame;
             var origin = new Vector2(frame.Width / 2f, frame.Height);
             var drawPos = new Vector2(NPC.Center.X, NPC.position.Y - 20) - screenPos;
-            
-            float sway = CurrentState == State.IdleOnCeiling ? (float)Math.Sin(Main.timeForVisualEffects / 30f + NPC.whoAmI) * 0.1f 
+
+            float sway = CurrentState == State.IdleOnCeiling ? (float)Math.Sin(Main.timeForVisualEffects / 30f + NPC.whoAmI) * 0.1f
                 : CurrentState == State.WakingUp ? (float)Math.Sin(Main.timeForVisualEffects / 10f + NPC.whoAmI) * 0.1f : 0f;
 
             spriteBatch.Draw(
@@ -412,7 +412,7 @@ public class TerrorBatNPC : ModNPC {
             NPC.frame.Y = 2 * NPC.frame.Height;
             return true;
         }
-        
+
         return true;
     }
 }

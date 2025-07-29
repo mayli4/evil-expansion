@@ -16,15 +16,15 @@ public class Sleep : ModDust {
 
         dust.frame = new Rectangle(0, 0, 28, 30);
 
-        dust.scale = scaleReduction * 0.9f + MathF.Pow(MathF.Sin((Main.GameUpdateCount ) / 15f), 2) * 0.3f;
-        dust.rotation = MathF.Sin((Main.GameUpdateCount ) / 10f) * (MathF.PI / 180f) * 10;
+        dust.scale = scaleReduction * 0.9f + MathF.Pow(MathF.Sin((Main.GameUpdateCount) / 15f), 2) * 0.3f;
+        dust.rotation = MathF.Sin((Main.GameUpdateCount) / 10f) * (MathF.PI / 180f) * 10;
 
         dust.velocity.X *= 0.975f;
 
         dust.position += dust.velocity + Vector2.UnitX * MathF.Sin(dust.fadeIn / 15f) * 0.6f;
 
         dust.fadeIn--;
-        if (dust.fadeIn <= 0)
+        if(dust.fadeIn <= 0)
             dust.active = false;
 
         return false;

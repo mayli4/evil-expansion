@@ -18,7 +18,7 @@ public abstract class BaseStateNPC<TState> : ModNPC where TState : Enum {
                 npc.ai[0] = setValue;
             }
         }
-        
+
         public ref float Timer => ref npc.ai[1];
     }
 
@@ -32,9 +32,9 @@ public enum State {
 
 public class TestStateNPC : BaseStateNPC<State> {
     private struct WrappedAI(NPC npc) {
-        
+
     }
-    
+
     public override string Texture => Assets.Assets.KEY_icon_small;
 
     public override void SetDefaults() {
@@ -48,28 +48,28 @@ public class TestStateNPC : BaseStateNPC<State> {
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
     }
-    
+
     public override void AI() {
         var ai = AIMap;
-        
+
         switch(ai.State) {
             case State.Walking:
                 NPC.velocity.X = NPC.direction * 1f;
-                
+
                 ai.Timer++;
-        
+
                 if(ai.Timer >= 2 * 60) {
                     ai.State = State.Idle;
                     ai.Timer = 0;
                     NPC.velocity.X = 0f;
                 }
-                
+
                 break;
             case State.Idle:
                 NPC.velocity.X = 0f;
-                
+
                 ai.Timer++;
-        
+
                 if(ai.Timer >= 2 * 60) {
                     ai.State = State.Walking;
                     ai.Timer = 0;
@@ -77,7 +77,7 @@ public class TestStateNPC : BaseStateNPC<State> {
                 }
                 break;
         }
-        
+
         Main.NewText(ai.State);
     }
 }

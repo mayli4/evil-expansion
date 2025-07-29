@@ -19,7 +19,7 @@ public class BezierCurve {
 
         List<Vector2> points = new List<Vector2>();
 
-        for (float step = 0f; step <= 1f; step += perStep)
+        for(float step = 0f; step <= 1f; step += perStep)
             points.Add(Evaluate(step));
 
         return points;
@@ -34,12 +34,11 @@ public class BezierCurve {
 
         int index = 0;
 
-        for (int i = 0; i < arcLengths.Length; i++) {
-            if (arcLengths[i] == pointAtLentgh)
+        for(int i = 0; i < arcLengths.Length; i++) {
+            if(arcLengths[i] == pointAtLentgh)
                 return i / (float)(arcLengths.Length - 1);
 
-            if (arcLengths[i] > pointAtLentgh)
-            {
+            if(arcLengths[i] > pointAtLentgh) {
                 longerLenghtFound = arcLengths[i];
                 break;
             }
@@ -48,7 +47,7 @@ public class BezierCurve {
             longestLenghtFound = arcLengths[i];
         }
 
-        if (longerLenghtFound != 0) {
+        if(longerLenghtFound != 0) {
             return (index + (pointAtLentgh - longestLenghtFound) / (longerLenghtFound - longestLenghtFound)) / (float)(arcLengths.Length - 1);
         }
 
@@ -56,15 +55,13 @@ public class BezierCurve {
     }
 
     public List<Vector2> GetEvenlySpacedPoints(int totalPoints, int computationPrecision = 30, bool forceRecalculate = false) {
-        if (arcLengths == null || arcLengths.Length == 0 || forceRecalculate)
-        {
+        if(arcLengths == null || arcLengths.Length == 0 || forceRecalculate) {
             arcLengths = new float[computationPrecision + 1];
             arcLengths[0] = 0;
 
             //Calculate the arc lentgh at a bunch of points
             Vector2 oldPosition = ControlPoints[0];
-            for (int i = 1; i <= computationPrecision; i += 1)
-            {
+            for(int i = 1; i <= computationPrecision; i += 1) {
                 Vector2 position = Evaluate(i / (float)computationPrecision);
                 float curveLength = (position - oldPosition).Length();
                 arcLengths[i] = arcLengths[i - 1] + curveLength;
@@ -79,22 +76,22 @@ public class BezierCurve {
 
         List<Vector2> points = new List<Vector2>();
 
-        for (int step = 0; step < totalPoints; step++)
+        for(int step = 0; step < totalPoints; step++)
             points.Add(Evaluate(ArcLengthParametrize((step / (float)(totalPoints - 1)), totalCurveLentgh)));
 
         return points;
     }
 
     private Vector2 PrivateEvaluate(Vector2[] points, float T) {
-        while (points.Length > 2) {
+        while(points.Length > 2) {
             Vector2[] nextPoints = new Vector2[points.Length - 1];
-            for (int k = 0; k < points.Length - 1; k++)
+            for(int k = 0; k < points.Length - 1; k++)
                 nextPoints[k] = Vector2.Lerp(points[k], points[k + 1], T);
 
             points = nextPoints;
         }
 
-        if (points.Length <= 1)
+        if(points.Length <= 1)
             return Vector2.Zero;
 
         return Vector2.Lerp(points[0], points[1], T);

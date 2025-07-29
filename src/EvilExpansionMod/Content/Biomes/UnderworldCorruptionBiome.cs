@@ -16,7 +16,7 @@ public sealed class UnderworldCorruptionBiome : ModBiome, IHasCustomLavaBiome {
     public override int Music => MusicID.UndergroundCorruption;
 
     public ModLavaStyle ModLavaStyle => ModContent.GetInstance<UnderworldCorruptLavaStyle>();
-    
+
     public override bool IsBiomeActive(Player player) {
         var underworld = player.ZoneUnderworldHeight;
         return EvilTileCountSystem.InUnderworldCorruption && underworld;

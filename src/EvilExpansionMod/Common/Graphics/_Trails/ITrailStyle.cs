@@ -3,7 +3,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Immutable;
 
-namespace EvilExpansionMod.Common.Graphics; 
+namespace EvilExpansionMod.Common.Graphics;
 
 public interface ITrailStyle {
     int VertexCount(int trailPositionCount);

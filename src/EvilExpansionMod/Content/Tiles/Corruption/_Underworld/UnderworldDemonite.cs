@@ -16,28 +16,28 @@ public class UnderworldDemonite : ModTile {
         Main.tileNoSunLight[Type] = false;
 
         TileID.Sets.Ore[Type] = true;
-        
+
         DustType = DustID.Demonite;
         MinPick = 65;
         HitSound = SoundID.Tink;
         Main.tileSpelunker[Type] = true;
-        
+
         Main.tileMerge[Type][ModContent.TileType<CorruptAsh>()] = true;
         Main.tileMerge[ModContent.TileType<CorruptAsh>()][Type] = true;
-        
+
         Main.tileMerge[Type][ModContent.TileType<OvergrownCorruptAsh>()] = true;
         Main.tileMerge[ModContent.TileType<OvergrownCorruptAsh>()][Type] = true;
-        
+
         AddMapEntry(new Color(147, 88, 201), CreateMapEntryName());
-        
+
         TileLoader.RegisterConversion(TileID.Hellstone, BiomeConversionID.Corruption, ConvertToCorruption);
     }
-    
+
     public bool ConvertToCorruption(int i, int j, int type, int conversionType) {
         WorldGen.ConvertTile(i, j, Type);
         return false;
     }
-    
+
     public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {
         r = 0.24f;
         g = 0.246f;
@@ -57,7 +57,7 @@ public class UnderworldDemoniteItem : ModItem {
         Item.width = 16;
         Item.height = 16;
         Item.value = Item.sellPrice(0, 0, 3);
-        
+
         Item.useStyle = ItemUseStyleID.Swing;
         Item.useTurn = true;
         Item.autoReuse = true;

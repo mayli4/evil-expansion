@@ -33,7 +33,7 @@ public abstract class ModLavaStyle : ModTexturedType {
     public int Type;
 
     public override void Load() {
-        if (Main.netMode == NetmodeID.Server)
+        if(Main.netMode == NetmodeID.Server)
             return;
 
         LavaTexture = ModContent.Request<Texture2D>(LavaTexturePath, AssetRequestMode.ImmediateLoad).Value;
@@ -45,7 +45,7 @@ public abstract class ModLavaStyle : ModTexturedType {
         LavaTexture = null;
         BlockTexture = null;
     }
-    
+
     public override void Register() {
         LavaStyleLoader.RegisterStyle(this);
         ModTypeLookup<ModLavaStyle>.Register(this);
@@ -60,16 +60,16 @@ public abstract class ModLavaStyle : ModTexturedType {
     public abstract int ChooseWaterfallStyle();
 
     public virtual int DebuffType() => BuffID.OnFire;
-    
+
     public virtual bool KeepVanillaOnFire() => false;
 
     public abstract int GetSplashDust();
 
     public abstract int GetDropletGore();
 
-    public virtual void SelectLightColor(ref Color initialLightColor) {}
+    public virtual void SelectLightColor(ref Color initialLightColor) { }
 
     public virtual void ModifyVertexColors(int x, int y, ref VertexColors colors) { }
-    
+
     public virtual void InflictDebuff(Player player, NPC npc, int onfireDuration) { }
 }

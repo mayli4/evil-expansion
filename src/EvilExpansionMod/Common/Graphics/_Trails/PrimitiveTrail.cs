@@ -4,7 +4,7 @@ using System;
 using System.Collections.Immutable;
 using Terraria;
 
-namespace EvilExpansionMod.Common.Graphics; 
+namespace EvilExpansionMod.Common.Graphics;
 
 public class PrimitiveTrail {
     public DynamicVertexBuffer VertexBuffer { get; private set; }

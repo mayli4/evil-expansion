@@ -6,11 +6,11 @@ namespace EvilExpansionMod.Utilities;
 
 public static class VectorExtensions {
     public static int NonZeroSign(this float value) => Math.Sign(value) >= 0 ? 1 : -1;
-    
+
     public static Vector3 ToVector3(this Vector2 vector, float z = 0f) {
         return new Vector3(vector.X, vector.Y, z);
     }
-    
+
     public static Point ToPoint(this Vector2 vector, float z = 0f) {
         return new Point((int)vector.X, (int)vector.Y);
     }

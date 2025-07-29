@@ -18,13 +18,13 @@ public enum PlantStage : byte {
 
 public class CorruptFireblossom : ModTile {
     public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_CorruptFireblossom;
-    
+
     public override void SetStaticDefaults() {
         Main.tileCut[Type] = true;
         Main.tileFrameImportant[Type] = true;
         Main.tileNoFail[Type] = true;
         Main.tileObsidianKill[Type] = true;
-        
+
         TileID.Sets.SwaysInWindBasic[Type] = true;
         TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
         TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<OvergrownCorruptAsh>()];
@@ -38,15 +38,15 @@ public class CorruptFireblossom : ModTile {
         TileObjectData.addTile(Type);
 
         AddMapEntry(new Color(230, 255, 63));
-        
+
         TileLoader.RegisterConversion(TileID.BloomingHerbs, BiomeConversionID.Corruption, ConvertToCorruption);
     }
-    
+
     public bool ConvertToCorruption(int i, int j, int type, int conversionType) {
         WorldGen.ConvertTile(i, j, Type);
         return false;
     }
-    
+
     public override IEnumerable<Item> GetItemDrops(int i, int j) {
         if(Main.rand.NextBool(10)) {
             yield return new Item(ItemID.Fireblossom, Main.rand.Next(1, 3));

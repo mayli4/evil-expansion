@@ -117,7 +117,7 @@ public sealed class CursehoundMace : ModProjectile
     public override bool OnTileCollide(Vector2 oldVelocity) {
         if (CurrentState == AIState.Launched) {
             CurrentState = AIState.Embedded;
-            SoundEngine.PlaySound(SoundID.DD2_OgreGroundPound with { Volume = 0.7f, Pitch = 0.5f }, Projectile.Center);
+            SoundEngine.PlaySound(Assets.Assets.Sounds.Cursehound.MaceSlam, Vector2.Lerp(Main.LocalPlayer.Center, Projectile.Center, 0.7f));
             
             for (int i = 0; i < 5; i++) {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Stone);

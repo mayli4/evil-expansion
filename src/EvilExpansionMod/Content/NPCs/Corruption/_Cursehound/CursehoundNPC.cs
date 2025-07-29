@@ -60,7 +60,7 @@ public sealed class CursehoundNPC : ModNPC {
     private const int ground_time_for_attack = 1 * 60;
 
     public override void SetStaticDefaults() {
-        Main.npcFrameCount[Type] = 31;
+        Main.npcFrameCount[Type] = 29;
     }
 
     public override void SetDefaults() {
@@ -231,6 +231,10 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.velocity.X *= 0.9f;
         ai.Timer++;
 
+        if(ai.Timer == 1) {
+            SoundEngine.PlaySound(Assets.Assets.Sounds.Cursehound.MaceSwing, NPC.Center);
+        }
+        
         if (ai.Timer >= mace_spin_duration) {
             ai.CurrentState = State.MaceAttacking;
         }
@@ -242,6 +246,7 @@ public sealed class CursehoundNPC : ModNPC {
 
         if (ai.Timer == 1) {
             Vector2 launchOrigin = NPC.Center + new Vector2(NPC.direction * 50, -40);
+            SoundEngine.PlaySound(Assets.Assets.Sounds.Cursehound.MaceThrow, NPC.Center);
 
             float gravity = 0.4f;
             

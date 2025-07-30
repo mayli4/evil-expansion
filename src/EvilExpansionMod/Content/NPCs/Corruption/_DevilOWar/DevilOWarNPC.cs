@@ -38,8 +38,8 @@ public sealed class DevilOWarNPC : ModNPC {
 
     private const int follow_range = 16 * 30;
     public const int charging_radius = 26 * 10;
-    private const int attack_cooldown_time = 60 * 1; // 1 second
-    public const int stinger_duration_max = 60 * 5; // 5 seconds
+    private const int attack_cooldown_time = 60 * 1;
+    public const int stinger_duration_max = 60 * 30;
 
     private const int tentacle_segment_count = 8;
 
@@ -51,6 +51,9 @@ public sealed class DevilOWarNPC : ModNPC {
     private Vector2[] _stingerTrailPositions;
     private Vector2[][] _tentacleTrailPositions;
     private float[] _tentacleWaveDirections;
+    
+    public int TotalLifeDrained { get; set; }
+    public const int MAX_DRAIN_FOR_LEVEL = 160;
 
     public override void SetDefaults() {
         NPC.width = 36;
@@ -425,9 +428,12 @@ public sealed class DevilOWarNPC : ModNPC {
 
         var fluidEffect = Assets.Assets.Effects.Compiled.Pixel.DevilOWarFluid.Value;
 
+        int clampedLifeDrained = Math.Clamp(TotalLifeDrained, 0, MAX_DRAIN_FOR_LEVEL);
+        float mappedLevel = MathHelper.Lerp(0.07f, 0.5f, (float)clampedLifeDrained / MAX_DRAIN_FOR_LEVEL);
+        
         fluidEffect.Parameters["liquidColor"].SetValue(CursedSpiritNPC.GhostColor1.ToVector4());
         fluidEffect.Parameters["uTime"].SetValue(Main.GameUpdateCount * 0.05f);
-        fluidEffect.Parameters["level"].SetValue(0.3f);
+        fluidEffect.Parameters["level"].SetValue(mappedLevel);
         fluidEffect.Parameters["noisetex"].SetValue(Assets.Assets.Textures.Sample.BubblyNoise.Value);
         fluidEffect.Parameters["noisetex2"].SetValue(Assets.Assets.Textures.Sample.SpottyNoise.Value);
         fluidEffect.Parameters["uNoiseStrength"].SetValue(3.0f);

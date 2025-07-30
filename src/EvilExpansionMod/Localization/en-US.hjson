@@ -69,6 +69,7 @@ Mods: {
 			MaceCrack.DisplayName: Mace Crack
 			MaceShard.DisplayName: Mace Shard
 			EffigyRootProjectile.DisplayName: Effigy Root Projectile
+			CursedFog.DisplayName: Cursed Fog
 		}
 
 		Biomes: {

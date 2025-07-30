@@ -42,6 +42,11 @@ public class DevilOWarHeartPickup : ModItem {
     public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI) {
         var tex = TextureAssets.Item[Type].Value;
 
+        var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;
+        var blinker = (MathF.Sin(0.1f * Main.GameUpdateCount + 23.2f * whoAmI) +
+                       MathF.Cos(0.06f * Main.GameUpdateCount) + 2f) / 4f;
+        var bigGlowColor = CursedSpiritNPC.GhostColor2 * (0.25f + 0.25f * blinker);
+        
         var snapshot = spriteBatch.Capture();
         spriteBatch.End();
         spriteBatch.Begin(snapshot with { BlendState = BlendState.Additive });
@@ -59,6 +64,20 @@ public class DevilOWarHeartPickup : ModItem {
                 0
             );
         }
+        
+        spriteBatch.Draw(
+            glowTexture,
+            Item.position - Main.screenPosition,
+            null,
+            bigGlowColor,
+            0f,
+            glowTexture.Size() * 0.5f - new Vector2(40, 40),
+            0.3f,
+            SpriteEffects.None,
+            0
+        );
+        
+        Lighting.AddLight(Main.item[whoAmI].position, bigGlowColor.ToVector3());
 
         spriteBatch.End();
         spriteBatch.Begin(snapshot);

@@ -267,66 +267,7 @@ public class Renderer : ModSystem {
         for(var i = 0; i < commands.Count; i++) {
             switch(commands.Types[i]) {
                 case CommandType.Trail:
-                    var trail = _trailDatas[commands.Datas[i]];
-                    var trailPositions =
-                        CollectionsMarshal.AsSpan(_trailPositions)[trail.PositionsIndex..(trail.PositionsIndex + trail.PositionCount)];
-
-                    Color color = trail.Color(0f);
-                    Vector2 vertexOffset = trailPositions[0]
-                        .DirectionTo(trailPositions[1])
-                        .RotatedBy(MathHelper.PiOver2) * trail.Width(0f) * 0.5f;
-
-                    _trailVertices[0] = new VertexPositionColorTexture((trailPositions[0] - vertexOffset).ToVector3(), color, Vector2.Zero);
-                    _trailVertices[1] = new VertexPositionColorTexture((trailPositions[0] + vertexOffset).ToVector3(), color, Vector2.UnitY);
-
-                    for(var j = 1; j < trailPositions.Length; j++) {
-                        var factor = j / (trailPositions.Length - 1f);
-
-                        color = trail.Color(factor);
-                        vertexOffset = trailPositions[j - 1]
-                            .DirectionTo(trailPositions[j])
-                            .RotatedBy(MathHelper.PiOver2)
-                            * trail.Width(factor) * 0.5f;
-
-                        _trailVertices[j * 2] = new VertexPositionColorTexture(
-                            (trailPositions[j] - vertexOffset).ToVector3(),
-                            color,
-                            new(factor, 0f)
-                        );
-                        _trailVertices[j * 2 + 1] = new VertexPositionColorTexture(
-                            (trailPositions[j] + vertexOffset).ToVector3(),
-                            color,
-                            new(factor, 1f)
-                        );
-
-                        _trailIndices[(j - 1) * 6] = (ushort)((j - 1) * 2);
-                        _trailIndices[(j - 1) * 6 + 1] = (ushort)((j - 1) * 2 + 2);
-                        _trailIndices[(j - 1) * 6 + 2] = (ushort)((j - 1) * 2 + 3);
-                        _trailIndices[(j - 1) * 6 + 3] = (ushort)((j - 1) * 2 + 3);
-                        _trailIndices[(j - 1) * 6 + 4] = (ushort)((j - 1) * 2 + 1);
-                        _trailIndices[(j - 1) * 6 + 5] = (ushort)((j - 1) * 2);
-                    }
-
-                    _trailVertexBuffer.SetData(_trailVertices);
-                    Main.graphics.GraphicsDevice.SetVertexBuffer(_trailVertexBuffer);
-
-                    _trailIndexBuffer.SetData(_trailIndices);
-                    Main.graphics.GraphicsDevice.Indices = _trailIndexBuffer;
-
-                    var effectData = _effectDatas[trail.EffectData];
-                    SetEffectParams(effectData);
-
-                    foreach(EffectPass pass in effectData.Effect.CurrentTechnique.Passes) {
-                        pass.Apply();
-                        Main.graphics.GraphicsDevice.DrawIndexedPrimitives(
-                            PrimitiveType.TriangleList,
-                            0,
-                            0,
-                            trailPositions.Length * 2,
-                            0,
-                            (trailPositions.Length - 1) * 2
-                        );
-                    }
+                    DrawTrail(_trailDatas[commands.Datas[i]]);
                     break;
                 case CommandType.Sprite:
                     var sprite = _spriteDatas[commands.Datas[i]];
@@ -396,6 +337,68 @@ public class Renderer : ModSystem {
         }
 
         if(initialSnapshot is { } s) Main.spriteBatch.Begin(s);
+    }
+
+    static void DrawTrail(TrailData trail) {
+        var trailPositions =
+            CollectionsMarshal.AsSpan(_trailPositions)[trail.PositionsIndex..(trail.PositionsIndex + trail.PositionCount)];
+
+        Color color = trail.Color(0f);
+        Vector2 vertexOffset = trailPositions[0]
+            .DirectionTo(trailPositions[1])
+            .RotatedBy(MathHelper.PiOver2) * trail.Width(0f) * 0.5f;
+
+        _trailVertices[0] = new VertexPositionColorTexture((trailPositions[0] - vertexOffset).ToVector3(), color, Vector2.Zero);
+        _trailVertices[1] = new VertexPositionColorTexture((trailPositions[0] + vertexOffset).ToVector3(), color, Vector2.UnitY);
+
+        for(var j = 1; j < trailPositions.Length; j++) {
+            var factor = j / (trailPositions.Length - 1f);
+
+            color = trail.Color(factor);
+            vertexOffset = trailPositions[j - 1]
+                .DirectionTo(trailPositions[j])
+                .RotatedBy(MathHelper.PiOver2)
+                * trail.Width(factor) * 0.5f;
+
+            _trailVertices[j * 2] = new VertexPositionColorTexture(
+                (trailPositions[j] - vertexOffset).ToVector3(),
+                color,
+                new(factor, 0f)
+            );
+            _trailVertices[j * 2 + 1] = new VertexPositionColorTexture(
+                (trailPositions[j] + vertexOffset).ToVector3(),
+                color,
+                new(factor, 1f)
+            );
+
+            _trailIndices[(j - 1) * 6] = (ushort)((j - 1) * 2);
+            _trailIndices[(j - 1) * 6 + 1] = (ushort)((j - 1) * 2 + 2);
+            _trailIndices[(j - 1) * 6 + 2] = (ushort)((j - 1) * 2 + 3);
+            _trailIndices[(j - 1) * 6 + 3] = (ushort)((j - 1) * 2 + 3);
+            _trailIndices[(j - 1) * 6 + 4] = (ushort)((j - 1) * 2 + 1);
+            _trailIndices[(j - 1) * 6 + 5] = (ushort)((j - 1) * 2);
+        }
+
+        _trailVertexBuffer.SetData(_trailVertices);
+        Main.graphics.GraphicsDevice.SetVertexBuffer(_trailVertexBuffer);
+
+        _trailIndexBuffer.SetData(_trailIndices);
+        Main.graphics.GraphicsDevice.Indices = _trailIndexBuffer;
+
+        var effectData = _effectDatas[trail.EffectData];
+        SetEffectParams(effectData);
+
+        foreach(EffectPass pass in effectData.Effect.CurrentTechnique.Passes) {
+            pass.Apply();
+            Main.graphics.GraphicsDevice.DrawIndexedPrimitives(
+                PrimitiveType.TriangleList,
+                0,
+                0,
+                trailPositions.Length * 2,
+                0,
+                (trailPositions.Length - 1) * 2
+            );
+        }
     }
 
     static void SetEffectParams(EffectData effectData) {

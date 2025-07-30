@@ -1,5 +1,6 @@
 ﻿using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -45,7 +46,7 @@ public class ThoughtfulCultistNPC : ModNPC {
         var directionToTarget = Vector2.Zero;
         var distanceToTarget = 999_999f;
         if(Target != null) {
-            var targetDelta = (Target.Center - Vector2.UnitY * 80f) - NPC.Center;
+            var targetDelta = Target.Center - Vector2.UnitY * 80f - NPC.Center;
             distanceToTarget = targetDelta.Length();
             directionToTarget = targetDelta / distanceToTarget;
         }
@@ -62,6 +63,7 @@ public class ThoughtfulCultistNPC : ModNPC {
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var brainTexture = TextureAssets.Npc[Type].Value;
         var robeTexture = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistRobe.Value;
+        var pendantTexture = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistPendant.Value;
 
         Span<Vector2> robeTrailPositions = new Vector2[7]; // TODO: change to stackalloc
         robeTrailPositions[0] = NPC.Center - Vector2.UnitY * 7f;
@@ -73,13 +75,29 @@ public class ThoughtfulCultistNPC : ModNPC {
             robeTrailPositions[i].X -=
                 (float)i / robeTrailPositions.Length
                 * _robeOffset
-                + MathF.Sin(NPC.whoAmI * 23.2f + Main.GameUpdateCount * 0.05f + i);
+                + 1.25f * MathF.Sin(NPC.whoAmI * 23.2f + Main.GameUpdateCount * 0.03f);
         }
+
+        var center = NPC.Center + Vector2.UnitY * 120;
+
+        var offsetX = 30;
+        var offsetY = 80;
+        var bezierRight = center + new Vector2(offsetX, -offsetY);
+        var bezierLeft = center + new Vector2(-offsetX, -offsetY);
+        var bezierCenter = center - Vector2.UnitX * _robeOffset * 2f;
+
+        var bezier = new BezierCurve(bezierLeft, bezierCenter, bezierRight);
+        var chainPoints = bezier.GetPoints(13).ToArray();
 
         new Renderer.Pipeline()
             .DrawBasicTrail(robeTrailPositions, static _ => 88, robeTexture, drawColor, 1)
+            .DrawBasicTrail(chainPoints, static _ => 5, TextureAssets.MagicPixel.Value, drawColor)
             .Flush();
 
+        spriteBatch.Draw(
+            pendantTexture, chainPoints[chainPoints.Length / 2] - screenPos,
+            null, drawColor, 0f, pendantTexture.Size() / 2f, 1f, SpriteEffects.None, 0f
+        );
         spriteBatch.Draw(brainTexture, NPC.Center - screenPos, null, drawColor, 0f, new Vector2(53, 55), 1f, SpriteEffects.None, 0f);
         return false;
     }

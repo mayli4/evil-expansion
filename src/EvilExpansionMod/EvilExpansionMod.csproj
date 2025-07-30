@@ -44,5 +44,9 @@
         <AdditionalFiles Include="Assets/**/*.ogg" />
         <AdditionalFiles Include="Assets/**/*.mp3" />
     </ItemGroup>
+
+    <ItemGroup>
+      <Folder Include="Assets\Textures\NPCs\Crimson\ThoughtfulCultist\" />
+    </ItemGroup>
     
 </Project>

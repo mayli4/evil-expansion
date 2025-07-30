@@ -72,7 +72,8 @@ public class Renderer : ModSystem {
     }
 
     struct TrailData {
-        public Vector2[] Positions;
+        public int PositionsIndex;
+        public int PositionCount;
         public Func<float, float> Width;
         public Func<float, Color> Color;
         public EffectDataIndex EffectData;
@@ -106,6 +107,9 @@ public class Renderer : ModSystem {
         public float Float;
 
         [FieldOffset(16)]
+        public int Int;
+
+        [FieldOffset(16)]
         public Vector2 Vector2;
 
         [FieldOffset(16)]
@@ -122,6 +126,12 @@ public class Renderer : ModSystem {
         {
             Type = ParameterValueType.Float,
             Float = value,
+        };
+
+        public static implicit operator ParameterValue(int value) => new()
+        {
+            Type = ParameterValueType.Int,
+            Int = value,
         };
 
         public static implicit operator ParameterValue(Vector2 value) => new()
@@ -157,6 +167,7 @@ public class Renderer : ModSystem {
 
     public enum ParameterValueType {
         Float,
+        Int,
         Vector2,
         Vector3,
         Vector4,
@@ -174,6 +185,7 @@ public class Renderer : ModSystem {
     static readonly List<OutlineData> _outlineDatas = [];
     static readonly List<SpriteBatchSnapshot> _snapshotDatas = [];
     static readonly List<EffectData> _effectDatas = [];
+    static readonly List<Vector2> _trailPositions = [];
 
     static Commands _cache = new();
 
@@ -222,6 +234,7 @@ public class Renderer : ModSystem {
         _outlineDatas.Clear();
         _snapshotDatas.Clear();
         _effectDatas.Clear();
+        _trailPositions.Clear();
 
         _behindNPCs.Clear();
         _afterTiles.Clear();
@@ -255,31 +268,33 @@ public class Renderer : ModSystem {
             switch(commands.Types[i]) {
                 case CommandType.Trail:
                     var trail = _trailDatas[commands.Datas[i]];
+                    var trailPositions =
+                        CollectionsMarshal.AsSpan(_trailPositions)[trail.PositionsIndex..(trail.PositionsIndex + trail.PositionCount)];
 
                     Color color = trail.Color(0f);
-                    Vector2 vertexOffset = trail.Positions[0]
-                        .DirectionTo(trail.Positions[1])
+                    Vector2 vertexOffset = trailPositions[0]
+                        .DirectionTo(trailPositions[1])
                         .RotatedBy(MathHelper.PiOver2) * trail.Width(0f) * 0.5f;
 
-                    _trailVertices[0] = new VertexPositionColorTexture((trail.Positions[0] - vertexOffset).ToVector3(), color, Vector2.Zero);
-                    _trailVertices[1] = new VertexPositionColorTexture((trail.Positions[0] + vertexOffset).ToVector3(), color, Vector2.UnitY);
+                    _trailVertices[0] = new VertexPositionColorTexture((trailPositions[0] - vertexOffset).ToVector3(), color, Vector2.Zero);
+                    _trailVertices[1] = new VertexPositionColorTexture((trailPositions[0] + vertexOffset).ToVector3(), color, Vector2.UnitY);
 
-                    for(var j = 1; j < trail.Positions.Length; j++) {
-                        var factor = j / (trail.Positions.Length - 1f);
+                    for(var j = 1; j < trailPositions.Length; j++) {
+                        var factor = j / (trailPositions.Length - 1f);
 
                         color = trail.Color(factor);
-                        vertexOffset = trail.Positions[j - 1]
-                            .DirectionTo(trail.Positions[j])
+                        vertexOffset = trailPositions[j - 1]
+                            .DirectionTo(trailPositions[j])
                             .RotatedBy(MathHelper.PiOver2)
                             * trail.Width(factor) * 0.5f;
 
                         _trailVertices[j * 2] = new VertexPositionColorTexture(
-                            (trail.Positions[j] - vertexOffset).ToVector3(),
+                            (trailPositions[j] - vertexOffset).ToVector3(),
                             color,
                             new(factor, 0f)
                         );
                         _trailVertices[j * 2 + 1] = new VertexPositionColorTexture(
-                            (trail.Positions[j] + vertexOffset).ToVector3(),
+                            (trailPositions[j] + vertexOffset).ToVector3(),
                             color,
                             new(factor, 1f)
                         );
@@ -307,9 +322,9 @@ public class Renderer : ModSystem {
                             PrimitiveType.TriangleList,
                             0,
                             0,
-                            trail.Positions.Length * 2,
+                            trailPositions.Length * 2,
                             0,
-                            (trail.Positions.Length - 1) * 2
+                            (trailPositions.Length - 1) * 2
                         );
                     }
                     break;
@@ -388,6 +403,9 @@ public class Renderer : ModSystem {
         for(var j = 0; j < effectData.ParameterCount; j++) {
             var parameter = _effectParameters[j + effectData.ParameterIndex];
             switch(parameter.Value.Type) {
+                case ParameterValueType.Int:
+                    effect.Parameters[parameter.Name].SetValue(parameter.Value.Int);
+                    break;
                 case ParameterValueType.Float:
                     effect.Parameters[parameter.Name].SetValue(parameter.Value.Float);
                     break;
@@ -465,18 +483,41 @@ public class Renderer : ModSystem {
             return this;
         }
 
+        public readonly Pipeline DrawBasicTrail(
+            ReadOnlySpan<Vector2> positions,
+            Func<float, float> width,
+            Texture2D texture,
+            Color color,
+            int spriteRotation = 0
+        ) {
+            var effect = Assets.Assets.Effects.Compiled.Trail.Default.Value;
+            ReadOnlySpan<(string, ParameterValue)> parameters = [
+                ("sampleTexture", texture),
+                ("color", color.ToVector4()),
+                ("transformationMatrix", MathUtilities.WorldTransformationMatrix),
+                ("spriteRotation", spriteRotation)
+            ];
+
+            return DrawTrail(positions, width, static _ => Color.White, effect, parameters);
+        }
+
         public readonly Pipeline DrawTrail(
-            Vector2[] positions,
+            ReadOnlySpan<Vector2> positions,
             Func<float, float> width,
             Func<float, Color> color,
             Effect effect,
             params ReadOnlySpan<(string, ParameterValue)> parameters
         ) {
             var effectDataIndex = AddEffectData(effect, parameters);
+
+            var trailPositionsIndex = _trailPositions.Count;
+            _trailPositions.AddRange(positions);
+
             var trailDataIndex = _trailDatas.Count;
             _trailDatas.Add(new()
             {
-                Positions = positions,
+                PositionsIndex = trailPositionsIndex,
+                PositionCount = positions.Length,
                 Width = width,
                 Color = color,
                 EffectData = effectDataIndex,

@@ -5,9 +5,9 @@ using MonoMod.Cil;
 using ReLogic.Content;
 using System;
 using Terraria;
-using Terraria.GameContent; // Needed for TextureAssets.BlackTile
+using Terraria.GameContent;
 using Terraria.Graphics.Effects;
-using Terraria.ModLoader; // Needed for SkyManager
+using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Core.World;
 
@@ -29,12 +29,14 @@ public class UnderworldCorruptionBGSystem : ModSystem {
     }
 
     public override void Load() {
-        IL_Main.DrawBG += UnderworldCorruptionBackground_DrawBG;
+         IL_Main.DrawBG += UnderworldCorruptionBackground_DrawBG;
+         IL_Main.DrawCapture += UnderworldCorruptionBackground_DrawCapture;
     }
 
     public override void Unload() {
         if (!Main.dedServ) {
             IL_Main.DrawBG -= UnderworldCorruptionBackground_DrawBG;
+            IL_Main.DrawCapture -= UnderworldCorruptionBackground_DrawCapture;
         }
     }
 
@@ -46,11 +48,24 @@ public class UnderworldCorruptionBGSystem : ModSystem {
              i => i.MatchLdcI4(0),
              i => i.MatchCall<Main>("DrawUnderworldBackground")
          );
-         c.EmitDelegate(() =>
-         {
+         c.EmitDelegate(() => {
              DrawCorruptionUnderworldBackground(false);
          });
     }
+    
+     private void UnderworldCorruptionBackground_DrawCapture(ILContext il) {
+         ILCursor c = new ILCursor(il);
+         c.GotoNext(
+             MoveType.After,
+             i => i.MatchLdarg0(),
+             i => i.MatchLdcI4(1),
+             i => i.MatchCall<Main>("DrawUnderworldBackground")
+         );
+         c.EmitDelegate(() =>
+         {
+             DrawCorruptionUnderworldBackground(true);
+         });
+     }
 
     protected void DrawCorruptionUnderworldBackground(bool flat) {
          if(!Main.LocalPlayer.InModBiome<UnderworldCorruptionBiome>())

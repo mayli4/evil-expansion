@@ -23,8 +23,7 @@ public sealed class DevilOWarNPC : ModNPC {
         AttackCooldown,
     }
 
-    public override string Texture =>
-        Assets.Assets.Textures.NPCs.Corruption.DevilOWar.KEY_DevilOWarHead;
+    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.DevilOWar.KEY_DevilOWarHead;
 
     public State CurrentState {
         get => (State)NPC.ai[0];
@@ -431,21 +430,38 @@ public sealed class DevilOWarNPC : ModNPC {
         int clampedLifeDrained = Math.Clamp(TotalLifeDrained, 0, MAX_DRAIN_FOR_LEVEL);
         float mappedLevel = MathHelper.Lerp(0.07f, 0.5f, (float)clampedLifeDrained / MAX_DRAIN_FOR_LEVEL);
         
-        fluidEffect.Parameters["liquidColor"].SetValue(CursedSpiritNPC.GhostColor1.ToVector4());
-        fluidEffect.Parameters["uTime"].SetValue(Main.GameUpdateCount * 0.05f);
-        fluidEffect.Parameters["level"].SetValue(mappedLevel);
-        fluidEffect.Parameters["noisetex"].SetValue(Assets.Assets.Textures.Sample.BubblyNoise.Value);
-        fluidEffect.Parameters["noisetex2"].SetValue(Assets.Assets.Textures.Sample.SpottyNoise.Value);
-        fluidEffect.Parameters["uNoiseStrength"].SetValue(3.0f);
-        fluidEffect.Parameters["uNoise1ScrollSpeedX"].SetValue(0.09f);
-        fluidEffect.Parameters["uDarkenStrength"].SetValue(0.5f);
-        fluidEffect.Parameters["uNoise2ScrollVector"].SetValue(new Vector2(0.1f, 0.1f));
-        fluidEffect.Parameters["uNoise2Scale"].SetValue(1.0f);
+        // fluidEffect.Parameters["liquidColor"].SetValue(CursedSpiritNPC.GhostColor1.ToVector4());
+        // fluidEffect.Parameters["uTime"].SetValue(Main.GameUpdateCount * 0.05f);
+        // fluidEffect.Parameters["level"].SetValue(mappedLevel);
+        // fluidEffect.Parameters["noisetex"].SetValue(Assets.Assets.Textures.Sample.BubblyNoise.Value);
+        // fluidEffect.Parameters["noisetex2"].SetValue(Assets.Assets.Textures.Sample.SpottyNoise.Value);
+        // fluidEffect.Parameters["uNoiseStrength"].SetValue(3.0f);
+        // fluidEffect.Parameters["uNoise1ScrollSpeedX"].SetValue(0.09f);
+        // fluidEffect.Parameters["uDarkenStrength"].SetValue(0.5f);
+        // fluidEffect.Parameters["uNoise2ScrollVector"].SetValue(new Vector2(0.1f, 0.1f));
+        // fluidEffect.Parameters["uNoise2Scale"].SetValue(1.0f);
 
         Main.spriteBatch.Draw(insidesTexture, NPC.Center + new Vector2(0, 19) - screenPos, null, drawColor, NPC.rotation, insidesTexture.Size() / 2, 1f, effects, 0f);
-        var snapshot = Main.spriteBatch.CaptureEndBegin(new SpriteBatchSnapshot() with { CustomEffect = fluidEffect});
-        Main.spriteBatch.Draw(headUnderTexture, NPC.Center - new Vector2(0, 4) - screenPos, null, glowColor * 0.8f, NPC.rotation, origin, finalDrawScale, effects, 0f);
-        Main.spriteBatch.EndBegin(snapshot);
+        
+        new Renderer.Pipeline()
+            .EffectParams(
+                fluidEffect,
+                ("level", mappedLevel),
+                ("liquidColor", CursedSpiritNPC.GhostColor1.ToVector4()),
+                ("noisetex", Assets.Assets.Textures.Sample.BubblyNoise.Value),
+                ("noisetex2", Assets.Assets.Textures.Sample.SpottyNoise.Value),
+                ("uNoiseStrength", 3.0f),
+                ("uNoise1ScrollSpeedX", 0.09f),
+                ("uDarkenStrength", 0.3f),
+                ("uNoise2ScrollVector", new Vector2(0.1f, 0.1f)),
+                ("uNoise2Scale", 1.0f),
+                ("uTime", Main.GameUpdateCount * 0.05f))
+            .BeginPixelate(new() { CustomEffect = fluidEffect })
+            .DrawSprite(headUnderTexture, NPC.Center - new Vector2(0, 4) - screenPos, Color.White, null, NPC.rotation, origin, new Vector2(finalDrawScale.X - 0.05f, finalDrawScale.Y - 0.05f), effects)
+            .End()
+            .Flush();
+        
+        Lighting.AddLight(NPC.position, CursedSpiritNPC.GhostColor1.ToVector3() * 0.4f);
 
         Main.spriteBatch.Draw(headTexture, NPC.Center - new Vector2(0, 4) - screenPos, null, glowColor * 0.8f, NPC.rotation, origin, finalDrawScale, effects, 0f );
         Main.spriteBatch.Draw(headSpikesTexture, NPC.Center - new Vector2(0, 4) - screenPos, null, glowColor * 0.8f, NPC.rotation, origin, finalDrawScale, effects, 0f);

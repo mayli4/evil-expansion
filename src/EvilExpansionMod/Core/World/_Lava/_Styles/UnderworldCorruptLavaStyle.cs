@@ -51,7 +51,7 @@ public class UnderworldCorruptLavaStyle : ModLavaStyle {
                 solidTilesPassedAboveLiquid = 0;
                 topOfActualLiquidSurfaceY = currentScanY;
             }
-            else if(scanTile.HasTile) {
+            else if(scanTile.HasTile && Main.tileSolid[scanTile.type]) {
                 // found a solid tile thats not lava, increment passed solid tiles
                 solidTilesPassedAboveLiquid++;
                 if(solidTilesPassedAboveLiquid > max_solid_tiles_per_scan) {

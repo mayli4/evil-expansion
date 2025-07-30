@@ -11,6 +11,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Common.Graphics;
 
 using DataIndex = int;
+using EffectDataIndex = int;
 
 public enum RenderLayer {
     BehindTiles,
@@ -49,14 +50,13 @@ public class Renderer : ModSystem {
         Trail,
         Sprite,
 
-
         Begin,
-        End,
-
         BeginPixelate,
-        EndPixelate,
 
         ApplyOutline,
+        EffectParams,
+
+        End,
     }
 
 
@@ -75,14 +75,17 @@ public class Renderer : ModSystem {
         public Vector2[] Positions;
         public Func<float, float> Width;
         public Func<float, Color> Color;
-        public Effect Effect;
-
-        public int ParameterIndex;
-        public int ParameterCount;
+        public EffectDataIndex EffectData;
     }
 
     struct OutlineData {
         public Color Color;
+    }
+
+    struct EffectData {
+        public Effect Effect;
+        public int ParameterIndex;
+        public int ParameterCount;
     }
 
     struct EffectParameter {
@@ -169,7 +172,8 @@ public class Renderer : ModSystem {
     static readonly List<SpriteData> _spriteDatas = [];
     static readonly List<TrailData> _trailDatas = [];
     static readonly List<OutlineData> _outlineDatas = [];
-    static readonly List<SpriteBatchSnapshot> _beginDatas = [];
+    static readonly List<SpriteBatchSnapshot> _snapshotDatas = [];
+    static readonly List<EffectData> _effectDatas = [];
 
     static Commands _cache = new();
 
@@ -216,7 +220,8 @@ public class Renderer : ModSystem {
         _spriteDatas.Clear();
         _trailDatas.Clear();
         _outlineDatas.Clear();
-        _beginDatas.Clear();
+        _snapshotDatas.Clear();
+        _effectDatas.Clear();
 
         _behindNPCs.Clear();
         _afterTiles.Clear();
@@ -233,6 +238,11 @@ public class Renderer : ModSystem {
             * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth / 2f, Main.screenHeight / 2f, 0, -1, 1);
     }
 
+    enum TargetState {
+        None,
+        Pixelate,
+    }
+
     static void ExecuteCommands(in Commands commands) {
         SpriteBatchSnapshot? initialSnapshot = null;
         if(Main.spriteBatch.beginCalled) {
@@ -240,7 +250,7 @@ public class Renderer : ModSystem {
             initialSnapshot = snap;
         }
 
-        SwapTarget currentTarget = null;
+        var targetState = TargetState.None;
         for(var i = 0; i < commands.Count; i++) {
             switch(commands.Types[i]) {
                 case CommandType.Trail:
@@ -288,9 +298,11 @@ public class Renderer : ModSystem {
                     _trailIndexBuffer.SetData(_trailIndices);
                     Main.graphics.GraphicsDevice.Indices = _trailIndexBuffer;
 
-                    var effect = trail.Effect;
-                    for(var j = 0; j < trail.ParameterCount; j++) {
-                        var parameter = _effectParameters[j + trail.ParameterIndex];
+                    var effectData = _effectDatas[trail.EffectData];
+                    var effect = effectData.Effect;
+
+                    for(var j = 0; j < effectData.ParameterCount; j++) {
+                        var parameter = _effectParameters[j + effectData.ParameterIndex];
                         switch(parameter.Value.Type) {
                             case ParameterValueType.Float:
                                 effect.Parameters[parameter.Name].SetValue(parameter.Value.Float);
@@ -340,30 +352,18 @@ public class Renderer : ModSystem {
                     );
                     break;
                 case CommandType.BeginPixelate:
-                    Main.spriteBatch.Begin(new()
+                    var pixelateSnapshot = _snapshotDatas[commands.Datas[i]];
+                    Main.spriteBatch.Begin(pixelateSnapshot with
                     {
                         TransformMatrix = Matrix.CreateScale(0.5f),
                     });
-                    currentTarget = SwapTarget.HalfScreen;
-                    currentTarget.Begin();
+                    SwapTarget.HalfScreen.Begin();
 
-                    break;
-                case CommandType.EndPixelate:
-                    Main.spriteBatch.End();
-
-                    var targetTexture = currentTarget.End();
-                    currentTarget = null;
-
-                    Main.spriteBatch.Begin(new()
-                    {
-                        TransformMatrix = Matrix.CreateScale(2f) * Main.GameViewMatrix.ZoomMatrix,
-                    });
-                    Main.spriteBatch.Draw(targetTexture, Vector2.Zero, Color.White);
-                    Main.spriteBatch.End();
+                    targetState = TargetState.Pixelate;
                     break;
                 case CommandType.ApplyOutline:
                     var outlineData = _outlineDatas[commands.Datas[i]];
-                    targetTexture = currentTarget.Swap();
+                    var targetTexture = SwapTarget.HalfScreen.Swap();
 
                     var outlineEffect = Assets.Assets.Effects.Compiled.Pixel.Outline.Value;
                     outlineEffect.Parameters["size"].SetValue(targetTexture.Size());
@@ -377,10 +377,26 @@ public class Renderer : ModSystem {
                     Main.spriteBatch.EndBegin(snapshot);
                     break;
                 case CommandType.Begin:
-                    Main.spriteBatch.Begin(_beginDatas[commands.Datas[i]]);
+                    Main.spriteBatch.Begin(_snapshotDatas[commands.Datas[i]]);
                     break;
                 case CommandType.End:
                     Main.spriteBatch.End();
+                    switch(targetState) {
+                        case TargetState.None:
+                            break;
+                        case TargetState.Pixelate:
+                            targetTexture = SwapTarget.HalfScreen.End();
+
+                            Main.spriteBatch.Begin(new()
+                            {
+                                TransformMatrix = Matrix.CreateScale(2f) * Main.GameViewMatrix.ZoomMatrix,
+                            });
+                            Main.spriteBatch.Draw(targetTexture, Vector2.Zero, Color.White);
+                            Main.spriteBatch.End();
+                            break;
+                    }
+
+                    targetState = TargetState.None;
                     break;
             }
         }
@@ -388,34 +404,50 @@ public class Renderer : ModSystem {
         if(initialSnapshot is { } s) Main.spriteBatch.Begin(s);
     }
 
-    public readonly struct Pipeline {
+    public struct Pipeline {
+        bool _beginCalled;
+
         public Pipeline() {
             if(_cache.Count != 0) throw new Exception("One pipeline can be active at a time.");
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly Pipeline Begin(SpriteBatchSnapshot snapshot) {
-            var index = _beginDatas.Count;
-            _beginDatas.Add(snapshot);
+        public Pipeline Begin(SpriteBatchSnapshot snapshot = default) {
+            if(_beginCalled) {
+                _cache.Clear();
+                throw new Exception("Begin already called.");
+            }
+
+            var index = _snapshotDatas.Count;
+            _snapshotDatas.Add(snapshot);
             _cache.Add(CommandType.Begin, index);
+
+            _beginCalled = true;
             return this;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly Pipeline End() {
+        public Pipeline End() {
+            if(!_beginCalled) {
+                _cache.Clear();
+                throw new Exception("Begin not called.");
+            }
+
             _cache.Add(CommandType.End, default);
+
+            _beginCalled = false;
             return this;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly Pipeline BeginPixelate() {
-            _cache.Add(CommandType.BeginPixelate, default);
-            return this;
-        }
+        public Pipeline BeginPixelate(SpriteBatchSnapshot snapshot = default) {
+            if(_beginCalled) {
+                _cache.Clear();
+                throw new Exception("Begin already called.");
+            }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly Pipeline EndPixelate() {
-            _cache.Add(CommandType.EndPixelate, default);
+            var index = _snapshotDatas.Count;
+            _snapshotDatas.Add(snapshot);
+            _cache.Add(CommandType.BeginPixelate, index);
+
+            _beginCalled = true;
             return this;
         }
 
@@ -434,6 +466,30 @@ public class Renderer : ModSystem {
             Effect effect,
             params ReadOnlySpan<(string, ParameterValue)> parameters
         ) {
+            var effectDataIndex = AddEffectData(effect, parameters);
+            var trailDataIndex = _trailDatas.Count;
+            _trailDatas.Add(new()
+            {
+                Positions = positions,
+                Width = width,
+                Color = color,
+                EffectData = effectDataIndex,
+            });
+            _cache.Add(CommandType.Trail, trailDataIndex);
+
+            return this;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Pipeline EffectParams(
+            Effect effect,
+            params ReadOnlySpan<(string, ParameterValue)> parameters
+        ) {
+            _cache.Add(CommandType.EffectParams, AddEffectData(effect, parameters));
+            return this;
+        }
+
+        static EffectDataIndex AddEffectData(Effect effect, ReadOnlySpan<(string, ParameterValue)> parameters) {
             var parameterIndex = _effectParameters.Count;
             var parameterCount = parameters.Length;
             foreach(var (name, value) in parameters) {
@@ -444,19 +500,14 @@ public class Renderer : ModSystem {
                 });
             }
 
-            var index = _trailDatas.Count;
-            _trailDatas.Add(new()
+            var index = _effectDatas.Count;
+            _effectDatas.Add(new()
             {
-                Positions = positions,
-                Width = width,
-                Color = color,
                 Effect = effect,
                 ParameterIndex = parameterIndex,
                 ParameterCount = parameterCount,
             });
-            _cache.Add(CommandType.Trail, index);
-
-            return this;
+            return index;
         }
 
         public readonly Pipeline DrawSprite(
@@ -469,6 +520,11 @@ public class Renderer : ModSystem {
             Vector2? scale = null,
             SpriteEffects spriteEffects = SpriteEffects.None
         ) {
+            if(!_beginCalled) {
+                _cache.Clear();
+                throw new Exception("Begin not called.");
+            }
+
             var index = _spriteDatas.Count;
             _spriteDatas.Add(new()
             {

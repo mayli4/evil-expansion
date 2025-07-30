@@ -96,7 +96,7 @@ internal class SpiritFireball : ModProjectile {
                 scale: Vector2.One * 0.3f
             )
             .ApplyOutline(CursedSpiritNPC.GhostColor1)
-            .EndPixelate()
+            .End()
             .Flush();
 
         return false;

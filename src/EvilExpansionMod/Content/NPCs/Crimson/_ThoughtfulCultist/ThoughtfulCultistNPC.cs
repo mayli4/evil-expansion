@@ -24,7 +24,7 @@ public class ThoughtfulCultistNPC : ModNPC {
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
-        NPC.knockBackResist = 0.05f;
+        NPC.knockBackResist = 0.001f;
         NPC.friendly = false;
         NPC.damage = 20;
 
@@ -44,16 +44,16 @@ public class ThoughtfulCultistNPC : ModNPC {
         NPC.TargetClosest();
 
         var directionToTarget = Vector2.Zero;
-        var distanceToTarget = 999_999f;
+        var distanceToTarget = float.MaxValue;
         if(Target != null) {
             var targetDelta = Target.Center - Vector2.UnitY * 80f - NPC.Center;
             distanceToTarget = targetDelta.Length();
             directionToTarget = targetDelta / distanceToTarget;
         }
 
-        var moveDelta = directionToTarget * 0.4f;
+        var moveDelta = directionToTarget * 0.075f;
         NPC.velocity += moveDelta;
-        NPC.velocity *= 0.9f;
+        NPC.velocity *= 0.98f;
 
         var offsetMax = 12f;
         _robeOffset = Math.Clamp(_robeOffset + moveDelta.X, -offsetMax, offsetMax);
@@ -62,8 +62,10 @@ public class ThoughtfulCultistNPC : ModNPC {
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var brainTexture = TextureAssets.Npc[Type].Value;
-        var robeTexture = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistRobe.Value;
+        var robeTextureBack = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistRobeBack.Value;
+        var robeTextureFront = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistRobeFront.Value;
         var pendantTexture = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistPendant.Value;
+        var chainTexture = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistChain.Value;
 
         Span<Vector2> robeTrailPositions = new Vector2[7]; // TODO: change to stackalloc
         robeTrailPositions[0] = NPC.Center - Vector2.UnitY * 7f;
@@ -90,13 +92,21 @@ public class ThoughtfulCultistNPC : ModNPC {
         var chainPoints = bezier.GetPoints(13).ToArray();
 
         new Renderer.Pipeline()
-            .DrawBasicTrail(robeTrailPositions, static _ => 88, robeTexture, drawColor, 1)
-            .DrawBasicTrail(chainPoints, static _ => 5, TextureAssets.MagicPixel.Value, drawColor)
+            .DrawBasicTrail(robeTrailPositions, static _ => 88, robeTextureBack, drawColor, 1)
+            .DrawBasicTrail(chainPoints, static _ => 6, chainTexture, drawColor)
+            .DrawBasicTrail(robeTrailPositions, static _ => 88, robeTextureFront, drawColor, 1)
             .Flush();
 
         spriteBatch.Draw(
-            pendantTexture, chainPoints[chainPoints.Length / 2] - screenPos,
-            null, drawColor, 0f, pendantTexture.Size() / 2f, 1f, SpriteEffects.None, 0f
+            pendantTexture,
+            chainPoints[chainPoints.Length / 2] - screenPos,
+            null,
+            drawColor,
+            0f,
+            pendantTexture.Size() / 2f,
+            1f,
+            SpriteEffects.None,
+            0f
         );
         spriteBatch.Draw(brainTexture, NPC.Center - screenPos, null, drawColor, 0f, new Vector2(53, 55), 1f, SpriteEffects.None, 0f);
         return false;

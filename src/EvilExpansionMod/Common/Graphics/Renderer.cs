@@ -299,33 +299,9 @@ public class Renderer : ModSystem {
                     Main.graphics.GraphicsDevice.Indices = _trailIndexBuffer;
 
                     var effectData = _effectDatas[trail.EffectData];
-                    var effect = effectData.Effect;
+                    SetEffectParams(effectData);
 
-                    for(var j = 0; j < effectData.ParameterCount; j++) {
-                        var parameter = _effectParameters[j + effectData.ParameterIndex];
-                        switch(parameter.Value.Type) {
-                            case ParameterValueType.Float:
-                                effect.Parameters[parameter.Name].SetValue(parameter.Value.Float);
-                                break;
-                            case ParameterValueType.Vector2:
-                                effect.Parameters[parameter.Name].SetValue(parameter.Value.Vector2);
-                                break;
-                            case ParameterValueType.Vector3:
-                                effect.Parameters[parameter.Name].SetValue(parameter.Value.Vector3);
-                                break;
-                            case ParameterValueType.Vector4:
-                                effect.Parameters[parameter.Name].SetValue(parameter.Value.Vector4);
-                                break;
-                            case ParameterValueType.Texture2D:
-                                effect.Parameters[parameter.Name].SetValue(parameter.Value.Texture2D);
-                                break;
-                            case ParameterValueType.Matrix:
-                                effect.Parameters[parameter.Name].SetValue(parameter.Value.Matrix);
-                                break;
-                        }
-                    }
-
-                    foreach(EffectPass pass in effect.CurrentTechnique.Passes) {
+                    foreach(EffectPass pass in effectData.Effect.CurrentTechnique.Passes) {
                         pass.Apply();
                         Main.graphics.GraphicsDevice.DrawIndexedPrimitives(
                             PrimitiveType.TriangleList,
@@ -379,6 +355,9 @@ public class Renderer : ModSystem {
                 case CommandType.Begin:
                     Main.spriteBatch.Begin(_snapshotDatas[commands.Datas[i]]);
                     break;
+                case CommandType.EffectParams:
+                    SetEffectParams(_effectDatas[commands.Datas[i]]);
+                    break;
                 case CommandType.End:
                     Main.spriteBatch.End();
                     switch(targetState) {
@@ -402,6 +381,33 @@ public class Renderer : ModSystem {
         }
 
         if(initialSnapshot is { } s) Main.spriteBatch.Begin(s);
+    }
+
+    static void SetEffectParams(EffectData effectData) {
+        var effect = effectData.Effect;
+        for(var j = 0; j < effectData.ParameterCount; j++) {
+            var parameter = _effectParameters[j + effectData.ParameterIndex];
+            switch(parameter.Value.Type) {
+                case ParameterValueType.Float:
+                    effect.Parameters[parameter.Name].SetValue(parameter.Value.Float);
+                    break;
+                case ParameterValueType.Vector2:
+                    effect.Parameters[parameter.Name].SetValue(parameter.Value.Vector2);
+                    break;
+                case ParameterValueType.Vector3:
+                    effect.Parameters[parameter.Name].SetValue(parameter.Value.Vector3);
+                    break;
+                case ParameterValueType.Vector4:
+                    effect.Parameters[parameter.Name].SetValue(parameter.Value.Vector4);
+                    break;
+                case ParameterValueType.Texture2D:
+                    effect.Parameters[parameter.Name].SetValue(parameter.Value.Texture2D);
+                    break;
+                case ParameterValueType.Matrix:
+                    effect.Parameters[parameter.Name].SetValue(parameter.Value.Matrix);
+                    break;
+            }
+        }
     }
 
     public struct Pipeline {

@@ -30,6 +30,7 @@ public class OvergrownCorruptAsh : ModTile {
         Main.tileMerge[Type][ModContent.TileType<CorruptAsh>()] = true;
 
         TileLoader.RegisterConversion(TileID.AshGrass, BiomeConversionID.Corruption, ConvertToCorruption);
+        RegisterItemDrop(ModContent.ItemType<CorruptAshItem>());
     }
 
     public bool ConvertToCorruption(int i, int j, int type, int conversionType) {

@@ -125,7 +125,7 @@ public sealed class CursehoundMace : ModProjectile {
         int amount = Main.rand.Next(4, 8);
 
         for(int k = 0; k < amount; k++) {
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * Main.rand.NextFloat(4f, 8f), ModContent.ProjectileType<MaceShard>(), Projectile.damage / 2, 0, Projectile.owner);
+            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * Main.rand.NextFloat(4f, 8f), ModContent.ProjectileType<MaceDebris>(), Projectile.damage / 2, 0, Projectile.owner);
         }
 
         Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(12f, 0.6f));
@@ -215,8 +215,10 @@ public sealed class CursehoundMace : ModProjectile {
     }
 }
 
-internal class MaceShard : ModProjectile {
-    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.Cursehound.KEY_CursehoundMace_Chain;
+internal class MaceDebris : ModProjectile {
+    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.Cursehound.KEY_Debris;
+
+    private Rectangle _frame;
 
     public override void SetDefaults() {
         Projectile.width = 18;
@@ -230,6 +232,10 @@ internal class MaceShard : ModProjectile {
         Projectile.penetrate = 15;
     }
 
+    public override void OnSpawn(IEntitySource source) {
+        _frame = new Rectangle(22 * Main.rand.Next(3), 0, 20, 20);
+    }
+
     public override void AI() {
         Projectile.velocity.Y += 0.3f;
         Projectile.rotation += Projectile.velocity.X * 0.1f;
@@ -238,6 +244,12 @@ internal class MaceShard : ModProjectile {
 
         if(Projectile.timeLeft < 30)
             Projectile.alpha = (int)((1 - Projectile.timeLeft / 30f) * 255);
+    }
+    
+    public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac) {
+        fallThrough = false;
+
+        return base.TileCollideStyle(ref width, ref height, ref fallThrough, ref hitboxCenterFrac);
     }
 
     public override bool OnTileCollide(Vector2 oldVelocity) {
@@ -249,7 +261,11 @@ internal class MaceShard : ModProjectile {
         return false;
     }
 
-    // public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
-    //     target.AddBuff(BuffID.Cursed, 60);
-    // }
+    public override bool PreDraw(ref Color lightColor) {
+        var tex = TextureAssets.Projectile[Type].Value;
+        
+        Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, _frame, Projectile.GetAlpha(lightColor), Projectile.rotation, _frame.Size() / 2f, Projectile.scale, SpriteEffects.None, 0f);
+        
+        return false;
+    }
 }

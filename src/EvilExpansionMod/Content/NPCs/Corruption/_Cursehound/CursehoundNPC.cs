@@ -176,18 +176,18 @@ public sealed class CursehoundNPC : ModNPC {
         if(NPC.velocity.Y == 0 && _timeGrounded >= ground_time_for_attack && ai.RoarAttackCooldown <= 0 && broadLineOfSight && distanceToTarget >= roarAttackMinRange && distanceToTarget <= roarAttackMaxRange) {
             if(Main.rand.NextBool(30)) {
                 ai.CurrentState = State.RoarTelegraph;
-                ai.RoarAttackCooldown = 60 * 1;
+                ai.RoarAttackCooldown = 60 * 5;
             }
             return;
         }
 
-        // if(ai.MaceAttackCooldown <= 0 && broadLineOfSight && distanceToTarget < maceAttackRange && _timeGrounded >= ground_time_for_attack) {
-        //     if(Main.rand.NextBool(30)) {
-        //         ai.CurrentState = State.MaceSpinning;
-        //         ai.MaceAttackCooldown = 60 * 5;
-        //     }
-        //     return;
-        // }
+        if(ai.MaceAttackCooldown <= 0 && broadLineOfSight && distanceToTarget < maceAttackRange && _timeGrounded >= ground_time_for_attack) {
+            if(Main.rand.NextBool(30)) {
+                ai.CurrentState = State.MaceSpinning;
+                ai.MaceAttackCooldown = 60 * 5;
+            }
+            return;
+        }
 
         bool shouldRun = distanceToTarget > runThreshold;
         if(shouldRun) {

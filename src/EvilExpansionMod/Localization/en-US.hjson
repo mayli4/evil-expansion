@@ -72,6 +72,8 @@ Mods: {
 			EffigyRootProjectile.DisplayName: Effigy Root Projectile
 			CursedFog.DisplayName: Cursed Fog
 			CultistPortal.DisplayName: Cultist Portal
+			MaceDebris.DisplayName: Mace Debris
+			StalactiteProjectile.DisplayName: Stalactite Projectile
 		}
 
 		Biomes: {

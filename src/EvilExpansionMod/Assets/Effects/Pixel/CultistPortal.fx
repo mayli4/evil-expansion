@@ -5,9 +5,10 @@ sampler2D sampler1 = sampler_state {
     texture = <tex1>;
 };
 
-float stepY;
+float size = 1;
 float time;
-float4 color;
+float4 color1;
+float4 color2;
 
 float2 rotate(float r, float2 uv)
 {
@@ -17,15 +18,14 @@ float2 rotate(float r, float2 uv)
 }
 
 float4 frag(float2 uv : TEXCOORD0) : COLOR0 {
-    float dist = length(uv - 0.5);
-
-    float distRot = dist * 3.0;
-    float2 uv1 = rotate(-time + pow(distRot * 4.0, 4.0), uv - 0.5) + 0.5;
-
-    float alpha = step(tex2D(uImage0, uv1).r, stepY);
-    alpha = step(smoothstep(tex2D(sampler1, uv + time * 0.01).r, 0.0, 0.5 - dist), alpha);
-
-    return color * alpha * step(dist, 0.5);
+    float uvMult = 2 / size;
+    float dist = length(uv * 2 / size - uvMult / 2);
+    float distMask = abs(dist - 0.5) + 0.1;
+    
+    float s1 = tex2D(uImage0, rotate(time, uv - 0.5)).r;
+    float s2 = tex2D(sampler1, rotate(-time, uv - 0.5)).r;
+    
+    return lerp(color1, color2, step(s2, 0.25)) * step(distMask * 1.75 - 0.2, s1 * s2);
 }
 
 technique Technique1 {

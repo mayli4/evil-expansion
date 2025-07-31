@@ -296,7 +296,7 @@ public sealed class CursehoundNPC : ModNPC {
         ai.Timer++;
 
         if(ai.Timer == 1) {
-            SoundEngine.PlaySound(SoundID.DD2_BetsyDeath with { Volume = 1.2f, Pitch = 0.5f }, NPC.Center);
+            SoundEngine.PlaySound(SoundID.DD2_BetsyDeath with { Volume = 1.2f, Pitch = 0.1f }, NPC.Center);
             SoundEngine.PlaySound(SoundID.DD2_BetsyScream with { Volume = 1.2f, Pitch = 0.1f }, NPC.Center);
 
             Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(12f, 0.6f));

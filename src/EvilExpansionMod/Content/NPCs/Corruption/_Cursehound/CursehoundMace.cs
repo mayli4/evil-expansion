@@ -35,8 +35,8 @@ public sealed class CursehoundMace : ModProjectile {
     public ref float Timer => ref Projectile.ai[1];
     public ref float OwningNPCWhoAmI => ref Projectile.ai[2];
 
-    private const int EmbeddedDuration = 45;
-    private const float RetractSpeed = 20f;
+    private const int embedded_duration = 45;
+    private const float retract_speed = 20f;
 
     public override void SetDefaults() {
         Projectile.width = 10;
@@ -88,7 +88,7 @@ public sealed class CursehoundMace : ModProjectile {
                 Projectile.tileCollide = false;
                 Timer++;
 
-                if(Timer >= EmbeddedDuration + 60) {
+                if(Timer >= embedded_duration + 60) {
                     CurrentState = State.Retracting;
                     Projectile.tileCollide = false;
                 }
@@ -97,12 +97,12 @@ public sealed class CursehoundMace : ModProjectile {
             case State.Retracting:
                 Vector2 targetPosition = owningNPC.Center + new Vector2(owningNPC.direction * 70, -30);
 
-                if(Projectile.Distance(targetPosition) < RetractSpeed) {
+                if(Projectile.Distance(targetPosition) < retract_speed) {
                     Projectile.Kill();
                     return;
                 }
 
-                Projectile.velocity = Projectile.DirectionTo(targetPosition) * RetractSpeed;
+                Projectile.velocity = Projectile.DirectionTo(targetPosition) * retract_speed;
 
                 Projectile.rotation += 0.3f * Math.Sign(Projectile.velocity.X);
                 break;

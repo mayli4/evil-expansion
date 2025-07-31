@@ -40,11 +40,9 @@ public class UnderworldDemonite : ModTile {
     
     public override void Convert(int i, int j, int conversionType) {
         switch(conversionType) {
-            case BiomeConversionID.Chlorophyte:
             case BiomeConversionID.Purity:
                 WorldGen.ConvertTile(i, j, TileID.Hellstone);
                 return;
-            case BiomeConversionID.Sand:
             case BiomeConversionID.Corruption:
                 WorldGen.ConvertTile(i, j, ModContent.TileType<UnderworldDemonite>());
                 return;

@@ -342,15 +342,7 @@ public sealed class DevilOWarNPC : ModNPC {
                                * 20f;
             }
 
-            pipeline.DrawTrail(
-                positions,
-                static _ => 10,
-                _ => drawColor,
-                defaultTrailEffect,
-                ("sampleTexture", tentacleTexture),
-                ("color", drawColor.ToVector4()),
-                ("transformationMatrix", MathUtilities.WorldTransformationMatrix)
-            );
+            pipeline.DrawBasicTrail(positions, _ => 10, tentacleTexture, drawColor);
         }
 
         if(_stingerProjectileId != -1) {
@@ -366,15 +358,7 @@ public sealed class DevilOWarNPC : ModNPC {
 
                 var stingerColor = Color.Lerp(drawColor, Color.Yellow, 0.5f + MathF.Sin(Main.GameUpdateCount * 0.1f) * 0.2f);
 
-                pipeline.DrawTrail(
-                    _stingerTrailPositions,
-                    static _ => 10,
-                    _ => stingerColor,
-                    defaultTrailEffect,
-                    ("sampleTexture", tentacleTexture),
-                    ("color", stingerColor.ToVector4()),
-                    ("transformationMatrix", MathUtilities.WorldTransformationMatrix)
-                );
+                pipeline.DrawBasicTrail(_stingerTrailPositions, _ => 10, tentacleTexture, stingerColor);
             }
         }
     }

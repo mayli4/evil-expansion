@@ -16,7 +16,7 @@ public sealed class StalactiteProjectile : ModProjectile {
     public override void SetDefaults() {
         Projectile.width = 16;
         Projectile.height = 28;
-        Projectile.tileCollide = true;
+        Projectile.tileCollide = false;
         Projectile.timeLeft = 300;
         Projectile.friendly = false;
         Projectile.hostile = true;
@@ -34,6 +34,12 @@ public sealed class StalactiteProjectile : ModProjectile {
         Projectile.velocity.Y += 0.3f;
         if (Projectile.velocity.Y > 16f) {
             Projectile.velocity.Y = 16f;
+        }
+        
+        Projectile.ai[0]++;
+
+        if(Projectile.ai[0] >= 30) {
+            Projectile.tileCollide = true;
         }
 
         if (Projectile.timeLeft < 60) {
@@ -60,7 +66,7 @@ public sealed class StalactiteProjectile : ModProjectile {
             texture,
             Projectile.Center - Main.screenPosition,
             _frame,
-            lightColor * Projectile.alpha,
+            Projectile.GetAlpha(lightColor),
             Projectile.rotation,
             _frame.Size() / 2f,
             Projectile.scale,

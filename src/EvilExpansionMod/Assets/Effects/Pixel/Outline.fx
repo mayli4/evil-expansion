@@ -5,7 +5,7 @@ float4 color;
 
 inline bool opaque(float2 coords)
 {
-  return tex2D(uImage0, coords).a > 0;
+  return tex2D(uImage0, coords).a > 0.01;
 }
 
 float4 PixelShaderFunction(float2 coords : TEXCOORD0) : COLOR0 {

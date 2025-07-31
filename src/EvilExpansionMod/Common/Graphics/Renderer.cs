@@ -315,22 +315,24 @@ public class Renderer : ModSystem {
                     {
                         TransformMatrix = Matrix.CreateScale(0.5f),
                     });
-                    SwapTarget.HalfScreen.Begin();
 
+                    SwapTarget.HalfScreen.Begin();
                     targetState = TargetState.Pixelate;
                     break;
                 case CommandType.ApplyOutline:
                     var outlineData = _outlineDatas[commands.Datas[i]];
-                    var targetTexture = SwapTarget.HalfScreen.Swap();
+                    var target = SwapTarget.HalfScreen;
 
-                    var outlineEffect = Assets.Assets.Effects.Compiled.Pixel.Outline.Value;
-                    outlineEffect.Parameters["size"].SetValue(targetTexture.Size());
+                    var outlineEffect = Assets.Assets.Effects.Pixel.Outline.Value;
+                    outlineEffect.Parameters["size"].SetValue(target.Size);
                     outlineEffect.Parameters["color"].SetValue(outlineData.Color.ToVector4());
                     var snapshot = Main.spriteBatch.CaptureEndBegin(new()
                     {
                         CustomEffect = outlineEffect,
                         TransformMatrix = Matrix.Identity,
                     });
+
+                    var targetTexture = target.Swap();
                     Main.spriteBatch.Draw(targetTexture, Vector2.Zero, Color.White);
                     Main.spriteBatch.EndBegin(snapshot);
                     break;
@@ -519,7 +521,7 @@ public class Renderer : ModSystem {
             Color color,
             int spriteRotation = 0
         ) {
-            var effect = Assets.Assets.Effects.Compiled.Trail.Default.Value;
+            var effect = Assets.Assets.Effects.Trail.Default.Value;
             ReadOnlySpan<(string, ParameterValue)> parameters = [
                 ("sampleTexture", texture),
                 ("color", color.ToVector4()),

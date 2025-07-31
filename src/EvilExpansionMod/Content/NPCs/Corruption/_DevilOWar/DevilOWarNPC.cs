@@ -50,7 +50,7 @@ public sealed class DevilOWarNPC : ModNPC {
     private Vector2[] _stingerTrailPositions;
     private Vector2[][] _tentacleTrailPositions;
     private float[] _tentacleWaveDirections;
-    
+
     public int TotalLifeDrained { get; set; }
     public const int MAX_DRAIN_FOR_LEVEL = 160;
 
@@ -317,7 +317,7 @@ public sealed class DevilOWarNPC : ModNPC {
         };
 
         var tentacleTexture = Assets.Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarTentacle.Value;
-        var defaultTrailEffect = Assets.Assets.Effects.Compiled.Trail.Default.Value;
+        var defaultTrailEffect = Assets.Assets.Effects.Trail.Default.Value;
 
         for(int i = 0; i < 4; i++) {
             var positions = _tentacleTrailPositions[i];
@@ -425,11 +425,11 @@ public sealed class DevilOWarNPC : ModNPC {
         PopulateTrails(pipeline, bodyWorldPositionForTrails, drawColor);
         pipeline.Flush();
 
-        var fluidEffect = Assets.Assets.Effects.Compiled.Pixel.DevilOWarFluid.Value;
+        var fluidEffect = Assets.Assets.Effects.Pixel.DevilOWarFluid.Value;
 
         int clampedLifeDrained = Math.Clamp(TotalLifeDrained, 0, MAX_DRAIN_FOR_LEVEL);
         float mappedLevel = MathHelper.Lerp(0.07f, 0.5f, (float)clampedLifeDrained / MAX_DRAIN_FOR_LEVEL);
-        
+
         // fluidEffect.Parameters["liquidColor"].SetValue(CursedSpiritNPC.GhostColor1.ToVector4());
         // fluidEffect.Parameters["uTime"].SetValue(Main.GameUpdateCount * 0.05f);
         // fluidEffect.Parameters["level"].SetValue(mappedLevel);
@@ -442,7 +442,7 @@ public sealed class DevilOWarNPC : ModNPC {
         // fluidEffect.Parameters["uNoise2Scale"].SetValue(1.0f);
 
         Main.spriteBatch.Draw(insidesTexture, NPC.Center + new Vector2(0, 19) - screenPos, null, drawColor, NPC.rotation, insidesTexture.Size() / 2, 1f, effects, 0f);
-        
+
         new Renderer.Pipeline()
             .EffectParams(
                 fluidEffect,
@@ -460,12 +460,12 @@ public sealed class DevilOWarNPC : ModNPC {
             .DrawSprite(headUnderTexture, NPC.Center - new Vector2(0, 4) - screenPos, Color.White, null, NPC.rotation, origin, new Vector2(finalDrawScale.X - 0.05f, finalDrawScale.Y - 0.05f), effects)
             .End()
             .Flush();
-        
+
         Lighting.AddLight(NPC.position, CursedSpiritNPC.GhostColor1.ToVector3() * 0.4f);
 
-        Main.spriteBatch.Draw(headTexture, NPC.Center - new Vector2(0, 4) - screenPos, null, glowColor * 0.8f, NPC.rotation, origin, finalDrawScale, effects, 0f );
+        Main.spriteBatch.Draw(headTexture, NPC.Center - new Vector2(0, 4) - screenPos, null, glowColor * 0.8f, NPC.rotation, origin, finalDrawScale, effects, 0f);
         Main.spriteBatch.Draw(headSpikesTexture, NPC.Center - new Vector2(0, 4) - screenPos, null, glowColor * 0.8f, NPC.rotation, origin, finalDrawScale, effects, 0f);
-        
+
         return false;
     }
 

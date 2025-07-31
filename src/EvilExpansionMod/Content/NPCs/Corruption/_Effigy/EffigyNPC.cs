@@ -3,7 +3,6 @@ using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -97,7 +96,7 @@ public sealed class EffigyNPC : ModNPC {
 
         var offset = new Vector2(0, -77); //cause frame very big! yes
 
-        var shader = Assets.Assets.Effects.Compiled.Pixel.EffigyDecay.Value;
+        var shader = Assets.Assets.Effects.Pixel.EffigyDecay.Value;
 
         float progValue = 1.5f;
 

@@ -73,7 +73,7 @@ internal class SpiritFireball : ModProjectile {
         );
         Main.spriteBatch.EndBegin(snapshot);
 
-        var trailEffect = Assets.Assets.Effects.Compiled.Trail.CursedSpiritFire.Value;
+        var trailEffect = Assets.Assets.Effects.Trail.CursedSpiritFire.Value;
         new Renderer.Pipeline()
             .BeginPixelate()
             .DrawTrail(

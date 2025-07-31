@@ -83,6 +83,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                 }
                 break;
             case CultistState.SpearAttack:
+                NPC.velocity *= 0.95f;
                 if(Target == null) {
                     ChangeState(CultistState.FlyToTarget);
                 }

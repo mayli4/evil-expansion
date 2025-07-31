@@ -94,7 +94,7 @@ public class TerrorBatSpit : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var shader = Assets.Assets.Effects.Compiled.Trail.CursedSpiritFire.Value;
+        var shader = Assets.Assets.Effects.Trail.CursedSpiritFire.Value;
 
         shader.Parameters["time"].SetValue(0.025f * Main.GameUpdateCount);
         shader.Parameters["mat"].SetValue(MathUtilities.WorldTransformationMatrix);

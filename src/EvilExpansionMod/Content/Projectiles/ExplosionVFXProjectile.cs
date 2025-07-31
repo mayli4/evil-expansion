@@ -83,7 +83,7 @@ internal class ExplosionVFXProjectile : ModProjectile {
         var smokeTexture = Assets.Assets.Textures.Sample.SmokeGlow.Value;
         var noiseTexture1 = Assets.Assets.Textures.Sample.PerlinNoise.Value;
         var noiseTexture2 = Assets.Assets.Textures.Sample.Noise2.Value;
-        var effect = Assets.Assets.Effects.Compiled.Pixel.ExplosionSmoke.Value;
+        var effect = Assets.Assets.Effects.Pixel.ExplosionSmoke.Value;
 
         effect.Parameters["progress"].SetValue(Progress);
         effect.Parameters["time"].SetValue(Main.GameUpdateCount * 0.002f + Projectile.rotation);

@@ -13,29 +13,22 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Common;
 
 public sealed class ShaderCompilationSystem : ModSystem {
-    private static FileSystemWatcher _effectsWatcher;
+    (string, Effect)[] _loadedEffects;
 
-    public override void PostAddRecipes() {
+    public override void OnModLoad() {
         if(Main.dedServ) return;
-
-        // var effectsFolderPath = $"{Mod.SourceFolder}/Assets/Effects";
-        // _effectsWatcher = new FileSystemWatcher()
-        // {
-        //     Path = effectsFolderPath,
-        //     NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName,
-        //     IncludeSubdirectories = true,
-        //     EnableRaisingEvents = true
-        // };
-        // _effectsWatcher.Filters.Add("*.fx");
-        // _effectsWatcher.Changed += (_, e) =>
-        // {
-        //     CompileSingle(Mod, e.FullPath);
-        // };
+        _loadedEffects = Mod.Assets.GetLoadedAssets().OfType<Effect>().Select(e => (e.Name, e)).ToArray();
     }
 
     public override void OnModUnload() {
-        if(Main.dedServ) return;
-        _effectsWatcher?.Dispose();
+        _loadedEffects = null;
+    }
+
+    public override void UpdateUI(GameTime gameTime) {
+        if(Main.GameUpdateCount % 60 != 0) return;
+        foreach(var (name, effect) in _loadedEffects) {
+
+        }
     }
 
     public static void CompileSingle(Mod mod, string effectPath) {

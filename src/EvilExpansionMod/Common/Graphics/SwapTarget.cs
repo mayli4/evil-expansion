@@ -13,6 +13,7 @@ public class SwapTarget(int width, int height) : IDisposable {
 
     public int Width => _activeTarget.Width;
     public int Height => _activeTarget.Height;
+    public Vector2 Size => new(Width, Height);
 
     public void Begin() {
         _cachedBindings = Main.graphics.GraphicsDevice.GetRenderTargets();

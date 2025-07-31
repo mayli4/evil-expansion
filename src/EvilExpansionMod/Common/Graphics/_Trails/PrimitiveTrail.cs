@@ -91,7 +91,7 @@ public class PrimitiveTrail {
     }
 
     public void Draw(Texture2D texture, Color color, Matrix? transformationMatrix = null, bool blackAsAlpha = false) {
-        Effect effect = Assets.Assets.Effects.Compiled.Trail.Default.Value;
+        Effect effect = Assets.Assets.Effects.Trail.Default.Value;
         effect.Parameters["sampleTexture"].SetValue(texture);
         effect.Parameters["color"].SetValue(color.ToVector4());
         effect.Parameters["transformationMatrix"].SetValue(transformationMatrix ?? Matrix.Identity);

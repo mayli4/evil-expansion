@@ -71,6 +71,7 @@ Mods: {
 			MaceShard.DisplayName: Mace Shard
 			EffigyRootProjectile.DisplayName: Effigy Root Projectile
 			CursedFog.DisplayName: Cursed Fog
+			CultistPortal.DisplayName: Cultist Portal
 		}
 
 		Biomes: {

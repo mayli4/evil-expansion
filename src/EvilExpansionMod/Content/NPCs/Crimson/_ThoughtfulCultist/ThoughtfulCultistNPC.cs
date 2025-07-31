@@ -1,20 +1,37 @@
 ﻿using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.NPCs.Crimson._ThoughtfulCultist;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Runtime.CompilerServices;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.NPCs.Crimson;
+
+enum CultistState {
+    FlyToTarget,
+    SpearAttack,
+}
+
 public class ThoughtfulCultistNPC : ModNPC {
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.KEY_CultistBrain;
     Player Target => Main.player[NPC.target];
+    CultistState State => Unsafe.BitCast<float, CultistState>(NPC.ai[0]);
 
+    float _timer;
     float _robeOffset;
+
+    void ChangeState(CultistState state) {
+        NPC.ai[0] = Unsafe.BitCast<CultistState, float>(state);
+        _timer = 0;
+        NPC.netUpdate = true;
+    }
 
     public override void SetDefaults() {
         NPC.width = 38;
@@ -40,6 +57,10 @@ public class ThoughtfulCultistNPC : ModNPC {
         // BannerItem = ModContent.ItemType<CursedSpiritBannerItem>();
     }
 
+    public override void OnSpawn(IEntitySource source) {
+        ChangeState(CultistState.FlyToTarget);
+    }
+
     public override void AI() {
         NPC.TargetClosest();
 
@@ -51,12 +72,41 @@ public class ThoughtfulCultistNPC : ModNPC {
             directionToTarget = targetDelta / distanceToTarget;
         }
 
-        var moveDelta = directionToTarget * 0.075f;
-        NPC.velocity += moveDelta;
-        NPC.velocity *= 0.98f;
+        switch(State) {
+            case CultistState.FlyToTarget:
+                if(distanceToTarget > 400) {
+                    NPC.velocity += directionToTarget * 0.075f;
+                    NPC.velocity *= 0.98f;
+                }
+                else if(Main.netMode != NetmodeID.MultiplayerClient && _timer > 60) {
+                    ChangeState(CultistState.SpearAttack);
+                }
+                break;
+            case CultistState.SpearAttack:
+                if(Target == null) {
+                    ChangeState(CultistState.FlyToTarget);
+                }
+                else if(_timer > 60) {
+                    var position = Target.Center - 120f * directionToTarget.RotatedByRandom(MathF.PI / 2f);
+                    var direction = position.DirectionTo(Target.Center);
+                    Projectile.NewProjectile(
+                        NPC.GetSource_FromAI(),
+                        position,
+                        direction,
+                        ModContent.ProjectileType<CultistPortal>(),
+                        20,
+                        0.2f
+                    );
+
+                    ChangeState(CultistState.FlyToTarget);
+                }
+                break;
+        }
+
+        _timer += 1;
 
         var offsetMax = 12f;
-        _robeOffset = Math.Clamp(_robeOffset + moveDelta.X, -offsetMax, offsetMax);
+        _robeOffset = Math.Clamp(_robeOffset + NPC.velocity.X * 0.1f, -offsetMax, offsetMax);
         _robeOffset *= 0.98f;
     }
 
@@ -73,7 +123,6 @@ public class ThoughtfulCultistNPC : ModNPC {
         for(var i = 1; i < robeTrailPositions.Length; i++) {
             robeTrailPositions[i] = robeTrailPositions[i - 1];
             robeTrailPositions[i].Y += 29;
-
             robeTrailPositions[i].X -=
                 (float)i / robeTrailPositions.Length
                 * _robeOffset

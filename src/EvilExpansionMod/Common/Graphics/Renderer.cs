@@ -47,8 +47,9 @@ public class Renderer : ModSystem {
     }
 
     enum CommandType : byte {
-        Trail,
-        Sprite,
+        DrawTrail,
+        DrawSpritePosition,
+        DrawSpriteRectangle,
 
         Begin,
         BeginPixelate,
@@ -60,7 +61,7 @@ public class Renderer : ModSystem {
     }
 
 
-    struct SpriteData {
+    struct DrawSpritePositionData {
         public Texture2D Texture;
         public Vector2 Position;
         public Color Color;
@@ -71,7 +72,17 @@ public class Renderer : ModSystem {
         public SpriteEffects SpriteEffects;
     }
 
-    struct TrailData {
+    struct DrawSpriteRectangleData {
+        public Texture2D Texture;
+        public Rectangle Destination;
+        public Color Color;
+        public Rectangle? Source;
+        public float Rotation;
+        public Vector2 Origin;
+        public SpriteEffects SpriteEffects;
+    }
+
+    struct DrawTrailData {
         public int PositionsIndex;
         public int PositionCount;
         public Func<float, float> Width;
@@ -180,8 +191,9 @@ public class Renderer : ModSystem {
 
     static readonly List<EffectParameter> _effectParameters = [];
 
-    static readonly List<SpriteData> _spriteDatas = [];
-    static readonly List<TrailData> _trailDatas = [];
+    static readonly List<DrawSpritePositionData> _spritePositionDatas = [];
+    static readonly List<DrawSpriteRectangleData> _spriteRectangleDatas = [];
+    static readonly List<DrawTrailData> _trailDatas = [];
     static readonly List<OutlineData> _outlineDatas = [];
     static readonly List<SpriteBatchSnapshot> _snapshotDatas = [];
     static readonly List<EffectData> _effectDatas = [];
@@ -229,14 +241,15 @@ public class Renderer : ModSystem {
     public override void PreUpdateEntities() {
         _effectParameters.Clear();
 
-        _spriteDatas.Clear();
+        _spritePositionDatas.Clear();
+        _spriteRectangleDatas.Clear();
         _trailDatas.Clear();
         _outlineDatas.Clear();
         _snapshotDatas.Clear();
         _effectDatas.Clear();
         _trailPositions.Clear();
 
-        _behindNPCs.Clear();
+        _behindTiles.Clear();
         _afterTiles.Clear();
         _behindProjectiles.Clear();
         _afterProjectiles.Clear();
@@ -266,11 +279,11 @@ public class Renderer : ModSystem {
         var targetState = TargetState.None;
         for(var i = 0; i < commands.Count; i++) {
             switch(commands.Types[i]) {
-                case CommandType.Trail:
+                case CommandType.DrawTrail:
                     DrawTrail(_trailDatas[commands.Datas[i]]);
                     break;
-                case CommandType.Sprite:
-                    var sprite = _spriteDatas[commands.Datas[i]];
+                case CommandType.DrawSpritePosition:
+                    var sprite = _spritePositionDatas[commands.Datas[i]];
                     Main.spriteBatch.Draw(
                         sprite.Texture,
                         sprite.Position,
@@ -280,6 +293,19 @@ public class Renderer : ModSystem {
                         sprite.Origin,
                         sprite.Scale,
                         sprite.SpriteEffects,
+                        0f
+                    );
+                    break;
+                case CommandType.DrawSpriteRectangle:
+                    var rectangleData = _spriteRectangleDatas[commands.Datas[i]];
+                    Main.spriteBatch.Draw(
+                        rectangleData.Texture,
+                        rectangleData.Destination,
+                        null,
+                        rectangleData.Color,
+                        rectangleData.Rotation,
+                        rectangleData.Origin,
+                        rectangleData.SpriteEffects,
                         0f
                     );
                     break;
@@ -339,7 +365,7 @@ public class Renderer : ModSystem {
         if(initialSnapshot is { } s) Main.spriteBatch.Begin(s);
     }
 
-    static void DrawTrail(TrailData trail) {
+    static void DrawTrail(DrawTrailData trail) {
         var trailPositions =
             CollectionsMarshal.AsSpan(_trailPositions)[trail.PositionsIndex..(trail.PositionsIndex + trail.PositionCount)];
 
@@ -525,7 +551,7 @@ public class Renderer : ModSystem {
                 Color = color,
                 EffectData = effectDataIndex,
             });
-            _cache.Add(CommandType.Trail, trailDataIndex);
+            _cache.Add(CommandType.DrawTrail, trailDataIndex);
 
             return this;
         }
@@ -575,8 +601,8 @@ public class Renderer : ModSystem {
                 throw new Exception("Begin not called.");
             }
 
-            var index = _spriteDatas.Count;
-            _spriteDatas.Add(new()
+            var index = _spritePositionDatas.Count;
+            _spritePositionDatas.Add(new()
             {
                 Texture = texture,
                 Position = position,
@@ -587,9 +613,38 @@ public class Renderer : ModSystem {
                 Scale = scale ?? Vector2.One,
                 SpriteEffects = spriteEffects,
             });
-            _cache.Add(CommandType.Sprite, index);
+            _cache.Add(CommandType.DrawSpritePosition, index);
             return this;
         }
+        public readonly Pipeline DrawSprite(
+            Texture2D texture,
+            Rectangle destination,
+            Color? color = null, // WHITE
+            Rectangle? source = null,
+            float rotation = 0f,
+            Vector2? origin = null,
+            SpriteEffects spriteEffects = SpriteEffects.None
+        ) {
+            if(!_beginCalled) {
+                _cache.Clear();
+                throw new Exception("Begin not called.");
+            }
+
+            var index = _spriteRectangleDatas.Count;
+            _spriteRectangleDatas.Add(new()
+            {
+                Texture = texture,
+                Destination = destination,
+                Color = color ?? Color.White,
+                Source = source,
+                Rotation = rotation,
+                Origin = origin ?? Vector2.Zero,
+                SpriteEffects = spriteEffects,
+            });
+            _cache.Add(CommandType.DrawSpriteRectangle, index);
+            return this;
+        }
+
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly void Flush() {

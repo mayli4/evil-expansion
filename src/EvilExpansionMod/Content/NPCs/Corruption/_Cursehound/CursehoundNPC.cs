@@ -176,18 +176,18 @@ public sealed class CursehoundNPC : ModNPC {
         if(NPC.velocity.Y == 0 && _timeGrounded >= ground_time_for_attack && ai.RoarAttackCooldown <= 0 && broadLineOfSight && distanceToTarget >= roarAttackMinRange && distanceToTarget <= roarAttackMaxRange) {
             if(Main.rand.NextBool(30)) {
                 ai.CurrentState = State.RoarTelegraph;
-                ai.RoarAttackCooldown = 60 * 15;
+                ai.RoarAttackCooldown = 60 * 1;
             }
             return;
         }
 
-        if(ai.MaceAttackCooldown <= 0 && broadLineOfSight && distanceToTarget < maceAttackRange && _timeGrounded >= ground_time_for_attack) {
-            if(Main.rand.NextBool(30)) {
-                ai.CurrentState = State.MaceSpinning;
-                ai.MaceAttackCooldown = 60 * 5;
-            }
-            return;
-        }
+        // if(ai.MaceAttackCooldown <= 0 && broadLineOfSight && distanceToTarget < maceAttackRange && _timeGrounded >= ground_time_for_attack) {
+        //     if(Main.rand.NextBool(30)) {
+        //         ai.CurrentState = State.MaceSpinning;
+        //         ai.MaceAttackCooldown = 60 * 5;
+        //     }
+        //     return;
+        // }
 
         bool shouldRun = distanceToTarget > runThreshold;
         if(shouldRun) {
@@ -323,7 +323,7 @@ public sealed class CursehoundNPC : ModNPC {
             if(lavaTiles.Count > 0) {
                 var randomLavaTile = lavaTiles[Main.rand.Next(lavaTiles.Count)];
                 var spawnPos = randomLavaTile.ToWorldCoordinates();
-                var velocity = new Vector2(0, Main.rand.NextFloat(-10f, -15f));
+                var velocity = new Vector2(0, MathUtilities.InitialVelocityRequiredToHitPosition(spawnPos, Target.position - new Vector2(0, 40), 0.4f, 16f).Y);
                 Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, velocity, ModContent.ProjectileType<SpiritFireball>(), NPC.damage / 2, 0f, Main.myPlayer);
 
                 if(Filters.Scene["WaterDistortion"].GetShader() is not WaterShaderData data) {

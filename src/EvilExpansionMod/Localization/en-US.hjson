@@ -2,37 +2,37 @@ Mods: {
 	EvilExpansionMod: {
 		Items: {
 			CorruptAshItem: {
-				DisplayName: Corrupt Ash Item
+				DisplayName: Corrupt Ash
 				Tooltip: ""
 			}
 
 			CrimsonAshItem: {
-				DisplayName: Crimson Ash Item
+				DisplayName: Crimson Ash
 				Tooltip: ""
 			}
 
 			UnderworldDemoniteItem: {
-				DisplayName: Underworld Demonite Item
+				DisplayName: Underworld Demonite
 				Tooltip: ""
 			}
 
 			DevilOWarHeartPickup: {
-				DisplayName: Devil O War Heart Pickup
+				DisplayName: Heart
 				Tooltip: ""
 			}
 
 			CursedSpiritBannerItem: {
-				DisplayName: Cursed Spirit Banner Item
+				DisplayName: Cursed Spirit Banner
 				Tooltip: ""
 			}
 
 			CursehoundBannerItem: {
-				DisplayName: Cursehound Banner Item
+				DisplayName: Cursehound Banner
 				Tooltip: ""
 			}
 
 			DevilOWarBannerItem: {
-				DisplayName: Devil O War Banner Item
+				DisplayName: Devil O War Banner
 				Tooltip: ""
 			}
 
@@ -64,7 +64,6 @@ Mods: {
 			HellbatSpitProjectile.DisplayName: Hellbat Spit Projectile
 			TerrorBatSpit.DisplayName: Terror Bat Spit
 			SpiritFireball.DisplayName: Spirit Fireball
-			GiantShroomCapDummy.DisplayName: Giant Shroom Cap Dummy
 			ExplosionVFXProjectile.DisplayName: Explosion V F X Projectile
 			CursehoundMace.DisplayName: Cursehound Mace
 			MaceCrack.DisplayName: Mace Crack
@@ -72,6 +71,8 @@ Mods: {
 			EffigyRootProjectile.DisplayName: Effigy Root Projectile
 			CursedFog.DisplayName: Cursed Fog
 			CultistPortal.DisplayName: Cultist Portal
+			MaceDebris.DisplayName: Mace Debris
+			StalactiteProjectile.DisplayName: Stalactite Projectile
 		}
 
 		Biomes: {

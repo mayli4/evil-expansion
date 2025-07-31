@@ -16,6 +16,8 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
+//todo balancing, stalactite telegraph and more sounds
+
 public sealed class CursehoundNPC : ModNPC {
     public enum State {
         Idle,
@@ -176,18 +178,18 @@ public sealed class CursehoundNPC : ModNPC {
         if(NPC.velocity.Y == 0 && _timeGrounded >= ground_time_for_attack && ai.RoarAttackCooldown <= 0 && broadLineOfSight && distanceToTarget >= roarAttackMinRange && distanceToTarget <= roarAttackMaxRange) {
             if(Main.rand.NextBool(30)) {
                 ai.CurrentState = State.RoarTelegraph;
-                ai.RoarAttackCooldown = 60 * 1;
+                ai.RoarAttackCooldown = 60 * 5;
             }
             return;
         }
 
-        // if(ai.MaceAttackCooldown <= 0 && broadLineOfSight && distanceToTarget < maceAttackRange && _timeGrounded >= ground_time_for_attack) {
-        //     if(Main.rand.NextBool(30)) {
-        //         ai.CurrentState = State.MaceSpinning;
-        //         ai.MaceAttackCooldown = 60 * 5;
-        //     }
-        //     return;
-        // }
+        if(ai.MaceAttackCooldown <= 0 && broadLineOfSight && distanceToTarget < maceAttackRange && _timeGrounded >= ground_time_for_attack) {
+            if(Main.rand.NextBool(30)) {
+                ai.CurrentState = State.MaceSpinning;
+                ai.MaceAttackCooldown = 60 * 5;
+            }
+            return;
+        }
 
         bool shouldRun = distanceToTarget > runThreshold;
         if(shouldRun) {
@@ -294,7 +296,7 @@ public sealed class CursehoundNPC : ModNPC {
         ai.Timer++;
 
         if(ai.Timer == 1) {
-            SoundEngine.PlaySound(SoundID.DD2_BetsyDeath with { Volume = 1.2f, Pitch = 0.5f }, NPC.Center);
+            SoundEngine.PlaySound(SoundID.DD2_BetsyDeath with { Volume = 1.2f, Pitch = 0.1f }, NPC.Center);
             SoundEngine.PlaySound(SoundID.DD2_BetsyScream with { Volume = 1.2f, Pitch = 0.1f }, NPC.Center);
 
             Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(12f, 0.6f));
@@ -331,6 +333,34 @@ public sealed class CursehoundNPC : ModNPC {
                 }
 
                 data.QueueRipple(spawnPos, 30f, RippleShape.Circle, MathHelper.PiOver4);
+            }
+        }
+        
+        if (ai.Timer > 40 && ai.Timer < roar_duration - 30 && ai.Timer % 20 == 0) {
+            int numberOfStalactites = Main.rand.Next(2, 4);
+            float spawnAreaWidth = 300f;
+
+            for (int i = 0; i < numberOfStalactites; i++) {
+                float spawnX = Target.Center.X + Main.rand.NextFloat(-spawnAreaWidth / 2f, spawnAreaWidth / 2f);
+
+                int tileX = (int)(spawnX / 16f);
+                int tileY = (int)(Target.position.Y / 16f) - 10;
+
+                for (int y = tileY; y > 0; y--) {
+                    if (WorldGen.InWorld(tileX, y) && Main.tile[tileX, y].HasTile && Main.tileSolid[Main.tile[tileX, y].TileType]) {
+                        Vector2 spawnPosition = new Vector2(tileX * 16f + 8f, y * 16f + 16f);
+                        Projectile.NewProjectile(
+                            NPC.GetSource_FromAI(),
+                            spawnPosition,
+                            Vector2.Zero,
+                            ModContent.ProjectileType<StalactiteProjectile>(),
+                            NPC.damage / 2,
+                            2f,
+                            Main.myPlayer
+                        );
+                        break;
+                    }
+                }
             }
         }
 

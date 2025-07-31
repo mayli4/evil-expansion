@@ -28,14 +28,14 @@ public class CultistPortal : ModProjectile {
 
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
         var t = (float)Projectile.timeLeft / MaxTimeLeft;
-        if(t < 0.85f || t > 0.9f) return false;
+        if(t < 0.8f || t > 0.9f) return false;
 
         float _ = 0;
         return Collision.CheckAABBvLineCollision(
             targetHitbox.TopLeft(),
             targetHitbox.Size(),
             Projectile.Center,
-            Projectile.Center + Projectile.velocity * 110f,
+            Projectile.Center + Projectile.velocity * 120f,
             10,
             ref _
         );
@@ -57,10 +57,36 @@ public class CultistPortal : ModProjectile {
         var t = (float)Projectile.timeLeft / MaxTimeLeft;
         var scale = t < 0.1f ? t / 0.1f : (t > 0.9f ? (0.1f - (t - 0.9f)) / 0.1f : 1f);
 
-        var color1 = new Color(209, 54, 0);
-        var color2 = new Color(249, 197, 55);
+        var color1 = new Color(249, 197, 55);
+        var color2 = new Color(242, 95, 2);
+        var color3 = new Color(222, 27, 5);
+        var middleColor = new Color(34, 11, 23);
         var rotation = Projectile.velocity.ToRotation();
+
+        var circleTexture = Assets.Assets.Textures.Misc.Circle.Value;
+        Main.spriteBatch.Draw(
+            circleTexture,
+            Projectile.Center - Main.screenPosition + Projectile.velocity * 18f,
+            null,
+            middleColor,
+            rotation,
+            circleTexture.Size() / 2f,
+            scale * new Vector2(0.7f, 2.1f),
+            SpriteEffects.None,
+            0f
+        );
+
         new Renderer.Pipeline()
+            .BeginPixelate()
+            .DrawSprite(
+                circleTexture,
+                Projectile.Center - Main.screenPosition + Projectile.velocity * 18f,
+                color: middleColor,
+                rotation: rotation,
+                origin: circleTexture.Size() / 2f,
+                scale: scale * new Vector2(0.75f, 2f)
+            )
+            .End()
             .BeginPixelate(new() { CustomEffect = effect })
             .EffectParams(
                 effect,
@@ -74,17 +100,22 @@ public class CultistPortal : ModProjectile {
                 sampleTexture0,
                 destination,
                 rotation: rotation,
-                origin: new(Projectile.width, Projectile.height * 2)
+                origin: new(Projectile.width, Projectile.height * 2 - 7)
             )
-            .ApplyOutline(color2)
-            .ApplyOutline(Color.DarkBlue)
+            .ApplyOutline(color3)
+            .ApplyOutline(middleColor)
             .End()
             .Flush();
 
+        // dont ask
+        var spearX = t < 0.2f ? 0f :
+            (t < 0.3f ? (t - 0.2f) / 0.1f :
+            (t < 0.8f ? 1 : t < 0.9f ? (0.1f - (t - 0.8f)) / 0.1f : 0f));
+
         Main.spriteBatch.Draw(
             spearTexture,
-            Projectile.Center - Main.screenPosition + Projectile.velocity * 12f,
-            new Rectangle(0, 0, (int)(scale * spearTexture.Width), spearTexture.Height),
+            Projectile.Center - Main.screenPosition + Projectile.velocity * 14f,
+            new Rectangle(0, 0, (int)(spearX * spearTexture.Width), spearTexture.Height),
             lightColor,
             rotation,
             Vector2.UnitY * 18,

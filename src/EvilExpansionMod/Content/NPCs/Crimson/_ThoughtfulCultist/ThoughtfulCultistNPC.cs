@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Runtime.CompilerServices;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -75,20 +76,21 @@ public class ThoughtfulCultistNPC : ModNPC {
         switch(State) {
             case CultistState.FlyToTarget:
                 if(distanceToTarget > 400) {
-                    NPC.velocity += directionToTarget * 0.075f;
+                    NPC.velocity += directionToTarget * 0.03f;
                     NPC.velocity *= 0.98f;
                 }
-                else if(Main.netMode != NetmodeID.MultiplayerClient && _timer > 60) {
+                else if(Main.netMode != NetmodeID.MultiplayerClient && _timer > 120) {
                     ChangeState(CultistState.SpearAttack);
                 }
                 break;
             case CultistState.SpearAttack:
-                NPC.velocity *= 0.95f;
+                NPC.velocity *= 0.99f;
                 if(Target == null) {
                     ChangeState(CultistState.FlyToTarget);
                 }
-                else if(_timer > 60) {
-                    var position = Target.Center - 120f * directionToTarget.RotatedByRandom(MathF.PI / 2f);
+                else if(_timer > 60 && (int)_timer % 30 == 0) {
+                    SoundEngine.PlaySound(SoundID.Item79);
+                    var position = Target.Center - 85f * directionToTarget.RotatedByRandom(MathF.PI);
                     var direction = position.DirectionTo(Target.Center);
                     Projectile.NewProjectile(
                         NPC.GetSource_FromAI(),
@@ -98,7 +100,9 @@ public class ThoughtfulCultistNPC : ModNPC {
                         20,
                         0.2f
                     );
+                }
 
+                if(_timer > 150) {
                     ChangeState(CultistState.FlyToTarget);
                 }
                 break;
@@ -141,23 +145,33 @@ public class ThoughtfulCultistNPC : ModNPC {
         var bezier = new BezierCurve(bezierLeft, bezierCenter, bezierRight);
         var chainPoints = bezier.GetPoints(13).ToArray();
 
+        var pendantOutlineColor = Color.Transparent;
+        switch(State) {
+            case CultistState.SpearAttack:
+                if(_timer < 60) pendantOutlineColor = Color.Lerp(
+                    pendantOutlineColor,
+                    Color.Orange,
+                    MathF.Sin(MathF.PI * _timer / 60)
+                );
+                break;
+        }
+
         new Renderer.Pipeline()
             .DrawBasicTrail(robeTrailPositions, static _ => 88, robeTextureBack, drawColor, 1)
             .DrawBasicTrail(chainPoints, static _ => 6, chainTexture, drawColor)
             .DrawBasicTrail(robeTrailPositions, static _ => 88, robeTextureFront, drawColor, 1)
+            .BeginPixelate()
+            .DrawSprite(
+                pendantTexture,
+                chainPoints[chainPoints.Length / 2] - screenPos,
+                color: drawColor,
+                rotation: 0f,
+                origin: pendantTexture.Size() / 2f
+            )
+            .ApplyOutline(pendantOutlineColor)
+            .End()
             .Flush();
 
-        spriteBatch.Draw(
-            pendantTexture,
-            chainPoints[chainPoints.Length / 2] - screenPos,
-            null,
-            drawColor,
-            0f,
-            pendantTexture.Size() / 2f,
-            1f,
-            SpriteEffects.None,
-            0f
-        );
         spriteBatch.Draw(brainTexture, NPC.Center - screenPos, null, drawColor, 0f, new Vector2(53, 55), 1f, SpriteEffects.None, 0f);
         return false;
     }

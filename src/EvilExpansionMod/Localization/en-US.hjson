@@ -56,6 +56,7 @@ Mods: {
 			CursehoundNPC.DisplayName: Cursehound
 			TestStateNPC.DisplayName: Test State N P C
 			ThoughtfulCultistNPC.DisplayName: Thoughtful Cultist
+			CultistEye.DisplayName: Cultist Eye
 		}
 
 		Projectiles: {
@@ -102,6 +103,7 @@ Mods: {
 			TerrorBatNPCBestiary: The terror bat grooves and dives in the air, while also using its acidic spit as a weapon that you wouldn't want to stain your clothes!
 			PusCarrierGrubNPCBestiary: ""
 			CursedSpiritNPCBestiary: ""
+			CultistEyeBestiary: ""
 		}
 	}
 }

@@ -18,6 +18,7 @@ namespace EvilExpansionMod.Content.NPCs.Crimson;
 enum CultistState {
     FlyToTarget,
     SpearAttack,
+    EyeAttack
 }
 
 public class ThoughtfulCultistNPC : ModNPC {
@@ -27,6 +28,7 @@ public class ThoughtfulCultistNPC : ModNPC {
 
     float _timer;
     float _robeOffset;
+    float _previousPortalRotation;
 
     void ChangeState(CultistState state) {
         NPC.ai[0] = Unsafe.BitCast<CultistState, float>(state);
@@ -80,7 +82,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                     NPC.velocity *= 0.98f;
                 }
                 else if(Main.netMode != NetmodeID.MultiplayerClient && _timer > 120) {
-                    ChangeState(CultistState.SpearAttack);
+                    ChangeState(Main.rand.NextBool() ? CultistState.SpearAttack : CultistState.EyeAttack);
                 }
                 break;
             case CultistState.SpearAttack:
@@ -89,20 +91,23 @@ public class ThoughtfulCultistNPC : ModNPC {
                     ChangeState(CultistState.FlyToTarget);
                 }
                 else if(_timer > 60 && (int)_timer % 30 == 0) {
-                    SoundEngine.PlaySound(SoundID.Item79);
-                    var position = Target.Center - 85f * directionToTarget.RotatedByRandom(MathF.PI);
-                    var direction = position.DirectionTo(Target.Center);
-                    Projectile.NewProjectile(
-                        NPC.GetSource_FromAI(),
-                        position,
-                        direction,
-                        ModContent.ProjectileType<CultistPortal>(),
-                        20,
-                        0.2f
-                    );
+                    SpawnPortalOnTarget(directionToTarget, 105f, PortalType.Spear, 120);
                 }
 
                 if(_timer > 150) {
+                    ChangeState(CultistState.FlyToTarget);
+                }
+                break;
+            case CultistState.EyeAttack:
+                NPC.velocity *= 0.99f;
+                if(Target == null) {
+                    ChangeState(CultistState.FlyToTarget);
+                }
+                else if(_timer > 60 && (int)_timer % 30 == 0) {
+                    SpawnPortalOnTarget(directionToTarget, 400f, PortalType.Blood, 240);
+                }
+
+                if(_timer > 120) {
                     ChangeState(CultistState.FlyToTarget);
                 }
                 break;
@@ -115,14 +120,33 @@ public class ThoughtfulCultistNPC : ModNPC {
         _robeOffset *= 0.98f;
     }
 
+    void SpawnPortalOnTarget(Vector2 directionToTarget, float distance, PortalType type, float timeLeft) {
+        _previousPortalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
+        var position = Target.Center - distance * directionToTarget.RotatedBy(_previousPortalRotation);
+        var direction = position.DirectionTo(Target.Center);
+        Projectile.NewProjectile(
+            NPC.GetSource_FromAI(),
+            position,
+            direction,
+            ModContent.ProjectileType<CultistPortal>(),
+            20,
+            0.2f,
+            ai0: (float)type,
+            ai1: timeLeft
+        );
+
+        SoundEngine.PlaySound(SoundID.Item79, position);
+    }
+
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var brainTexture = TextureAssets.Npc[Type].Value;
         var robeTextureBack = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistRobeBack.Value;
         var robeTextureFront = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistRobeFront.Value;
         var pendantTexture = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistPendant.Value;
+        var pendantGlowmaskTexture = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistPendantGlowmask.Value;
         var chainTexture = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistChain.Value;
 
-        Span<Vector2> robeTrailPositions = new Vector2[7]; // TODO: change to stackalloc
+        Span<Vector2> robeTrailPositions = new Vector2[7];
         robeTrailPositions[0] = NPC.Center - Vector2.UnitY * 7f;
 
         for(var i = 1; i < robeTrailPositions.Length; i++) {
@@ -154,6 +178,13 @@ public class ThoughtfulCultistNPC : ModNPC {
                     MathF.Sin(MathF.PI * _timer / 60)
                 );
                 break;
+            case CultistState.EyeAttack:
+                if(_timer < 60) pendantOutlineColor = Color.Lerp(
+                    pendantOutlineColor,
+                    Color.Red,
+                    MathF.Sin(MathF.PI * _timer / 60)
+                );
+                break;
         }
 
         new Renderer.Pipeline()
@@ -165,6 +196,13 @@ public class ThoughtfulCultistNPC : ModNPC {
                 pendantTexture,
                 chainPoints[chainPoints.Length / 2] - screenPos,
                 color: drawColor,
+                rotation: 0f,
+                origin: pendantTexture.Size() / 2f
+            )
+            .DrawSprite(
+                pendantGlowmaskTexture,
+                chainPoints[chainPoints.Length / 2] - screenPos,
+                color: pendantOutlineColor,
                 rotation: 0f,
                 origin: pendantTexture.Size() / 2f
             )

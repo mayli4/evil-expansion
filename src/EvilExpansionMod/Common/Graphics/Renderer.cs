@@ -14,13 +14,13 @@ using DataIndex = int;
 using EffectDataIndex = int;
 
 public enum RenderLayer {
-    BehindTiles,
+    BeforeTiles,
     AfterTiles,
-    BehindProjectiles,
+    BeforeProjectiles,
     AfterProjectiles,
-    BehindNPCs,
+    BeforeNPCs,
     AfterNPCs,
-    BehindPlayers,
+    BeforePlayers,
     AfterPlayers,
 }
 
@@ -201,13 +201,13 @@ public class Renderer : ModSystem {
 
     static Commands _cache = new();
 
-    static Commands _behindTiles = new();
+    static Commands _beforeTiles = new();
     static Commands _afterTiles = new();
-    static Commands _behindProjectiles = new();
+    static Commands _beforeProjectiles = new();
     static Commands _afterProjectiles = new();
-    static Commands _behindNPCs = new();
+    static Commands _beforeNPCs = new();
     static Commands _afterNPCs = new();
-    static Commands _behindPlayers = new();
+    static Commands _beforePlayers = new();
     static Commands _afterPlayers = new();
 
     const int TrailPositionCapacity = 256;
@@ -236,6 +236,47 @@ public class Renderer : ModSystem {
                 BufferUsage.WriteOnly
             );
         });
+
+        On_Main.DrawNPCs += On_Main_DrawNPCs;
+        On_Main.DrawSuperSpecialProjectiles += On_Main_DrawSuperSpecialProjectiles;
+        On_Main.DrawPlayers_AfterProjectiles += On_Main_DrawPlayers_AfterProjectiles;
+        On_Main.DrawCachedProjs += On_Main_DrawCachedProjs;
+    }
+
+    public override void Unload() {
+        On_Main.DrawNPCs -= On_Main_DrawNPCs;
+        On_Main.DrawSuperSpecialProjectiles -= On_Main_DrawSuperSpecialProjectiles;
+        On_Main.DrawPlayers_AfterProjectiles -= On_Main_DrawPlayers_AfterProjectiles;
+        On_Main.DrawCachedProjs -= On_Main_DrawCachedProjs;
+    }
+
+    private void On_Main_DrawSuperSpecialProjectiles(On_Main.orig_DrawSuperSpecialProjectiles orig, Main self, List<int> projCache, bool startSpriteBatch) {
+        ExecuteCommands(in _beforeProjectiles);
+        orig(self, projCache, startSpriteBatch);
+    }
+
+    private void On_Main_DrawCachedProjs(On_Main.orig_DrawCachedProjs orig, Main self, List<int> projCache, bool startSpriteBatch) {
+        orig(self, projCache, startSpriteBatch);
+        ExecuteCommands(in _afterProjectiles);
+    }
+
+    private void On_Main_DrawPlayers_AfterProjectiles(On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self) {
+        ExecuteCommands(in _beforePlayers);
+        orig(self);
+        ExecuteCommands(in _afterPlayers);
+    }
+
+    private void On_Main_DrawNPCs(On_Main.orig_DrawNPCs orig, Main self, bool behindTiles) {
+        if(behindTiles) {
+            ExecuteCommands(in _beforeTiles);
+            orig(self, behindTiles);
+        }
+        else {
+            ExecuteCommands(in _afterTiles);
+            ExecuteCommands(in _beforeNPCs);
+            orig(self, behindTiles);
+            ExecuteCommands(in _afterNPCs);
+        }
     }
 
     public override void PreUpdateEntities() {
@@ -249,13 +290,13 @@ public class Renderer : ModSystem {
         _effectDatas.Clear();
         _trailPositions.Clear();
 
-        _behindTiles.Clear();
+        _beforeTiles.Clear();
         _afterTiles.Clear();
-        _behindProjectiles.Clear();
+        _beforeProjectiles.Clear();
         _afterProjectiles.Clear();
-        _behindNPCs.Clear();
+        _beforeNPCs.Clear();
         _afterNPCs.Clear();
-        _behindPlayers.Clear();
+        _beforePlayers.Clear();
         _afterPlayers.Clear();
 
         PixelateEffectMatrix =
@@ -466,14 +507,14 @@ public class Renderer : ModSystem {
             if(_cache.Count != 0) throw new Exception("One pipeline can be active at a time.");
         }
 
-        public Pipeline Begin(SpriteBatchSnapshot snapshot = default) {
+        public Pipeline Begin(SpriteBatchSnapshot? snapshot = null) {
             if(_beginCalled) {
                 _cache.Clear();
                 throw new Exception("Begin already called.");
             }
 
             var index = _snapshotDatas.Count;
-            _snapshotDatas.Add(snapshot);
+            _snapshotDatas.Add(snapshot ?? new());
             _cache.Add(CommandType.Begin, index);
 
             _beginCalled = true;
@@ -492,14 +533,14 @@ public class Renderer : ModSystem {
             return this;
         }
 
-        public Pipeline BeginPixelate(SpriteBatchSnapshot snapshot = default) {
+        public Pipeline BeginPixelate(SpriteBatchSnapshot? snapshot = null) {
             if(_beginCalled) {
                 _cache.Clear();
                 throw new Exception("Begin already called.");
             }
 
             var index = _snapshotDatas.Count;
-            _snapshotDatas.Add(snapshot);
+            _snapshotDatas.Add(snapshot ?? new());
             _cache.Add(CommandType.BeginPixelate, index);
 
             _beginCalled = true;
@@ -656,26 +697,26 @@ public class Renderer : ModSystem {
 
         public readonly void Schedule(RenderLayer layer) {
             switch(layer) {
-                case RenderLayer.BehindTiles:
-                    _behindTiles.AddRange(in _cache);
+                case RenderLayer.BeforeTiles:
+                    _beforeTiles.AddRange(in _cache);
                     break;
                 case RenderLayer.AfterTiles:
                     _afterTiles.AddRange(in _cache);
                     break;
-                case RenderLayer.BehindProjectiles:
-                    _behindProjectiles.AddRange(in _cache);
+                case RenderLayer.BeforeProjectiles:
+                    _beforeProjectiles.AddRange(in _cache);
                     break;
                 case RenderLayer.AfterProjectiles:
                     _afterProjectiles.AddRange(in _cache);
                     break;
-                case RenderLayer.BehindNPCs:
-                    _behindNPCs.AddRange(in _cache);
+                case RenderLayer.BeforeNPCs:
+                    _beforeNPCs.AddRange(in _cache);
                     break;
                 case RenderLayer.AfterNPCs:
                     _afterNPCs.AddRange(in _cache);
                     break;
-                case RenderLayer.BehindPlayers:
-                    _behindPlayers.AddRange(in _cache);
+                case RenderLayer.BeforePlayers:
+                    _beforePlayers.AddRange(in _cache);
                     break;
                 case RenderLayer.AfterPlayers:
                     _afterPlayers.AddRange(in _cache);
@@ -684,5 +725,10 @@ public class Renderer : ModSystem {
 
             _cache.Clear();
         }
+    }
+}
+
+public class TestSystem : ModSystem {
+    public override void PreUpdateNPCs() {
     }
 }

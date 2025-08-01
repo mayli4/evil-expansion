@@ -41,6 +41,7 @@ public class CultistPortal : ModProjectile {
 
     public override void OnSpawn(IEntitySource source) {
         Projectile.timeLeft = (int)Projectile.ai[1];
+        Projectile.netUpdate = true;
     }
 
     public override void AI() {
@@ -90,8 +91,8 @@ public class CultistPortal : ModProjectile {
 
     public override bool PreDraw(ref Color lightColor) {
         var spearTexture = TextureAssets.Projectile[Type].Value;
-        var sampleTexture0 = Assets.Assets.Textures.Sample.BubblyNoise.Value;
-        var sampleTexture1 = Assets.Assets.Textures.Sample.DissolveNoise.Value;
+        var sampleTexture0 = Assets.Assets.Textures.Sample.PerlinNoise.Value;
+        var sampleTexture1 = Assets.Assets.Textures.Sample.Noise2.Value;
         var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;
 
         var effect = Assets.Assets.Effects.Pixel.CultistPortal.Value;
@@ -113,18 +114,18 @@ public class CultistPortal : ModProjectile {
         var middleColor = PortalType switch
         {
             PortalType.Spear => new Color(34, 11, 23),
-            PortalType.Blood => new Color(70, 11, 30),
+            PortalType.Blood => new Color(90, 21, 30),
         };
         var circleTexture = Assets.Assets.Textures.Misc.Circle.Value;
         new Renderer.Pipeline()
             .BeginPixelate()
             .DrawSprite(
                 circleTexture,
-                Projectile.Center - Main.screenPosition + Projectile.velocity * 18f,
+                Projectile.Center - Main.screenPosition + Projectile.velocity * 20f,
                 color: middleColor,
                 rotation: rotation,
-                origin: circleTexture.Size() / 2f + Vector2.UnitY * 2f,
-                scale: scale * new Vector2(0.75f, 2.2f)
+                origin: circleTexture.Size() / 2f + Vector2.UnitY * 4f,
+                scale: scale * new Vector2(0.7f, 2.2f)
             )
             .ApplyOutline(color2)
             .ApplyOutline(middleColor)
@@ -142,7 +143,7 @@ public class CultistPortal : ModProjectile {
                 sampleTexture0,
                 destination,
                 rotation: rotation,
-                origin: new(Projectile.width, Projectile.height * 2 - 7)
+                origin: new(Projectile.width, Projectile.height * 4 - 7)
             )
             .ApplyOutline(color2)
             .ApplyOutline(middleColor)

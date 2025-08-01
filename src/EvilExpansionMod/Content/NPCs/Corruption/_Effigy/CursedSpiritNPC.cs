@@ -558,7 +558,7 @@ public sealed class CursedSpiritNPC : ModNPC {
                     NPC.Center - Main.screenPosition,
                     color: smallGlowColor,
                     origin: 16f * Vector2.One,
-                    scale: Vector2.One * 0.9f
+                    scale: Vector2.One * 0.8f
                 )
                 .ApplyOutline(GhostColor1)
                 .End()

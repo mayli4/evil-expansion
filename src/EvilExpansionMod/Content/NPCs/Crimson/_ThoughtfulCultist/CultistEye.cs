@@ -61,6 +61,6 @@ public class CultistEye : ModNPC {
 
     public override void FindFrame(int frameHeight) {
         NPC.frame = new(0, (int)NPC.frameCounter * frameHeight, 40, frameHeight);
-        NPC.frameCounter = (NPC.frameCounter + 0.25f) % 3;
+        NPC.frameCounter = (NPC.frameCounter + 0.2f) % 3;
     }
 }

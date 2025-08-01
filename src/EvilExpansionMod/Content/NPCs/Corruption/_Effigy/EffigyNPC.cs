@@ -54,21 +54,13 @@ public sealed class EffigyNPC : ModNPC {
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<EffigyBannerItem>();
     }
+    
+    public override void Load() {
+        for(int j = 1; j <= 5; j++)
+            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/EffigyGore" + j);
+    }
 
     public override void AI() {
-        // if(_dead) {
-        //     _deadTimer++;
-        //     _animCounter++;
-        //     Lighting.AddLight(NPC.Center, _glowColor.ToVector3());
-        //
-        //     if(_deadTimer >= DEATH_TIME) {
-        //         
-        //         
-        //         NPC.life = 0;
-        //         NPC.active = false;
-        //     }
-        // }
-
         if(_spawnedSprits >= 3) {
             _dead = true;
         }
@@ -93,6 +85,16 @@ public sealed class EffigyNPC : ModNPC {
         }
     }
 
+    public override void HitEffect(NPC.HitInfo hit) {
+        if(Main.netMode == NetmodeID.Server || NPC.life > 0) {
+            return;
+        }
+
+        for(int i = 1; i <= 5; i++) {
+            Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("EffigyGore" + i).Type);
+        }
+    }
+
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var texture = TextureAssets.Npc[Type].Value;
         var glowTex = Assets.Assets.Textures.NPCs.Corruption.Effigy.EffigyNPC_Glow.Value;
@@ -102,16 +104,6 @@ public sealed class EffigyNPC : ModNPC {
         var shader = Assets.Assets.Effects.Pixel.EffigyDecay.Value;
 
         float progValue = 1.5f;
-        
-        // if(NPC.frameCounter == 17) {
-        //     if(_animCounter >= 1.5f * 60) {
-        //         float deathProgress = MathHelper.Clamp((float)_deadTimer / DEATH_TIME, 0f, 1f);
-        //         progValue = MathHelper.Lerp(1.1f, 0.0f, deathProgress);
-        //     }
-        // }
-        // else {
-        //     progValue = 1.5f;
-        // }
         
         shader.Parameters["prog"].SetValue(progValue);
         shader.Parameters["edgeColor"].SetValue(Color.Black.ToVector3());
@@ -142,47 +134,15 @@ public sealed class EffigyNPC : ModNPC {
         );
         spriteBatch.EndBegin(shaderSnapshot);
 
-        // var snapshot = spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive, SamplerState = SamplerState.PointClamp });
-        // spriteBatch.Draw(
-        //     glowTex,
-        //     NPC.Center + offset - screenPos,
-        //     new Rectangle(NPC.frame.X, NPC.frame.Y, NPC.frame.Width + 24, NPC.frame.Height),
-        //     _glowColor,
-        //     0f,
-        //     new Rectangle(NPC.frame.X - 12, NPC.frame.Y, NPC.frame.Width + 24, NPC.frame.Height).Size() / 2f,
-        //     1.0f,
-        //     SpriteEffects.None,
-        //     0
-        // ); 
-        // spriteBatch.EndBegin(snapshot);
-
         return false;
     }
 
     public override bool CheckDead() {
         if(_dead) return true;
-        //
-        // _dead = true;
-        // _deadTimer = 0;
-        // _thornsSpawned = false;
-        //
-        // NPC.dontTakeDamage = true;
-        // NPC.life = 1;
-        //
         return false;
     }
 
     public override void FindFrame(int frameHeight) {
-        // if(_dead) {
-        //     NPC.frameCounter += 0.20f;
-        //     if(NPC.frameCounter >= 17)
-        //         NPC.frameCounter = 17;
-        // }
-        // else {
-        //     NPC.frameCounter += 0.15f;
-        //     if(NPC.frameCounter >= 3)
-        //         NPC.frameCounter = 0;
-        // }
         NPC.frameCounter += 0.15f;
         if(NPC.frameCounter >= 3)
             NPC.frameCounter = 0;

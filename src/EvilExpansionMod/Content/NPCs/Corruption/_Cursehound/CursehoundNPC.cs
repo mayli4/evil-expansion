@@ -91,6 +91,22 @@ public sealed class CursehoundNPC : ModNPC {
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<CursehoundBannerItem>();
     }
+    
+    public override void Load() {
+        for(int j = 1; j <= 8; j++)
+            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/CursehoundGore" + j);
+    }
+    
+    public override void HitEffect(NPC.HitInfo hit) {
+        if(Main.netMode == NetmodeID.Server || NPC.life > 0) {
+            return;
+        }
+
+        for(int i = 1; i <= 8; i++) {
+            Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("CursehoundGore" + i).Type);
+        }
+    }
+
 
     public override void AI() {
         var ai = new MappedAI(NPC);

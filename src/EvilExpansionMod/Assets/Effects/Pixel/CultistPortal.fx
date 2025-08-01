@@ -25,7 +25,7 @@ float4 frag(float2 uv : TEXCOORD0) : COLOR0 {
     float s1 = tex2D(uImage0, rotate(time, uv - 0.5)).r;
     float s2 = tex2D(sampler1, rotate(-time, uv - 0.5)).r;
     
-    return lerp(color1, color2, step(s2, 0.25)) * step(distMask * 1.75 - 0.2, s1 * s2);
+    return lerp(color1, color2, step(s1 * 0.5 + s2 * 0.5, 0.45)) * step(distMask * 2.75 - 0.2, s1 * s2);
 }
 
 technique Technique1 {

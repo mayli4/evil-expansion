@@ -2,6 +2,8 @@
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -31,6 +33,7 @@ public class CultistPortal : ModProjectile {
         Projectile.ignoreWater = false;
         Projectile.penetrate = -1;
         Projectile.timeLeft = 10;
+        Projectile.hide = true;
 
         Projectile.aiStyle = -1;
         Projectile.usesLocalNPCImmunity = true;
@@ -70,6 +73,28 @@ public class CultistPortal : ModProjectile {
                     );
                     npc.velocity = Projectile.velocity * 12f;
                 }
+
+                if(Main.rand.NextBool(2)) {
+                    Dust.NewDustPerfect(
+                        Projectile.Center + Projectile.velocity * 20f
+                        + Main.rand.NextFloatDirection() * 20f * Projectile.velocity.RotatedBy(MathF.PI / 2f),
+                        DustID.Blood,
+                        Velocity: Projectile.velocity * 5f
+                    );
+                }
+
+                if(Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft % 20 == 0) {
+                    var position = Projectile.Center + Projectile.velocity * 15f;
+                    var velocity = Projectile.velocity.RotatedByRandom(MathF.PI / 4f) * Main.rand.NextFloat(5f, 10f);
+                    Projectile.NewProjectile(
+                        Projectile.GetSource_FromAI(),
+                        position,
+                        velocity,
+                        ModContent.ProjectileType<PortalGore>(),
+                        20,
+                        4f
+                    );
+                }
                 break;
         }
     }
@@ -87,6 +112,10 @@ public class CultistPortal : ModProjectile {
             10,
             ref _
         );
+    }
+
+    public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) {
+        behindNPCs.Add(index);
     }
 
     public override bool PreDraw(ref Color lightColor) {

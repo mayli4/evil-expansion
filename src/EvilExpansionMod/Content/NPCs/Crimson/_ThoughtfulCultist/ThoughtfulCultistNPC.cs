@@ -28,7 +28,7 @@ public class ThoughtfulCultistNPC : ModNPC {
 
     float _timer;
     float _robeOffset;
-    float _previousPortalRotation;
+    float _portalRotation;
 
     void ChangeState(CultistState state) {
         NPC.ai[0] = Unsafe.BitCast<CultistState, float>(state);
@@ -82,7 +82,14 @@ public class ThoughtfulCultistNPC : ModNPC {
                     NPC.velocity *= 0.98f;
                 }
                 else if(Main.netMode != NetmodeID.MultiplayerClient && _timer > 120) {
-                    ChangeState(Main.rand.NextBool() ? CultistState.SpearAttack : CultistState.EyeAttack);
+                    if(Main.rand.NextBool()) {
+                        _portalRotation = Main.rand.NextFloat(0, -MathF.PI);
+                        ChangeState(CultistState.EyeAttack);
+                    }
+                    else {
+                        _portalRotation = Main.rand.NextFloat(0, 2 * MathF.PI);
+                        ChangeState(CultistState.SpearAttack);
+                    }
                 }
                 break;
             case CultistState.SpearAttack:
@@ -91,7 +98,21 @@ public class ThoughtfulCultistNPC : ModNPC {
                     ChangeState(CultistState.FlyToTarget);
                 }
                 else if(_timer > 60 && (int)_timer % 30 == 0) {
-                    SpawnPortalOnTarget(directionToTarget, 105f, PortalType.Spear, 120);
+                    var position = Target.Center - 105f * _portalRotation.ToRotationVector2();
+                    var direction = position.DirectionTo(Target.Center);
+                    Projectile.NewProjectile(
+                        NPC.GetSource_FromAI(),
+                        position,
+                        direction,
+                        ModContent.ProjectileType<CultistPortal>(),
+                        20,
+                        0.2f,
+                        ai0: (float)PortalType.Spear,
+                        ai1: 120
+                    );
+
+                    _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
+                    SoundEngine.PlaySound(SoundID.Item79, position);
                 }
 
                 if(_timer > 150) {
@@ -104,7 +125,21 @@ public class ThoughtfulCultistNPC : ModNPC {
                     ChangeState(CultistState.FlyToTarget);
                 }
                 else if(_timer > 60 && (int)_timer % 30 == 0) {
-                    SpawnPortalOnTarget(directionToTarget, 400f, PortalType.Blood, 240);
+                    var position = Target.Center + _portalRotation.ToRotationVector2() * Main.rand.NextFloat(300, 400);
+                    var direction = position.DirectionTo(Target.Center);
+                    Projectile.NewProjectile(
+                        NPC.GetSource_FromAI(),
+                        position,
+                        direction,
+                        ModContent.ProjectileType<CultistPortal>(),
+                        20,
+                        0.2f,
+                        ai0: (float)PortalType.Blood,
+                        ai1: 360
+                    );
+
+                    _portalRotation += Main.rand.NextFloat(MathF.PI / 4f, MathF.PI / 2f);
+                    SoundEngine.PlaySound(SoundID.Item79, position);
                 }
 
                 if(_timer > 120) {
@@ -120,22 +155,23 @@ public class ThoughtfulCultistNPC : ModNPC {
         _robeOffset *= 0.98f;
     }
 
-    void SpawnPortalOnTarget(Vector2 directionToTarget, float distance, PortalType type, float timeLeft) {
-        _previousPortalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
-        var position = Target.Center - distance * directionToTarget.RotatedBy(_previousPortalRotation);
-        var direction = position.DirectionTo(Target.Center);
-        Projectile.NewProjectile(
-            NPC.GetSource_FromAI(),
-            position,
-            direction,
-            ModContent.ProjectileType<CultistPortal>(),
-            20,
-            0.2f,
-            ai0: (float)type,
-            ai1: timeLeft
+    public override void HitEffect(NPC.HitInfo hit) {
+        if(Main.netMode == NetmodeID.Server || NPC.life > 0) return;
+        for(var i = 1; i < 4; i++) Gore.NewGoreDirect(
+            NPC.GetSource_Death(),
+            NPC.Center + Main.rand.NextVector2Unit() * 5f - Vector2.UnitY * 30f,
+            Main.rand.NextVector2Unit(rotationRange: -MathF.PI) * 3f,
+            Mod.Find<ModGore>($"CultistBrainGore{i}").Type
         );
 
-        SoundEngine.PlaySound(SoundID.Item79, position);
+        for(var i = 0; i < 5; i++) {
+            var gore = Gore.NewGoreDirect(
+                NPC.GetSource_Death(),
+                NPC.Center + Main.rand.NextVector2Unit() * 40f + Vector2.UnitY * 30f,
+                Vector2.Zero,
+                Mod.Find<ModGore>($"CultistRobeGore{Main.rand.Next(1, 4)}").Type
+            );
+        }
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {

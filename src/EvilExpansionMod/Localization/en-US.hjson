@@ -74,6 +74,7 @@ Mods: {
 			CultistPortal.DisplayName: Cultist Portal
 			MaceDebris.DisplayName: Mace Debris
 			StalactiteProjectile.DisplayName: Stalactite Projectile
+			PortalGore.DisplayName: Portal Gore
 		}
 
 		Biomes: {

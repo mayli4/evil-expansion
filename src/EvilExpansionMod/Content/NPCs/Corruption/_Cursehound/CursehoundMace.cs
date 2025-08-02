@@ -245,7 +245,7 @@ internal class MaceDebris : ModProjectile {
         if(Projectile.timeLeft < 30)
             Projectile.alpha = (int)((1 - Projectile.timeLeft / 30f) * 255);
     }
-    
+
     public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac) {
         fallThrough = false;
 
@@ -263,9 +263,9 @@ internal class MaceDebris : ModProjectile {
 
     public override bool PreDraw(ref Color lightColor) {
         var tex = TextureAssets.Projectile[Type].Value;
-        
+
         Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, _frame, Projectile.GetAlpha(lightColor), Projectile.rotation, _frame.Size() / 2f, Projectile.scale, SpriteEffects.None, 0f);
-        
+
         return false;
     }
 }

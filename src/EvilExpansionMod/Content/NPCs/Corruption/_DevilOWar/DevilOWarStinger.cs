@@ -81,8 +81,8 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
                 if(actualDrain > 0) {
                     TargetPlayer.statLife -= actualDrain;
                     _healthDrained += actualDrain;
-                    
-                    if (ParentNPC.ModNPC is DevilOWarNPC devilOWarNPC) {
+
+                    if(ParentNPC.ModNPC is DevilOWarNPC devilOWarNPC) {
                         devilOWarNPC.TotalLifeDrained += actualDrain;
                     }
 
@@ -132,8 +132,8 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
                 if(newItemIndex != -1) {
                     Main.item[newItemIndex].damage = healthToReturn;
                 }
-                
-                if (ParentNPC.active && ParentNPC.ModNPC is DevilOWarNPC npc) {
+
+                if(ParentNPC.active && ParentNPC.ModNPC is DevilOWarNPC npc) {
                     npc.TotalLifeDrained -= healthToReturn;
                     npc.TotalLifeDrained = Math.Max(0, npc.TotalLifeDrained);
                 }

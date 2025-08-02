@@ -29,20 +29,20 @@ public sealed class StalactiteProjectile : ModProjectile {
     public override void OnSpawn(IEntitySource source) {
         _frame = new Rectangle(18 * Main.rand.Next(3), 0, 16, 28);
     }
-    
+
     public override void AI() {
         Projectile.velocity.Y += 0.3f;
-        if (Projectile.velocity.Y > 16f) {
+        if(Projectile.velocity.Y > 16f) {
             Projectile.velocity.Y = 16f;
         }
-        
+
         Projectile.ai[0]++;
 
         if(Projectile.ai[0] >= 30) {
             Projectile.tileCollide = true;
         }
 
-        if (Projectile.timeLeft < 60) {
+        if(Projectile.timeLeft < 60) {
             Projectile.alpha = (int)((1 - Projectile.timeLeft / 60f) * 255);
         }
         else {
@@ -53,7 +53,7 @@ public sealed class StalactiteProjectile : ModProjectile {
     public override bool OnTileCollide(Vector2 oldVelocity) {
         Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
 
-        for (int i = 0; i < 10; i++) {
+        for(int i = 0; i < 10; i++) {
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Corruption, Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-2f, 0f), 0, default, 1f);
         }
         return true;
@@ -73,7 +73,7 @@ public sealed class StalactiteProjectile : ModProjectile {
             SpriteEffects.None,
             0f
         );
-        
+
         return false;
     }
 }

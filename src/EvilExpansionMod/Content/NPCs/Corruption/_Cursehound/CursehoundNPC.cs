@@ -91,12 +91,12 @@ public sealed class CursehoundNPC : ModNPC {
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<CursehoundBannerItem>();
     }
-    
+
     public override void Load() {
         for(int j = 1; j <= 8; j++)
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/CursehoundGore" + j);
     }
-    
+
     public override void HitEffect(NPC.HitInfo hit) {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) {
             return;
@@ -351,19 +351,19 @@ public sealed class CursehoundNPC : ModNPC {
                 data.QueueRipple(spawnPos, 30f, RippleShape.Circle, MathHelper.PiOver4);
             }
         }
-        
-        if (ai.Timer > 40 && ai.Timer < roar_duration - 30 && ai.Timer % 20 == 0) {
+
+        if(ai.Timer > 40 && ai.Timer < roar_duration - 30 && ai.Timer % 20 == 0) {
             int numberOfStalactites = Main.rand.Next(2, 4);
             float spawnAreaWidth = 300f;
 
-            for (int i = 0; i < numberOfStalactites; i++) {
+            for(int i = 0; i < numberOfStalactites; i++) {
                 float spawnX = Target.Center.X + Main.rand.NextFloat(-spawnAreaWidth / 2f, spawnAreaWidth / 2f);
 
                 int tileX = (int)(spawnX / 16f);
                 int tileY = (int)(Target.position.Y / 16f) - 10;
 
-                for (int y = tileY; y > 0; y--) {
-                    if (WorldGen.InWorld(tileX, y) && Main.tile[tileX, y].HasTile && Main.tileSolid[Main.tile[tileX, y].TileType]) {
+                for(int y = tileY; y > 0; y--) {
+                    if(WorldGen.InWorld(tileX, y) && Main.tile[tileX, y].HasTile && Main.tileSolid[Main.tile[tileX, y].TileType]) {
                         Vector2 spawnPosition = new Vector2(tileX * 16f + 8f, y * 16f + 16f);
                         Projectile.NewProjectile(
                             NPC.GetSource_FromAI(),

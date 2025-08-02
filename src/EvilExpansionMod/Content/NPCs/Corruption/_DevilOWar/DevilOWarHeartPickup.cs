@@ -46,7 +46,7 @@ public class DevilOWarHeartPickup : ModItem {
         var blinker = (MathF.Sin(0.1f * Main.GameUpdateCount + 23.2f * whoAmI) +
                        MathF.Cos(0.06f * Main.GameUpdateCount) + 2f) / 4f;
         var bigGlowColor = CursedSpiritNPC.GhostColor2 * (0.25f + 0.25f * blinker);
-        
+
         var snapshot = spriteBatch.Capture();
         spriteBatch.End();
         spriteBatch.Begin(snapshot with { BlendState = BlendState.Additive });
@@ -64,7 +64,7 @@ public class DevilOWarHeartPickup : ModItem {
                 0
             );
         }
-        
+
         spriteBatch.Draw(
             glowTexture,
             Item.position - Main.screenPosition,
@@ -76,7 +76,7 @@ public class DevilOWarHeartPickup : ModItem {
             SpriteEffects.None,
             0
         );
-        
+
         Lighting.AddLight(Main.item[whoAmI].position, bigGlowColor.ToVector3());
 
         spriteBatch.End();

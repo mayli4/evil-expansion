@@ -98,6 +98,11 @@ Mods: {
 		Tiles: {
 			UnderworldDemonite.MapEntry: Underworld Demonite
 			UnderworldCorruptLavaDropletSource.MapEntry: Lava Dripping
+			CreamTree.MapEntry: Cream Tree
+			CorruptHellTreeSapling.MapEntry: Corrupt Hell Tree Sapling
+			CreamSapling.MapEntry: Cream Sapling
+			HellEbontree.MapEntry: Hell Ebontree
+			HellEbontreeSapling.MapEntry: Hell Ebontree Sapling
 		}
 
 		Bestiary: {

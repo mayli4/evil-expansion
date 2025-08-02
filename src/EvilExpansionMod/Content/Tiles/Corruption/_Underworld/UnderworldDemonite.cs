@@ -37,7 +37,7 @@ public class UnderworldDemonite : ModTile {
         WorldGen.ConvertTile(i, j, Type);
         return false;
     }
-    
+
     public override void Convert(int i, int j, int conversionType) {
         switch(conversionType) {
             case BiomeConversionID.Purity:

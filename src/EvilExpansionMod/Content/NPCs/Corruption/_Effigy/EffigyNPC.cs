@@ -54,7 +54,7 @@ public sealed class EffigyNPC : ModNPC {
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<EffigyBannerItem>();
     }
-    
+
     public override void Load() {
         for(int j = 1; j <= 5; j++)
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/EffigyGore" + j);
@@ -104,17 +104,17 @@ public sealed class EffigyNPC : ModNPC {
         var shader = Assets.Assets.Effects.Pixel.EffigyDecay.Value;
 
         float progValue = 1.5f;
-        
+
         shader.Parameters["prog"].SetValue(progValue);
         shader.Parameters["edgeColor"].SetValue(Color.Black.ToVector3());
         shader.Parameters["ashColor"].SetValue(_glowColor.ToVector3());
         shader.Parameters["noisetex"].SetValue(Assets.Assets.Textures.Sample.DissolveNoise.Value);
         shader.Parameters["sampleColor"].SetValue(drawColor.ToVector4());
-        
+
         var noiseTexture = Assets.Assets.Textures.Sample.DissolveNoise.Value;
         float noiseAspect = (float)noiseTexture.Width / noiseTexture.Height;
         float frameAspect = (float)NPC.frame.Width / NPC.frame.Height;
-        
+
         shader.Parameters["noiseTexelAspect"].SetValue(noiseAspect + 200);
         shader.Parameters["frameTexelAspect"].SetValue(frameAspect + 2000);
         shader.Parameters["texSize"].SetValue(new Vector2(NPC.frame.Width, NPC.frame.Height));
@@ -146,7 +146,7 @@ public sealed class EffigyNPC : ModNPC {
         NPC.frameCounter += 0.15f;
         if(NPC.frameCounter >= 3)
             NPC.frameCounter = 0;
-        
+
         NPC.frame.Y = (int)NPC.frameCounter * frameHeight;
     }
 }

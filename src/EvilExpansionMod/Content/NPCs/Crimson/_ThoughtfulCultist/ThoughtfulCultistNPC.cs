@@ -182,6 +182,9 @@ public class ThoughtfulCultistNPC : ModNPC {
         var pendantGlowmaskTexture = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistPendantGlowmask.Value;
         var chainTexture = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistChain.Value;
 
+        if(NPC.IsABestiaryIconDummy)
+            return true;
+
         Span<Vector2> robeTrailPositions = new Vector2[7];
         robeTrailPositions[0] = NPC.Center - Vector2.UnitY * 7f;
 

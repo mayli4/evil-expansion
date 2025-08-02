@@ -57,6 +57,7 @@ Mods: {
 			TestStateNPC.DisplayName: Test State N P C
 			ThoughtfulCultistNPC.DisplayName: Thoughtful Cultist
 			CultistEye.DisplayName: Cultist Eye
+			PusImpNPC.DisplayName: Pus Imp N P C
 		}
 
 		Projectiles: {

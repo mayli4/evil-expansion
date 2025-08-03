@@ -17,9 +17,10 @@ public class SwapTarget(int width, int height) : IDisposable {
 
     public void Begin() {
         _cachedBindings = Main.graphics.GraphicsDevice.GetRenderTargets();
-        _cachedUsage = ((RenderTarget2D)_cachedBindings[0].RenderTarget).RenderTargetUsage;
-
-        ((RenderTarget2D)_cachedBindings[0].renderTarget).RenderTargetUsage = RenderTargetUsage.PreserveContents;
+        if(_cachedBindings != null && _cachedBindings.Length > 0) {
+            _cachedUsage = ((RenderTarget2D)_cachedBindings[0].RenderTarget).RenderTargetUsage;
+            ((RenderTarget2D)_cachedBindings[0].renderTarget).RenderTargetUsage = RenderTargetUsage.PreserveContents;
+        }
 
         Main.graphics.GraphicsDevice.SetRenderTarget(_activeTarget);
         Main.graphics.GraphicsDevice.Clear(Color.Transparent);
@@ -27,7 +28,10 @@ public class SwapTarget(int width, int height) : IDisposable {
 
     public Texture2D End() {
         Main.graphics.GraphicsDevice.SetRenderTargets(_cachedBindings);
-        ((RenderTarget2D)_cachedBindings[0].RenderTarget).RenderTargetUsage = _cachedUsage;
+        if(_cachedBindings != null && _cachedBindings.Length > 0) {
+            ((RenderTarget2D)_cachedBindings[0].RenderTarget).RenderTargetUsage = _cachedUsage;
+        }
+
         return _activeTarget;
     }
 

@@ -1,8 +1,10 @@
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Runtime.CompilerServices;
 using Terraria;
+using Terraria.Audio;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -33,6 +35,7 @@ public class PusImpNPC : ModNPC {
 
     private const int teleport_range = 30 * 16;
     private const int teleport_cooldown = 60 * 4;
+    
 
     private int _attackCooldownTimer;
     private int _teleportCooldownTimer;
@@ -83,6 +86,7 @@ public class PusImpNPC : ModNPC {
                 Idle();
                 break;
             case State.Spitting:
+                Spitting();
                 break;
             case State.Disintegrating:
                 Melt();
@@ -93,8 +97,39 @@ public class PusImpNPC : ModNPC {
         }
     }
 
+    private void Spitting() {
+        Timer++;
+        
+        if (Timer == spit_time / 2) {
+            var numberOfGlobs = Main.rand.Next(1, 4);
+
+            for (int i = 0; i < numberOfGlobs; i++) {
+                var vel = MathUtilities.InitialVelocityRequiredToHitPosition(NPC.Center, Target.Center, 1f, 10f);
+                vel = vel.RotatedBy(Main.rand.NextFloat(-MathHelper.Pi / 10, MathHelper.Pi / 10));
+                //vel.Y *= 1.2f;
+
+                Projectile.NewProjectile(
+                    NPC.GetSource_FromAI(),
+                    NPC.Center + new Vector2(NPC.direction * 10, -5),
+                    vel,
+                    ModContent.ProjectileType<PusGlob>(),
+                    NPC.damage,
+                    3f,
+                    Main.myPlayer
+                );
+            }
+            SoundEngine.PlaySound(SoundID.Item16, NPC.Center);
+        }
+
+        if (Timer >= spit_time) {
+            ChangeState(State.Idle);
+        }
+    }
+
     private void Idle() {
         Timer++;
+        NPC.velocity.X = 0;
+        
         if(Timer >= Main.rand.Next(120, 240)) {
             var canAttack = _attackCooldownTimer <= 0;
             var canTeleport = _teleportCooldownTimer <= 0;

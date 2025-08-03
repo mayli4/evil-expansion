@@ -91,6 +91,7 @@ Mods: {
 			MaceDebris.DisplayName: Mace Debris
 			StalactiteProjectile.DisplayName: Stalactite Projectile
 			PortalGore.DisplayName: Portal Gore
+			PusGlob.DisplayName: Pus Glob
 		}
 
 		Biomes: {

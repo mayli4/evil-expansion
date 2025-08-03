@@ -30,7 +30,7 @@ public class HellEbontreeSapling : ModTile {
         TileObjectData.newTile.AnchorValidTiles = new[] { ModContent.TileType<OvergrownCorruptAsh>() };
         TileObjectData.newTile.StyleHorizontal = true;
         TileObjectData.newTile.DrawFlipHorizontal = true;
-        TileObjectData.newTile.WaterPlacement = LiquidPlacement.NotAllowed;
+        TileObjectData.newTile.LavaPlacement = LiquidPlacement.Allowed;
         TileObjectData.newTile.LavaDeath = true;
         TileObjectData.newTile.RandomStyleRange = 3;
         TileObjectData.newTile.StyleMultiplier = 3;
@@ -52,45 +52,6 @@ public class HellEbontreeSapling : ModTile {
 
     public override void RandomUpdate(int i, int j) {
         AttemptToGrowTreeFromSapling(i, j);
-
-        //          if (!WorldGen.genRand.NextBool(20))
-        //          {
-        //              return;
-        //          }
-        //
-        //          Tile tile = Framing.GetTileSafely(i, j);
-        //          bool growSucess;
-        //
-        //          if (tile.TileFrameX < 54)
-        //          {
-        // 	tile = Main.tile[i, j];
-        // 	if (tile.HasUnactuatedTile) {
-        // 		for (int k = 0; k < (Main.maxTilesX * Main.maxTilesY); k++) {
-        // 			if (j > Main.rockLayer) {
-        // 				if (WorldGen.genRand.NextBool(5)) {
-        // 					AttemptToGrowCreamTreeFromSapling(i, j);
-        // 				}
-        // 			}
-        // 			else {
-        // 				if (WorldGen.genRand.NextBool(20)) {
-        // 					AttemptToGrowCreamTreeFromSapling(i, j);
-        // 				}
-        // 			}
-        // 		}
-        // 	}
-        // 	growSucess = false;
-        // }
-        //          else
-        //          {
-        //              growSucess = WorldGen.GrowPalmTree(i, j);
-        //          }
-        //
-        //          bool isPlayerNear = WorldGen.PlayerLOS(i, j);
-        //
-        //          if (growSucess && isPlayerNear)
-        //          {
-        //              WorldGen.TreeGrowFXCheck(i, j);
-        //          }
     }
 
     public override void SetSpriteEffects(int i, int j, ref SpriteEffects effects) {
@@ -112,12 +73,12 @@ public class HellEbontreeSapling : ModTile {
         }
         bool flag = HellEbontree.GrowModdedTreeWithSettings(x, y, HellEbontree.Tree_Cream);
         if(flag && WorldGen.PlayerLOS(x, y)) {
-            GrowCreamTreeFXCheck(x, y);
+            GrowHellEbonTreeFXCheck(x, y);
         }
         return flag;
     }
 
-    public static void GrowCreamTreeFXCheck(int x, int y) {
+    public static void GrowHellEbonTreeFXCheck(int x, int y) {
         int treeHeight = 1;
         for(int num = -1; num > -100; num--) {
             Tile tile = Main.tile[x, y + num];
@@ -139,7 +100,7 @@ public class HellEbontreeSapling : ModTile {
                 NetMessage.SendData(MessageID.SpecialFX, -1, -1, null, 1, x, y, treeHeight, 1);
             }
             if(Main.netMode == NetmodeID.SinglePlayer) {
-                //WorldGen.TreeGrowFX(x, y, treeHeight, ModContent.GoreType<CreamTreeLeaf>());
+                //WorldGen.TreeGrowFX(x, y, treeHeight, 1);
             }
         }
     }

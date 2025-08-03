@@ -18,7 +18,7 @@ using static Terraria.WorldGen;
 
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
-public class CreamTreeBase : ModTree {
+public class HellEbonModTree : ModTree {
     public override TreePaintingSettings TreeShaderSettings => new TreePaintingSettings
     {
         UseSpecialGroups = true,
@@ -29,7 +29,7 @@ public class CreamTreeBase : ModTree {
     };
 
     public override void SetStaticDefaults() {
-        GrowsOnTileId = new int[1] { ModContent.TileType<OvergrownCorruptAsh>() }; //Creamtree is here so trees don't combust when converting into their custom tile type
+        GrowsOnTileId = new int[1] { ModContent.TileType<OvergrownCorruptAsh>() };
     }
 
     public override bool Shake(int x, int y, ref bool createLeaves) {
@@ -57,7 +57,7 @@ public class CreamTreeBase : ModTree {
     }
 
     public override int DropWood() {
-        return ItemID.Shadewood;
+        return ItemID.Ebonwood;
     }
 }
 
@@ -110,26 +110,24 @@ public class HellEbontree : ModTile {
                     for(k = j; Main.tile[i, k] != null && (!Main.tile[i, k].HasTile || !Main.tileSolid[Main.tile[i, k].TileType] || Main.tileSolidTop[Main.tile[i, k].TileType]); k++) {
                     }
                     if(Main.tile[i, k] != null) {
-                        dropItem = 9;
-                        secondaryItem = 27;
+                        dropItem = ItemID.Ebonwood;
+                        secondaryItem = ItemID.Acorn;
                     }
                 }
                 else {
-                    dropItem = 9;
+                    dropItem = ItemID.Ebonwood;
                 }
             }
         }
         else {
-            dropItem = 9;
+            dropItem = ItemID.Ebonwood;
         }
-        if(dropItem != 9) {
-            return;
-        }
+
         GetTreeBottom(i, j, out var x, out var y);
         int num = Player.FindClosest(new Vector2((float)(x * 16), (float)(y * 16)), 16, 16);
         int axe = Main.player[num].inventory[Main.player[num].selectedItem].axe;
         if(genRand.Next(100) < axe || Main.rand.NextBool(3)) {
-            bonusWood = true;
+            bonusWood = false;
         }
     }
 
@@ -639,9 +637,9 @@ public class HellEbontree : ModTile {
     }
 
     public override IEnumerable<Item> GetItemDrops(int i, int j) {
-        int dropItem = ItemID.None;
+        int dropItem = ItemID.Ebonwood;
         int dropItemStack = 1;
-        int secondaryItem = ItemID.None;
+        int secondaryItem = ItemID.Ebonwood;
         Tile tileCache = Main.tile[i, j];
         bool bonusWood = false;
         KillTile_GetTreeDrops(i, j, tileCache, ref bonusWood, ref dropItem, ref secondaryItem);
@@ -827,9 +825,6 @@ public class HellEbontree : ModTile {
                 vector.Y -= Main.rand.Next(0, 28) * 4;
             }
         }
-        if(!WorldGen.SolidTile(vector.ToTileCoordinates())) {
-            //Gore.NewGoreDirect(new EntitySource_Misc(""), vector, Utils.RandomVector2(Main.rand, -num3, num3), ModContent.GoreType<CreamTreeLeaf>(), 0.7f + Main.rand.NextFloat() * 0.6f).Frame.CurrentColumn = Main.tile[tilePosX, tilePosY].TileColor;
-        }
     }
 
     public static bool CreamwoodTreeGroundTest(int tileType) {
@@ -844,7 +839,7 @@ public class HellEbontree : ModTile {
 
     public static bool GetCreamwoodTreeFoliageData(int i, int j, int xoffset, ref int treeFrame, out int floorY, out int topTextureFrameWidth, out int topTextureFrameHeight) {
         int num = i + xoffset;
-        CreamTreeTextureFrame(i, ref treeFrame, out topTextureFrameWidth, out topTextureFrameHeight);
+        TreeTextureFrame(i, ref treeFrame, out topTextureFrameWidth, out topTextureFrameHeight);
         floorY = j;
         for(int k = 0; k < 100; k++) {
             floorY = j + k;
@@ -856,28 +851,9 @@ public class HellEbontree : ModTile {
         return true;
     }
 
-    private static void CreamTreeTextureFrame(int i, ref int treeFrame, out int topTextureFrameWidth, out int topTextureFrameHeight) {
+    private static void TreeTextureFrame(int i, ref int treeFrame, out int topTextureFrameWidth, out int topTextureFrameHeight) {
         topTextureFrameWidth = 196;
         topTextureFrameHeight = 144;
-        // int variant = ConfectionWorldGeneration.confectionTree;
-        // if (variant == 0) {
-        // 	topTextureFrameWidth = 80;
-        // 	topTextureFrameHeight = 80;
-        // }
-        // else if (variant == 1) {
-        // 	topTextureFrameWidth = 102;
-        // 	topTextureFrameHeight = 118;
-        // 	if (i % 3 == 1) {
-        // 		treeFrame += 3;
-        // 	}
-        // 	else if (i % 3 == 2) {
-        // 		treeFrame += 6;
-        // 	}
-        // }
-        // else {
-        // 	topTextureFrameWidth = 100;
-        // 	topTextureFrameHeight = 110;
-        // }
     }
 
     private void DrawTrees(int k, int l, SpriteBatch spriteBatch) {

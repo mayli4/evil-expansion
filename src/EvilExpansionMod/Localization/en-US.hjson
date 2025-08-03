@@ -45,6 +45,21 @@ Mods: {
 				DisplayName: Terrorbat Banner Item
 				Tooltip: ""
 			}
+
+			CorruptFireblossomItem: {
+				DisplayName: Corrupt Fireblossom Item
+				Tooltip: ""
+			}
+
+			CorruptFireblossomSeedsItem: {
+				DisplayName: Corrupt Fireblossom Seeds Item
+				Tooltip: ""
+			}
+
+			CorruptFireblossomSeeds: {
+				DisplayName: Corrupt Fireblossom Seeds
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -98,11 +113,10 @@ Mods: {
 		Tiles: {
 			UnderworldDemonite.MapEntry: Underworld Demonite
 			UnderworldCorruptLavaDropletSource.MapEntry: Lava Dripping
-			CreamTree.MapEntry: Cream Tree
 			CorruptHellTreeSapling.MapEntry: Corrupt Hell Tree Sapling
-			CreamSapling.MapEntry: Cream Sapling
 			HellEbontree.MapEntry: Hell Ebontree
 			HellEbontreeSapling.MapEntry: Hell Ebontree Sapling
+			CorruptFireblossom.MapEntry: Corrupt Fireblossom
 		}
 
 		Bestiary: {

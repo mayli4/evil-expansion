@@ -1,8 +1,12 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
+using Terraria.GameContent.Creative;
 using Terraria.GameContent.Metadata;
 using Terraria.ID;
+using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
@@ -18,38 +22,193 @@ public enum PlantStage : byte {
 
 public class CorruptFireblossom : ModTile {
     public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_CorruptFireblossom;
+    private const int FrameWidth = 18;
 
     public override void SetStaticDefaults() {
-        Main.tileCut[Type] = true;
         Main.tileFrameImportant[Type] = true;
-        Main.tileNoFail[Type] = true;
-        Main.tileObsidianKill[Type] = true;
-
+        if(Main.LocalPlayer.HeldItem.type == ItemID.StaffofRegrowth) {
+            Main.tileCut[Type] = false;
+        }
+        else {
+            Main.tileCut[Type] = true;
+        }
         TileID.Sets.SwaysInWindBasic[Type] = true;
-        TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
-        TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<OvergrownCorruptAsh>()];
+        Main.tileNoFail[Type] = true;
 
-        DustType = DustID.CursedTorch;
-        HitSound = SoundID.Grass;
 
-        TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
-        TileObjectData.newTile.StyleHorizontal = true;
-        TileObjectData.newTile.DrawYOffset = 2;
+        TileObjectData.newTile.CopyFrom(TileObjectData.StyleAlch);
+
+        TileObjectData.newTile.AnchorValidTiles = new int[]
+        {
+            ModContent.TileType<OvergrownCorruptAsh>()
+        };
+
+        TileObjectData.newTile.AnchorAlternateTiles = new int[]
+        {
+            TileID.ClayPot,
+            TileID.PlanterBox,
+        };
+
         TileObjectData.addTile(Type);
 
-        AddMapEntry(new Color(230, 255, 63));
-
-        TileLoader.RegisterConversion(TileID.BloomingHerbs, BiomeConversionID.Corruption, ConvertToCorruption);
+        LocalizedText name = CreateMapEntryName();
+        AddMapEntry(new Color(172, 49, 238), name);
+        HitSound = SoundID.Grass;
     }
 
-    public bool ConvertToCorruption(int i, int j, int type, int conversionType) {
-        WorldGen.ConvertTile(i, j, Type);
-        return false;
+    public override bool CanPlace(int i, int j) {
+        Tile tile = Framing.GetTileSafely(i, j);
+
+        if(tile.HasTile) {
+            int tileType = tile.TileType;
+            if(tileType == Type) {
+                PlantStage stage = GetStage(i, j);
+
+                return stage == PlantStage.Grown;
+            }
+            else {
+                if(Main.tileCut[tileType] || TileID.Sets.BreakableWhenPlacing[tileType] || tileType == TileID.WaterDrip || tileType == TileID.LavaDrip || tileType == TileID.HoneyDrip || tileType == TileID.SandDrip) {
+                    bool foliageGrass = tileType == TileID.Plants || tileType == TileID.Plants2;
+                    bool moddedFoliage = tileType >= TileID.Count && (Main.tileCut[tileType] || TileID.Sets.BreakableWhenPlacing[tileType]);
+                    bool harvestableVanillaHerb = Main.tileAlch[tileType] && WorldGen.IsHarvestableHerbWithSeed(tileType, tile.TileFrameX / 18);
+
+                    if(foliageGrass || moddedFoliage || harvestableVanillaHerb) {
+                        WorldGen.KillTile(i, j);
+                        if(!tile.HasTile && Main.netMode == NetmodeID.MultiplayerClient) {
+                            NetMessage.SendData(MessageID.TileManipulation, -1, -1, null, 0, i, j);
+                        }
+
+                        return true;
+                    }
+                }
+
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    public override void SetSpriteEffects(int i, int j, ref SpriteEffects spriteEffects) {
+        if(i % 2 == 0) {
+            spriteEffects = SpriteEffects.FlipHorizontally;
+        }
+    }
+
+    public override bool CanDrop(int i, int j) {
+        PlantStage stage = GetStage(i, j);
+
+        if(stage == PlantStage.Planted) {
+            return false;
+        }
+        return true;
     }
 
     public override IEnumerable<Item> GetItemDrops(int i, int j) {
-        if(Main.rand.NextBool(10)) {
-            yield return new Item(ItemID.Fireblossom, Main.rand.Next(1, 3));
+        PlantStage stage = GetStage(i, j);
+
+        Vector2 worldPosition = new Vector2(i, j).ToWorldCoordinates();
+        Player nearestPlayer = Main.player[Player.FindClosest(worldPosition, 16, 16)];
+
+        int herbItemType = ModContent.ItemType<CorruptFireblossomSeeds>();
+        int herbItemStack = 1;
+
+        int seedItemType = ModContent.ItemType<CorruptFireblossomSeeds>();
+        int seedItemStack = 1;
+
+        if(nearestPlayer.active && nearestPlayer.HeldItem.type == ItemID.StaffofRegrowth && stage == PlantStage.Grown) {
+            herbItemStack = Main.rand.Next(1, 3);
+            seedItemStack = Main.rand.Next(1, 6);
         }
+        else if(stage == PlantStage.Grown) {
+            herbItemStack = 1;
+            seedItemStack = Main.rand.Next(1, 4);
+        }
+        else if(stage == PlantStage.Growing) {
+            herbItemStack = 1;
+        }
+
+        var source = new EntitySource_TileBreak(i, j);
+
+        if(herbItemType > 0 && herbItemStack > 0) {
+            Item.NewItem(source, worldPosition, herbItemType, herbItemStack);
+        }
+
+        if(seedItemType > 0 && seedItemStack > 0) {
+            Item.NewItem(source, worldPosition, seedItemType, seedItemStack);
+        }
+
+        if(herbItemType > 0 && herbItemStack > 0) {
+            yield return new Item(herbItemType, herbItemStack);
+        }
+
+        if(seedItemType > 0 && seedItemStack > 0) {
+            yield return new Item(seedItemType, seedItemStack);
+        }
+    }
+
+    public override bool IsTileSpelunkable(int i, int j) {
+        PlantStage stage = GetStage(i, j);
+
+        return stage == PlantStage.Grown;
+    }
+
+    public override void RandomUpdate(int i, int j) {
+        Tile tile = Framing.GetTileSafely(i, j);
+        PlantStage stage = GetStage(i, j);
+
+        if(stage != PlantStage.Grown && stage != PlantStage.Growing) {
+            tile.TileFrameX += FrameWidth;
+
+            if(Main.netMode != NetmodeID.SinglePlayer) {
+                NetMessage.SendTileSquare(-1, i, j, 1);
+            }
+        }
+    }
+
+    public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY) {
+        offsetY = -2;
+
+        if(Main.tile[i, j].TileFrameX != 36 && Main.tile[i, j].TileFrameX == 18 && Main.time >= 11700 && Main.time <= 20700 && !Main.dayTime) {
+            Main.tile[i, j].TileFrameX = 36;
+            offsetY = -2;
+            if(Main.netMode != NetmodeID.SinglePlayer) {
+                NetMessage.SendTileSquare(-1, i, j, 1);
+            }
+        }
+        else if(Main.tile[i, j].TileFrameX == 36 && Main.tile[i, j].TileFrameX != 18 && Main.dayTime || Main.tile[i, j].TileFrameX == 36 && Main.tile[i, j].TileFrameX != 18 && Main.time >= 20700 && !Main.dayTime) {
+            Main.tile[i, j].TileFrameX = 18;
+            offsetY = -2;
+            if(Main.netMode != NetmodeID.SinglePlayer) {
+                NetMessage.SendTileSquare(-1, i, j, 1);
+            }
+        }
+    }
+
+    private static PlantStage GetStage(int i, int j) {
+        Tile tile = Framing.GetTileSafely(i, j);
+        return (PlantStage)(tile.TileFrameX / FrameWidth);
+    }
+}
+
+public sealed class CorruptFireblossomSeeds : ModItem {
+    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_CorruptFireblossom;
+    public override void SetStaticDefaults() {
+        CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 25;
+    }
+
+    public override void SetDefaults() {
+        Item.autoReuse = true;
+        Item.useTurn = true;
+        Item.useStyle = ItemUseStyleID.Swing;
+        Item.useAnimation = 15;
+        Item.useTime = 10;
+        Item.maxStack = 9999;
+        Item.consumable = true;
+        Item.placeStyle = 0;
+        Item.width = 12;
+        Item.height = 14;
+        Item.value = 80;
+        Item.createTile = ModContent.TileType<CorruptFireblossom>();
     }
 }

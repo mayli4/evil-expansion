@@ -101,6 +101,8 @@ public class TerrorBatNPC : ModNPC {
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.5f : 0;
     }
+    
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
     public override void OnSpawn(IEntitySource source) {
         int startX = (int)(NPC.Center.X / 16f);
@@ -379,8 +381,6 @@ public class TerrorBatNPC : ModNPC {
                 break;
         }
     }
-
-    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         if(CurrentState == State.IdleOnCeiling || CurrentState == State.WakingUp) {

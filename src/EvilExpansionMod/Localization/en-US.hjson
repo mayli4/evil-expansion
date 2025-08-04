@@ -92,6 +92,7 @@ Mods: {
 			StalactiteProjectile.DisplayName: Stalactite Projectile
 			PortalGore.DisplayName: Portal Gore
 			PusGlob.DisplayName: Pus Glob
+			PusCreepProjectile.DisplayName: Pus Creep Projectile
 		}
 
 		Biomes: {

@@ -396,6 +396,12 @@ public class Renderer : ModSystem {
                                 TransformMatrix = Matrix.CreateScale(2f) * Main.GameViewMatrix.ZoomMatrix,
                             });
                             Main.spriteBatch.Draw(targetTexture, Vector2.Zero, Color.White);
+
+                            // This fixes the issue with vanilla trail being drawn 2x bigger..
+                            // The spritebatch sets the transformation matrix in `End`
+                            // and the trails depend on it so it needs to be set back to normal.
+                            Main.spriteBatch.EndBegin(new());
+
                             Main.spriteBatch.End();
                             break;
                     }

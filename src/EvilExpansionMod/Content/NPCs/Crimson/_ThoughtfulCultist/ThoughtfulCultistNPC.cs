@@ -60,6 +60,10 @@ public class ThoughtfulCultistNPC : ModNPC {
         // BannerItem = ModContent.ItemType<CursedSpiritBannerItem>();
     }
 
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+        return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.05f : 0;
+    }
+
     public override void OnSpawn(IEntitySource source) {
         ChangeState(CultistState.FlyToTarget);
     }
@@ -165,7 +169,7 @@ public class ThoughtfulCultistNPC : ModNPC {
         );
 
         for(var i = 0; i < 5; i++) {
-            var gore = Gore.NewGoreDirect(
+            Gore.NewGoreDirect(
                 NPC.GetSource_Death(),
                 NPC.Center + Main.rand.NextVector2Unit() * 40f + Vector2.UnitY * 30f,
                 Vector2.Zero,

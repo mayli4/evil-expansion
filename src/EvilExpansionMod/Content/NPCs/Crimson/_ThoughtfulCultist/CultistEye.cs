@@ -6,7 +6,8 @@ using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Content.NPCs.Crimson._ThoughtfulCultist;
+namespace EvilExpansionMod.Content.NPCs.Crimson;
+
 public class CultistEye : ModNPC {
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.KEY_CultistEye;
     public override void SetStaticDefaults() {

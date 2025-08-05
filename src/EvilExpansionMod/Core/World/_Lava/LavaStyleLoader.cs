@@ -216,15 +216,11 @@ public class LavaStyleLoader : ModSystem {
     private static void CacheLavaStyle(On_Main.orig_RenderWater orig, Main self) {
         _cachedModLavaStyle = default;
 
-        foreach(ModBiome biome in ModContent.GetContent<ModBiome>()) {
+        foreach(var biome in ModContent.GetContent<ModBiome>()) {
             if(biome is IHasCustomLavaBiome customLavaBiome && Main.LocalPlayer.InModBiome(biome)) {
                 _cachedModLavaStyle = customLavaBiome.ModLavaStyle;
                 break;
             }
-        }
-
-        if(Main.LocalPlayer.ZoneCorrupt) {
-            _cachedModLavaStyle = ModContent.GetInstance<UnderworldCorruptLavaStyle>();
         }
 
         orig(self);

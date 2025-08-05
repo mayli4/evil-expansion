@@ -6,7 +6,7 @@ using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Content.NPCs.Crimson._ThoughtfulCultist;
+namespace EvilExpansionMod.Content.NPCs.Crimson;
 public class PortalGore : ModProjectile {
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.KEY_PortalGore1;
 

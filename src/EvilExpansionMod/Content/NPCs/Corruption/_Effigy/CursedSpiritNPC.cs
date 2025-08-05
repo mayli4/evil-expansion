@@ -637,16 +637,18 @@ public sealed class CursedSpiritNPC : ModNPC {
             _ => Vector2.Zero,
         };
 
-        Main.EntitySpriteDraw(
-            maskTexture,
-            NPC.Center - screenPos + maskPositionOffset,
-            maskSource,
-            drawColor,
-            maskRotation,
-            maskSource.Size() / 2f + originOffset,
-            NPC.scale * new Vector2(1f - _lookOffset * 0.175f, 1) * maskScale,
-            NPC.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
-        );
+        if(_data.Splitter.Depth == 0) {
+            Main.EntitySpriteDraw(
+                maskTexture,
+                NPC.Center - screenPos + maskPositionOffset,
+                maskSource,
+                drawColor,
+                maskRotation,
+                maskSource.Size() / 2f + originOffset,
+                NPC.scale * new Vector2(1f - _lookOffset * 0.175f, 1) * maskScale,
+                NPC.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
+            );
+        }
 
         switch(SpiritType) {
             case SpiritType.Splitter:

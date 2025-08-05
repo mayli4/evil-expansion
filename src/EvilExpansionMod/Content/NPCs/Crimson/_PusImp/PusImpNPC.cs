@@ -113,12 +113,12 @@ public class PusImpNPC : ModNPC {
                     NPC.Center + new Vector2(NPC.direction * 10, -5),
                     vel,
                     ModContent.ProjectileType<PusGlob>(),
-                    NPC.damage,
+                    12,
                     3f,
                     Main.myPlayer
                 );
             }
-            SoundEngine.PlaySound(SoundID.Item16, NPC.Center);
+            SoundEngine.PlaySound(SoundID.NPCDeath13 with { Pitch = -0.2f, PitchVariance = 0.5f}, NPC.Center);
         }
 
         if (Timer >= spit_time) {

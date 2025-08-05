@@ -1,6 +1,5 @@
 ﻿using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
-using EvilExpansionMod.Content.NPCs.Crimson._ThoughtfulCultist;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;

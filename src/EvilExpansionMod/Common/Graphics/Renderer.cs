@@ -619,6 +619,7 @@ public class Renderer : ModSystem {
             _targetSemaphore.Release();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunDrawTrail(DataIndex index) {
             var trailData = _trailDatas[index];
             var trailPositions = CollectionsMarshal
@@ -682,6 +683,7 @@ public class Renderer : ModSystem {
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunDrawSpritePosition(DataIndex index) {
             var sprite = _spritePositionDatas[index];
             Main.spriteBatch.Draw(
@@ -697,6 +699,7 @@ public class Renderer : ModSystem {
             );
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunDrawSpriteRectangle(DataIndex index) {
             var rectangleData = _spriteRectangleDatas[index];
             Main.spriteBatch.Draw(
@@ -711,6 +714,7 @@ public class Renderer : ModSystem {
             );
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void RunBegin(DataIndex index) {
             var beginData = _beginDatas[index];
 
@@ -741,6 +745,7 @@ public class Renderer : ModSystem {
             _target.Begin();
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void RunApplyEffect(DataIndex index) {
             var effectData = _effectDatas[index];
 
@@ -756,10 +761,12 @@ public class Renderer : ModSystem {
             Main.spriteBatch.EndBegin(snapshot);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunEffectParams(DataIndex index) {
             SetEffectParams(_effectDatas[index]);
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void RunEnd(DataIndex _) {
             var texture = _target.End();
             var scale = Main.ScreenSize.ToVector2() / _target.Size;
@@ -776,7 +783,6 @@ public class Renderer : ModSystem {
             Main.spriteBatch.EndBegin(new());
             Main.spriteBatch.End();
         }
-
 
         readonly void SetEffectParams(EffectData effectData) {
             var effect = effectData.Effect;

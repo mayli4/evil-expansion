@@ -17,7 +17,6 @@ namespace EvilExpansionMod.Content.Items.Corruption;
 public class HeadPounderHeldProjectile : ModProjectile {
     Player Owner => Main.player[Projectile.owner];
 
-    static float HitboxLength = 100f;
     static int PostChargeFrames = 15;
     static int MaxCharge = 30;
 
@@ -28,7 +27,6 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
     float ChargeProgress => MathF.Min((float)_charge / MaxCharge, 1f);
     Vector2 RotationVector => (Projectile.rotation - MathF.PI / 4f).ToRotationVector2() * new Vector2(Owner.direction, 1f);
-    Vector2 HammerHeadCenter => Projectile.position + RotationVector * 65f;
 
     Vector2[] _trailPositions;
 
@@ -46,7 +44,6 @@ public class HeadPounderHeldProjectile : ModProjectile {
         Projectile.ownerHitCheck = true;
         Projectile.localNPCHitCooldown = 999;
         Projectile.usesLocalNPCImmunity = true;
-
     }
 
     public override bool ShouldUpdatePosition() => false;
@@ -204,14 +201,13 @@ public class HeadPounderHeldProjectile : ModProjectile {
         var rotation = (Projectile.rotation + MathF.PI / 4f) * Owner.direction;
         Vector2 origin = new(offset - 5f, texture.Height - offset);
 
-        var outlineColor = new Color(96, 91, 206) * _outlineAlpha * 0.4f;
-
+        var trailColor = new Color(96, 91, 206) * _outlineAlpha * 0.4f;
         Renderer.BeginPipeline(RenderTarget.HalfScreen)
             .DrawBasicTrail(
                 _trailPositions.Select(p => p + Projectile.position).ToArray(),
                 static t => (1.25f - t) * 20f,
                 TextureAssets.MagicPixel.Value,
-                outlineColor
+                trailColor
             )
             .DrawSprite(
                  texture,
@@ -222,13 +218,15 @@ public class HeadPounderHeldProjectile : ModProjectile {
                  scale: Vector2.One * Projectile.scale,
                  spriteEffects: Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
             )
-            .ApplyOutline(outlineColor)
+            .ApplyOutline(trailColor)
             .ApplyOutline(new Color(230, 255, 5) * _outlineAlpha)
             .Flush();
 
+        var tintFlashFrames = 15;
         var tintColor = Color.Transparent;
-        if(Owner.channel && ChargeProgress >= 1f && Main.GameUpdateCount % 8 < 4) {
-            tintColor = Color.White;
+        if(Owner.channel) {
+            tintColor = Color.White
+            * MathF.Max(1f - MathF.Pow(2f * MathF.Max(_charge - MaxCharge + tintFlashFrames / 2, 0) / tintFlashFrames - 1f, 2), 0f);
         }
 
         Renderer.BeginPipeline()
@@ -241,7 +239,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                 scale: Vector2.One * Projectile.scale,
                 spriteEffects: Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
             )
-            .ApplyTint(tintColor * 0.8f)
+            .ApplyTint(tintColor)
             .Flush();
 
         return false;

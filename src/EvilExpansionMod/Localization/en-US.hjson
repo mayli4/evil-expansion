@@ -60,6 +60,11 @@ Mods: {
 				DisplayName: Corrupt Fireblossom Seeds
 				Tooltip: ""
 			}
+
+			HeadPounderItem: {
+				DisplayName: Head Pounder
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -93,6 +98,8 @@ Mods: {
 			PortalGore.DisplayName: Portal Gore
 			PusGlob.DisplayName: Pus Glob
 			PusCreepProjectile.DisplayName: Pus Creep Projectile
+			SpikeHammerHeldProjectile.DisplayName: Spike Hammer Held Projectile
+			HeadPounderHeldProjectile.DisplayName: Head Pounder Held Projectile
 		}
 
 		Biomes: {

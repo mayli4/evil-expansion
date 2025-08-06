@@ -3,7 +3,6 @@ using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Content.Tiles.Banners;
-using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -401,7 +400,7 @@ public sealed class DevilOWarNPC : ModNPC {
             );
             return false;
         }
-        var pipeline = new Renderer.Pipeline();
+        var pipeline = Renderer.BeginPipeline();
 
         var offsetForTrails = flipped ? new Vector2(-5, 30) : new Vector2(5, 30);
         Vector2 bodyWorldPositionForTrails = NPC.Center + offsetForTrails;
@@ -427,7 +426,7 @@ public sealed class DevilOWarNPC : ModNPC {
 
         Main.spriteBatch.Draw(insidesTexture, NPC.Center + new Vector2(0, 19) - screenPos, null, drawColor, NPC.rotation, insidesTexture.Size() / 2, 1f, effects, 0f);
 
-        new Renderer.Pipeline()
+        Renderer.BeginPipeline(RenderTarget.HalfScreen, new() { CustomEffect = fluidEffect })
             .EffectParams(
                 fluidEffect,
                 ("level", mappedLevel),
@@ -440,9 +439,7 @@ public sealed class DevilOWarNPC : ModNPC {
                 ("uNoise2ScrollVector", new Vector2(0.1f, 0.1f)),
                 ("uNoise2Scale", 1.0f),
                 ("uTime", Main.GameUpdateCount * 0.05f))
-            .BeginPixelate(new() { CustomEffect = fluidEffect })
             .DrawSprite(headUnderTexture, NPC.Center - new Vector2(0, 4) - screenPos, Color.White, null, NPC.rotation, origin, new Vector2(finalDrawScale.X - 0.05f, finalDrawScale.Y - 0.05f), effects)
-            .End()
             .Flush();
 
         Lighting.AddLight(NPC.position, CursedSpiritNPC.GhostColor1.ToVector3() * 0.4f);

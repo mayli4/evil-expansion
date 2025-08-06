@@ -539,15 +539,14 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         if(!NPC.IsABestiaryIconDummy) {
             var trailEffect = Assets.Assets.Effects.Trail.CursedSpiritFire.Value;
-            new Renderer.Pipeline()
-                .BeginPixelate()
+            Renderer.BeginPipeline(RenderTarget.HalfScreen)
                 .DrawTrail(
                     _trailPositions,
                     static _ => 50,
                     static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f),
                     trailEffect,
                     ("time", 0.025f * Main.GameUpdateCount + NPC.whoAmI * 3.432f),
-                    ("mat", Renderer.PixelateEffectMatrix),
+                    ("mat", Renderer.HalfScreenEffectMatrix),
                     ("stepY", 0.25f),
                     ("scale", 0.8f),
                     ("texture1", Assets.Assets.Textures.Sample.Pebbles.Value),
@@ -561,39 +560,7 @@ public sealed class CursedSpiritNPC : ModNPC {
                     scale: Vector2.One * 0.8f
                 )
                 .ApplyOutline(GhostColor1)
-                .End()
                 .Flush();
-
-            // RenderingUtilities.DrawVFX(() =>
-            // {
-            //     var matrix = RenderingUtilities.VFXMatrix;
-
-            //     var trailEffect = Assets.Assets.Effects.Compiled.Trail.CursedSpiritFire.Value;
-            //     trailEffect.Parameters["time"].SetValue(0.025f * Main.GameUpdateCount + NPC.whoAmI * 3.432f);
-            //     trailEffect.Parameters["mat"].SetValue(matrix.effect);
-            //     trailEffect.Parameters["stepY"].SetValue(0.25f);
-            //     trailEffect.Parameters["scale"].SetValue(0.8f);
-            //     trailEffect.Parameters["texture1"].SetValue(Assets.Assets.Textures.Sample.Pebbles.Value);
-            //     trailEffect.Parameters["texture2"].SetValue(Assets.Assets.Textures.Sample.Noise2.Value);
-            //     trail?.Draw(trailEffect);
-
-            //     Main.spriteBatch.Begin(new()
-            //     {
-            //         TransformMatrix = matrix.batch,
-            //     });
-            //     Main.spriteBatch.Draw(
-            //         Assets.Assets.Textures.Misc.Circle.Value,
-            //         NPC.Center,
-            //         null,
-            //         smallGlowColor,
-            //         0,
-            //         16f * Vector2.One,
-            //         0.8f,
-            //         SpriteEffects.None,
-            //         0
-            //     );
-            //     Main.spriteBatch.End();
-            // }, GhostColor1);
         }
 
         var maskShake = 0f;

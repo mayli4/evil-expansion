@@ -229,11 +229,13 @@ public class ThoughtfulCultistNPC : ModNPC {
                 break;
         }
 
-        new Renderer.Pipeline()
+        Renderer.BeginPipeline()
             .DrawBasicTrail(robeTrailPositions, static _ => 88, robeTextureBack, drawColor, 1)
             .DrawBasicTrail(chainPoints, static _ => 6, chainTexture, drawColor)
             .DrawBasicTrail(robeTrailPositions, static _ => 88, robeTextureFront, drawColor, 1)
-            .BeginPixelate()
+            .Flush();
+
+        Renderer.BeginPipeline()
             .DrawSprite(
                 pendantTexture,
                 chainPoints[chainPoints.Length / 2] - screenPos,
@@ -249,7 +251,6 @@ public class ThoughtfulCultistNPC : ModNPC {
                 origin: pendantTexture.Size() / 2f
             )
             .ApplyOutline(pendantOutlineColor)
-            .End()
             .Flush();
 
         spriteBatch.Draw(brainTexture, NPC.Center - screenPos, null, drawColor, 0f, new Vector2(53, 55), 1f, SpriteEffects.None, 0f);

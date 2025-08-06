@@ -7,7 +7,6 @@ using System;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -15,7 +14,7 @@ namespace EvilExpansionMod.Content.NPCs.Crimson;
 
 public sealed class PusGlob : ModProjectile {
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.PusImp.KEY_PusGlob;
-    
+
     private Vector2[] _trailPositions;
 
     public override void SetDefaults() {
@@ -24,7 +23,7 @@ public sealed class PusGlob : ModProjectile {
         Projectile.aiStyle = -1;
         Projectile.friendly = false;
         Projectile.hostile = true;
-        Projectile.penetrate = 1; 
+        Projectile.penetrate = 1;
         Projectile.tileCollide = true;
         Projectile.ignoreWater = false;
         Projectile.timeLeft = 180;
@@ -33,14 +32,14 @@ public sealed class PusGlob : ModProjectile {
 
     public override void AI() {
         Projectile.velocity.Y += 0.2f;
-        Projectile.velocity.X *= 0.99f; 
+        Projectile.velocity.X *= 0.99f;
 
         Projectile.rotation += Projectile.velocity.Length() * 0.05f * Projectile.direction;
 
-        if (Projectile.timeLeft < 30) {
+        if(Projectile.timeLeft < 30) {
             Projectile.alpha = (int)MathHelper.Lerp(0, 255, (30f - Projectile.timeLeft) / 30f);
         }
-        
+
         _trailPositions ??= [.. Enumerable.Repeat(Projectile.Center, 7)];
         var i = _trailPositions.Length - 1;
         while(i > 0) {
@@ -73,11 +72,10 @@ public sealed class PusGlob : ModProjectile {
             Main.myPlayer
         );
     }
-    
+
     public override bool PreDraw(ref Color lightColor) {
         var trailEffect = Assets.Assets.Effects.Trail.CursedSpiritFire.Value;
-        new Renderer.Pipeline()
-            .BeginPixelate()
+        Renderer.BeginPipeline(RenderTarget.HalfScreen)
             .DrawTrail(
                 _trailPositions,
                 static _ => 14f,
@@ -98,7 +96,6 @@ public sealed class PusGlob : ModProjectile {
                 scale: Vector2.One * 0.3f
             )
             .ApplyOutline(new Color(161, 131, 78))
-            .End()
             .Flush();
 
         return false;
@@ -107,7 +104,7 @@ public sealed class PusGlob : ModProjectile {
 
 public sealed class PusCreepProjectile : ModProjectile, IDrawOverTiles {
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.PusImp.KEY_PusGlob;
-    
+
     private const int lifetime = 165;
 
     public float Scale => Utils.GetLerpValue(2f, 8f, Math.Abs(Projectile.ai[0]), true);
@@ -125,13 +122,15 @@ public sealed class PusCreepProjectile : ModProjectile, IDrawOverTiles {
     }
 
     public override void AI() {
-        if (Projectile.timeLeft > lifetime - 15) {
+        if(Projectile.timeLeft > lifetime - 15) {
             float fadeInProgress = (lifetime - Projectile.timeLeft) / 15f;
             Projectile.alpha = (int)MathHelper.Lerp(255, 0, fadeInProgress);
-        } else if (Projectile.timeLeft <= 90) {
+        }
+        else if(Projectile.timeLeft <= 90) {
             float fadeOutProgress = (90f - Projectile.timeLeft) / 90f;
             Projectile.alpha = (int)MathHelper.Lerp(0, 255, fadeOutProgress);
-        } else {
+        }
+        else {
             Projectile.alpha = 0;
         }
 
@@ -149,15 +148,15 @@ public sealed class PusCreepProjectile : ModProjectile, IDrawOverTiles {
     public void DrawOverTiles(SpriteBatch spriteBatch) {
         var tex = Assets.Assets.Textures.NPCs.Crimson.PusImp.PusCreepSplat.Value;
         var color = Lighting.GetColor(Projectile.Center.ToTileCoordinates()) * ((255 - Projectile.alpha) / 255f);
-        var scale = new Vector2(1f + Scale * 0.6f, 1f); 
+        var scale = new Vector2(1f + Scale * 0.6f, 1f);
 
         var drawOffsetY = 0f;
 
-        if (Projectile.timeLeft < 90 && Projectile.timeLeft > 30) {
+        if(Projectile.timeLeft < 90 && Projectile.timeLeft > 30) {
             float extendProgress = Utils.GetLerpValue(90f, 30f, Projectile.timeLeft, true);
             float currentExtendAmount = extendProgress * 0.5f;
             scale.Y += currentExtendAmount;
-            
+
             drawOffsetY = (tex.Height / 2f) * currentExtendAmount * scale.X;
         }
 

@@ -22,7 +22,7 @@ public class UnderworldCorruptionBGSystem : ModSystem {
 
         for(int i = 0; i < BackgroundTextures.Length; i++) {
             BackgroundTextures[i] = ModContent.Request<Texture2D>(
-                "EvilExpansionMod/Assets/Textures/Backgrounds/CorruptUnderworldBG_" + i
+                "EvilExpansionMod/Assets/Textures/Backgrounds/UnderworldCorruption/UnderworldCorruptionBackground_" + i
             );
         }
     }
@@ -148,7 +148,7 @@ public class UnderworldCorruptionBGSystem : ModSystem {
         }
 
         Vector2 vector = new(1f / num7);
-        float num8 = 0.7f;
+        float num8 = 0.5f;
         Vector2 zero = Vector2.Zero;
 
         switch(textureArrayIndex) {
@@ -160,10 +160,10 @@ public class UnderworldCorruptionBGSystem : ModSystem {
                 zero.Y -= 10f;
                 break;
             case 2:
-                zero.Y += 180f;
+                // zero.Y -= 20;
                 break;
             case 3:
-                zero.Y -= 0f;
+                zero.Y += 110f;
                 break;
         }
 

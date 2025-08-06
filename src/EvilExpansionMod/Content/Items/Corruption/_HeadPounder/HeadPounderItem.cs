@@ -14,7 +14,7 @@ public class HeadPounderItem : ModItem {
 
         Item.width = Item.height = 80;
 
-        Item.useTime = Item.useAnimation = 5;
+        Item.useTime = Item.useAnimation = 30;
         Item.useStyle = -1;
 
         Item.value = 17500;

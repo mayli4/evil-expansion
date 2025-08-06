@@ -1,4 +1,5 @@
 ﻿using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Content.NPCs.Corruption;
 using EvilExpansionMod.Utilities;
@@ -16,7 +17,6 @@ namespace EvilExpansionMod.Content.Items.Corruption;
 public class HeadPounderHeldProjectile : ModProjectile {
     Player Owner => Main.player[Projectile.owner];
 
-    static float HitboxLength = 100f;
     static int PostChargeFrames = 15;
     static int MaxCharge = 30;
 
@@ -27,7 +27,6 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
     float ChargeProgress => MathF.Min((float)_charge / MaxCharge, 1f);
     Vector2 RotationVector => (Projectile.rotation - MathF.PI / 4f).ToRotationVector2() * new Vector2(Owner.direction, 1f);
-    Vector2 HammerHeadCenter => Projectile.position + RotationVector * 65f;
 
     Vector2[] _trailPositions;
 
@@ -45,7 +44,6 @@ public class HeadPounderHeldProjectile : ModProjectile {
         Projectile.ownerHitCheck = true;
         Projectile.localNPCHitCooldown = 999;
         Projectile.usesLocalNPCImmunity = true;
-
     }
 
     public override bool ShouldUpdatePosition() => false;
@@ -67,11 +65,12 @@ public class HeadPounderHeldProjectile : ModProjectile {
             Projectile.rotation = -3f * MathF.PI / 4f - ChargeProgress * MathF.PI / 8f;
 
             _charge += 1;
+            _outlineAlpha = MathF.Pow(ChargeProgress, 2);
+
             if(_charge >= MaxCharge) {
                 if(_charge == MaxCharge) {
                     SoundEngine.PlaySound(SoundID.Tink);
                 }
-                _outlineAlpha = MathF.Min(_outlineAlpha + 0.2f, 1f);
             }
         }
         else {
@@ -152,6 +151,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                             });
                         });
 
+                        Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(13f, 0.6f));
                         _hit = true;
                     }
                 }
@@ -195,25 +195,19 @@ public class HeadPounderHeldProjectile : ModProjectile {
         modifiers.SourceDamage *= modifier;
     }
 
-    void OnChargedUp() {
-        // SoundEngine.PlaySound(SoundID.Research);
-    }
-
     public override bool PreDraw(ref Color lightColor) {
-
         var texture = TextureAssets.Projectile[Type].Value;
         var offset = -6;
         var rotation = (Projectile.rotation + MathF.PI / 4f) * Owner.direction;
         Vector2 origin = new(offset - 5f, texture.Height - offset);
 
-        var outlineColor = new Color(96, 91, 206) * _outlineAlpha * 0.4f;
-        new Renderer.Pipeline()
-            .BeginPixelate(new() { BlendState = BlendState.Additive })
+        var trailColor = new Color(96, 91, 206) * _outlineAlpha * 0.4f;
+        Renderer.BeginPipeline(RenderTarget.HalfScreen)
             .DrawBasicTrail(
                 _trailPositions.Select(p => p + Projectile.position).ToArray(),
                 static t => (1.25f - t) * 20f,
                 TextureAssets.MagicPixel.Value,
-                outlineColor
+                trailColor
             )
             .DrawSprite(
                  texture,
@@ -224,22 +218,29 @@ public class HeadPounderHeldProjectile : ModProjectile {
                  scale: Vector2.One * Projectile.scale,
                  spriteEffects: Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
             )
-            .ApplyOutline(outlineColor)
-            .ApplyOutline(Color.White * _outlineAlpha)
-            .End()
+            .ApplyOutline(trailColor)
+            .ApplyOutline(new Color(230, 255, 5) * _outlineAlpha)
             .Flush();
 
-        Main.spriteBatch.Draw(
-            texture,
-            Projectile.position - Main.screenPosition,
-            null,
-            lightColor,
-            (Projectile.rotation + MathF.PI / 4f) * Owner.direction,
-            Owner.direction == -1 ? new Vector2(texture.Width - origin.X, origin.Y) : origin,
-            Projectile.scale,
-            Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
-            0
-        );
+        var tintFlashFrames = 15;
+        var tintColor = Color.Transparent;
+        if(Owner.channel) {
+            tintColor = Color.White
+            * MathF.Max(1f - MathF.Pow(2f * MathF.Max(_charge - MaxCharge + tintFlashFrames / 2, 0) / tintFlashFrames - 1f, 2), 0f);
+        }
+
+        Renderer.BeginPipeline()
+            .DrawSprite(
+                texture,
+                Projectile.position - Main.screenPosition,
+                lightColor,
+                rotation: (Projectile.rotation + MathF.PI / 4f) * Owner.direction,
+                origin: Owner.direction == -1 ? new Vector2(texture.Width - origin.X, origin.Y) : origin,
+                scale: Vector2.One * Projectile.scale,
+                spriteEffects: Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
+            )
+            .ApplyTint(tintColor)
+            .Flush();
 
         return false;
     }

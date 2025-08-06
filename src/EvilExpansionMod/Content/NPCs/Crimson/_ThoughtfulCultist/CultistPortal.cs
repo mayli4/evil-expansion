@@ -146,8 +146,7 @@ public class CultistPortal : ModProjectile {
             PortalType.Blood => new Color(90, 21, 30),
         };
         var circleTexture = Assets.Assets.Textures.Misc.Circle.Value;
-        new Renderer.Pipeline()
-            .BeginPixelate()
+        Renderer.BeginPipeline(RenderTarget.HalfScreen)
             .DrawSprite(
                 circleTexture,
                 Projectile.Center - Main.screenPosition + Projectile.velocity * 20f,
@@ -158,8 +157,9 @@ public class CultistPortal : ModProjectile {
             )
             .ApplyOutline(color2)
             .ApplyOutline(middleColor)
-            .End()
-            .BeginPixelate(new() { CustomEffect = effect })
+            .Flush();
+
+        Renderer.BeginPipeline(RenderTarget.HalfScreen, new() { CustomEffect = effect })
             .EffectParams(
                 effect,
                 ("tex1", sampleTexture1),
@@ -176,7 +176,6 @@ public class CultistPortal : ModProjectile {
             )
             .ApplyOutline(color2)
             .ApplyOutline(middleColor)
-            .End()
             .Flush();
 
         switch(PortalType) {

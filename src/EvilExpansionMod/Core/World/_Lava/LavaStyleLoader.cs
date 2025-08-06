@@ -211,8 +211,6 @@ public class LavaStyleLoader : ModSystem {
         return initialLavafallColor;
     }
 
-    public static ModLavaStyle Get(int type) => CustomLavaStyles[type];
-
     private static void CacheLavaStyle(On_Main.orig_RenderWater orig, Main self) {
         _cachedModLavaStyle = default;
 

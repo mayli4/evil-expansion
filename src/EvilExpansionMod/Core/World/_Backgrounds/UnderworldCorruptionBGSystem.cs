@@ -16,6 +16,9 @@ namespace EvilExpansionMod.Core.World;
 public class UnderworldCorruptionBGSystem : ModSystem {
     public Asset<Texture2D>[] BackgroundTextures = new Asset<Texture2D>[4];
 
+    private static float _fadeOpacity;
+    private const float fade_speed = 0.05f;
+
     public override void PostSetupContent() {
         if(Main.dedServ)
             return;
@@ -36,6 +39,18 @@ public class UnderworldCorruptionBGSystem : ModSystem {
         if(!Main.dedServ) {
             IL_Main.DrawBG -= UnderworldCorruptionBackground_DrawBG;
             IL_Main.DrawCapture -= UnderworldCorruptionBackground_DrawCapture;
+        }
+        _fadeOpacity = 0f;
+    }
+
+    public override void PostUpdateEverything() {
+        var inBiome = Main.LocalPlayer.InModBiome<UnderworldCorruptionBiome>();
+
+        if (inBiome) {
+            _fadeOpacity = Math.Min(_fadeOpacity + fade_speed, 1f);
+        }
+        else {
+            _fadeOpacity = Math.Max(_fadeOpacity - fade_speed, 0f);
         }
     }
 
@@ -68,7 +83,7 @@ public class UnderworldCorruptionBGSystem : ModSystem {
     }
 
     protected void DrawCorruptionUnderworldBackground(bool flat) {
-        if(!Main.LocalPlayer.InModBiome<UnderworldCorruptionBiome>())
+        if (_fadeOpacity <= 0f)
             return;
 
         if(!(Main.screenPosition.Y + Main.screenHeight < (Main.maxTilesY - 220) * 16f)) {
@@ -160,10 +175,10 @@ public class UnderworldCorruptionBGSystem : ModSystem {
                 zero.Y -= 10f;
                 break;
             case 2:
-                // zero.Y -= 20;
+                //zero.Y -= 20;
                 break;
             case 3:
-                zero.Y += 110f;
+                zero.Y += 200f;
                 break;
         }
 
@@ -207,7 +222,7 @@ public class UnderworldCorruptionBGSystem : ModSystem {
         }
 
         for(int i = startTileX - 2; i <= startTileX + 4 + numTilesToDraw; i++) {
-            Color drawColor = Color.White;
+            Color drawColor = Color.White * _fadeOpacity;
             Main.spriteBatch.Draw(
                 value,
                 drawPos,
@@ -230,7 +245,7 @@ public class UnderworldCorruptionBGSystem : ModSystem {
                         (int)(textureRenderWidth),
                         Math.Max(0, Main.screenHeight - bottomY)
                     ),
-                    drawColor
+                    new Color(226, 255, 41)
                 );
             }
             drawPos.X += textureRenderWidth;

@@ -144,6 +144,12 @@ public sealed class PusCreepProjectile : ModProjectile, IDrawOverTiles {
             );
         }
     }
+    
+    public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac) {
+        fallThrough = false;
+
+        return base.TileCollideStyle(ref width, ref height, ref fallThrough, ref hitboxCenterFrac);
+    }
 
     public void DrawOverTiles(SpriteBatch spriteBatch) {
         var tex = Assets.Assets.Textures.NPCs.Crimson.PusImp.PusCreepSplat.Value;

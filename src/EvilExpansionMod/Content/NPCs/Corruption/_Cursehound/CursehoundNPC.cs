@@ -192,7 +192,7 @@ public sealed class CursehoundNPC : ModNPC {
         dynamicJumpVelocity = MathHelper.Clamp(dynamicJumpVelocity, -maxJumpPower, -baseJumpPower);
 
         if(NPC.velocity.Y == 0 && _timeGrounded >= ground_time_for_attack && ai.RoarAttackCooldown <= 0 && broadLineOfSight && distanceToTarget >= roarAttackMinRange && distanceToTarget <= roarAttackMaxRange) {
-            if(Main.rand.NextBool(30)) {
+            if(Main.rand.NextBool(20)) {
                 ai.CurrentState = State.RoarTelegraph;
                 ai.RoarAttackCooldown = 60 * 5;
             }

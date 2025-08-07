@@ -714,32 +714,39 @@ public class Renderer : ModSystem {
             var beginData = _beginDatas[index];
             var snapshot = _snapshotDatas[beginData.SnapshotIndex];
 
-            var spriteBatchMatrix = Matrix.Identity;
             switch(beginData.Target) {
                 case RenderTarget.FullScreen:
                     _target = _fullScreenTarget;
                     break;
                 case RenderTarget.HalfScreen:
                     _target = _halfScreenTarget;
-                    spriteBatchMatrix = Matrix.CreateScale(0.5f);
                     break;
             }
 
-            _screenToTargetMatrix = spriteBatchMatrix
-                * Matrix.CreateOrthographicOffCenter(0, _target.Width, _target.Height, 0, -1, 1);
+            var scale = _target.Size / Main.ScreenSize.ToVector2();
+
+            _screenToTargetMatrix =
+                Matrix.CreateTranslation(-Main.GameViewMatrix.Translation.X, -Main.GameViewMatrix.Translation.Y, 0f)
+                * Matrix.CreateScale(Main.GameViewMatrix.Zoom.X, Main.GameViewMatrix.Zoom.Y, 1f)
+                * Matrix.CreateScale(scale.X, scale.Y, 1f)
+                * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
             _worldToTargetMatrix = Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f)
                 * _screenToTargetMatrix;
 
             _target.Begin();
+            Main.graphics.GraphicsDevice.Viewport = new(0, 0, Main.screenWidth, Main.screenHeight);
             Main.spriteBatch.Begin(snapshot with
             {
-                TransformMatrix = spriteBatchMatrix,
+                TransformMatrix = snapshot.TransformMatrix
+                    * Matrix.CreateScale(scale.X, scale.Y, 1f),
             });
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void RunApplyEffect(DataIndex index) {
             var effectData = _effectDatas[index];
+
+            var targetTexture = _target.Swap();
 
             SetEffectParams(effectData);
             var snapshot = Main.spriteBatch.CaptureEndBegin(new()
@@ -748,9 +755,10 @@ public class Renderer : ModSystem {
                 TransformMatrix = Matrix.Identity,
             });
 
-            var targetTexture = _target.Swap();
             Main.spriteBatch.Draw(targetTexture, Vector2.Zero, Color.White);
             Main.spriteBatch.EndBegin(snapshot);
+
+            Main.graphics.GraphicsDevice.Viewport = new(0, 0, Main.screenWidth, Main.screenHeight);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -761,7 +769,10 @@ public class Renderer : ModSystem {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunEnd(DataIndex _) {
             var texture = _target.End();
-            Main.spriteBatch.EndBegin(new());
+            Main.spriteBatch.EndBegin(new()
+            {
+                TransformMatrix = Matrix.Identity,
+            });
             Main.spriteBatch.Draw(texture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), null, Color.White);
 
             // This fixes the issue with vanilla trail being drawn 2x bigger in case of half size target..

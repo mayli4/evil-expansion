@@ -5,8 +5,9 @@ using Terraria;
 
 namespace EvilExpansionMod.Common.Graphics;
 public class SwapTarget(int width, int height) : IDisposable {
-    static RenderTargetBinding[] _cachedBindings;
-    static RenderTargetUsage _cachedUsage;
+    RenderTargetBinding[] _cachedBindings;
+    Viewport _cachedViewport;
+    RenderTargetUsage _cachedUsage;
 
     RenderTarget2D _activeTarget = new(Main.graphics.GraphicsDevice, width, height);
     RenderTarget2D _inactiveTarget = new(Main.graphics.GraphicsDevice, width, height);
@@ -17,6 +18,7 @@ public class SwapTarget(int width, int height) : IDisposable {
 
     public void Begin() {
         _cachedBindings = Main.graphics.GraphicsDevice.GetRenderTargets();
+        _cachedViewport = Main.graphics.GraphicsDevice.Viewport;
         if(_cachedBindings != null && _cachedBindings.Length > 0) {
             _cachedUsage = ((RenderTarget2D)_cachedBindings[0].RenderTarget).RenderTargetUsage;
             ((RenderTarget2D)_cachedBindings[0].renderTarget).RenderTargetUsage = RenderTargetUsage.PreserveContents;

@@ -78,6 +78,8 @@ Mods: {
 			ThoughtfulCultistNPC.DisplayName: Thoughtful Cultist
 			CultistEye.DisplayName: Cultist Eye
 			PusImpNPC.DisplayName: Pus Imp N P C
+			StinkgrubNPC.DisplayName: Stinkgrub N P C
+			PusBottleNPC.DisplayName: Pus Bottle N P C
 		}
 
 		Projectiles: {
@@ -99,6 +101,7 @@ Mods: {
 			PusGlob.DisplayName: Pus Glob
 			PusCreepProjectile.DisplayName: Pus Creep Projectile
 			HeadPounderHeldProjectile.DisplayName: Head Pounder Held Projectile
+			PusBottleProjectile.DisplayName: Pus Bottle Projectile
 		}
 
 		Biomes: {
@@ -133,6 +136,7 @@ Mods: {
 			PusCarrierGrubNPCBestiary: ""
 			CursedSpiritNPCBestiary: ""
 			CultistEyeBestiary: ""
+			StinkgrubNPCBestiary: ""
 		}
 	}
 }

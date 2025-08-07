@@ -7,14 +7,14 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Common.Graphics;
 
-public interface IDrawOverTiles {
-    void DrawOverTiles(SpriteBatch spriteBatch);
+public interface ITileMask {
+    void DrawTileMask(SpriteBatch spriteBatch);
 }
 
 internal sealed class TileMasking : ModSystem {
     public static RenderTarget2D MaskTarget;
     public static RenderTarget2D SolidTilesTarget;
-    public static readonly List<IDrawOverTiles> RenderQueue = [];
+    public static readonly List<ITileMask> RenderQueue = [];
 
     private static bool _refreshTarget;
 
@@ -96,7 +96,7 @@ internal sealed class TileMasking : ModSystem {
 
         for(int i = 0; i < Main.maxProjectiles; i++) {
             Projectile proj = Main.projectile[i];
-            if(proj.active && proj.ModProjectile is IDrawOverTiles maskDraw) {
+            if(proj.active && proj.ModProjectile is ITileMask maskDraw) {
                 RenderQueue.Add(maskDraw);
             }
         }
@@ -136,13 +136,13 @@ internal sealed class TileMasking : ModSystem {
         Main.spriteBatch.Begin(
             SpriteSortMode.Deferred,
             BlendState.AlphaBlend,
-            SamplerState.LinearClamp,
+            SamplerState.PointClamp,
             DepthStencilState.Default,
             RasterizerState.CullNone
         );
 
         for(int i = 0; i < RenderQueue.Count; i++) {
-            RenderQueue[i].DrawOverTiles(Main.spriteBatch);
+            RenderQueue[i].DrawTileMask(Main.spriteBatch);
         }
 
         Main.spriteBatch.End();

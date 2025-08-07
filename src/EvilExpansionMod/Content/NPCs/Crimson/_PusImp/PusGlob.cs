@@ -102,7 +102,7 @@ public sealed class PusGlob : ModProjectile {
     }
 }
 
-public sealed class PusCreepProjectile : ModProjectile, IDrawOverTiles {
+public sealed class PusCreepProjectile : ModProjectile, ITileMask {
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.PusImp.KEY_PusGlob;
 
     private const int lifetime = 165;
@@ -151,7 +151,7 @@ public sealed class PusCreepProjectile : ModProjectile, IDrawOverTiles {
         return base.TileCollideStyle(ref width, ref height, ref fallThrough, ref hitboxCenterFrac);
     }
 
-    public void DrawOverTiles(SpriteBatch spriteBatch) {
+    public void DrawTileMask(SpriteBatch spriteBatch) {
         var tex = Assets.Assets.Textures.NPCs.Crimson.PusImp.PusCreepSplat.Value;
         var color = Lighting.GetColor(Projectile.Center.ToTileCoordinates()) * ((255 - Projectile.alpha) / 255f);
         var scale = new Vector2(1f + Scale * 0.6f, 1f);

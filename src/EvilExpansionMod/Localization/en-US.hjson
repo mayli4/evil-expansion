@@ -65,6 +65,36 @@ Mods: {
 				DisplayName: Head Pounder
 				Tooltip: ""
 			}
+
+			HellbringerBody: {
+				DisplayName: Hellbringer Body
+				Tooltip: ""
+			}
+
+			HellbringerHead: {
+				DisplayName: Hellbringer Head
+				Tooltip: ""
+			}
+
+			HellbringerLegs: {
+				DisplayName: Hellbringer Legs
+				Tooltip: ""
+			}
+
+			MeatPrisonBody: {
+				DisplayName: Meat Prison Body
+				Tooltip: ""
+			}
+
+			MeatPrisonHead: {
+				DisplayName: Meat Prison Head
+				Tooltip: ""
+			}
+
+			MeatPrisonLegs: {
+				DisplayName: Meat Prison Legs
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {

@@ -116,6 +116,7 @@ Mods: {
 			PusBottleNPC.DisplayName: Pus Bottle
 			StinkflyNPC.DisplayName: Stinkfly
 			SmallStinkflyNPC.DisplayName: Small Stinkfly
+			SmallStinkflyNpc.DisplayName: Small Stinkfly Npc
 		}
 
 		Projectiles: {

@@ -5,6 +5,8 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Tiles;
 
+//this will never work ever ever ever ever ever ever ever ever ever ever ever ever ever
+
 public sealed class ConversionGlobalTile : GlobalTile {
     public override void NearbyEffects(int i, int j, int type, bool closer) {
         if(type == TileID.TreeAsh) {

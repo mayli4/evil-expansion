@@ -83,17 +83,26 @@ Mods: {
 
 			MeatPrisonBody: {
 				DisplayName: Meat Prison Body
-				Tooltip: ""
+				Tooltip:
+					'''
+                    Increases summon damage by 10%
+                    Increases movement speed by 5%
+                    Increases your max number of minions by 1
+					'''
 			}
 
 			MeatPrisonHead: {
 				DisplayName: Meat Prison Head
-				Tooltip: ""
+				Tooltip:
+					'''
+					Increases summon damage by 8%
+					Increases your max number of minions by 1
+					'''
 			}
 
 			MeatPrisonLegs: {
 				DisplayName: Meat Prison Legs
-				Tooltip: ""
+				Tooltip: Increases movement speed by 10%
 			}
 
 			StinkflyItem: {
@@ -140,6 +149,7 @@ Mods: {
 			HeadPounderHeldProjectile.DisplayName: Head Pounder Held Projectile
 			PusBottleProjectile.DisplayName: Pus Bottle Projectile
 			StinkgrubGasProjectile.DisplayName: Stinkgrub Gas Projectile
+			PounderSpike.DisplayName: Pounder Spike
 		}
 
 		Biomes: {

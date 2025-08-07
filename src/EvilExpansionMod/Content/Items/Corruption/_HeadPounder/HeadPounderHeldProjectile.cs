@@ -1,14 +1,18 @@
-﻿using EvilExpansionMod.Common.Graphics;
+﻿using EvilExpansionMod.Common;
+using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Dusts;
+using EvilExpansionMod.Content.Items.Corruption._HeadPounder;
 using EvilExpansionMod.Content.NPCs.Corruption;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -27,7 +31,6 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
     float ChargeProgress => MathF.Min((float)_charge / MaxCharge, 1f);
     Vector2 RotationVector => (Projectile.rotation - MathF.PI / 4f).ToRotationVector2() * new Vector2(Owner.direction, 1f);
-
     Vector2[] _trailPositions;
 
     public override string Texture => Assets.Assets.Textures.Items.Corruption.HeadPounder.KEY_HeadPounderItem;
@@ -87,7 +90,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
                     var hitCenter = Projectile.position
                         + RotationVector * 65f
-                        + Owner.direction * RotationVector.RotatedBy(MathF.PI / 2f) * 35f;
+                        + Owner.direction * RotationVector.RotatedBy(MathF.PI / 2f) * 25f;
                     var hitSize = 40;
 
                     var hitPosition = hitCenter - Vector2.One * hitSize / 2f;
@@ -99,7 +102,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
                         Projectile.NewProjectile(
                             Projectile.GetSource_FromThis(),
-                            hitCenter - Vector2.UnitY * 15,
+                            hitCenter - Vector2.UnitY * 5,
                             Vector2.Zero,
                             ModContent.ProjectileType<MaceCrack>(),
                             0,
@@ -152,6 +155,15 @@ public class HeadPounderHeldProjectile : ModProjectile {
                         });
 
                         Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(13f, 0.6f));
+
+                        CoroutineSystem.Start(SpawnSpikesRoutine(
+                            Projectile.GetSource_FromAI(),
+                            hitCenter,
+                            Owner.direction,
+                            Projectile.damage,
+                            Projectile.knockBack * 2f,
+                            Projectile.owner
+                         ));
                         _hit = true;
                     }
                 }
@@ -173,6 +185,51 @@ public class HeadPounderHeldProjectile : ModProjectile {
                 + new Vector2(MathF.Sin(i * 0.35f + Main.GameUpdateCount * 0.1f) * 3.2f, -4f);
         }
         _trailPositions[0] = trailLastPosition;
+    }
+
+    static IEnumerator SpawnSpikesRoutine(
+        IEntitySource source,
+        Vector2 position,
+        int direction,
+        int damage,
+        float knockback,
+        int owner
+    ) {
+        var x = position.X;
+        var tileY = (int)position.Y >> 4;
+        for(var i = 0; i < 7; i++) {
+            if(Collision.SolidTiles(new(x, tileY * 16), 1, 1)) {
+                for(var j = 1; j < 100; j++) {
+                    if(!Collision.SolidTiles(new(x, (tileY - j) * 16), 1, 1)) {
+                        tileY -= (j - 1);
+                        break;
+                    }
+                }
+            }
+            else {
+                for(var j = 1; j < 100; j++) {
+                    if(Collision.SolidTiles(new(x, (tileY + j) * 16), 1, 1)) {
+                        tileY += (j + 1);
+                        break;
+                    }
+                }
+            }
+
+            var projectile = Projectile.NewProjectileDirect(
+                source,
+                new(x, tileY * 16f + 10f),
+                Vector2.Zero,
+                ModContent.ProjectileType<PounderSpike>(),
+                damage,
+                knockback,
+                owner,
+                Main.rand.Next(9)
+            );
+            projectile.rotation = Main.rand.NextFloatDirection() * 0.3f;
+
+            x += Main.rand.NextFloat(40f, 60f) * direction;
+            for(var j = 0; j < 2; j++) yield return null;
+        }
     }
 
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {

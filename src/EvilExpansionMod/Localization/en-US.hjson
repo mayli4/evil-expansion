@@ -132,6 +132,7 @@ Mods: {
 			PusCreepProjectile.DisplayName: Pus Creep Projectile
 			HeadPounderHeldProjectile.DisplayName: Head Pounder Held Projectile
 			PusBottleProjectile.DisplayName: Pus Bottle Projectile
+			PounderSpike.DisplayName: Pounder Spike
 		}
 
 		Biomes: {

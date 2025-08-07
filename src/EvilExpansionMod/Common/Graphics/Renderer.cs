@@ -345,14 +345,13 @@ public class Renderer : ModSystem {
     }
 
     public static Pipeline BeginPipeline(float scale = 1f, SpriteBatchSnapshot? snapshot = null) {
-        if(scale > 1f) throw new Exception("Scale cannot exceed 1f.");
         if(_cache.Count != 0) throw new Exception("One pipeline can be begun at a time.");
 
         var snapshotIndex = _snapshotDatas.Count;
         _snapshotDatas.Add(snapshot ?? new());
 
         var beginDataIndex = _beginDatas.Count;
-        _beginDatas.Add(new() { Scale = scale, SnapshotIndex = snapshotIndex });
+        _beginDatas.Add(new() { Scale = Math.Clamp(scale, 0f, 1f), SnapshotIndex = snapshotIndex });
 
         _cache.Add(CommandType.Begin, beginDataIndex);
         return new();
@@ -679,16 +678,16 @@ public class Renderer : ModSystem {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunDrawSpritePosition(DataIndex index) {
-            var sprite = _spritePositionDatas[index];
+            var spriteData = _spritePositionDatas[index];
             Main.spriteBatch.Draw(
-                sprite.Texture,
-                sprite.Position,
-                null,
-                sprite.Color,
-                sprite.Rotation,
-                sprite.Origin,
-                sprite.Scale,
-                sprite.SpriteEffects,
+                spriteData.Texture,
+                spriteData.Position,
+                spriteData.Source,
+                spriteData.Color,
+                spriteData.Rotation,
+                spriteData.Origin,
+                spriteData.Scale,
+                spriteData.SpriteEffects,
                 0f
             );
         }
@@ -699,7 +698,7 @@ public class Renderer : ModSystem {
             Main.spriteBatch.Draw(
                 rectangleData.Texture,
                 rectangleData.Destination,
-                null,
+                rectangleData.Source,
                 rectangleData.Color,
                 rectangleData.Rotation,
                 rectangleData.Origin,

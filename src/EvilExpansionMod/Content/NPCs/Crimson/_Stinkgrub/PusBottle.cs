@@ -21,7 +21,7 @@ public class PusBottleNPC : ModNPC {
     private const int spew_interval = 60 * 2;
     private const int detached_lifetime = 60 * 10;
     
-    private float MaxSquishTime = 30f;
+    private float _maxSquishTime = 30f;
 
     public override void SetDefaults() {
         NPC.width = 16;
@@ -100,7 +100,7 @@ public class PusBottleNPC : ModNPC {
     private void FirePus() {
         var amount = Main.rand.Next(2, 4);
         
-        SquishTimer = MaxSquishTime;
+        SquishTimer = _maxSquishTime;
 
         for(int i = 0; i < amount; i++) {
             float speed = Main.rand.NextFloat(4f, 7f);

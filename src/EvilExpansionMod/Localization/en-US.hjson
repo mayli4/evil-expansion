@@ -37,22 +37,22 @@ Mods: {
 			}
 
 			EffigyBannerItem: {
-				DisplayName: Effigy Banner Item
+				DisplayName: Effigy Banner
 				Tooltip: ""
 			}
 
 			TerrorbatBannerItem: {
-				DisplayName: Terrorbat Banner Item
+				DisplayName: Terrorbat Banner
 				Tooltip: ""
 			}
 
 			CorruptFireblossomItem: {
-				DisplayName: Corrupt Fireblossom Item
+				DisplayName: Corrupt Fireblossom
 				Tooltip: ""
 			}
 
 			CorruptFireblossomSeedsItem: {
-				DisplayName: Corrupt Fireblossom Seeds Item
+				DisplayName: Corrupt Fireblossom Seeds
 				Tooltip: ""
 			}
 
@@ -95,6 +95,11 @@ Mods: {
 				DisplayName: Meat Prison Legs
 				Tooltip: ""
 			}
+
+			StinkflyItem: {
+				DisplayName: Stinkfly
+				Tooltip: Used in perfume for some reason...
+			}
 		}
 
 		NPCs: {
@@ -102,14 +107,15 @@ Mods: {
 			TerrorBatNPC.DisplayName: Terror Bat
 			CursedSpiritNPC.DisplayName: Cursed Spirit
 			EffigyNPC.DisplayName: Effigy
-			PusCarrierGrubNPC.DisplayName: Pus Carrier Grub
 			CursehoundNPC.DisplayName: Cursehound
 			TestStateNPC.DisplayName: Test State N P C
 			ThoughtfulCultistNPC.DisplayName: Thoughtful Cultist
 			CultistEye.DisplayName: Cultist Eye
-			PusImpNPC.DisplayName: Pus Imp N P C
-			StinkgrubNPC.DisplayName: Stinkgrub N P C
-			PusBottleNPC.DisplayName: Pus Bottle N P C
+			PusImpNPC.DisplayName: Pus Imp
+			StinkgrubNPC.DisplayName: Stinkgrub
+			PusBottleNPC.DisplayName: Pus Bottle
+			StinkflyNPC.DisplayName: Stinkfly
+			SmallStinkflyNPC.DisplayName: Small Stinkfly
 		}
 
 		Projectiles: {
@@ -129,10 +135,10 @@ Mods: {
 			StalactiteProjectile.DisplayName: Stalactite Projectile
 			PortalGore.DisplayName: Portal Gore
 			PusGlob.DisplayName: Pus Glob
-			PusCreepProjectile.DisplayName: Pus Creep Projectile
+			PusCreepProjectile.DisplayName: Pus Creep
 			HeadPounderHeldProjectile.DisplayName: Head Pounder Held Projectile
 			PusBottleProjectile.DisplayName: Pus Bottle Projectile
-			PounderSpike.DisplayName: Pounder Spike
+			StinkgrubGasProjectile.DisplayName: Stinkgrub Gas Projectile
 		}
 
 		Biomes: {
@@ -164,7 +170,6 @@ Mods: {
 		Bestiary: {
 			DevilOWarNPCBestiary: Marine life in the underworld? this organism uses hot gases to float in the air, and a sharp stinger to feed off its prey!
 			TerrorBatNPCBestiary: The terror bat grooves and dives in the air, while also using its acidic spit as a weapon that you wouldn't want to stain your clothes!
-			PusCarrierGrubNPCBestiary: ""
 			CursedSpiritNPCBestiary: ""
 			CultistEyeBestiary: ""
 			StinkgrubNPCBestiary: ""

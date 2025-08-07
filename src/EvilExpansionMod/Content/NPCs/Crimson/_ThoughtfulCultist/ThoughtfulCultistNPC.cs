@@ -60,7 +60,7 @@ public class ThoughtfulCultistNPC : ModNPC {
     }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-        return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.05f : 0;
+        return spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.05f : 0;
     }
 
     public override void OnSpawn(IEntitySource source) {

@@ -100,9 +100,6 @@ public sealed class StinkgrubNPC : ModNPC {
                 pusBottleNPC = Main.npc[(int)PusBottleNPCID];
                 if (!pusBottleNPC.active || pusBottleNPC.type != ModContent.NPCType<PusBottleNPC>() || (int)pusBottleNPC.ai[0] != NPC.whoAmI) {
                     PusBottleNPCID = -1;
-                    NPC.lifeMax = 80;
-                    NPC.life = Math.Min(NPC.life, NPC.lifeMax);
-                    NPC.scale = 1f;
                     NPC.netUpdate = true;
                 }
             }

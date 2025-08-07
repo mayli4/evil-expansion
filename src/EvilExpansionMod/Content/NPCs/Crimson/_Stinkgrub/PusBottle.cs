@@ -1,4 +1,6 @@
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -6,15 +8,20 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.NPCs.Crimson;
 
+//todo: pus shader
 
 public class PusBottleNPC : ModNPC {
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.Stinkgrub.KEY_PusBottle;
 
     private int ParentNPCID => (int)NPC.ai[0];
     private ref float IsDetached => ref NPC.ai[1];
+    
+    public ref float SquishTimer => ref NPC.localAI[0];
 
     private const int spew_interval = 60 * 2;
     private const int detached_lifetime = 60 * 10;
+    
+    private float MaxSquishTime = 30f;
 
     public override void SetDefaults() {
         NPC.width = 16;
@@ -22,7 +29,7 @@ public class PusBottleNPC : ModNPC {
         NPC.aiStyle = -1;
         NPC.friendly = false;
         NPC.damage = 0;
-        NPC.lifeMax = 100;
+        NPC.lifeMax = 1100;
         NPC.knockBackResist = 0f;
         NPC.value = 0f;
 
@@ -36,15 +43,24 @@ public class PusBottleNPC : ModNPC {
     public override void AI() {
         NPC parentNPC = Main.npc[ParentNPCID];
 
+        if (SquishTimer > 0) 
+            SquishTimer--;
+        
         if (IsDetached == 0) {
             if (parentNPC.active && parentNPC.type == ModContent.NPCType<StinkgrubNPC>())
             {
                 StinkgrubNPC grub = (StinkgrubNPC)parentNPC.ModNPC;
                 if (grub.IsPusCarrier) {
-                    NPC.Center = parentNPC.Center + new Vector2(parentNPC.spriteDirection * -5 * parentNPC.scale, -parentNPC.height / 2 * parentNPC.scale);
+                    NPC.Center = parentNPC.Center + new Vector2(parentNPC.spriteDirection, -parentNPC.height / 2 * parentNPC.scale);
                     NPC.velocity = parentNPC.velocity;
                     NPC.gfxOffY = parentNPC.gfxOffY;
+                    
+                    NPC.direction = parentNPC.direction;
+                    NPC.spriteDirection = parentNPC.spriteDirection;
 
+                    float tiltAngle = 0.2f;
+                    NPC.rotation = (NPC.direction == 1) ? -tiltAngle : tiltAngle;
+                    
                     NPC.ai[2]++;
                     if (NPC.ai[2] >= spew_interval) {
                         FirePus();
@@ -73,6 +89,8 @@ public class PusBottleNPC : ModNPC {
 
             NPC.velocity.X *= 0.98f;
             
+            NPC.rotation += 0.1f;
+            
             if (NPC.collideX || NPC.collideY) {
                 NPC.StrikeInstantKill();
             }
@@ -81,6 +99,8 @@ public class PusBottleNPC : ModNPC {
 
     private void FirePus() {
         var amount = Main.rand.Next(2, 4);
+        
+        SquishTimer = MaxSquishTime;
 
         for(int i = 0; i < amount; i++) {
             float speed = Main.rand.NextFloat(4f, 7f);
@@ -119,5 +139,50 @@ public class PusBottleNPC : ModNPC {
             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Ichor, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 0, default, 0.8f);
         }
         SoundEngine.PlaySound(SoundID.Shatter, NPC.Center);
+    }
+    
+    public override void HitEffect(NPC.HitInfo hit) {
+        if(Main.netMode == NetmodeID.Server || NPC.life > 0) return;
+        for(var i = 0; i < 3; i++) Gore.NewGoreDirect(
+            NPC.GetSource_Death(),
+            NPC.Center + Main.rand.NextVector2Unit() * 5f - Vector2.UnitY * 30f,
+            Main.rand.NextVector2Unit(rotationRange: -MathF.PI) * 3f,
+            Mod.Find<ModGore>($"BottleGore{i}").Type
+        );
+    }
+    
+    public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
+        var texture = Assets.Assets.Textures.NPCs.Crimson.Stinkgrub.PusBottle.Value;
+
+        var origin = texture.Size() / 2f;
+        
+        float squishFactor = Math.Clamp(SquishTimer / 40, 0f, 1f);
+        float easedSquish = MathF.Sin(squishFactor * MathHelper.Pi);
+        float currentSquishX = 1f + easedSquish * 0.2f;
+        float currentSquishY = 1f - easedSquish * 0.2f;
+
+        var finalScale = new Vector2(currentSquishX, currentSquishY);
+        
+        var flipped = NPC.direction != -1;
+        var effects = flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+        
+        const float maxVerticalOffset = 12f;
+        float verticalSquishOffset = easedSquish * maxVerticalOffset;
+        
+        var offset = flipped ? new Vector2(0, 60) : new Vector2(-14, 60);
+        
+        spriteBatch.Draw(
+            texture,
+            NPC.position - screenPos - offset + new Vector2(0, verticalSquishOffset),
+            null,
+            drawColor,
+            NPC.rotation,
+            origin,
+            finalScale,
+            SpriteEffects.None,
+            0f
+        );
+
+        return false;
     }
 }

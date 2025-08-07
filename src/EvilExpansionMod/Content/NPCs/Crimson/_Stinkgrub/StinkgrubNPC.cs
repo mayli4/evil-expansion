@@ -63,7 +63,7 @@ public sealed class StinkgrubNPC : ModNPC {
     }
 
     public override void OnSpawn(IEntitySource source) {
-        if (Main.rand.NextBool(3)) {
+        if (Main.rand.NextBool(1)) {
             int npcIndex = NPC.NewNPC(
                 NPC.GetSource_FromThis(),
                 (int)NPC.Center.X,
@@ -124,7 +124,6 @@ public sealed class StinkgrubNPC : ModNPC {
             StateTimer++;
             if (StateTimer >= Main.rand.Next(60, 120)) {
                 ChangeState(State.Moving);
-                NPC.direction = Main.rand.NextBool() ? 1 : -1;
             }
         }
         else if (CurrentState == State.Moving) {
@@ -138,13 +137,7 @@ public sealed class StinkgrubNPC : ModNPC {
                 NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * Main.rand.NextFloat(-0.5f, 0.5f), acceleration);
             }
 
-            int tileX = (int)((NPC.Center.X + NPC.width / 2 * NPC.direction) / 16f);
-            int tileY = (int)((NPC.position.Y + NPC.height) / 16f);
-            var frontTile = Framing.GetTileSafely(tileX, tileY);
-
-            if (!frontTile.HasTile || !Main.tileSolid[frontTile.TileType]) {
-                NPC.direction *= -1;
-            }
+            Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
 
             StateTimer++;
             if (StateTimer >= Main.rand.Next(60 * 3, 60 * 5)) {
@@ -157,7 +150,30 @@ public sealed class StinkgrubNPC : ModNPC {
             GasTimer = 0;
         }
     }
-
+    
+    public override void OnKill() {
+        if (IsPusCarrier) {
+            NPC pusBottleNPC;
+            if (PusBottleNPCID >= 0 && PusBottleNPCID < Main.maxNPCs) {
+                pusBottleNPC = Main.npc[(int)PusBottleNPCID];
+                if (pusBottleNPC.active && pusBottleNPC.type == ModContent.NPCType<PusBottleNPC>() && (int)pusBottleNPC.ai[0] == NPC.whoAmI) {
+                    pusBottleNPC.ai[1] = 1;
+                    pusBottleNPC.netUpdate = true;
+                }
+            }
+        }
+    }
+    
+    public override void HitEffect(NPC.HitInfo hit) {
+        if(Main.netMode == NetmodeID.Server || NPC.life > 0) return;
+        for(var i = 0; i < 3; i++) Gore.NewGoreDirect(
+            NPC.GetSource_Death(),
+            NPC.Center + Main.rand.NextVector2Unit() * 5f - Vector2.UnitY * 30f,
+            Main.rand.NextVector2Unit(rotationRange: -MathF.PI) * 3f,
+            Mod.Find<ModGore>($"StinkgrubGore{i}").Type
+        );
+    }
+    
     public override void FindFrame(int frameHeight) {
         NPC.frameCounter++;
 
@@ -183,19 +199,6 @@ public sealed class StinkgrubNPC : ModNPC {
         }
         else {
             NPC.frame.Y = 5 * frameHeight;
-        }
-    }
-
-    public override void OnKill() {
-        if (IsPusCarrier) {
-            NPC pusBottleNPC;
-            if (PusBottleNPCID >= 0 && PusBottleNPCID < Main.maxNPCs) {
-                pusBottleNPC = Main.npc[(int)PusBottleNPCID];
-                if (pusBottleNPC.active && pusBottleNPC.type == ModContent.NPCType<PusBottleNPC>() && (int)pusBottleNPC.ai[0] == NPC.whoAmI) {
-                    pusBottleNPC.ai[1] = 1;
-                    pusBottleNPC.netUpdate = true;
-                }
-            }
         }
     }
 }

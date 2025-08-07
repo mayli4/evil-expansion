@@ -1,3 +1,4 @@
+using EvilExpansionMod.Content.Tiles.Crimson;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using System;
@@ -42,11 +43,12 @@ public class OvergrownCorruptAsh : ModTile {
 
     public override void Convert(int i, int j, int conversionType) {
         switch(conversionType) {
-            case BiomeConversionID.Chlorophyte:
             case BiomeConversionID.Purity:
                 WorldGen.ConvertTile(i, j, TileID.AshGrass);
                 return;
-            case BiomeConversionID.Sand:
+            case BiomeConversionID.Crimson:
+                WorldGen.ConvertTile(i, j, ModContent.TileType<CrimsonAshGrass>());
+                return;
             case BiomeConversionID.Corruption:
                 WorldGen.ConvertTile(i, j, ModContent.TileType<OvergrownCorruptAsh>());
                 return;

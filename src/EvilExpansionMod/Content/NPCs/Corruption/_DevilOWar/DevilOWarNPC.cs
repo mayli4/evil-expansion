@@ -426,7 +426,7 @@ public sealed class DevilOWarNPC : ModNPC {
 
         Main.spriteBatch.Draw(insidesTexture, NPC.Center + new Vector2(0, 19) - screenPos, null, drawColor, NPC.rotation, insidesTexture.Size() / 2, 1f, effects, 0f);
 
-        Renderer.BeginPipeline(RenderTarget.HalfScreen, new() { CustomEffect = fluidEffect })
+        Renderer.BeginPipeline(0.5f, new() { CustomEffect = fluidEffect })
             .EffectParams(
                 fluidEffect,
                 ("level", mappedLevel),

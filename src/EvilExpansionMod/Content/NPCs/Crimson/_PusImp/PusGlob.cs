@@ -75,7 +75,7 @@ public sealed class PusGlob : ModProjectile {
 
     public override bool PreDraw(ref Color lightColor) {
         var trailEffect = Assets.Assets.Effects.Trail.CursedSpiritFire.Value;
-        Renderer.BeginPipeline(RenderTarget.HalfScreen)
+        Renderer.BeginPipeline(0.5f)
             .DrawTrail(
                 _trailPositions,
                 static _ => 14f,
@@ -144,7 +144,7 @@ public sealed class PusCreepProjectile : ModProjectile, IDrawOverTiles {
             );
         }
     }
-    
+
     public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac) {
         fallThrough = false;
 

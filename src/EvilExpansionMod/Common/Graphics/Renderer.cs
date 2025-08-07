@@ -31,11 +31,6 @@ public enum RuntimeParameterValue {
     ScreenToTargetMatrix,
 }
 
-public enum RenderTarget {
-    FullScreen,
-    HalfScreen,
-}
-
 public class Renderer : ModSystem {
     struct Commands() {
         public List<CommandType> Types = [];
@@ -101,7 +96,7 @@ public class Renderer : ModSystem {
     }
 
     struct BeginData {
-        public RenderTarget Target;
+        public float Scale;
         public DataIndex SnapshotIndex;
     }
 
@@ -237,9 +232,11 @@ public class Renderer : ModSystem {
     static DynamicIndexBuffer _trailIndexBuffer;
     static readonly ushort[] _trailIndices = new ushort[TrailIndexCount];
 
-    static Semaphore _targetSemaphore = new(1, 1);
-    static SwapTarget _fullScreenTarget;
-    static SwapTarget _halfScreenTarget;
+    readonly static Semaphore _targetSemaphore = new(0, 1);
+    static RenderTarget2D _activeTarget;
+    static RenderTarget2D _inactiveTarget;
+
+    static RenderTarget2D InitFullScreenTarget => new(Main.graphics.GraphicsDevice, Main.screenWidth, Main.screenHeight);
 
     public override void Load() {
         Main.QueueMainThreadAction(() =>
@@ -257,9 +254,8 @@ public class Renderer : ModSystem {
                 BufferUsage.WriteOnly
             );
 
-            _targetSemaphore.WaitOne();
-            _fullScreenTarget = new(Main.screenWidth, Main.screenHeight);
-            _halfScreenTarget = new(Main.screenWidth / 2, Main.screenHeight / 2);
+            _activeTarget = InitFullScreenTarget;
+            _inactiveTarget = InitFullScreenTarget;
             _targetSemaphore.Release();
         });
 
@@ -268,11 +264,13 @@ public class Renderer : ModSystem {
             Main.QueueMainThreadAction(() =>
             {
                 _targetSemaphore.WaitOne();
-                _fullScreenTarget.Dispose();
-                _fullScreenTarget = new(Main.screenWidth, Main.screenHeight);
 
-                _halfScreenTarget.Dispose();
-                _halfScreenTarget = new(Main.screenWidth / 2, Main.screenHeight / 2);
+                _activeTarget.Dispose();
+                _inactiveTarget.Dispose();
+
+                _activeTarget = InitFullScreenTarget;
+                _inactiveTarget = InitFullScreenTarget;
+
                 _targetSemaphore.Release();
             });
         };
@@ -291,8 +289,8 @@ public class Renderer : ModSystem {
 
         Main.QueueMainThreadAction(() =>
         {
-            _fullScreenTarget.Dispose();
-            _halfScreenTarget.Dispose();
+            _activeTarget.Dispose();
+            _inactiveTarget.Dispose();
         });
     }
 
@@ -346,14 +344,15 @@ public class Renderer : ModSystem {
         _afterPlayers.Clear();
     }
 
-    public static Pipeline BeginPipeline(RenderTarget target = RenderTarget.FullScreen, SpriteBatchSnapshot? snapshot = null) {
+    public static Pipeline BeginPipeline(float scale = 1f, SpriteBatchSnapshot? snapshot = null) {
+        if(scale > 1f) throw new Exception("Scale cannot exceed 1f.");
         if(_cache.Count != 0) throw new Exception("One pipeline can be begun at a time.");
 
         var snapshotIndex = _snapshotDatas.Count;
         _snapshotDatas.Add(snapshot ?? new());
 
         var beginDataIndex = _beginDatas.Count;
-        _beginDatas.Add(new() { Target = target, SnapshotIndex = snapshotIndex });
+        _beginDatas.Add(new() { Scale = scale, SnapshotIndex = snapshotIndex });
 
         _cache.Add(CommandType.Begin, beginDataIndex);
         return new();
@@ -466,7 +465,7 @@ public class Renderer : ModSystem {
         public readonly Pipeline DrawSprite(
             Texture2D texture,
             Vector2 position,
-            Color? color = null, // WHITE
+            Color? color = null,
             Rectangle? source = null,
             float rotation = 0f,
             Vector2? origin = null,
@@ -565,17 +564,17 @@ public class Renderer : ModSystem {
 
     // TODO: put this in a separate file and expose renderer data.
     struct CommandRunner {
-        SwapTarget _target;
+        float _targetScale;
 
         Matrix _worldToTargetMatrix;
         Matrix _screenToTargetMatrix;
 
+        RenderTargetBinding[] _cachedBindings;
+        RenderTargetUsage _cachedUsage;
+
         public static void Run(in Commands commands) {
             _targetSemaphore.WaitOne();
-            var r = new CommandRunner()
-            {
-                _target = _fullScreenTarget,
-            };
+            var r = new CommandRunner();
 
             SpriteBatchSnapshot? snapshot = null;
             if(Main.spriteBatch.beginCalled) {
@@ -712,33 +711,29 @@ public class Renderer : ModSystem {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void RunBegin(DataIndex index) {
             var beginData = _beginDatas[index];
+
+            _targetScale = beginData.Scale;
             var snapshot = _snapshotDatas[beginData.SnapshotIndex];
 
-            switch(beginData.Target) {
-                case RenderTarget.FullScreen:
-                    _target = _fullScreenTarget;
-                    break;
-                case RenderTarget.HalfScreen:
-                    _target = _halfScreenTarget;
-                    break;
-            }
-
-            var scale = _target.Size / Main.ScreenSize.ToVector2();
-
-            _screenToTargetMatrix =
-                Matrix.CreateTranslation(-Main.GameViewMatrix.Translation.X, -Main.GameViewMatrix.Translation.Y, 0f)
-                * Matrix.CreateScale(Main.GameViewMatrix.Zoom.X, Main.GameViewMatrix.Zoom.Y, 1f)
-                * Matrix.CreateScale(scale.X, scale.Y, 1f)
+            _screenToTargetMatrix = Main.GameViewMatrix.TransformationMatrix
                 * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
             _worldToTargetMatrix = Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f)
                 * _screenToTargetMatrix;
 
-            _target.Begin();
-            Main.graphics.GraphicsDevice.Viewport = new(0, 0, Main.screenWidth, Main.screenHeight);
+            _cachedBindings = Main.graphics.GraphicsDevice.GetRenderTargets();
+            if(_cachedBindings != null && _cachedBindings.Length > 0) {
+                _cachedUsage = ((RenderTarget2D)_cachedBindings[0].RenderTarget).RenderTargetUsage;
+                ((RenderTarget2D)_cachedBindings[0].renderTarget).RenderTargetUsage = RenderTargetUsage.PreserveContents;
+            }
+
+            Main.graphics.graphicsDevice.SetRenderTarget(_activeTarget);
+            SetTargetViewport();
+
+            Main.graphics.GraphicsDevice.Clear(Color.Transparent);
+
             Main.spriteBatch.Begin(snapshot with
             {
-                TransformMatrix = snapshot.TransformMatrix
-                    * Matrix.CreateScale(scale.X, scale.Y, 1f),
+                TransformMatrix = snapshot.TransformMatrix * Matrix.CreateScale(_targetScale)
             });
         }
 
@@ -746,7 +741,9 @@ public class Renderer : ModSystem {
         void RunApplyEffect(DataIndex index) {
             var effectData = _effectDatas[index];
 
-            var targetTexture = _target.Swap();
+            (_activeTarget, _inactiveTarget) = (_inactiveTarget, _activeTarget);
+            Main.graphics.GraphicsDevice.SetRenderTarget(_activeTarget);
+            Main.graphics.GraphicsDevice.Clear(Color.Transparent);
 
             SetEffectParams(effectData);
             var snapshot = Main.spriteBatch.CaptureEndBegin(new()
@@ -755,10 +752,9 @@ public class Renderer : ModSystem {
                 TransformMatrix = Matrix.Identity,
             });
 
-            Main.spriteBatch.Draw(targetTexture, Vector2.Zero, Color.White);
+            Main.spriteBatch.Draw(_inactiveTarget, Vector2.Zero, Color.White);
             Main.spriteBatch.EndBegin(snapshot);
-
-            Main.graphics.GraphicsDevice.Viewport = new(0, 0, Main.screenWidth, Main.screenHeight);
+            SetTargetViewport();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -768,18 +764,31 @@ public class Renderer : ModSystem {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunEnd(DataIndex _) {
-            var texture = _target.End();
+            Main.graphics.GraphicsDevice.SetRenderTargets(_cachedBindings);
+            if(_cachedBindings != null && _cachedBindings.Length > 0) {
+                ((RenderTarget2D)_cachedBindings[0].RenderTarget).RenderTargetUsage = _cachedUsage;
+            }
+
             Main.spriteBatch.EndBegin(new()
             {
-                TransformMatrix = Matrix.Identity,
+                TransformMatrix = Matrix.CreateScale(1f / _targetScale),
             });
-            Main.spriteBatch.Draw(texture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), null, Color.White);
+            Main.spriteBatch.Draw(_activeTarget, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), null, Color.White);
 
             // This fixes the issue with vanilla trail being drawn 2x bigger in case of half size target..
             // The spritebatch sets the transformation matrix in `End`
             // and the trails depend on it so it needs to be set back to normal.
             Main.spriteBatch.EndBegin(new());
             Main.spriteBatch.End();
+        }
+
+        readonly void SetTargetViewport() {
+            Main.graphics.GraphicsDevice.Viewport = new(
+                0,
+                0,
+                (int)(Main.screenWidth * _targetScale),
+                (int)(Main.screenHeight * _targetScale)
+            );
         }
 
         readonly void SetEffectParams(EffectData effectData) {
@@ -811,7 +820,7 @@ public class Renderer : ModSystem {
                     case ParameterValueType.RuntimeValue:
                         switch(parameter.Value.RuntimeValue) {
                             case RuntimeParameterValue.TargetSize:
-                                effect.Parameters[parameter.Name].SetValue(_target.Size);
+                                effect.Parameters[parameter.Name].SetValue(Main.ScreenSize.ToVector2());
                                 break;
                             case RuntimeParameterValue.WorldToTargetMatrix:
                                 effect.Parameters[parameter.Name].SetValue(_worldToTargetMatrix);

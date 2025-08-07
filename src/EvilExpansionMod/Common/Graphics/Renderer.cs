@@ -206,8 +206,6 @@ public class Renderer : ModSystem {
         RuntimeValue,
     }
 
-    public static Matrix HalfScreenEffectMatrix { get; private set; }
-
     static readonly List<EffectParameter> _effectParameters = [];
 
     static readonly List<DrawSpritePositionData> _spritePositionDatas = [];
@@ -269,11 +267,13 @@ public class Renderer : ModSystem {
         {
             Main.QueueMainThreadAction(() =>
             {
+                _targetSemaphore.WaitOne();
                 _fullScreenTarget.Dispose();
                 _fullScreenTarget = new(Main.screenWidth, Main.screenHeight);
 
                 _halfScreenTarget.Dispose();
                 _halfScreenTarget = new(Main.screenWidth / 2, Main.screenHeight / 2);
+                _targetSemaphore.Release();
             });
         };
 
@@ -297,31 +297,31 @@ public class Renderer : ModSystem {
     }
 
     private void On_Main_DrawSuperSpecialProjectiles(On_Main.orig_DrawSuperSpecialProjectiles orig, Main self, List<int> projCache, bool startSpriteBatch) {
-        CommandRunner.Run(ref _beforeProjectiles);
+        CommandRunner.Run(in _beforeProjectiles);
         orig(self, projCache, startSpriteBatch);
     }
 
     private void On_Main_DrawCachedProjs(On_Main.orig_DrawCachedProjs orig, Main self, List<int> projCache, bool startSpriteBatch) {
         orig(self, projCache, startSpriteBatch);
-        CommandRunner.Run(ref _afterProjectiles);
+        CommandRunner.Run(in _afterProjectiles);
     }
 
     private void On_Main_DrawPlayers_AfterProjectiles(On_Main.orig_DrawPlayers_AfterProjectiles orig, Main self) {
-        CommandRunner.Run(ref _beforePlayers);
+        CommandRunner.Run(in _beforePlayers);
         orig(self);
-        CommandRunner.Run(ref _afterPlayers);
+        CommandRunner.Run(in _afterPlayers);
     }
 
     private void On_Main_DrawNPCs(On_Main.orig_DrawNPCs orig, Main self, bool behindTiles) {
         if(behindTiles) {
-            CommandRunner.Run(ref _beforeTiles);
+            CommandRunner.Run(in _beforeTiles);
             orig(self, behindTiles);
         }
         else {
-            CommandRunner.Run(ref _afterTiles);
-            CommandRunner.Run(ref _beforeNPCs);
+            CommandRunner.Run(in _afterTiles);
+            CommandRunner.Run(in _beforeNPCs);
             orig(self, behindTiles);
-            CommandRunner.Run(ref _afterNPCs);
+            CommandRunner.Run(in _afterNPCs);
         }
     }
 
@@ -344,11 +344,6 @@ public class Renderer : ModSystem {
         _afterNPCs.Clear();
         _beforePlayers.Clear();
         _afterPlayers.Clear();
-
-        HalfScreenEffectMatrix =
-            Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f)
-            * Matrix.CreateScale(0.5f)
-            * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth / 2f, Main.screenHeight / 2f, 0, -1, 1);
     }
 
     public static Pipeline BeginPipeline(RenderTarget target = RenderTarget.FullScreen, SpriteBatchSnapshot? snapshot = null) {
@@ -531,7 +526,7 @@ public class Renderer : ModSystem {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly void Flush() {
             _cache.Add(CommandType.End, -1);
-            CommandRunner.Run(ref _cache);
+            CommandRunner.Run(in _cache);
             _cache.Clear();
         }
 
@@ -575,7 +570,7 @@ public class Renderer : ModSystem {
         Matrix _worldToTargetMatrix;
         Matrix _screenToTargetMatrix;
 
-        public static void Run(ref Commands commands) {
+        public static void Run(in Commands commands) {
             _targetSemaphore.WaitOne();
             var r = new CommandRunner()
             {
@@ -717,32 +712,29 @@ public class Renderer : ModSystem {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void RunBegin(DataIndex index) {
             var beginData = _beginDatas[index];
-
-            var target = beginData.Target;
             var snapshot = _snapshotDatas[beginData.SnapshotIndex];
 
-            switch(target) {
-                case RenderTarget.HalfScreen:
-                    _target = _halfScreenTarget;
-                    snapshot = snapshot with
-                    {
-                        TransformMatrix = Matrix.CreateScale(0.5f),
-                    };
-
-                    _screenToTargetMatrix = Matrix.CreateScale(0.5f)
-                        * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth / 2f, Main.screenHeight / 2f, 0, -1, 1);
-                    break;
+            var spriteBatchMatrix = Matrix.Identity;
+            switch(beginData.Target) {
                 case RenderTarget.FullScreen:
                     _target = _fullScreenTarget;
-                    _screenToTargetMatrix = Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+                    break;
+                case RenderTarget.HalfScreen:
+                    _target = _halfScreenTarget;
+                    spriteBatchMatrix = Matrix.CreateScale(0.5f);
                     break;
             }
 
+            _screenToTargetMatrix = spriteBatchMatrix
+                * Matrix.CreateOrthographicOffCenter(0, _target.Width, _target.Height, 0, -1, 1);
             _worldToTargetMatrix = Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f)
                 * _screenToTargetMatrix;
 
-            Main.spriteBatch.Begin(snapshot);
             _target.Begin();
+            Main.spriteBatch.Begin(snapshot with
+            {
+                TransformMatrix = spriteBatchMatrix,
+            });
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -767,15 +759,10 @@ public class Renderer : ModSystem {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void RunEnd(DataIndex _) {
+        readonly void RunEnd(DataIndex _) {
             var texture = _target.End();
-            var scale = Main.ScreenSize.ToVector2() / _target.Size;
-
-            Main.spriteBatch.EndBegin(new()
-            {
-                TransformMatrix = Matrix.CreateScale(scale.X, scale.Y, 1f) * Main.GameViewMatrix.ZoomMatrix,
-            });
-            Main.spriteBatch.Draw(texture, Vector2.Zero, Color.White);
+            Main.spriteBatch.EndBegin(new());
+            Main.spriteBatch.Draw(texture, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), null, Color.White);
 
             // This fixes the issue with vanilla trail being drawn 2x bigger in case of half size target..
             // The spritebatch sets the transformation matrix in `End`

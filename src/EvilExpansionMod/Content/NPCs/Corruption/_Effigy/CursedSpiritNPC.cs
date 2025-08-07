@@ -247,6 +247,15 @@ public sealed class CursedSpiritNPC : ModNPC {
 
                     SetState(SplitterState.FlyToTarget);
                     splitNPC.NPC.netUpdate = true;
+
+                    if(_data.Splitter.Depth == 1) {
+                        Gore.NewGoreDirect(
+                            NPC.GetSource_Death(),
+                            NPC.Center,
+                            Main.rand.NextVector2Unit() * 5f,
+                            Mod.Find<ModGore>($"CursedSpiritSplitterGore").Type
+                        );
+                    }
                 }
                 break;
         }
@@ -413,8 +422,7 @@ public sealed class CursedSpiritNPC : ModNPC {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) return;
         switch(SpiritType) {
             case SpiritType.Splitter:
-                if(_data.Splitter.Depth < SplitterMaxDepth) return;
-                break;
+                return;
             case SpiritType.Exploder:
                 if(State<ExploderState>() != ExploderState.Exploding) return;
                 break;
@@ -546,7 +554,7 @@ public sealed class CursedSpiritNPC : ModNPC {
                     static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f),
                     trailEffect,
                     ("time", 0.025f * Main.GameUpdateCount + NPC.whoAmI * 3.432f),
-                    ("mat", Renderer.HalfScreenEffectMatrix),
+                    ("mat", RuntimeParameterValue.WorldToTargetMatrix),
                     ("stepY", 0.25f),
                     ("scale", 0.8f),
                     ("texture1", Assets.Assets.Textures.Sample.Pebbles.Value),
@@ -604,7 +612,7 @@ public sealed class CursedSpiritNPC : ModNPC {
             _ => Vector2.Zero,
         };
 
-        if(_data.Splitter.Depth == 0) {
+        if(SpiritType != SpiritType.Splitter || _data.Splitter.Depth == 0) {
             Main.EntitySpriteDraw(
                 maskTexture,
                 NPC.Center - screenPos + maskPositionOffset,

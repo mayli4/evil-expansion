@@ -47,6 +47,4 @@ public class SwapTarget(int width, int height) : IDisposable {
         _activeTarget.Dispose();
         _inactiveTarget.Dispose();
     }
-
-    public static SwapTarget HalfScreen => HalfScreenTargetSystem.Target;
 }

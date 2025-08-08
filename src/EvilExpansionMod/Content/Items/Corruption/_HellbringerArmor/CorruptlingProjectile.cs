@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EvilExpansionMod.Utilities._Extensions;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
@@ -10,8 +11,8 @@ namespace EvilExpansionMod.Content.Items.Corruption._HellbringerArmor;
 public class CorruptlingProjectile : ModProjectile {
     public override string Texture => Assets.Assets.Textures.Items.Corruption.HellbringerArmor.KEY_CorruptlingNPC;
 
+    static float AttackRadius = 2000;
     int TypeIndex => (int)Projectile.ai[0];
-    int _target = -1;
 
     public override void SetDefaults() {
         Projectile.width = 40;
@@ -21,31 +22,38 @@ public class CorruptlingProjectile : ModProjectile {
         Projectile.tileCollide = false;
         Projectile.ignoreWater = false;
         Projectile.timeLeft = 420;
-        Projectile.penetrate = -1;
+        Projectile.penetrate = 6;
         Projectile.aiStyle = -1;
+
+        Projectile.SetAISlotNPC(1, null);
     }
 
     public override void AI() {
-        if(!IsTargetValid(_target)) {
-            if(Main.netMode != NetmodeID.MultiplayerClient) {
-                TargetClosest(2000);
-                if(!IsTargetValid(_target)) {
-                    Projectile.Kill();
-                    return;
-                }
+        var target = Projectile.GetAISlotNPC(1);
+        Vector2 directionToTarget;
+        if(!Projectile.MinionValidTarget(target, AttackRadius, false, true)) {
+            if(Main.netMode != NetmodeID.MultiplayerClient && Projectile.MinionTryGetTarget(AttackRadius, false, true, out target)) {
+                Projectile.SetAISlotNPC(1, target);
+                Projectile.netUpdate = true;
             }
 
-            return;
+            var owner = Main.player[Projectile.owner];
+            directionToTarget = (owner.Center - (Projectile.Center + ((float)Main.GameUpdateCount * 0.05f).ToRotationVector2() * 50))
+                .SafeNormalize(Vector2.Zero);
+        }
+        else {
+            directionToTarget = (target.Center - Projectile.Center).SafeNormalize(Vector2.Zero);
         }
 
-        var target = Main.npc[_target];
-        var directionToTarget = (target.Center - Projectile.Center).SafeNormalize(Vector2.Zero);
-        Projectile.velocity = Vector2.Lerp(Projectile.velocity, directionToTarget * 10f, 0.1f);
-        Projectile.rotation += MathF.Sign(Projectile.velocity.X) * 0.1f;
+        Projectile.velocity = Vector2.Lerp(Projectile.velocity, directionToTarget * 10f, 0.02f);
+        Projectile.rotation += Math.Min(Projectile.velocity.X * 0.05f, 0.15f);
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
-        TargetClosest(2000);
+        Projectile.velocity = -Projectile.velocity.SafeNormalize(Vector2.Zero).RotatedByRandom(MathF.PI) * 8f;
+        if(Projectile.MinionTryGetTarget(AttackRadius, false, true, out target)) {
+            Projectile.SetAISlotNPC(1, target);
+        }
     }
 
     public override bool PreKill(int timeLeft) {
@@ -57,7 +65,7 @@ public class CorruptlingProjectile : ModProjectile {
             Gore.NewGoreDirect(
                 Projectile.GetSource_Death(),
                 Projectile.Center + direction * 10f - new Vector2(8, 8),
-                direction * Main.rand.NextFloat(3f, 5f),
+                direction * Main.rand.NextFloat(3f, 4f) + Projectile.velocity,
                 Mod.Find<ModGore>("CorruptlingGore" + i).Type
             );
 
@@ -65,26 +73,6 @@ public class CorruptlingProjectile : ModProjectile {
         }
 
         return true;
-    }
-
-    static bool IsTargetValid(int target) => target != -1 && Main.npc[target] != null && Main.npc[target].active;
-
-    void TargetClosest(float maxDistance) {
-        int closest = -1;
-        float minDistance = float.MaxValue;
-
-        for(var i = 0; i < Main.maxNPCs; i++) {
-            if(!IsTargetValid(i)) continue;
-
-            var npc = Main.npc[i];
-            var npcDistance = npc.Center.DistanceSQ(Projectile.Center);
-            if(npcDistance <= maxDistance * maxDistance && npcDistance < minDistance) {
-                closest = i;
-                minDistance = npcDistance;
-            }
-        }
-
-        _target = closest;
     }
 
     public override bool PreDraw(ref Color lightColor) {

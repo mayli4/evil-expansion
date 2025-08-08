@@ -67,18 +67,29 @@ Mods: {
 			}
 
 			HellbringerBody: {
-				DisplayName: Hellbringer Body
-				Tooltip: ""
+				DisplayName: Hellbringer Torso
+				Tooltip: 
+					'''
+					Increases summon damage by 10%
+					Increases movement speed by 10%
+					'''
 			}
 
 			HellbringerHead: {
-				DisplayName: Hellbringer Head
-				Tooltip: ""
+				DisplayName: Hellbringer Helmet
+				Tooltip: 
+					'''
+					Increases summon damage by 5%
+					Increases your max number of minions by 1
+					'''
 			}
 
 			HellbringerLegs: {
-				DisplayName: Hellbringer Legs
-				Tooltip: ""
+				DisplayName: Hellbringer Leggings
+				Tooltip: 
+					'''
+					Increases movement speed by 10%
+					'''
 			}
 
 			MeatPrisonBody: {

@@ -15,4 +15,5 @@ public static class EntityExtensions {
     public static void MoveInDirection(this Entity entity, Vector2 direction, float acceleration = 1f, float turn = 0.5f) {
         entity.velocity = entity.velocity.RotatedBy(-Vector3.Cross(direction.ToVector3(), entity.velocity.ToVector3()).Z * turn) * acceleration;
     }
+
 }

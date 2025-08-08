@@ -24,6 +24,11 @@ public class HellbringerHead : ModItem {
         Item.defense = 6;
     }
 
+    public override void UpdateEquip(Player player) {
+        player.GetDamage(DamageClass.Summon) += 0.05f;
+        player.maxMinions += 1;
+    }
+
     public override bool IsArmorSet(Item head, Item body, Item legs) {
         return body.type == ModContent.ItemType<HellbringerBody>() && legs.type == ModContent.ItemType<HellbringerLegs>();
     }
@@ -41,7 +46,12 @@ public class HellbringerBody : ModItem {
         Item.height = 20;
         Item.value = 30000;
         Item.rare = ItemRarityID.Blue;
-        Item.defense = 6;
+        Item.defense = 14;
+    }
+
+    public override void UpdateEquip(Player player) {
+        player.GetDamage(DamageClass.Summon) += 0.10f;
+        player.moveSpeed += 0.10f;
     }
 
     public override bool IsArmorSet(Item head, Item body, Item legs) {
@@ -61,7 +71,11 @@ public class HellbringerLegs : ModItem {
         Item.height = 20;
         Item.value = 30000;
         Item.rare = ItemRarityID.Blue;
-        Item.defense = 6;
+        Item.defense = 8;
+    }
+
+    public override void UpdateEquip(Player player) {
+        player.moveSpeed += 0.10f;
     }
 
     public override bool IsArmorSet(Item head, Item body, Item legs) {

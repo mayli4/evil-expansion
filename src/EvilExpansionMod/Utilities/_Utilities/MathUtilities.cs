@@ -13,23 +13,6 @@ public static class MathUtilities {
         return MathHelper.Lerp(b, c, (progress - upperBound) / (1f - upperBound));
     }
 
-    public static void NewDustCircular(
-    Vector2 center,
-    float radius,
-    Func<int, int> dustType,
-    int count,
-    (float min, float max) speed,
-    float rotation = 0f,
-    Action<Dust> action = null
-) {
-        Vector2[] positions = center.PositionsAround(count, radius, rotation);
-        for(int i = 0; i < positions.Length; i++) {
-            Vector2 velocity = center.DirectionTo(positions[i]) * Main.rand.NextFloat(speed.min, speed.max);
-            Dust dust = Dust.NewDustDirect(positions[i], 0, 0, dustType.Invoke(i), velocity.X, velocity.Y);
-            action?.Invoke(dust);
-        }
-    }
-
     public static Vector2 InitialVelocityRequiredToHitPosition(Vector2 initialPosition, Vector2 targetPosition, float gravity, float initialSpeed, bool secondAngle = false) {
         Vector2 localTargetPosition = targetPosition - initialPosition;
         localTargetPosition.X = MathF.Abs(localTargetPosition.X);

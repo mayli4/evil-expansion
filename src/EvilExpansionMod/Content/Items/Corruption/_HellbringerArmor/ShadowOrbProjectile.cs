@@ -44,7 +44,11 @@ public class ShadowOrbProjectile : ModProjectile {
             && owner.Hitbox.Intersects(Projectile.Hitbox)
         ) {
             Projectile.timeLeft = 45;
-            Projectile.velocity += owner.Center.DirectionTo(Projectile.Center) * 10f;
+            Projectile.velocity = Vector2.Lerp(
+                owner.Center.DirectionTo(Projectile.Center),
+                owner.velocity.SafeNormalize(Vector2.Zero),
+                0.5f
+            ) * 14f;
             FlashAlpha = 1f;
             Hit = true;
 
@@ -52,17 +56,29 @@ public class ShadowOrbProjectile : ModProjectile {
         }
 
         if(Projectile.timeLeft == 1 && Hit) {
-            var rotation = Main.rand.NextFloat();
-            for(int i = 0; i < 3; i++) {
-                var direction = rotation.ToRotationVector2();
-                Gore.NewGoreDirect(
-                    Projectile.GetSource_Death(),
-                    Projectile.Center + direction * 10f - new Vector2(8, 8),
-                    direction * Main.rand.NextFloat(3f, 5f),
-                    Mod.Find<ModGore>("ShadowOrbGore" + i).Type
-                );
+            if(!Main.dedServ) {
+                var rotation = Main.rand.NextFloat();
+                for(var i = 0; i < 3; i++) {
+                    var direction = rotation.ToRotationVector2();
+                    Gore.NewGoreDirect(
+                        Projectile.GetSource_Death(),
+                        Projectile.Center + direction * 10f - new Vector2(8, 8),
+                        direction * Main.rand.NextFloat(3f, 5f),
+                        Mod.Find<ModGore>("ShadowOrbGore" + i).Type
+                    );
 
-                rotation += MathF.PI * 2f / 3f + Main.rand.NextFloatDirection() * 0.2f;
+                    rotation += MathF.PI * 2f / 3f + Main.rand.NextFloatDirection() * 0.2f;
+                }
+
+                for(var i = 0; i < 8; i++) {
+                    var additionalSize = 30;
+                    Dust.NewDust(
+                        Projectile.position - Vector2.One * additionalSize / 2f,
+                        Projectile.width + additionalSize,
+                        Projectile.height + additionalSize,
+                        DustID.Corruption
+                    );
+                }
             }
 
             if(Main.netMode != NetmodeID.MultiplayerClient) {
@@ -98,11 +114,18 @@ public class ShadowOrbProjectile : ModProjectile {
         if(!Hit && Projectile.timeLeft < 20) {
             masterAlpha = Projectile.timeLeft / 20f;
         }
+        else if(Projectile.timeLeft > MaxTimeLeft - 20) {
+            masterAlpha = (MaxTimeLeft - Projectile.timeLeft) / 20f;
+        }
 
         var outlineColor = new Color(230, 255, 5);
-        var outlineColorBlink = outlineColor
-            * MathF.Sin(Main.GameUpdateCount * 0.1f + Projectile.whoAmI * 34.12f)
-            * masterAlpha;
+        var outlineColorBlink = Color.Transparent;
+        if(!Hit) {
+            outlineColorBlink = outlineColor
+                * MathF.Sin(Main.GameUpdateCount * 0.1f + Projectile.whoAmI * 34.12f)
+                * masterAlpha;
+        }
+
         Renderer.BeginPipeline()
             .DrawSprite(
                 texture,

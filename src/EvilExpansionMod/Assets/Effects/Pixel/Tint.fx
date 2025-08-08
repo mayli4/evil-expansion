@@ -3,7 +3,7 @@ float4 color;
 
 float4 frag(float2 uv : TEXCOORD0) : COLOR0 {
     float4 s = tex2D(uImage0, uv);
-    return lerp(s, color, color.a) * s.a;
+    return float4(lerp(s.rgb, color.rgb, color.a), 1) * s.a;
 }
 
 technique Technique1 {

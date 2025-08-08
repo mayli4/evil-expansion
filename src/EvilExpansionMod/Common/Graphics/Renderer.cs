@@ -223,19 +223,21 @@ public class Renderer : ModSystem {
     static RenderTarget2D _activeTarget;
     static RenderTarget2D _inactiveTarget;
 
-    static RenderTarget2D InitFullScreenTarget => new(Main.graphics.GraphicsDevice, Main.screenWidth, Main.screenHeight);
+    static GraphicsDevice GraphicsDevice => Main.graphics.GraphicsDevice;
+    static SpriteBatch SpriteBatch => Main.spriteBatch;
+    static RenderTarget2D InitFullScreenTarget => new(GraphicsDevice, Main.screenWidth, Main.screenHeight);
 
     public override void Load() {
         Main.QueueMainThreadAction(() =>
         {
             _trailVertexBuffer = new DynamicVertexBuffer(
-                Main.graphics.GraphicsDevice,
+                GraphicsDevice,
                 typeof(VertexPositionColorTexture),
                 TrailPositionCapacity * 2,
                 BufferUsage.WriteOnly
             );
             _trailIndexBuffer = new DynamicIndexBuffer(
-                Main.graphics.GraphicsDevice,
+                GraphicsDevice,
                 IndexElementSize.SixteenBits,
                 (TrailPositionCapacity - 1) * 6,
                 BufferUsage.WriteOnly
@@ -566,8 +568,8 @@ public class Renderer : ModSystem {
             var r = new CommandRunner();
 
             SpriteBatchSnapshot? snapshot = null;
-            if(Main.spriteBatch.beginCalled) {
-                Main.spriteBatch.End(out var snap);
+            if(SpriteBatch.beginCalled) {
+                SpriteBatch.End(out var snap);
                 snapshot = snap;
             }
 
@@ -598,7 +600,7 @@ public class Renderer : ModSystem {
                 }
             }
 
-            if(snapshot is { } s) Main.spriteBatch.Begin(s);
+            if(snapshot is { } s) SpriteBatch.Begin(s);
             _targetSemaphore.Release();
         }
 
@@ -645,17 +647,17 @@ public class Renderer : ModSystem {
             }
 
             _trailVertexBuffer.SetData(_trailVertices);
-            Main.graphics.GraphicsDevice.SetVertexBuffer(_trailVertexBuffer);
+            GraphicsDevice.SetVertexBuffer(_trailVertexBuffer);
 
             _trailIndexBuffer.SetData(_trailIndices);
-            Main.graphics.GraphicsDevice.Indices = _trailIndexBuffer;
+            GraphicsDevice.Indices = _trailIndexBuffer;
 
             var effectData = _effectDatas[trailData.EffectData];
             SetEffectParams(effectData);
 
             foreach(EffectPass pass in effectData.Effect.CurrentTechnique.Passes) {
                 pass.Apply();
-                Main.graphics.GraphicsDevice.DrawIndexedPrimitives(
+                GraphicsDevice.DrawIndexedPrimitives(
                     PrimitiveType.TriangleList,
                     0,
                     0,
@@ -669,7 +671,7 @@ public class Renderer : ModSystem {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunDrawSpritePosition(DataIndex index) {
             var spriteData = _spritePositionDatas[index];
-            Main.spriteBatch.Draw(
+            SpriteBatch.Draw(
                 spriteData.Texture,
                 spriteData.Position,
                 spriteData.Source,
@@ -685,7 +687,7 @@ public class Renderer : ModSystem {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunDrawSpriteRectangle(DataIndex index) {
             var rectangleData = _spriteRectangleDatas[index];
-            Main.spriteBatch.Draw(
+            SpriteBatch.Draw(
                 rectangleData.Texture,
                 rectangleData.Destination,
                 rectangleData.Source,
@@ -704,16 +706,16 @@ public class Renderer : ModSystem {
             _targetScale = beginData.Scale;
             var snapshot = _snapshotDatas[beginData.SnapshotIndex];
 
-            _cachedBindings = Main.graphics.GraphicsDevice.GetRenderTargets();
+            _cachedBindings = GraphicsDevice.GetRenderTargets();
             if(_cachedBindings != null && _cachedBindings.Length > 0) {
                 _cachedUsage = ((RenderTarget2D)_cachedBindings[0].RenderTarget).RenderTargetUsage;
                 ((RenderTarget2D)_cachedBindings[0].renderTarget).RenderTargetUsage = RenderTargetUsage.PreserveContents;
             }
 
-            Main.graphics.graphicsDevice.SetRenderTarget(_activeTarget);
-            Main.graphics.GraphicsDevice.Clear(Color.Transparent);
+            GraphicsDevice.SetRenderTarget(_activeTarget);
+            GraphicsDevice.Clear(Color.Transparent);
 
-            Main.spriteBatch.Begin(snapshot with
+            SpriteBatch.Begin(snapshot with
             {
                 TransformMatrix = snapshot.TransformMatrix * Matrix.CreateScale(_targetScale)
             });
@@ -725,18 +727,18 @@ public class Renderer : ModSystem {
             var effectData = _effectDatas[index];
 
             SetEffectParams(effectData);
-            var snapshot = Main.spriteBatch.CaptureEndBegin(new()
+            var snapshot = SpriteBatch.CaptureEndBegin(new()
             {
                 CustomEffect = effectData.Effect,
                 TransformMatrix = Matrix.Identity,
             });
 
             (_activeTarget, _inactiveTarget) = (_inactiveTarget, _activeTarget);
-            Main.graphics.GraphicsDevice.SetRenderTarget(_activeTarget);
-            Main.graphics.GraphicsDevice.Clear(Color.Transparent);
+            GraphicsDevice.SetRenderTarget(_activeTarget);
+            GraphicsDevice.Clear(Color.Transparent);
 
-            Main.spriteBatch.Draw(_inactiveTarget, Vector2.Zero, Color.White);
-            Main.spriteBatch.EndBegin(snapshot);
+            SpriteBatch.Draw(_inactiveTarget, Vector2.Zero, Color.White);
+            SpriteBatch.EndBegin(snapshot);
             SetTargetViewport();
         }
 
@@ -747,27 +749,27 @@ public class Renderer : ModSystem {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunEnd(DataIndex _) {
-            Main.spriteBatch.EndBegin(new()
+            SpriteBatch.EndBegin(new()
             {
                 TransformMatrix = Matrix.CreateScale(1f / _targetScale),
             });
 
-            Main.graphics.GraphicsDevice.SetRenderTargets(_cachedBindings);
+            GraphicsDevice.SetRenderTargets(_cachedBindings);
             if(_cachedBindings != null && _cachedBindings.Length > 0) {
                 ((RenderTarget2D)_cachedBindings[0].RenderTarget).RenderTargetUsage = _cachedUsage;
             }
 
-            Main.spriteBatch.Draw(_activeTarget, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), null, Color.White);
+            SpriteBatch.Draw(_activeTarget, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), null, Color.White);
 
             // This fixes the issue with vanilla trail being drawn 2x bigger in case of half size target..
             // The spritebatch sets the transformation matrix in `End`
             // and the trails depend on it so it needs to be set back to normal.
-            Main.spriteBatch.EndBegin(new());
-            Main.spriteBatch.End();
+            SpriteBatch.EndBegin(new());
+            SpriteBatch.End();
         }
 
         readonly void SetTargetViewport() {
-            Main.graphics.GraphicsDevice.Viewport = new(
+            GraphicsDevice.Viewport = new(
                 0,
                 0,
                 (int)(Main.screenWidth * _targetScale),

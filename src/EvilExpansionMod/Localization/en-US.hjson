@@ -126,6 +126,7 @@ Mods: {
 			StinkflyNPC.DisplayName: Stinkfly
 			SmallStinkflyNPC.DisplayName: Small Stinkfly
 			SmallStinkflyNpc.DisplayName: Small Stinkfly Npc
+			CorruptlingNPC.DisplayName: Corruptling N P C
 		}
 
 		Projectiles: {
@@ -152,6 +153,7 @@ Mods: {
 			PounderSpike.DisplayName: Pounder Spike
 			BloodWarden.DisplayName: Blood Warden
 			ShadowOrbProjectile.DisplayName: Shadow Orb Projectile
+			CorruptlingProjectile.DisplayName: Corruptling Projectile
 		}
 
 		Biomes: {

@@ -1,5 +1,4 @@
-﻿using System;
-using Terraria;
+﻿using Terraria;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Items.Corruption._HellbringerArmor;
@@ -22,7 +21,7 @@ public class HellbringerGlobalNPC : GlobalNPC {
                 Projectile.NewProjectile(
                     player.GetSource_FromThis(),
                     npc.Center,
-                    npc.Center.DirectionTo(player.Center).RotatedByRandom(MathF.PI / 8f) * 5f,
+                    Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f, 8f),
                     ModContent.ProjectileType<ShadowOrbProjectile>(),
                     HellbringerHead.CorruptlingDamage,
                     0.5f,

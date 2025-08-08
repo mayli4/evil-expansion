@@ -85,9 +85,9 @@ Mods: {
 				DisplayName: Meat Prison Body
 				Tooltip:
 					'''
-                    Increases summon damage by 10%
-                    Increases movement speed by 5%
-                    Increases your max number of minions by 1
+					Increases summon damage by 10%
+					Increases movement speed by 5%
+					Increases your max number of minions by 1
 					'''
 			}
 
@@ -150,6 +150,7 @@ Mods: {
 			PusBottleProjectile.DisplayName: Pus Bottle Projectile
 			StinkgrubGasProjectile.DisplayName: Stinkgrub Gas Projectile
 			PounderSpike.DisplayName: Pounder Spike
+			BloodWarden.DisplayName: Blood Warden
 		}
 
 		Biomes: {
@@ -184,6 +185,13 @@ Mods: {
 			CursedSpiritNPCBestiary: ""
 			CultistEyeBestiary: ""
 			StinkgrubNPCBestiary: ""
+		}
+
+		Buffs: {
+			BloodWardenBuff: {
+				DisplayName: Blood Warden Buff
+				Description: Mods.EvilExpansionMod.Buffs.BloodWardenBuff.Description
+			}
 		}
 	}
 }

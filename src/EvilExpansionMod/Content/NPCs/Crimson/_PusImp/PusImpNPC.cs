@@ -35,7 +35,7 @@ public class PusImpNPC : ModNPC {
 
     private const int teleport_range = 30 * 16;
     private const int teleport_cooldown = 60 * 4;
-    
+
 
     private int _attackCooldownTimer;
     private int _teleportCooldownTimer;
@@ -49,14 +49,14 @@ public class PusImpNPC : ModNPC {
     }
 
     public override void SetDefaults() {
-        NPC.width = 22;
-        NPC.height = 22;
+        NPC.width = 25;
+        NPC.height = 38;
         NPC.lifeMax = 100;
         NPC.value = 250f;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = false;
-        NPC.knockBackResist = 0.05f;
+        NPC.knockBackResist = 0f;
         NPC.friendly = false;
         NPC.damage = 20;
 
@@ -99,11 +99,11 @@ public class PusImpNPC : ModNPC {
 
     private void Spitting() {
         Timer++;
-        
-        if (Timer == spit_time / 2) {
+
+        if(Timer == spit_time / 2) {
             var numberOfGlobs = Main.rand.Next(1, 4);
 
-            for (int i = 0; i < numberOfGlobs; i++) {
+            for(int i = 0; i < numberOfGlobs; i++) {
                 var vel = MathUtilities.InitialVelocityRequiredToHitPosition(NPC.Center, Target.Center, 1f, 10f);
                 vel = vel.RotatedBy(Main.rand.NextFloat(-MathHelper.Pi / 10, MathHelper.Pi / 10));
                 //vel.Y *= 1.2f;
@@ -118,10 +118,10 @@ public class PusImpNPC : ModNPC {
                     Main.myPlayer
                 );
             }
-            SoundEngine.PlaySound(SoundID.NPCDeath13 with { Pitch = -0.2f, PitchVariance = 0.5f}, NPC.Center);
+            SoundEngine.PlaySound(SoundID.NPCDeath13 with { Pitch = -0.2f, PitchVariance = 0.5f }, NPC.Center);
         }
 
-        if (Timer >= spit_time) {
+        if(Timer >= spit_time) {
             ChangeState(State.Idle);
         }
     }
@@ -129,7 +129,7 @@ public class PusImpNPC : ModNPC {
     private void Idle() {
         Timer++;
         NPC.velocity.X = 0;
-        
+
         if(Timer >= Main.rand.Next(120, 240)) {
             var canAttack = _attackCooldownTimer <= 0;
             var canTeleport = _teleportCooldownTimer <= 0;
@@ -195,7 +195,7 @@ public class PusImpNPC : ModNPC {
         }
 
         if(foundSpot) {
-            NPC.Center = teleportPosition;
+            NPC.position = teleportPosition;
         }
     }
 
@@ -209,7 +209,17 @@ public class PusImpNPC : ModNPC {
         var flipped = NPC.direction != -1;
         var effects = flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
-        Main.spriteBatch.Draw(tex, NPC.position - screenPos, NPC.frame, drawColor, NPC.rotation, NPC.frame.Size() / 2, 1.0f, effects, 0f);
+        Main.spriteBatch.Draw(
+            tex,
+            NPC.position + new Vector2(NPC.width / 2f, NPC.height) - screenPos,
+            NPC.frame,
+            drawColor,
+            NPC.rotation,
+            new(NPC.frame.Width / 2f, NPC.frame.Height - 5f),
+            1.0f,
+            effects,
+            0f
+        );
 
         return false;
     }

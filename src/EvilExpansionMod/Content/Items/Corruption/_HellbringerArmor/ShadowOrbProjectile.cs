@@ -33,7 +33,7 @@ public class ShadowOrbProjectile : ModProjectile {
             Projectile.rotation = Projectile.velocity.ToRotation();
         }
 
-        FlashAlpha *= 0.95f;
+        FlashAlpha *= 0.98f;
 
         var owner = Main.player[Projectile.owner];
         if(

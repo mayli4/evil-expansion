@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -60,7 +61,7 @@ public class CorruptlingProjectile : ModProjectile {
         if(Main.dedServ) return true;
 
         var rotation = Main.rand.NextFloat();
-        for(int i = 0; i < 3; i++) {
+        for(var i = 0; i < 3; i++) {
             var direction = rotation.ToRotationVector2();
             Gore.NewGoreDirect(
                 Projectile.GetSource_Death(),
@@ -72,6 +73,11 @@ public class CorruptlingProjectile : ModProjectile {
             rotation += MathF.PI * 2f / 3f + Main.rand.NextFloatDirection() * 0.2f;
         }
 
+        for(var i = 0; i < 16; i++) {
+            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.CorruptGibs);
+        }
+
+        SoundEngine.PlaySound(SoundID.NPCDeath1, Projectile.Center);
         return true;
     }
 

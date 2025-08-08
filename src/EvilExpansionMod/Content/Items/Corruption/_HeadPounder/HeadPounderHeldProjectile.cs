@@ -148,11 +148,11 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
                         MathUtilities.ForEachNPCInRange(hitCenter, 80f, npc =>
                         {
-                            Owner.StrikeNPCDirect(npc, new()
-                            {
-                                Damage = Projectile.damage * 2,
-                                Knockback = Projectile.knockBack * 5f,
-                            });
+                            var modifiers = npc.GetIncomingStrikeModifiers(
+                                Projectile.DamageType,
+                                Math.Sign(npc.Center.X) - Math.Sign(Owner.Center.X)
+                            );
+                            Owner.StrikeNPCDirect(npc, modifiers.ToHitInfo(Projectile.damage * 2, false, Projectile.knockBack * 5f));
                         });
 
                         Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(13f, 0.6f));

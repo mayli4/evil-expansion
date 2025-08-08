@@ -97,7 +97,7 @@ public class TerrorBatSpit : ModProjectile {
         var shader = Assets.Assets.Effects.Trail.CursedSpiritFire.Value;
 
         shader.Parameters["time"].SetValue(0.025f * Main.GameUpdateCount);
-        shader.Parameters["mat"].SetValue(MathUtilities.WorldTransformationMatrix);
+        shader.Parameters["mat"].SetValue(Renderer.WorldTransformMatrix);
         shader.Parameters["stepY"].SetValue(0.25f);
         shader.Parameters["scale"].SetValue(0.25f);
         shader.Parameters["texture1"].SetValue(Assets.Assets.Textures.Sample.Pebbles.Value);

@@ -151,6 +151,7 @@ Mods: {
 			StinkgrubGasProjectile.DisplayName: Stinkgrub Gas Projectile
 			PounderSpike.DisplayName: Pounder Spike
 			BloodWarden.DisplayName: Blood Warden
+			ShadowOrbProjectile.DisplayName: Shadow Orb Projectile
 		}
 
 		Biomes: {

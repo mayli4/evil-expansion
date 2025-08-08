@@ -81,7 +81,7 @@ public class SpiritFireball : ModProjectile {
                 static t => Color.Lerp(CursedSpiritNPC.GhostColor1, CursedSpiritNPC.GhostColor2, t + 0.7f),
                 trailEffect,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
-                ("mat", RuntimeParameterValue.WorldToTargetMatrix),
+                ("mat", Renderer.WorldTransformMatrix),
                 ("stepY", 0.25f),
                 ("scale", 0.25f),
                 ("texture1", Assets.Assets.Textures.Sample.Pebbles.Value),

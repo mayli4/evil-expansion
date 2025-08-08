@@ -81,7 +81,6 @@ public class PounderSpike : ModProjectile {
                 Vector2.One * Scale,
                 SpriteEffects.None
             )
-            .ApplyOutline(Color.Green)
             .Flush();
 
         return false;

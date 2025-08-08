@@ -550,11 +550,11 @@ public sealed class CursedSpiritNPC : ModNPC {
             Renderer.BeginPipeline(0.5f)
                 .DrawTrail(
                     _trailPositions,
-                    static _ => 50,
+                    static _ => 40,
                     static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f),
                     trailEffect,
                     ("time", 0.025f * Main.GameUpdateCount + NPC.whoAmI * 3.432f),
-                    ("mat", RuntimeParameterValue.WorldToTargetMatrix),
+                    ("mat", Renderer.WorldTransformMatrix),
                     ("stepY", 0.25f),
                     ("scale", 0.8f),
                     ("texture1", Assets.Assets.Textures.Sample.Pebbles.Value),

@@ -25,12 +25,6 @@ public enum RenderLayer {
     AfterPlayers,
 }
 
-public enum RuntimeParameterValue {
-    TargetSize,
-    WorldToTargetMatrix,
-    ScreenToTargetMatrix,
-}
-
 public class Renderer : ModSystem {
     struct Commands() {
         public List<CommandType> Types = [];
@@ -138,9 +132,6 @@ public class Renderer : ModSystem {
         [FieldOffset(16)]
         public Matrix Matrix;
 
-        [FieldOffset(16)]
-        public RuntimeParameterValue RuntimeValue;
-
         public static implicit operator ParameterValue(float value) => new()
         {
             Type = ParameterValueType.Float,
@@ -182,12 +173,6 @@ public class Renderer : ModSystem {
             Type = ParameterValueType.Matrix,
             Matrix = value,
         };
-
-        public static implicit operator ParameterValue(RuntimeParameterValue value) => new()
-        {
-            Type = ParameterValueType.RuntimeValue,
-            RuntimeValue = value,
-        };
     }
 
     public enum ParameterValueType {
@@ -198,8 +183,10 @@ public class Renderer : ModSystem {
         Vector4,
         Texture2D,
         Matrix,
-        RuntimeValue,
     }
+
+    public static Matrix WorldTransformMatrix { get; private set; }
+    public static Matrix ScreenTransformMatrix { get; private set; }
 
     static readonly List<EffectParameter> _effectParameters = [];
 
@@ -342,6 +329,11 @@ public class Renderer : ModSystem {
         _afterNPCs.Clear();
         _beforePlayers.Clear();
         _afterPlayers.Clear();
+
+        ScreenTransformMatrix = Main.GameViewMatrix.TransformationMatrix
+            * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+        WorldTransformMatrix = Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f)
+            * ScreenTransformMatrix;
     }
 
     public static Pipeline BeginPipeline(float scale = 1f, SpriteBatchSnapshot? snapshot = null) {
@@ -364,7 +356,7 @@ public class Renderer : ModSystem {
             ApplyEffect(
                 Assets.Assets.Effects.Pixel.Outline.Value,
                 ("color", color.ToVector4()),
-                ("size", RuntimeParameterValue.TargetSize)
+                ("size", Main.ScreenSize.ToVector2())
             );
             return this;
         }
@@ -406,7 +398,7 @@ public class Renderer : ModSystem {
             ReadOnlySpan<(string, ParameterValue)> parameters = [
                 ("sampleTexture", texture),
                 ("color", color.ToVector4()),
-                ("transformationMatrix", RuntimeParameterValue.WorldToTargetMatrix),
+                ("transformationMatrix", WorldTransformMatrix),
                 ("spriteRotation", spriteRotation)
             ];
 
@@ -424,7 +416,7 @@ public class Renderer : ModSystem {
             ReadOnlySpan<(string, ParameterValue)> parameters = [
                 ("sampleTexture", texture),
                 ("color", Color.White.ToVector4()),
-                ("transformationMatrix", RuntimeParameterValue.WorldToTargetMatrix),
+                ("transformationMatrix", WorldTransformMatrix),
                 ("spriteRotation", spriteRotation)
             ];
 
@@ -506,6 +498,7 @@ public class Renderer : ModSystem {
                 Origin = origin ?? Vector2.Zero,
                 SpriteEffects = spriteEffects,
             });
+
             _cache.Add(CommandType.DrawSpriteRectangle, index);
             return this;
         }
@@ -564,9 +557,6 @@ public class Renderer : ModSystem {
     // TODO: put this in a separate file and expose renderer data.
     struct CommandRunner {
         float _targetScale;
-
-        Matrix _worldToTargetMatrix;
-        Matrix _screenToTargetMatrix;
 
         RenderTargetBinding[] _cachedBindings;
         RenderTargetUsage _cachedUsage;
@@ -714,11 +704,6 @@ public class Renderer : ModSystem {
             _targetScale = beginData.Scale;
             var snapshot = _snapshotDatas[beginData.SnapshotIndex];
 
-            _screenToTargetMatrix = Main.GameViewMatrix.TransformationMatrix
-                * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
-            _worldToTargetMatrix = Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f)
-                * _screenToTargetMatrix;
-
             _cachedBindings = Main.graphics.GraphicsDevice.GetRenderTargets();
             if(_cachedBindings != null && _cachedBindings.Length > 0) {
                 _cachedUsage = ((RenderTarget2D)_cachedBindings[0].RenderTarget).RenderTargetUsage;
@@ -726,23 +711,18 @@ public class Renderer : ModSystem {
             }
 
             Main.graphics.graphicsDevice.SetRenderTarget(_activeTarget);
-            SetTargetViewport();
-
             Main.graphics.GraphicsDevice.Clear(Color.Transparent);
 
             Main.spriteBatch.Begin(snapshot with
             {
                 TransformMatrix = snapshot.TransformMatrix * Matrix.CreateScale(_targetScale)
             });
+            SetTargetViewport();
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void RunApplyEffect(DataIndex index) {
             var effectData = _effectDatas[index];
-
-            (_activeTarget, _inactiveTarget) = (_inactiveTarget, _activeTarget);
-            Main.graphics.GraphicsDevice.SetRenderTarget(_activeTarget);
-            Main.graphics.GraphicsDevice.Clear(Color.Transparent);
 
             SetEffectParams(effectData);
             var snapshot = Main.spriteBatch.CaptureEndBegin(new()
@@ -750,6 +730,10 @@ public class Renderer : ModSystem {
                 CustomEffect = effectData.Effect,
                 TransformMatrix = Matrix.Identity,
             });
+
+            (_activeTarget, _inactiveTarget) = (_inactiveTarget, _activeTarget);
+            Main.graphics.GraphicsDevice.SetRenderTarget(_activeTarget);
+            Main.graphics.GraphicsDevice.Clear(Color.Transparent);
 
             Main.spriteBatch.Draw(_inactiveTarget, Vector2.Zero, Color.White);
             Main.spriteBatch.EndBegin(snapshot);
@@ -763,15 +747,16 @@ public class Renderer : ModSystem {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunEnd(DataIndex _) {
+            Main.spriteBatch.EndBegin(new()
+            {
+                TransformMatrix = Matrix.CreateScale(1f / _targetScale),
+            });
+
             Main.graphics.GraphicsDevice.SetRenderTargets(_cachedBindings);
             if(_cachedBindings != null && _cachedBindings.Length > 0) {
                 ((RenderTarget2D)_cachedBindings[0].RenderTarget).RenderTargetUsage = _cachedUsage;
             }
 
-            Main.spriteBatch.EndBegin(new()
-            {
-                TransformMatrix = Matrix.CreateScale(1f / _targetScale),
-            });
             Main.spriteBatch.Draw(_activeTarget, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), null, Color.White);
 
             // This fixes the issue with vanilla trail being drawn 2x bigger in case of half size target..
@@ -815,20 +800,6 @@ public class Renderer : ModSystem {
                         break;
                     case ParameterValueType.Matrix:
                         effect.Parameters[parameter.Name].SetValue(parameter.Value.Matrix);
-                        break;
-                    case ParameterValueType.RuntimeValue:
-                        switch(parameter.Value.RuntimeValue) {
-                            case RuntimeParameterValue.TargetSize:
-                                effect.Parameters[parameter.Name].SetValue(Main.ScreenSize.ToVector2());
-                                break;
-                            case RuntimeParameterValue.WorldToTargetMatrix:
-                                effect.Parameters[parameter.Name].SetValue(_worldToTargetMatrix);
-                                break;
-                            case RuntimeParameterValue.ScreenToTargetMatrix:
-                                effect.Parameters[parameter.Name].SetValue(_screenToTargetMatrix);
-                                break;
-                        }
-
                         break;
                 }
             }

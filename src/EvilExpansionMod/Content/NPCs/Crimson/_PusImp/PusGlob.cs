@@ -1,6 +1,5 @@
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Dusts;
-using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -82,7 +81,7 @@ public sealed class PusGlob : ModProjectile {
                 static _ => new Color(98, 90, 40),
                 trailEffect,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
-                ("mat", MathUtilities.WorldTransformationMatrix),
+                ("mat", Renderer.WorldTransformMatrix),
                 ("stepY", 0.25f),
                 ("scale", 0.25f),
                 ("texture1", Assets.Assets.Textures.Sample.Pebbles.Value),

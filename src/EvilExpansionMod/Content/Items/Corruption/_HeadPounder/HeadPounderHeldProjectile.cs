@@ -43,6 +43,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
         Projectile.tileCollide = false;
         Projectile.friendly = true;
         Projectile.hostile = false;
+        Projectile.DamageType = DamageClass.Melee;
         Projectile.timeLeft = PostChargeFrames;
         Projectile.ownerHitCheck = true;
         Projectile.localNPCHitCooldown = 999;
@@ -198,6 +199,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
         var x = position.X;
         var tileY = (int)position.Y >> 4;
         for(var i = 0; i < 7; i++) {
+            x += Main.rand.NextFloat(40f, 60f) * direction;
             if(Collision.SolidTiles(new(x, tileY * 16), 1, 1)) {
                 for(var j = 1; j < 100; j++) {
                     if(!Collision.SolidTiles(new(x, (tileY - j) * 16), 1, 1)) {
@@ -217,7 +219,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
             var projectile = Projectile.NewProjectileDirect(
                 source,
-                new(x, tileY * 16f + 10f),
+                new(x, tileY * 16f + 8f),
                 Vector2.Zero,
                 ModContent.ProjectileType<PounderSpike>(),
                 damage,
@@ -227,7 +229,6 @@ public class HeadPounderHeldProjectile : ModProjectile {
             );
             projectile.rotation = Main.rand.NextFloatDirection() * 0.3f;
 
-            x += Main.rand.NextFloat(40f, 60f) * direction;
             for(var j = 0; j < 2; j++) yield return null;
         }
     }
@@ -296,7 +297,6 @@ public class HeadPounderHeldProjectile : ModProjectile {
                 scale: Vector2.One * Projectile.scale,
                 spriteEffects: Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
             )
-            .ApplyTint(tintColor)
             .ApplyTint(tintColor)
             .Flush();
 

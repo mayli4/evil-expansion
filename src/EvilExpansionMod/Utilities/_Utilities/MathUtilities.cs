@@ -5,10 +5,6 @@ using Terraria;
 namespace EvilExpansionMod.Utilities;
 
 public static class MathUtilities {
-    public static Matrix WorldTransformationMatrix => Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f)
-                                                      * Main.GameViewMatrix.TransformationMatrix
-                                                      * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
-
     public static float Lerp3(float a, float b, float c, float progress, float upperBound = 0.5f) {
         if(progress < upperBound) {
             return MathHelper.Lerp(a, b, progress / upperBound);

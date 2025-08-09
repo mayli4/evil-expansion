@@ -9,10 +9,10 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
-namespace EvilExpansionMod.Content.Tiles.Corruption;
+namespace EvilExpansionMod.Content.Tiles.Crimson;
 
-public class HellEbontreeSapling : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_CorruptHellTreeSapling;
+public class HellShadetreeSapling : ModTile {
+    public override string Texture => Assets.Assets.Textures.Tiles.Crimson.KEY_HellShadetreeSapling;
 
     public override void SetStaticDefaults() {
         Main.tileFrameImportant[Type] = true;
@@ -27,7 +27,7 @@ public class HellEbontreeSapling : ModTile {
         TileObjectData.newTile.CoordinateHeights = new[] { 16, 18 };
         TileObjectData.newTile.CoordinateWidth = 16;
         TileObjectData.newTile.CoordinatePadding = 2;
-        TileObjectData.newTile.AnchorValidTiles = new[] { ModContent.TileType<OvergrownCorruptAsh>() };
+        TileObjectData.newTile.AnchorValidTiles = new[] { ModContent.TileType<CrimsonAshGrass>() };
         TileObjectData.newTile.StyleHorizontal = true;
         TileObjectData.newTile.DrawFlipHorizontal = true;
         TileObjectData.newTile.LavaPlacement = LiquidPlacement.Allowed;
@@ -71,14 +71,14 @@ public class HellEbontreeSapling : ModTile {
         if(tile == null || !tile.HasTile) {
             return false;
         }
-        bool flag = HellEbontree.GrowModdedTreeWithSettings(x, y, HellEbontree.GrowSettings);
+        bool flag = HellShadetree.GrowModdedTreeWithSettings(x, y, HellShadetree.GrowSettings);
         if(flag && WorldGen.PlayerLOS(x, y)) {
-            GrowHellEbonTreeFXCheck(x, y);
+            GrowTreeFXCheck(x, y);
         }
         return flag;
     }
 
-    public static void GrowHellEbonTreeFXCheck(int x, int y) {
+    public static void GrowTreeFXCheck(int x, int y) {
         int treeHeight = 1;
         for(int num = -1; num > -100; num--) {
             Tile tile = Main.tile[x, y + num];

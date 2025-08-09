@@ -70,20 +70,20 @@ public class CrimsonAshGrass : ModTile {
     }
 
     protected virtual void GrowTiles(int i, int j) {
-        // var tile = Framing.GetTileSafely(i, j);
-        // var tileAbove = Framing.GetTileSafely(i, j - 1);
-        //
-        // //try place foliage
-        // if (WorldGen.genRand.NextBool(10) && !tileAbove.HasTile && tileAbove.LiquidAmount < 80) {
-        //     if (!tile.BottomSlope && !tile.TopSlope && !tile.IsHalfBlock && !tile.TopSlope) {
-        //         tileAbove.TileType = (ushort)ModContent.TileType<OvergrownCorruptAshFoliage>();
-        //         tileAbove.HasTile = true;
-        //         tileAbove.TileFrameY = 0;
-        //         tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(8) * 18);
-        //         WorldGen.SquareTileFrame(i, j + 1, true);
-        //         if (Main.netMode == NetmodeID.Server)
-        //             NetMessage.SendTileSquare(-1, i, j - 1, 3, TileChangeType.None);
-        //     }
-        // }
+        var tile = Framing.GetTileSafely(i, j);
+        var tileAbove = Framing.GetTileSafely(i, j - 1);
+        
+        //try place foliage
+        if (WorldGen.genRand.NextBool(10) && !tileAbove.HasTile && tileAbove.LiquidAmount < 80) {
+            if (!tile.BottomSlope && !tile.TopSlope && !tile.IsHalfBlock && !tile.TopSlope) {
+                tileAbove.TileType = (ushort)ModContent.TileType<CrimsonAshFoliage>();
+                tileAbove.HasTile = true;
+                tileAbove.TileFrameY = 0;
+                tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(8) * 18);
+                WorldGen.SquareTileFrame(i, j + 1, true);
+                if (Main.netMode == NetmodeID.Server)
+                    NetMessage.SendTileSquare(-1, i, j - 1, 3, TileChangeType.None);
+            }
+        }
     }
 }

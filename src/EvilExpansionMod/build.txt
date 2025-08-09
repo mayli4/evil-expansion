@@ -1,5 +1,5 @@
 ﻿displayName = Evil Expansion
-author = me
+author = Tobias, mathica, sucss
 version = 0.1.0
 hideCode = false
 hideResources = true

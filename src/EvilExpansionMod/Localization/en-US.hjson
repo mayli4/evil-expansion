@@ -199,6 +199,7 @@ Mods: {
 			HellEbontreeSapling.MapEntry: Hell Ebontree Sapling
 			CorruptFireblossom.MapEntry: Corrupt Fireblossom
 			VeinOre.MapEntry: Vein Ore
+			HellShadetree.MapEntry: Hell Shadetree
 		}
 
 		Bestiary: {

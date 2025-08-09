@@ -67,7 +67,7 @@ Mods: {
 			}
 
 			HellbringerBody: {
-				DisplayName: Hellbringer Torso
+				DisplayName: Hellbringer Breastplate
 				Tooltip:
 					'''
 					Increases summon damage by 10%
@@ -90,7 +90,7 @@ Mods: {
 			}
 
 			MeatPrisonBody: {
-				DisplayName: Meat Prison Body
+				DisplayName: Meat Prison Breastplate
 				Tooltip:
 					'''
 					Increases summon damage by 10%
@@ -100,7 +100,7 @@ Mods: {
 			}
 
 			MeatPrisonHead: {
-				DisplayName: Meat Prison Head
+				DisplayName: Meat Prison Helmet
 				Tooltip:
 					'''
 					Increases summon damage by 8%
@@ -109,7 +109,7 @@ Mods: {
 			}
 
 			MeatPrisonLegs: {
-				DisplayName: Meat Prison Legs
+				DisplayName: Meat Prison Leggings
 				Tooltip: Increases movement speed by 10%
 			}
 

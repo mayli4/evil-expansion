@@ -117,6 +117,16 @@ Mods: {
 				DisplayName: Stinkfly
 				Tooltip: Used in perfume for some reason...
 			}
+
+			CrimtaneHellstoneBarItem: {
+				DisplayName: Crimtane Hellstone Bar
+				Tooltip: ""
+			}
+
+			VeinOreItem: {
+				DisplayName: Vein Ore
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -188,6 +198,7 @@ Mods: {
 			HellEbontree.MapEntry: Hell Ebontree
 			HellEbontreeSapling.MapEntry: Hell Ebontree Sapling
 			CorruptFireblossom.MapEntry: Corrupt Fireblossom
+			VeinOre.MapEntry: Vein Ore
 		}
 
 		Bestiary: {

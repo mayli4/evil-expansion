@@ -30,6 +30,7 @@ public class CrimsonAshGrass : ModTile {
         Main.tileMerge[Type][ModContent.TileType<CrimsonAsh>()] = true;
 
         TileLoader.RegisterConversion(TileID.AshGrass, BiomeConversionID.Crimson, ConvertToCrimson);
+        RegisterItemDrop(ModContent.ItemType<CrimsonAshItem>());
     }
 
     public bool ConvertToCrimson(int i, int j, int type, int conversionType) {

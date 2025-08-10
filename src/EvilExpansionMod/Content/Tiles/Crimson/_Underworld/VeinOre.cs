@@ -4,6 +4,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Tiles.Crimson;
+
 public class VeinOre : ModTile {
     public override string Texture => Assets.Assets.Textures.Tiles.Crimson.KEY_VeinOre;
 

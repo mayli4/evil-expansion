@@ -16,9 +16,9 @@ using Terraria.Utilities;
 using static Terraria.GameContent.TilePaintSystemV2;
 using static Terraria.WorldGen;
 
-namespace EvilExpansionMod.Content.Tiles.Corruption;
+namespace EvilExpansionMod.Content.Tiles.Crimson;
 
-public class HellEbonModTree : ModTree {
+public class HellShadeModTree : ModTree {
     public override TreePaintingSettings TreeShaderSettings => new TreePaintingSettings
     {
         UseSpecialGroups = true,
@@ -29,7 +29,7 @@ public class HellEbonModTree : ModTree {
     };
 
     public override void SetStaticDefaults() {
-        GrowsOnTileId = new int[1] { ModContent.TileType<OvergrownCorruptAsh>() };
+        GrowsOnTileId = new int[1] { ModContent.TileType<CrimsonAshGrass>() };
     }
 
     public override bool Shake(int x, int y, ref bool createLeaves) {
@@ -42,7 +42,7 @@ public class HellEbonModTree : ModTree {
 
     public override int SaplingGrowthType(ref int style) {
         style = 0;
-        return ModContent.TileType<HellEbontreeSapling>();
+        return ModContent.TileType<HellShadetreeSapling>();
     }
 
     public override void SetTreeFoliageSettings(Tile tile, ref int xoffset, ref int treeFrame, ref int floorY, ref int topTextureFrameWidth, ref int topTextureFrameHeight) {
@@ -61,8 +61,8 @@ public class HellEbonModTree : ModTree {
     }
 }
 
-public class HellEbontree : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_CorruptHellTree;
+public class HellShadetree : ModTile {
+    public override string Texture => Assets.Assets.Textures.Tiles.Crimson.KEY_HellShadetreeTrunk;
 
     public static GrowTreeSettings GrowSettings = new GrowTreeSettings
     {
@@ -70,9 +70,9 @@ public class HellEbontree : ModTile {
         WallTest = DefaultTreeWallTest,
         TreeHeightMax = 12,
         TreeHeightMin = 7,
-        TreeTileType = (ushort)ModContent.TileType<HellEbontree>(),
+        TreeTileType = (ushort)ModContent.TileType<HellShadetree>(),
         TreeTopPaddingNeeded = 4,
-        SaplingTileType = (ushort)ModContent.TileType<HellEbontreeSapling>()
+        SaplingTileType = (ushort)ModContent.TileType<HellShadetreeSapling>()
     };
 
     public static TreePaintingSettings Settings = new TreePaintingSettings
@@ -507,12 +507,12 @@ public class HellEbontree : ModTile {
     }*/
 
     public Texture2D GetTreeTopTexture(int tileType, int treeTextureStyle, byte tileColor) {
-        var texture2D = Assets.Assets.Textures.Tiles.Corruption.CorruptHellTreeTops.Value;
+        var texture2D = Assets.Assets.Textures.Tiles.Crimson.HellShadetreeTops.Value;
         return texture2D;
     }
 
     public Texture2D GetTreeBranchTexture(int tileType, int treeTextureStyle, byte tileColor) {
-        var texture2D = Assets.Assets.Textures.Tiles.Corruption.CorruptHellTreeBranches.Value;
+        var texture2D = Assets.Assets.Textures.Tiles.Crimson.HellShadetreeBranches.Value;
         return texture2D;
     }
 
@@ -520,7 +520,7 @@ public class HellEbontree : ModTile {
         public TreeFoliageVariantKey Key;
 
         public override void Prepare() {
-            var asset = Assets.Assets.Textures.Tiles.Corruption.CorruptHellTreeTops;
+            var asset = Assets.Assets.Textures.Tiles.Crimson.HellShadetreeTops;
             asset.Wait?.Invoke();
             PrepareTextureIfNecessary(asset.Value);
         }
@@ -534,7 +534,7 @@ public class HellEbontree : ModTile {
         public TreeFoliageVariantKey Key;
 
         public override void Prepare() {
-            var asset = Assets.Assets.Textures.Tiles.Corruption.CorruptHellTreeBranches;
+            var asset = Assets.Assets.Textures.Tiles.Crimson.HellShadetreeBranches;
             asset.Wait?.Invoke();
             PrepareTextureIfNecessary(asset.Value);
         }
@@ -831,7 +831,7 @@ public class HellEbontree : ModTile {
         if(tileType < 0) {
             return false;
         }
-        if(tileType == ModContent.TileType<OvergrownCorruptAsh>()) {
+        if(tileType == ModContent.TileType<CrimsonAshGrass>()) {
             return true;
         }
         return false;

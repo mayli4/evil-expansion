@@ -1,4 +1,5 @@
 using EvilExpansionMod.Content.Tiles.Corruption;
+using EvilExpansionMod.Content.Tiles.Crimson;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ModLoader;
@@ -45,6 +46,12 @@ public class FertilizerEdit : GlobalProjectile {
                                 HellEbontreeSapling.AttemptToGrowTreeFromSapling(num1032, num1043);
                             }
                             HellEbontreeSapling.AttemptToGrowTreeFromSapling(num1032, num1043);
+                        }
+                        if(tile.TileType == ModContent.TileType<HellShadetreeSapling>()) {
+                            if(Main.remixWorld && num1043 >= (int)Main.worldSurface - 1 && num1043 < Main.maxTilesY - 20) {
+                                HellShadetreeSapling.AttemptToGrowTreeFromSapling(num1032, num1043);
+                            }
+                            HellShadetreeSapling.AttemptToGrowTreeFromSapling(num1032, num1043);
                         }
                     }
                 }

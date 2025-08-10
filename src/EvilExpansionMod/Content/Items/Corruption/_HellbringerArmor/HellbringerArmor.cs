@@ -14,6 +14,11 @@ public class HellbringerHead : ModItem {
     public override string Texture => Assets.Assets.Textures.Items.Corruption.HellbringerArmor.KEY_HellbringerHead;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+        
+        int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Head);
+        
+        ArmorIDs.Head.Sets.DrawHead[equipSlot] = false;
+        ArmorIDs.Head.Sets.DrawHead[equipSlot] = false;
     }
 
     public override void SetDefaults() {
@@ -39,6 +44,11 @@ public class HellbringerBody : ModItem {
     public override string Texture => Assets.Assets.Textures.Items.Corruption.HellbringerArmor.KEY_HellbringerBody;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+        
+        int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Body);
+        
+        ArmorIDs.Body.Sets.HidesTopSkin[equipSlot] = true;
+        ArmorIDs.Body.Sets.HidesArms[equipSlot] = true;
     }
 
     public override void SetDefaults() {
@@ -64,6 +74,10 @@ public class HellbringerLegs : ModItem {
     public override string Texture => Assets.Assets.Textures.Items.Corruption.HellbringerArmor.KEY_HellbringerLegs;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+        
+        int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Legs);
+        
+        ArmorIDs.Legs.Sets.HidesBottomSkin[equipSlot] = true;
     }
 
     public override void SetDefaults() {

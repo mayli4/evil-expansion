@@ -148,6 +148,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
                         MathUtilities.ForEachNPCInRange(hitCenter, 80f, npc =>
                         {
+                            if(npc.dontTakeDamage || npc.friendly) return;
                             var modifiers = npc.GetIncomingStrikeModifiers(
                                 Projectile.DamageType,
                                 Math.Sign(npc.Center.X) - Math.Sign(Owner.Center.X)

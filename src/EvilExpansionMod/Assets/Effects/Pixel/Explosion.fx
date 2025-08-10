@@ -2,9 +2,10 @@
 sampler uImage1 : register(s1);
 
 float size = 1;
+float progress;
 float time;
-float4 color1;
-float4 color2;
+float4 startColor;
+float4 endColor;
 
 float2 rotate(float r, float2 uv)
 {
@@ -16,16 +17,16 @@ float2 rotate(float r, float2 uv)
 float4 frag(float2 uv : TEXCOORD0) : COLOR0 {
     float uvMult = 2 / size;
     float dist = length(uv * 2 / size - uvMult / 2);
-    float distMask = abs(dist - 0.5) + 0.1;
+    float distMask = abs(dist - progress);
     
     float s1 = tex2D(uImage0, rotate(time, uv - 0.5)).r;
     float s2 = tex2D(uImage1, rotate(-time, uv - 0.5)).r;
     
-    return lerp(color1, color2, step(s1 * 0.5 + s2 * 0.5, 0.45)) * step(distMask * 2.75 - 0.2, s1 * s2);
+    return lerp(startColor, endColor, progress) * step(distMask, s1 * s2 * (1 - progress)) * step(dist, 1.0);
 }
 
 technique Technique1 {
     pass AwesomePass {
-        PixelShader = compile ps_2_0 frag();
+        PixelShader = compile ps_3_0 frag();
     }
 };

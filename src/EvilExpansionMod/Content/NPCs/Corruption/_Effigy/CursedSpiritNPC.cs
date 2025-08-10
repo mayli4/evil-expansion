@@ -1,7 +1,6 @@
 ﻿using EvilExpansionMod.Common.Bestiary;
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
-using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Projectiles;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
@@ -277,13 +276,13 @@ public sealed class CursedSpiritNPC : ModNPC {
                             NPC.GetSource_Death(),
                             NPC.Center,
                             40,
-                            size: ExplosionRange
+                            size: ExplosionRange,
+                            timeLeft: 30
                         );
 
                         NPC.StrikeInstantKill();
                     }
 
-                    Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(12f, 0.96f));
                     Lighting.AddLight(NPC.Center, GhostColor1.ToVector3() * 3.5f);
                     SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, NPC.Center);
                 }

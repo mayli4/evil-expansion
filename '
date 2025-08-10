@@ -1,4 +1,4 @@
-﻿using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Utilities;
@@ -57,9 +57,9 @@ public class ExplosionProjectile : ModProjectile {
             _maxTimeLeft = Projectile.timeLeft;
 
             Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(12f, 0.85f));
-            for(int i = 0; i < 8; i++) {
+            for(int i = 0; i < 5; i++) {
                 var randomDirection = Main.rand.NextVector2Unit();
-                var dustPos = Projectile.Center + randomDirection * Main.rand.NextFloat(Projectile.width * 0.5f);
+                var dustPos = Projectile.Center + randomDirection * Main.rand.NextFloat(Projectile.width * 0.7f);
 
                 var newDustData = new Smoke.Data()
                 {
@@ -67,9 +67,9 @@ public class ExplosionProjectile : ModProjectile {
                     ElapsedFrames = 0,
                     InitialOpacity = 0.8f,
                     ColorStart = Color.Black,
-                    ColorFade = Color.Black,
+                    ColorFade = Color.Gray,
                     Spin = 0f,
-                    InitialScale = Main.rand.NextFloat(0.5f, 2f)
+                    InitialScale = Main.rand.NextFloat(1f, 2f)
                 };
 
                 var newDust = Dust.NewDustPerfect(
@@ -103,7 +103,7 @@ public class ExplosionProjectile : ModProjectile {
 
     public override bool PreDraw(ref Color lightColor) {
         var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;
-        var starTexture = Assets.Assets.Textures.Sample.Star3.Value;
+        var flareTexture = Assets.Assets.Textures.Sample.Flare1.Value;
         var noiseTexture1 = Assets.Assets.Textures.Sample.Noise1.Value;
         var noiseTexture2 = Assets.Assets.Textures.Sample.Noise2.Value;
         var explosionEffect = Assets.Assets.Effects.Pixel.Explosion.Value;
@@ -130,16 +130,16 @@ public class ExplosionProjectile : ModProjectile {
                     (int)(Projectile.position.Y - Main.screenPosition.Y),
                     Projectile.width,
                     Projectile.height
-                )
+                ),
+                Color.White * (1f - explosionProgress)
             )
-            .ApplyOutline(Color.Lerp(Color.DarkRed, Color.Transparent, explosionProgress))
             .Reset(0.5f, new() { CustomEffect = explosionEffect })
             .EffectParams(
                 explosionEffect,
-                ("time", explosionProgress + Projectile.whoAmI * 638.8239f),
-                ("progress", MathF.Pow(1f - explosionProgress, 4)),
-                ("startColor", Color.Transparent.ToVector4()),
-                ("endColor", Color.LightGoldenrodYellow.ToVector4())
+                ("time", explosionProgress + Projectile.whoAmI * 438.8239f),
+                ("progress", 1f - explosionProgress * 2f),
+                ("startColor", Color.OrangeRed.ToVector4()),
+                ("endColor", Color.LightGoldenrodYellow.ToVector4() * (1f - explosionProgress))
             )
             .DrawSprite(
                 noiseTexture1,
@@ -148,12 +148,14 @@ public class ExplosionProjectile : ModProjectile {
                     (int)(Projectile.position.Y - Main.screenPosition.Y),
                     Projectile.width,
                     Projectile.height
-                )
+                ),
+                Color.White
             )
+            .ApplyOutline(Color.Lerp(Color.Red, Color.Black, explosionProgress))
             .Flush();
 
         var flashScale = MathF.Pow(progress - 1f, 4);
-        var flashAlpha = 1f - MathF.Pow(-progress * 3f, 2);
+        var flashAlpha = 1f - MathF.Pow(-progress * 5f, 2);
 
         var glowScale = Projectile.width * 0.0035f;
         flashScale *= glowScale;
@@ -170,18 +172,17 @@ public class ExplosionProjectile : ModProjectile {
             0f
         );
 
-        Main.spriteBatch.Draw(
-            starTexture,
-            Projectile.Center - Main.screenPosition
-                + 0.2f * Main.rand.NextVector2Square(-Projectile.width, Projectile.width),
-            null,
-            Color.Yellow * flashAlpha,
-            Projectile.rotation + Main.rand.NextFloat(),
-            glowTexture.Size() / 2f,
-            1.8f * flashScale * Main.rand.NextFloat(),
-            SpriteEffects.None,
-            0f
-        );
+        // Main.spriteBatch.Draw(
+        //     flareTexture,
+        //     Projectile.Center - Main.screenPosition,
+        //     null,
+        //     Color.Yellow * flashAlpha,
+        //     Projectile.rotation,
+        //     flareTexture.Size() / 2f,
+        //     4f * flashScale,
+        //     SpriteEffects.None,
+        //     0f
+        // );
 
         Main.spriteBatch.EndBegin(snapshot);
         return false;
@@ -195,7 +196,7 @@ public class TestPlayer : ModPlayer {
                 null,
                 Main.MouseWorld,
                 250,
-                timeLeft: 30,
+                timeLeft: 40,
                 size: 200
             );
         }

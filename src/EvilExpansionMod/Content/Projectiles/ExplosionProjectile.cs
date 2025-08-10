@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -185,19 +184,5 @@ public class ExplosionProjectile : ModProjectile {
 
         Main.spriteBatch.EndBegin(snapshot);
         return false;
-    }
-}
-
-public class TestPlayer : ModPlayer {
-    public override void ProcessTriggers(TriggersSet triggersSet) {
-        if(Main.LocalPlayer.justJumped) {
-            ExplosionProjectile.New(
-                null,
-                Main.MouseWorld,
-                250,
-                timeLeft: 30,
-                size: 200
-            );
-        }
     }
 }

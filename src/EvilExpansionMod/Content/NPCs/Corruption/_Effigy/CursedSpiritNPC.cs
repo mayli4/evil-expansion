@@ -270,14 +270,14 @@ public sealed class CursedSpiritNPC : ModNPC {
                 _lookOffset *= 0.95f;
 
                 if(Timer > ExploderExplosionTime) {
-                    const int ExplosionRange = 200;
+                    const int ExplosionRange = 300;
                     if(Main.netMode != NetmodeID.MultiplayerClient) {
                         ExplosionProjectile.New(
                             NPC.GetSource_Death(),
                             NPC.Center,
                             40,
                             size: ExplosionRange,
-                            timeLeft: 30
+                            timeLeft: 35
                         );
 
                         NPC.StrikeInstantKill();

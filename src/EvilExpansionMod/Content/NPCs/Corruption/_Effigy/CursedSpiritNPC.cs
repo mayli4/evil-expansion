@@ -271,27 +271,13 @@ public sealed class CursedSpiritNPC : ModNPC {
                 _lookOffset *= 0.95f;
 
                 if(Timer > ExploderExplosionTime) {
-                    const float ExplosionRange = 200;
+                    const int ExplosionRange = 200;
                     if(Main.netMode != NetmodeID.MultiplayerClient) {
-                        MathUtilities.ForEachPlayerInRange(
-                            NPC.Center,
-                            ExplosionRange,
-                            player => player.Hurt(
-                                PlayerDeathReason.ByNPC(NPC.whoAmI),
-                                40,
-                                MathF.Sign(player.Center.X - NPC.Center.X),
-                                knockback: 8f
-                            )
-                        );
-
-                        ExplosionVFXProjectile.Spawn(
+                        ExplosionProjectile.New(
                             NPC.GetSource_Death(),
                             NPC.Center,
-                            Color.Yellow,
-                            Color.Orange,
-                            t => Color.Lerp(GhostColor1, Color.Black, t),
-                            400,
-                            80
+                            40,
+                            size: ExplosionRange
                         );
 
                         NPC.StrikeInstantKill();
@@ -442,7 +428,7 @@ public sealed class CursedSpiritNPC : ModNPC {
             Mod.Find<ModGore>($"CursedSpirit{name}Gore").Type
         );
 
-        for(var i = 0; i < 10; i += 1) Dust.NewDust(
+        for(var i = 0; i < 20; i += 1) Dust.NewDust(
             NPC.position,
             NPC.width,
             NPC.height,
@@ -547,14 +533,14 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         if(!NPC.IsABestiaryIconDummy) {
             var trailEffect = Assets.Assets.Effects.Trail.CursedSpiritFire.Value;
-            Renderer.BeginPipeline(0.5f)
+            Graphics.BeginPipeline(0.5f)
                 .DrawTrail(
                     _trailPositions,
                     static _ => 40,
                     static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f),
                     trailEffect,
                     ("time", 0.025f * Main.GameUpdateCount + NPC.whoAmI * 3.432f),
-                    ("mat", Renderer.WorldTransformMatrix),
+                    ("mat", Graphics.WorldTransformMatrix),
                     ("stepY", 0.25f),
                     ("scale", 0.8f),
                     ("texture1", Assets.Assets.Textures.Sample.Pebbles.Value),

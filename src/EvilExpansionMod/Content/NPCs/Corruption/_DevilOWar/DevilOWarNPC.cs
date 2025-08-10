@@ -303,7 +303,7 @@ public sealed class DevilOWarNPC : ModNPC {
         }
     }
 
-    private void PopulateTrails(Renderer.Pipeline pipeline, Vector2 bodyWorldPosition, Color drawColor) {
+    private void PopulateTrails(Graphics.Pipeline pipeline, Vector2 bodyWorldPosition, Color drawColor) {
         float Equation(float x) {
             return 0.2f * MathF.Sin(x) + 0.8f * MathF.Cos(x + MathHelper.PiOver4);
         }
@@ -400,7 +400,7 @@ public sealed class DevilOWarNPC : ModNPC {
             );
             return false;
         }
-        var pipeline = Renderer.BeginPipeline();
+        var pipeline = Graphics.BeginPipeline();
 
         var offsetForTrails = flipped ? new Vector2(-5, 30) : new Vector2(5, 30);
         Vector2 bodyWorldPositionForTrails = NPC.Center + offsetForTrails;
@@ -426,7 +426,7 @@ public sealed class DevilOWarNPC : ModNPC {
 
         Main.spriteBatch.Draw(insidesTexture, NPC.Center + new Vector2(0, 19) - screenPos, null, drawColor, NPC.rotation, insidesTexture.Size() / 2, 1f, effects, 0f);
 
-        Renderer.BeginPipeline(0.5f, new() { CustomEffect = fluidEffect })
+        Graphics.BeginPipeline(0.5f, new() { CustomEffect = fluidEffect })
             .EffectParams(
                 fluidEffect,
                 ("level", mappedLevel),

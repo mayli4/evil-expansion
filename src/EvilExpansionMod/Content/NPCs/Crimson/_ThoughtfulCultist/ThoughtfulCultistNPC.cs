@@ -229,13 +229,13 @@ public class ThoughtfulCultistNPC : ModNPC {
                 break;
         }
 
-        Renderer.BeginPipeline()
+        Graphics.BeginPipeline()
             .DrawBasicTrail(robeTrailPositions, static _ => 88, robeTextureBack, drawColor, 1)
             .DrawBasicTrail(chainPoints, static _ => 6, chainTexture, drawColor)
             .DrawBasicTrail(robeTrailPositions, static _ => 88, robeTextureFront, drawColor, 1)
             .Flush();
 
-        Renderer.BeginPipeline()
+        Graphics.BeginPipeline()
             .DrawSprite(
                 pendantTexture,
                 chainPoints[chainPoints.Length / 2] - screenPos,

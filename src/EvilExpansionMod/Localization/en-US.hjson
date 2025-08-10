@@ -172,6 +172,7 @@ Mods: {
 			BloodWarden.DisplayName: Blood Warden
 			ShadowOrbProjectile.DisplayName: Shadow Orb Projectile
 			CorruptlingProjectile.DisplayName: Corruptling Projectile
+			ExplosionProjectile.DisplayName: Explosion Projectile
 		}
 
 		Biomes: {

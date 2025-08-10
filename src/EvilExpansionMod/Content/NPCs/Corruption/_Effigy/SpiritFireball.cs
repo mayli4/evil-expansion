@@ -74,14 +74,14 @@ public class SpiritFireball : ModProjectile {
         Main.spriteBatch.EndBegin(snapshot);
 
         var trailEffect = Assets.Assets.Effects.Trail.CursedSpiritFire.Value;
-        Renderer.BeginPipeline(0.5f)
+        Graphics.BeginPipeline(0.5f)
             .DrawTrail(
                 _trailPositions,
                 static _ => 14f,
                 static t => Color.Lerp(CursedSpiritNPC.GhostColor1, CursedSpiritNPC.GhostColor2, t + 0.7f),
                 trailEffect,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
-                ("mat", Renderer.WorldTransformMatrix),
+                ("mat", Graphics.WorldTransformMatrix),
                 ("stepY", 0.25f),
                 ("scale", 0.25f),
                 ("texture1", Assets.Assets.Textures.Sample.Pebbles.Value),

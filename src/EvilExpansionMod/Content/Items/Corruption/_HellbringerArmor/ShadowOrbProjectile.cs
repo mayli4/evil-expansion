@@ -126,7 +126,7 @@ public class ShadowOrbProjectile : ModProjectile {
                 * masterAlpha;
         }
 
-        Renderer.BeginPipeline()
+        Graphics.BeginPipeline()
             .DrawSprite(
                 texture,
                 position - Main.screenPosition,

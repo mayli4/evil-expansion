@@ -11,9 +11,6 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Common.Graphics;
 
-using DataIndex = int;
-using EffectDataIndex = int;
-
 public enum RenderLayer {
     BeforeTiles,
     AfterTiles,
@@ -25,13 +22,13 @@ public enum RenderLayer {
     AfterPlayers,
 }
 
-public class Renderer : ModSystem {
+public class Graphics : ModSystem {
     struct Commands() {
         public List<CommandType> Types = [];
-        public List<DataIndex> Datas = [];
+        public List<int> Datas = [];
 
         public readonly int Count => Types.Count;
-        public readonly void Add(CommandType type, DataIndex data) {
+        public readonly void Add(CommandType type, int data) {
             Types.Add(type);
             Datas.Add(data);
         }
@@ -53,6 +50,7 @@ public class Renderer : ModSystem {
         DrawSpriteRectangle,
 
         Begin,
+        Reset,
         End,
 
         ApplyEffect,
@@ -86,12 +84,12 @@ public class Renderer : ModSystem {
         public int PositionCount;
         public Func<float, float> Width;
         public Func<float, Color> Color;
-        public EffectDataIndex EffectData;
+        public int EffectDataIndex;
     }
 
     struct BeginData {
         public float Scale;
-        public DataIndex SnapshotIndex;
+        public int SnapshotDataIndex;
     }
 
     struct EffectData {
@@ -100,8 +98,8 @@ public class Renderer : ModSystem {
         public int ParameterCount;
     }
 
-    struct EffectParameter {
-        public string Name;
+    struct EffectParameterData {
+        public int Index;
         public ParameterValue Value;
     }
 
@@ -188,7 +186,7 @@ public class Renderer : ModSystem {
     public static Matrix WorldTransformMatrix { get; private set; }
     public static Matrix ScreenTransformMatrix { get; private set; }
 
-    static readonly List<EffectParameter> _effectParameters = [];
+    static readonly List<EffectParameterData> _effectParameters = [];
 
     static readonly List<DrawSpritePositionData> _spritePositionDatas = [];
     static readonly List<DrawSpriteRectangleData> _spriteRectangleDatas = [];
@@ -345,7 +343,7 @@ public class Renderer : ModSystem {
         _snapshotDatas.Add(snapshot ?? new());
 
         var beginDataIndex = _beginDatas.Count;
-        _beginDatas.Add(new() { Scale = Math.Clamp(scale, 0f, 1f), SnapshotIndex = snapshotIndex });
+        _beginDatas.Add(new() { Scale = Math.Clamp(scale, 0f, 1f), SnapshotDataIndex = snapshotIndex });
 
         _cache.Add(CommandType.Begin, beginDataIndex);
         return new();
@@ -382,7 +380,7 @@ public class Renderer : ModSystem {
                 PositionCount = positions.Length,
                 Width = width,
                 Color = color,
-                EffectData = effectDataIndex,
+                EffectDataIndex = effectDataIndex,
             });
             _cache.Add(CommandType.DrawTrail, trailDataIndex);
 
@@ -434,13 +432,25 @@ public class Renderer : ModSystem {
             return this;
         }
 
-        static EffectDataIndex AddEffectData(Effect effect, ReadOnlySpan<(string, ParameterValue)> parameters) {
+        static int AddEffectData(Effect effect, ReadOnlySpan<(string, ParameterValue)> parameters) {
             var parameterIndex = _effectParameters.Count;
             var parameterCount = parameters.Length;
             foreach(var (name, value) in parameters) {
+                // This is literally just what 'effect.Parameters[name]' does.
+                // And I feel like its better to fail here rather than when actually drawing.
+                var i = 0;
+                for(; i < effect.Parameters.Count; i++) {
+                    if(effect.Parameters[i].Name == name) break;
+                }
+
+                if(i == effect.Parameters.Count) {
+                    _cache.Clear();
+                    throw new Exception($"Invalid parameter name '{name}'.");
+                }
+
                 _effectParameters.Add(new()
                 {
-                    Name = name,
+                    Index = i,
                     Value = value,
                 });
             }
@@ -516,7 +526,17 @@ public class Renderer : ModSystem {
             return this;
         }
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Pipeline Reset(float scale = 1f, SpriteBatchSnapshot? snapshot = null) {
+            var snapshotIndex = _snapshotDatas.Count;
+            _snapshotDatas.Add(snapshot ?? new());
+
+            var beginDataIndex = _beginDatas.Count;
+            _beginDatas.Add(new() { Scale = Math.Clamp(scale, 0f, 1f), SnapshotDataIndex = snapshotIndex });
+
+            _cache.Add(CommandType.Reset, beginDataIndex);
+            return this;
+        }
+
         public readonly void Flush() {
             _cache.Add(CommandType.End, -1);
             CommandRunner.Run(in _cache);
@@ -556,7 +576,6 @@ public class Renderer : ModSystem {
         }
     }
 
-    // TODO: put this in a separate file and expose renderer data.
     struct CommandRunner {
         float _targetScale;
 
@@ -588,6 +607,9 @@ public class Renderer : ModSystem {
                     case CommandType.Begin:
                         r.RunBegin(dataIndex);
                         break;
+                    case CommandType.Reset:
+                        r.RunReset(dataIndex);
+                        break;
                     case CommandType.End:
                         r.RunEnd(dataIndex);
                         break;
@@ -605,7 +627,7 @@ public class Renderer : ModSystem {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly void RunDrawTrail(DataIndex index) {
+        readonly void RunDrawTrail(int index) {
             var trailData = _trailDatas[index];
             var trailPositions = CollectionsMarshal
                 .AsSpan(_trailPositions)[trailData.PositionsIndex..(trailData.PositionsIndex + trailData.PositionCount)];
@@ -652,7 +674,7 @@ public class Renderer : ModSystem {
             _trailIndexBuffer.SetData(_trailIndices);
             GraphicsDevice.Indices = _trailIndexBuffer;
 
-            var effectData = _effectDatas[trailData.EffectData];
+            var effectData = _effectDatas[trailData.EffectDataIndex];
             SetEffectParams(effectData);
 
             foreach(EffectPass pass in effectData.Effect.CurrentTechnique.Passes) {
@@ -669,7 +691,7 @@ public class Renderer : ModSystem {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly void RunDrawSpritePosition(DataIndex index) {
+        readonly void RunDrawSpritePosition(int index) {
             var spriteData = _spritePositionDatas[index];
             SpriteBatch.Draw(
                 spriteData.Texture,
@@ -685,7 +707,7 @@ public class Renderer : ModSystem {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly void RunDrawSpriteRectangle(DataIndex index) {
+        readonly void RunDrawSpriteRectangle(int index) {
             var rectangleData = _spriteRectangleDatas[index];
             SpriteBatch.Draw(
                 rectangleData.Texture,
@@ -700,30 +722,7 @@ public class Renderer : ModSystem {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void RunBegin(DataIndex index) {
-            var beginData = _beginDatas[index];
-
-            _targetScale = beginData.Scale;
-            var snapshot = _snapshotDatas[beginData.SnapshotIndex];
-
-            _cachedBindings = GraphicsDevice.GetRenderTargets();
-            if(_cachedBindings != null && _cachedBindings.Length > 0) {
-                _cachedUsage = ((RenderTarget2D)_cachedBindings[0].RenderTarget).RenderTargetUsage;
-                ((RenderTarget2D)_cachedBindings[0].renderTarget).RenderTargetUsage = RenderTargetUsage.PreserveContents;
-            }
-
-            GraphicsDevice.SetRenderTarget(_activeTarget);
-            GraphicsDevice.Clear(Color.Transparent);
-
-            SpriteBatch.Begin(snapshot with
-            {
-                TransformMatrix = snapshot.TransformMatrix * Matrix.CreateScale(_targetScale)
-            });
-            SetTargetViewport();
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void RunApplyEffect(DataIndex index) {
+        void RunApplyEffect(int index) {
             var effectData = _effectDatas[index];
 
             SetEffectParams(effectData);
@@ -743,12 +742,59 @@ public class Renderer : ModSystem {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly void RunEffectParams(DataIndex index) {
+        readonly void RunEffectParams(int index) {
             SetEffectParams(_effectDatas[index]);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly void RunEnd(DataIndex _) {
+        void RunBegin(int index) {
+            var beginData = _beginDatas[index];
+            _targetScale = beginData.Scale;
+
+            _cachedBindings = GraphicsDevice.GetRenderTargets();
+            if(_cachedBindings != null && _cachedBindings.Length > 0) {
+                _cachedUsage = ((RenderTarget2D)_cachedBindings[0].RenderTarget).RenderTargetUsage;
+                ((RenderTarget2D)_cachedBindings[0].renderTarget).RenderTargetUsage = RenderTargetUsage.PreserveContents;
+            }
+
+            GraphicsDevice.SetRenderTarget(_activeTarget);
+            GraphicsDevice.Clear(Color.Transparent);
+
+            var snapshot = _snapshotDatas[beginData.SnapshotDataIndex];
+            SpriteBatch.Begin(snapshot with
+            {
+                TransformMatrix = snapshot.TransformMatrix * Matrix.CreateScale(_targetScale)
+            });
+            SetTargetViewport();
+        }
+
+        void RunReset(int index) {
+            var beginData = _beginDatas[index];
+
+            var previousScale = _targetScale;
+            _targetScale = beginData.Scale;
+
+            SpriteBatch.EndBegin(new()
+            {
+                TransformMatrix = Matrix.CreateScale(_targetScale / previousScale),
+            });
+
+            (_activeTarget, _inactiveTarget) = (_inactiveTarget, _activeTarget);
+            GraphicsDevice.SetRenderTarget(_activeTarget);
+            GraphicsDevice.Clear(Color.Transparent);
+
+            SpriteBatch.Draw(_inactiveTarget, Vector2.Zero, Color.White);
+
+            var snapshot = _snapshotDatas[beginData.SnapshotDataIndex];
+            SpriteBatch.EndBegin(snapshot with
+            {
+                TransformMatrix = snapshot.TransformMatrix * Matrix.CreateScale(_targetScale)
+            });
+            SetTargetViewport();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly void RunEnd(int _) {
             SpriteBatch.EndBegin(new()
             {
                 TransformMatrix = Matrix.CreateScale(1f / _targetScale),
@@ -777,31 +823,33 @@ public class Renderer : ModSystem {
             );
         }
 
-        readonly void SetEffectParams(EffectData effectData) {
+        static void SetEffectParams(EffectData effectData) {
             var effect = effectData.Effect;
             for(var j = 0; j < effectData.ParameterCount; j++) {
-                var parameter = _effectParameters[j + effectData.ParameterIndex];
-                switch(parameter.Value.Type) {
+                var parameterData = _effectParameters[j + effectData.ParameterIndex];
+
+                var parameter = effect.Parameters.elements[parameterData.Index];
+                switch(parameterData.Value.Type) {
                     case ParameterValueType.Int:
-                        effect.Parameters[parameter.Name].SetValue(parameter.Value.Int);
+                        parameter.SetValue(parameterData.Value.Int);
                         break;
                     case ParameterValueType.Float:
-                        effect.Parameters[parameter.Name].SetValue(parameter.Value.Float);
+                        parameter.SetValue(parameterData.Value.Float);
                         break;
                     case ParameterValueType.Vector2:
-                        effect.Parameters[parameter.Name].SetValue(parameter.Value.Vector2);
+                        parameter.SetValue(parameterData.Value.Vector2);
                         break;
                     case ParameterValueType.Vector3:
-                        effect.Parameters[parameter.Name].SetValue(parameter.Value.Vector3);
+                        parameter.SetValue(parameterData.Value.Vector3);
                         break;
                     case ParameterValueType.Vector4:
-                        effect.Parameters[parameter.Name].SetValue(parameter.Value.Vector4);
+                        parameter.SetValue(parameterData.Value.Vector4);
                         break;
                     case ParameterValueType.Texture2D:
-                        effect.Parameters[parameter.Name].SetValue(parameter.Value.Texture2D);
+                        parameter.SetValue(parameterData.Value.Texture2D);
                         break;
                     case ParameterValueType.Matrix:
-                        effect.Parameters[parameter.Name].SetValue(parameter.Value.Matrix);
+                        parameter.SetValue(parameterData.Value.Matrix);
                         break;
                 }
             }

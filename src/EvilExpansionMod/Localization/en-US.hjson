@@ -144,7 +144,7 @@ Mods: {
 			StinkflyNPC.DisplayName: Stinkfly
 			SmallStinkflyNPC.DisplayName: Small Stinkfly
 			SmallStinkflyNpc.DisplayName: Small Stinkfly Npc
-			CorruptlingNPC.DisplayName: Corruptling N P C
+			MarrowEyeNPC.DisplayName: Marrow Eye	
 		}
 
 		Projectiles: {

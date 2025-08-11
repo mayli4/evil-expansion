@@ -278,6 +278,7 @@ public class Graphics : ModSystem {
         {
             _activeTarget.Dispose();
             _inactiveTarget.Dispose();
+
         });
     }
 
@@ -299,6 +300,7 @@ public class Graphics : ModSystem {
 
     private void On_Main_DrawNPCs(On_Main.orig_DrawNPCs orig, Main self, bool behindTiles) {
         if(behindTiles) {
+            PreDraw();
             CommandRunner.Run(in _beforeTiles);
             orig(self, behindTiles);
         }
@@ -310,7 +312,8 @@ public class Graphics : ModSystem {
         }
     }
 
-    public override void PreUpdateEntities() {
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    static void PreDraw() {
         _effectParameters.Clear();
 
         _spritePositionDatas.Clear();
@@ -644,18 +647,19 @@ public class Graphics : ModSystem {
                 var factor = j / (trailPositions.Length - 1f);
 
                 color = trailData.Color(factor);
-                vertexOffset = trailPositions[j - 1]
-                    .DirectionTo(trailPositions[j])
-                    .RotatedBy(MathHelper.PiOver2)
-                    * trailData.Width(factor) * 0.5f;
+
+                var currentPosition = trailPositions[j];
+                var previousPosition = trailPositions[j - 1];
+
+                vertexOffset = previousPosition.DirectionTo(currentPosition).RotatedBy(MathHelper.PiOver2) * trailData.Width(factor) * 0.5f;
 
                 _trailVertices[j * 2] = new VertexPositionColorTexture(
-                    (trailPositions[j] - vertexOffset).ToVector3(),
+                    (currentPosition - vertexOffset).ToVector3(),
                     color,
                     new(factor, 0f)
                 );
                 _trailVertices[j * 2 + 1] = new VertexPositionColorTexture(
-                    (trailPositions[j] + vertexOffset).ToVector3(),
+                    (currentPosition + vertexOffset).ToVector3(),
                     color,
                     new(factor, 1f)
                 );

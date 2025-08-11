@@ -382,10 +382,6 @@ public sealed class CursedSpiritNPC : ModNPC {
                 );
             }
 
-            var groan1 = new SoundStyle($"{nameof(EvilExpansionMod)}/Assets/Sounds/CursedSpiritGroan1");
-            var groan2 = new SoundStyle($"{nameof(EvilExpansionMod)}/Assets/Sounds/CursedSpiritGroan2");
-
-            SoundEngine.PlaySound(Main.rand.NextFromList(groan1, groan2), NPC.Center);
             SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot with
             {
                 Pitch = 2.1f + Main.rand.NextFloatDirection() * 0.3f,

@@ -33,7 +33,7 @@ public class SpiritFireball : ModProjectile {
     }
 
     public override void AI() {
-        _trailPositions ??= [.. Enumerable.Repeat(Projectile.Center, 7)];
+        _trailPositions ??= [.. Enumerable.Repeat(Projectile.Center, 6)];
         var i = _trailPositions.Length - 1;
         while(i > 0) {
             _trailPositions[i] = _trailPositions[i - 1];
@@ -77,7 +77,7 @@ public class SpiritFireball : ModProjectile {
         Graphics.BeginPipeline(0.5f)
             .DrawTrail(
                 _trailPositions,
-                static _ => 14f,
+                static _ => 18f,
                 static t => Color.Lerp(CursedSpiritNPC.GhostColor1, CursedSpiritNPC.GhostColor2, t + 0.7f),
                 trailEffect,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
@@ -85,7 +85,7 @@ public class SpiritFireball : ModProjectile {
                 ("stepY", 0.25f),
                 ("scale", 0.25f),
                 ("texture1", Assets.Assets.Textures.Sample.Pebbles.Value),
-                ("texture2", Assets.Assets.Textures.Sample.Noise2.Value)
+                ("texture2", Assets.Assets.Textures.Sample.Noise3.Value)
             )
             .DrawSprite(
                 Assets.Assets.Textures.Misc.Circle.Value,

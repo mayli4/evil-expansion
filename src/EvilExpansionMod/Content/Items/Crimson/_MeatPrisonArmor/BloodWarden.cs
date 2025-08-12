@@ -3,9 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
-using System.Runtime.CompilerServices;
 using Terraria;
-using Terraria.DataStructures;
 using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -74,6 +72,10 @@ public sealed class BloodWarden : ModProjectile {
 
     public override bool MinionContactDamage() => CurrentState == State.Attacking && _canDealDamage;
 
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+        target.AddBuff(BuffID.Bleeding, 6 * 60);
+    }
+
     public override void AI() {
         _canDealDamage = false;
         
@@ -86,6 +88,9 @@ public sealed class BloodWarden : ModProjectile {
         
         NPC target = FindTarget();
 
+        if (Projectile.Distance(Owner.Center) > 100 * 16) {
+            Projectile.Center = Owner.Center;
+        }
         if (CurrentState == State.Idle) {
             if (target != null) {
                 CurrentState = State.Attacking;
@@ -198,22 +203,21 @@ public sealed class BloodWarden : ModProjectile {
         
         var texture = ModContent.Request<Texture2D>(Texture).Value;
         var chainTexture = Assets.Assets.Textures.Items.Crimson.MeatPrisonArmor.BloodWardenCord.Value;
+        var shader = GameShaders.Armor.GetShaderFromItemId(Main.LocalPlayer.dye[1].type);
         
         var origin = new Vector2(texture.Width / 2f, texture.Height / Main.projFrames[Projectile.type] / 2f);
         
         int frameHeight = texture.Height / Main.projFrames[Projectile.type];
         var sourceRectangle = new Rectangle(0, Projectile.frame * frameHeight, texture.Width, frameHeight);
-        
-
-        Vector2 attachmentOffsetFromFrameCenter = attachmentPoint - new Vector2(35 , 30);
+        var attachmentOffsetFromFrameCenter = attachmentPoint - new Vector2(35 , 30);
 
         if (Projectile.spriteDirection == -1) {
             attachmentOffsetFromFrameCenter.X = -attachmentOffsetFromFrameCenter.X;
         }
         
-        Vector2 chainStart = Projectile.Center + attachmentOffsetFromFrameCenter + new Vector2(0f, Projectile.gfxOffY);
+        var chainStart = Projectile.Center + attachmentOffsetFromFrameCenter + new Vector2(0f, Projectile.gfxOffY);
 
-        Vector2 chainEnd = Owner.Center;
+        var chainEnd = Owner.Center;
         
         List<Vector2> chainPoints = new();
         GenerateWavyChainPoints(chainPoints, chainStart, chainEnd, 20, 5, 0.5f, 0.2f);
@@ -221,7 +225,7 @@ public sealed class BloodWarden : ModProjectile {
         Graphics.BeginPipeline()
             .DrawBasicTrail(chainPoints.ToArray(), static _ => 6, chainTexture, Color.White)
             .Flush();
-        
+
         Main.spriteBatch.Draw(
             texture,
             Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY),

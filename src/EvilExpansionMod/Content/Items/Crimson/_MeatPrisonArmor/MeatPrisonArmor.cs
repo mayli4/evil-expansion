@@ -131,7 +131,7 @@ public sealed class MeatPrisonPlayer : ModPlayer {
                     Player.Center,
                     Vector2.Zero,
                     ModContent.ProjectileType<BloodWarden>(),
-                    (int)Player.GetDamage(DamageClass.Summon).ApplyTo(50),
+                    (int)Player.GetDamage(DamageClass.Summon).ApplyTo(30),
                     0f,
                     Player.whoAmI
                 );
@@ -141,7 +141,7 @@ public sealed class MeatPrisonPlayer : ModPlayer {
 }
 
 public class BloodWardenBuff : ModBuff {
-    public override string Texture => Assets.Assets.Textures.Items.Crimson.MeatPrisonArmor.KEY_MeatPrisonLegs;
+    public override string Texture => Assets.Assets.Textures.Items.Crimson.MeatPrisonArmor.KEY_BloodwardenBuff;
     
     public override void SetStaticDefaults() {
         Main.buffNoSave[Type] = true;

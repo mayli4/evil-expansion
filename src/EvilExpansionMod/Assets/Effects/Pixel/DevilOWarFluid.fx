@@ -33,8 +33,10 @@ float2 uNoise2ScrollVector;
 
 float uTime;
 
+float smooth;
+
 float plot(float2 st, float pct){
-  return smoothstep(pct, pct/0.95f, st.y);
+  return smoothstep(pct, pct/smooth, st.y);
 }
 
 float4 PixelShaderFunction(float2 coords : TEXCOORD0) : COLOR0 {

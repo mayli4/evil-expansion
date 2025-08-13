@@ -1,3 +1,4 @@
+using EvilExpansionMod.Common.Graphics;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -7,8 +8,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.NPCs.Crimson;
-
-//todo: pus shader
 
 public class PusBottleNPC : ModNPC {
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.Stinkgrub.KEY_PusBottle;
@@ -162,31 +161,52 @@ public class PusBottleNPC : ModNPC {
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var texture = Assets.Assets.Textures.NPCs.Crimson.Stinkgrub.PusBottle.Value;
+        var textureInside = Assets.Assets.Textures.NPCs.Crimson.Stinkgrub.PusBottle_Inside.Value;
 
         var origin = new Vector2(texture.Width / 2, 94);
 
-        float squishFactor = Math.Clamp(SquishTimer / 40, 0f, 1f);
-        float easedSquish = MathF.Sin(squishFactor * MathHelper.Pi);
-        float currentSquishX = 1f + easedSquish * 0.2f;
-        float currentSquishY = 1f - easedSquish * 0.2f;
+        float intensityFactor = Math.Clamp(SquishTimer / _maxSquishTime, 0f, 1f);
+        float easedIntensity = MathF.Pow(intensityFactor, 0.5f); 
 
-        var finalScale = new Vector2(currentSquishX, currentSquishY);
+        var shakeOffset = Main.rand.NextVector2Circular(1 * easedIntensity, 1 * easedIntensity);
 
-        var flipped = NPC.direction != -1;
-        var effects = flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+        float additionalRotation = MathF.Sin(Main.GameUpdateCount * 0.8f) * 0.05f * easedIntensity;
 
-        const float maxVerticalOffset = 12f;
-        float verticalSquishOffset = easedSquish * maxVerticalOffset;
+        float finalRotation = NPC.rotation + additionalRotation;
+
+        Vector2 finalScale = Vector2.One * NPC.scale;
+        
+        var fluidEffect = Assets.Assets.Effects.Pixel.DevilOWarFluid.Value;
+
+        if(!NPC.IsABestiaryIconDummy) {
+            Graphics.BeginPipeline(0.5f, new() { CustomEffect = fluidEffect })
+                .EffectParams(
+                    fluidEffect,
+                    ("level", 0.3f),
+                    ("smooth", 1.0f),
+                    ("liquidColor", new Color(98, 90, 40).ToVector4()),
+                    ("noisetex", Assets.Assets.Textures.Sample.BubblyNoise.Value),
+                    ("noisetex2", Assets.Assets.Textures.Sample.SpottyNoise.Value),
+                    ("uNoiseStrength", 1.0f),
+                    ("uNoise1ScrollSpeedX", 0.09f),
+                    ("uDarkenStrength", 0.3f),
+                    ("uNoise2ScrollVector", new Vector2(0.1f, 0.1f)),
+                    ("uNoise2Scale", 1.0f),
+                    ("uTime", Main.GameUpdateCount * 0.05f))
+                .DrawSprite(textureInside, NPC.Center - screenPos + shakeOffset, drawColor, null, finalRotation, origin, finalScale, NPC.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally)
+                .ApplyOutline(new Color(132, 122, 61))
+                .Flush();
+        }
 
         spriteBatch.Draw(
             texture,
-            NPC.Center - screenPos + new Vector2(0, verticalSquishOffset),
+            NPC.Center - screenPos + shakeOffset,
             null,
             drawColor,
-            NPC.rotation,
+            finalRotation,
             origin,
             finalScale,
-            SpriteEffects.None,
+            NPC.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
             0f
         );
 

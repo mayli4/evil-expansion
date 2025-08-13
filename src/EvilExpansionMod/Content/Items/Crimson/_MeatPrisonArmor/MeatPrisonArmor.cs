@@ -1,6 +1,10 @@
+using EvilExpansionMod.Common.Graphics;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -127,17 +131,17 @@ public sealed class MeatPrisonPlayer : ModPlayer {
                     Player.Center,
                     Vector2.Zero,
                     ModContent.ProjectileType<BloodWarden>(),
-                    (int)Player.GetDamage(DamageClass.Summon).Multiplicative,
+                    (int)Player.GetDamage(DamageClass.Summon).ApplyTo(30),
                     0f,
                     Player.whoAmI
                 );
             }
         }
     }
-}
+} 
 
 public class BloodWardenBuff : ModBuff {
-    public override string Texture => Assets.Assets.Textures.Items.Crimson.MeatPrisonArmor.KEY_MeatPrisonLegs;
+    public override string Texture => Assets.Assets.Textures.Items.Crimson.MeatPrisonArmor.KEY_BloodwardenBuff;
     
     public override void SetStaticDefaults() {
         Main.buffNoSave[Type] = true;

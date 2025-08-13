@@ -8,7 +8,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Content.NPCs.Crimson._MarrowEye;
+namespace EvilExpansionMod.Content.NPCs.Crimson;
 
 public class MarrowEyeNPC : ModNPC {
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.MarrowEye.KEY_MarrowEyeNPC;

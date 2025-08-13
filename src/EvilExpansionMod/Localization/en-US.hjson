@@ -127,6 +127,11 @@ Mods: {
 				DisplayName: Vein Ore
 				Tooltip: ""
 			}
+
+			HellDemoniteBarItem: {
+				DisplayName: Hell Demonite Bar Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -213,8 +218,8 @@ Mods: {
 
 		Buffs: {
 			BloodWardenBuff: {
-				DisplayName: Blood Warden Buff
-				Description: Mods.EvilExpansionMod.Buffs.BloodWardenBuff.Description
+				DisplayName: Blood Warden
+				Description: It will protect you!
 			}
 		}
 	}

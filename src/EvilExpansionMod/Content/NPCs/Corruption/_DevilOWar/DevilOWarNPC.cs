@@ -430,6 +430,7 @@ public sealed class DevilOWarNPC : ModNPC {
             .EffectParams(
                 fluidEffect,
                 ("level", mappedLevel),
+                ("smooth", 0.95f),
                 ("liquidColor", CursedSpiritNPC.GhostColor1.ToVector4()),
                 ("noisetex", Assets.Assets.Textures.Sample.BubblyNoise.Value),
                 ("noisetex2", Assets.Assets.Textures.Sample.SpottyNoise.Value),

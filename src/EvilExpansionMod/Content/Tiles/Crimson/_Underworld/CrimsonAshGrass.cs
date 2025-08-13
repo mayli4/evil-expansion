@@ -77,7 +77,7 @@ public class CrimsonAshGrass : ModTile {
         //try place foliage
         if (WorldGen.genRand.NextBool(10) && !tileAbove.HasTile && tileAbove.LiquidAmount < 80) {
             if (!tile.BottomSlope && !tile.TopSlope && !tile.IsHalfBlock && !tile.TopSlope) {
-                tileAbove.TileType = (ushort)ModContent.TileType<CrimsonAshFoliage>();
+                tileAbove.TileType = (ushort)ModContent.TileType<CrimsonFoliage>();
                 tileAbove.HasTile = true;
                 tileAbove.TileFrameY = 0;
                 tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(8) * 18);

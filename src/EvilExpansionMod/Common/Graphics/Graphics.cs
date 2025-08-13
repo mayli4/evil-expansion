@@ -57,11 +57,10 @@ public class Graphics : ModSystem {
     }
 
     struct DrawSpriteData {
-        public Texture2D Texture;
         public Color Color;
-
-        // 4 x [Vertex Positions, Texture Coordinates] in _positionDatas
-        public int PositionDatasIndex;
+        public Vector4 Source;
+        public Matrix Matrix;
+        public Texture2D Texture;
     }
 
     struct DrawTrailData {
@@ -211,6 +210,8 @@ public class Graphics : ModSystem {
 
     static Effect _spriteEffect;
     static nint _spriteMatrix;
+    static nint _spriteColor;
+    static nint _spriteSource;
 
     static VertexBuffer _spriteVertexBuffer;
     static IndexBuffer _spriteIndexBuffer;
@@ -235,12 +236,21 @@ public class Graphics : ModSystem {
             _inactiveTarget = InitFullScreenTarget;
             _targetSemaphore.Release();
 
-            _spriteVertexBuffer = new DynamicVertexBuffer(GraphicsDevice, typeof(VertexPositionColorTexture), 4, BufferUsage.WriteOnly);
-            _spriteIndexBuffer = new IndexBuffer(GraphicsDevice, IndexElementSize.SixteenBits, 6, BufferUsage.WriteOnly);
-            _spriteIndexBuffer.SetData(new ushort[] { 0, 1, 2, 3, 2, 1 });
+            _spriteVertexBuffer = new VertexBuffer(
+                GraphicsDevice,
+                new VertexDeclaration(new VertexElement(0, VertexElementFormat.Single, VertexElementUsage.TextureCoordinate, 0)),
+                4,
+                BufferUsage.WriteOnly
+            );
+            _spriteVertexBuffer.SetData([0f, 1f, 2f, 3f]);
 
-            _spriteEffect = new Effect(GraphicsDevice, Resources.SpriteEffect);
-            _spriteMatrix = _spriteEffect.Parameters["MatrixTransform"].values;
+            _spriteIndexBuffer = new IndexBuffer(GraphicsDevice, IndexElementSize.SixteenBits, 6, BufferUsage.WriteOnly);
+            _spriteIndexBuffer.SetData(new ushort[] { 0, 1, 2, 1, 2, 3 });
+
+            _spriteEffect = Assets.Assets.Effects.Trail.Quad.Value;
+            _spriteMatrix = _spriteEffect.Parameters["uMatrix"].values;
+            _spriteColor = _spriteEffect.Parameters["uColor"].values;
+            _spriteSource = _spriteEffect.Parameters["uSource"].values;
         });
 
         Main.OnResolutionChanged += (screenSize) =>
@@ -490,8 +500,8 @@ public class Graphics : ModSystem {
                 new Rectangle(
                     (int)position.X,
                     (int)position.Y,
-                    (int)(actualSource.Width / actualScale.X),
-                    (int)(actualSource.Height / actualScale.Y)
+                    (int)(actualSource.Width * actualScale.X),
+                    (int)(actualSource.Height * actualScale.Y)
                 ),
                 color ?? Color.White,
                 actualSource,
@@ -529,79 +539,50 @@ public class Graphics : ModSystem {
             Vector2 origin,
             SpriteEffects spriteEffects
         ) {
-            var rCos = MathF.Cos(rotation);
-            var rSin = MathF.Sin(rotation);
+            var sin = MathF.Sin(rotation);
+            var cos = MathF.Cos(rotation);
 
-            var sourceWidthNormalized =
-                Math.Sign(source.Width) * MathF.Max(MathF.Abs(source.Width), MathHelper.MachineEpsilonFloat) / texture.Width;
-            var sourceHeightNormalized =
-                Math.Sign(source.Height) * MathF.Max(MathF.Abs(source.Height), MathHelper.MachineEpsilonFloat) / texture.Height;
+            var size = destination.Size();
 
-            var originXNormalized = origin.X / sourceWidthNormalized / texture.Width;
-            var originYNormalized = origin.Y / sourceHeightNormalized / texture.Height;
+            var oX = origin.X * size.X / texture.Width;
+            var oY = origin.Y * size.Y / texture.Height;
 
-            Span<Vector2> positions = stackalloc Vector2[8];
+            float px = destination.X;
+            float py = destination.Y;
 
-            var originOffset = new Vector2(
-                -originXNormalized * destination.Width,
-                -originYNormalized * destination.Height
+            var matrix = Matrix.Identity;
+            matrix.M11 = cos * size.X;
+            matrix.M21 = -sin * size.Y;
+            matrix.M42 =
+                cos * -oY
+                    - oX * sin
+                    + py;
+
+            matrix.M12 = sin * size.X;
+            matrix.M22 = cos * size.Y;
+            matrix.M41 =
+                cos * oX
+                    + oY * sin
+                    + px;
+
+            matrix =
+                Matrix.CreateScale(size.X, size.Y, 1f)
+                * ScreenTransformMatrix;
+
+            var sourceVec4 = new Vector4(
+                (float)source.X / texture.Width,
+                (float)source.Y / texture.Height,
+                (float)source.Width / texture.Width,
+                (float)source.Width / texture.Height
             );
-            positions[0] = new(
-                -rSin * originOffset.Y + rCos * originOffset.X + destination.X,
-                rCos * originOffset.Y + rSin * originOffset.X + destination.Y
-            );
-
-            originOffset = new Vector2(
-                (1f - originXNormalized) * destination.Width,
-                -originYNormalized * destination.Height
-            );
-            positions[1] = new(
-                -rSin * originOffset.Y + rCos * originOffset.X + destination.X,
-                rCos * originOffset.Y + rSin * originOffset.X + destination.Y
-            );
-
-            originOffset = new Vector2(
-                -originXNormalized * destination.Width,
-                (1f - originYNormalized) * destination.Height
-            );
-            positions[2] = new(
-                -rSin * originOffset.Y + rCos * originOffset.X + destination.X,
-                rCos * originOffset.Y + rSin * originOffset.X + destination.Y
-            );
-
-            originOffset = new Vector2(
-                (1f - originXNormalized) * destination.Width,
-                (1f - originYNormalized) * destination.Height
-            );
-            positions[3] = new(
-                -rSin * originOffset.Y + rCos * originOffset.X + destination.X,
-                rCos * originOffset.Y + rSin * originOffset.X + destination.Y
-            );
-
-            ReadOnlySpan<float> cornerOffsetX = [0f, 1f, 0f, 1f];
-            ReadOnlySpan<float> cornerOffsetY = [0f, 0f, 1f, 1f];
-
-            var effects = (byte)(spriteEffects & (SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically));
-
-            var sourceXNormalized = source.X / texture.Width;
-            var sourceYNormalized = source.Y / texture.Width;
-
-            for(byte i = 0; i < 4; i++) {
-                positions[i + 4] = new(
-                    cornerOffsetX[i ^ effects] * sourceXNormalized + sourceWidthNormalized,
-                    cornerOffsetY[i ^ effects] * sourceYNormalized + sourceHeightNormalized
-                );
-            }
-
-            var positionDatasIndex = _positionDatas.Count;
-            _positionDatas.AddRange(positions);
 
             var spriteDatasIndex = _spriteDatas.Count;
             _spriteDatas.Add(new()
             {
                 Texture = texture,
                 Color = color,
-                PositionDatasIndex = positionDatasIndex,
+                Matrix = matrix,
+                Source = sourceVec4,
             });
             _cache.Add(CommandType.DrawSprite, spriteDatasIndex);
             return this;
@@ -783,30 +764,24 @@ public class Graphics : ModSystem {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunDrawSprite(int index) {
             var data = _spriteDatas[index];
-            var positions = CollectionsMarshal.AsSpan(_positionDatas)[data.PositionDatasIndex..(data.PositionDatasIndex + 8)];
 
+            GraphicsDevice.SetVertexBuffer(_spriteVertexBuffer);
+            GraphicsDevice.Indices = _spriteIndexBuffer;
 
-            _spriteVertexBuffer.SetData<VertexPositionColorTexture>([
-                new(positions[0].ToVector3(), data.Color, positions[4]),
-                new(positions[1].ToVector3(), data.Color, positions[5]),
-                new(positions[2].ToVector3(), data.Color, positions[6]),
-                new(positions[3].ToVector3(), data.Color, positions[7]),
-            ]);
-
-            GraphicsDevice.Textures[0] = data.Texture;
             GraphicsDevice.BlendState = BlendState.AlphaBlend;
             GraphicsDevice.SamplerStates[0] = Main.DefaultSamplerState;
             GraphicsDevice.DepthStencilState = DepthStencilState.None;
             GraphicsDevice.RasterizerState = Main.Rasterizer;
 
-            GraphicsDevice.SetVertexBuffer(_spriteVertexBuffer);
-            GraphicsDevice.Indices = _spriteIndexBuffer;
-
             unsafe {
-                *(Matrix*)_spriteMatrix = ScreenTransformMatrix;
+                *(Matrix*)_spriteMatrix = data.Matrix;
+                *(Vector4*)_spriteColor = data.Color.ToVector4();
+                *(Vector4*)_spriteSource = data.Source;
             }
 
             _spriteEffect.CurrentTechnique.Passes[0].Apply();
+
+            GraphicsDevice.Textures[0] = data.Texture;
             GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 4, 0, 2);
         }
 

@@ -178,6 +178,7 @@ Mods: {
 			CorruptlingProjectile.DisplayName: Corruptling Projectile
 			ExplosionProjectile.DisplayName: Explosion Projectile
 			TendonProjectile.DisplayName: Tendon Projectile
+			MarrowLazerProjectile.DisplayName: Marrow Lazer Projectile
 		}
 
 		Biomes: {

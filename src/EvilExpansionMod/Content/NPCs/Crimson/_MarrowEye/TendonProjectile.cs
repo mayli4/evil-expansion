@@ -25,6 +25,8 @@ public class TendonProjectile : ModProjectile {
         Projectile.hide = true;
     }
 
+    public override bool ShouldUpdatePosition() => false;
+
     public override void AI() {
         if(Main.npc[AttachedEye] != null && Main.npc[AttachedEye].active) Projectile.timeLeft = DisapearFrames;
     }
@@ -44,7 +46,7 @@ public class TendonProjectile : ModProjectile {
             texture,
             Projectile.position - Main.screenPosition,
             source,
-            lightColor,
+            lightColor * ((float)Projectile.timeLeft / DisapearFrames),
             Projectile.rotation,
             source.Size() / 2f,
             new Vector2(1f, Projectile.scale / texture.Height),

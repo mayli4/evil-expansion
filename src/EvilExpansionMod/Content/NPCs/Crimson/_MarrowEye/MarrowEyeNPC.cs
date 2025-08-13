@@ -10,11 +10,25 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.NPCs.Crimson;
 
+enum State {
+    Idle,
+    Targeting
+}
+
 public class MarrowEyeNPC : ModNPC {
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.MarrowEye.KEY_MarrowEyeNPC;
 
     Player Target => Main.player[NPC.target];
+    State State {
+        get => (State)NPC.ai[0];
+        set {
+            NPC.ai[0] = (float)value;
+            NPC.netUpdate = true;
+        }
+    }
     Vector2 _lookDirection;
+
+    int LaserProjectile = -1;
 
     public override void SetDefaults() {
         NPC.width = 50;
@@ -106,26 +120,59 @@ public class MarrowEyeNPC : ModNPC {
 
     public override void AI() {
         NPC.rotation = 0f;
+        NPC.rotation = MathF.Sin(Main.GameUpdateCount * 0.03f + NPC.whoAmI * 574f) * 0.1f;
 
-        NPC.TargetClosest();
-        if(Target != null) {
-            var targetDelta = Target.Center - NPC.Center;
-            var distanceToTarget = targetDelta.Length();
-            if(distanceToTarget < 400f) {
-                _lookDirection = Vector2.Lerp(_lookDirection, targetDelta / distanceToTarget, 0.04f);
-                NPC.frameCounter = Math.Min(NPC.frameCounter + 0.2, 2);
-            }
-            else {
+        var minDist = 400f;
+        switch(State) {
+            case State.Idle:
                 _lookDirection *= 0.95f;
                 NPC.frameCounter = Math.Max(NPC.frameCounter - 0.1, 0);
-            }
-        }
-        else {
-            _lookDirection *= 0.95f;
-            NPC.frameCounter = Math.Max(NPC.frameCounter - 0.1, 0);
-        }
 
-        NPC.rotation = MathF.Sin(Main.GameUpdateCount * 0.03f + NPC.whoAmI * 574f) * 0.1f;
+                NPC.TargetClosest();
+                if(Target != null) {
+                    if(NPC.Center.DistanceSQ(Target.Center) < minDist * minDist) {
+                        State = State.Targeting;
+                    }
+                }
+
+                break;
+            case State.Targeting:
+                if(Target == null || !Target.active) {
+                    State = State.Idle;
+                    break;
+                }
+
+
+                var directionToTarget = NPC.Center.DirectionTo(Target.Center);
+                _lookDirection = Vector2.Lerp(_lookDirection, directionToTarget, 0.04f);
+                NPC.frameCounter = Math.Min(NPC.frameCounter + 0.1, 2);
+
+                if(NPC.frameCounter == 2) {
+                    if(LaserProjectile == -1) {
+                        LaserProjectile = Projectile.NewProjectile(
+                            NPC.GetSource_FromAI(),
+                            Vector2.Zero,
+                            directionToTarget,
+                            ModContent.ProjectileType<MarrowLazerProjectile>(),
+                            NPC.damage,
+                            0.1f
+                        );
+                    }
+
+                    var laser = Main.projectile[LaserProjectile];
+
+                    var offset = new Vector2(-4f, -38f);
+                    laser.position = NPC.Center + offset - offset.RotatedBy(NPC.rotation) + _lookDirection * 4f;
+                    laser.velocity = _lookDirection;
+                    laser.timeLeft = Math.Max(MarrowLazerProjectile.DisapearFrames, laser.timeLeft);
+                }
+
+                if(NPC.Center.DistanceSQ(Target.Center) > minDist * minDist) {
+                    LaserProjectile = -1;
+                    State = State.Idle;
+                }
+                break;
+        }
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {

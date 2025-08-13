@@ -138,7 +138,7 @@ public sealed class MeatPrisonPlayer : ModPlayer {
             }
         }
     }
-}
+} 
 
 public class BloodWardenBuff : ModBuff {
     public override string Texture => Assets.Assets.Textures.Items.Crimson.MeatPrisonArmor.KEY_BloodwardenBuff;

@@ -9,6 +9,8 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.NPCs.Crimson;
 
+//todo finish pus bottle shader and gas attack
+
 public sealed class StinkgrubNPC : ModNPC {
     public enum State {
         Idle,

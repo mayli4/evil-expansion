@@ -1,4 +1,5 @@
 using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -221,6 +222,7 @@ public sealed class BloodWarden : ModProjectile {
         
         List<Vector2> chainPoints = new();
         GenerateWavyChainPoints(chainPoints, chainStart, chainEnd, 20, 5, 0.5f, 0.2f);
+
         
         Graphics.BeginPipeline()
             .DrawBasicTrail(chainPoints.ToArray(), static _ => 6, chainTexture, Color.White)

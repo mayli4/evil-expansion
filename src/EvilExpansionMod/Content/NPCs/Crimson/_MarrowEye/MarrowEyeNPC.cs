@@ -39,6 +39,69 @@ public class MarrowEyeNPC : ModNPC {
     }
 
     public override void OnSpawn(IEntitySource source) {
+        var randomDirection = (MathF.PI / 2f + Main.rand.NextFloatDirection() * MathF.PI / 8f).ToRotationVector2();
+
+        var minLength = 50f;
+        var hookPoint = NPC.Center - Vector2.UnitY * 42f;
+        var positionA = hookPoint - randomDirection * minLength / 2f;
+        for(var i = 0; i < 50; i++) {
+            if(Collision.SolidCollision(positionA, 1, 1)) {
+                break;
+            }
+
+            positionA -= randomDirection * 22.67f;
+        }
+
+        var positionB = hookPoint + randomDirection * minLength / 2f;
+        for(var i = 0; i < 50; i++) {
+            if(Collision.SolidCollision(positionB, 1, 1)) {
+                break;
+            }
+
+            positionB += randomDirection * 22.67f;
+        }
+
+        if((positionB - positionA).LengthSquared() > 200) {
+            var positionA2 = positionA + (positionB - positionA) * Main.rand.NextFloat();
+            randomDirection = (
+                randomDirection.ToRotation()
+                + (Main.rand.NextBool() ? 1 : -1)
+                * Main.rand.NextFloat(MathF.PI / 8f, MathF.PI / 4f)
+            ).ToRotationVector2();
+
+            var positionB2 = positionA2 + randomDirection * minLength;
+            for(var i = 0; i < 50; i++) {
+                if(Collision.SolidCollision(positionB2, 1, 1)) {
+                    break;
+                }
+
+                positionB2 += randomDirection * 22.67f;
+            }
+
+            NewTendon(positionA2, positionB2);
+        }
+
+        NewTendon(positionA, positionB);
+    }
+
+    void NewTendon(Vector2 positionA, Vector2 positionB) {
+        var tendon = Projectile.NewProjectileDirect(
+            NPC.GetSource_FromThis(),
+            (positionA + positionB) / 2f,
+            Vector2.Zero,
+            ModContent.ProjectileType<TendonProjectile>(),
+            0,
+            0f
+        );
+
+        var positionDelta = positionB - positionA;
+        tendon.rotation = positionDelta.ToRotation() - MathF.PI / 2f;
+
+        var tendonLength = positionDelta.Length();
+        tendon.scale = tendonLength;
+        (tendon.ModProjectile as TendonProjectile).AttachedEye = NPC.whoAmI;
+
+        tendon.netUpdate = true;
     }
 
     public override void AI() {

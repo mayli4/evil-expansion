@@ -46,8 +46,7 @@ public class Graphics : ModSystem {
 
     enum CommandType : byte {
         DrawTrail,
-        DrawSpritePosition,
-        DrawSpriteRectangle,
+        DrawSprite,
 
         Begin,
         Reset,
@@ -57,44 +56,30 @@ public class Graphics : ModSystem {
         EffectParams,
     }
 
-
-    struct DrawSpritePositionData {
+    struct DrawSpriteData {
         public Texture2D Texture;
-        public Vector2 Position;
         public Color Color;
-        public Rectangle? Source;
-        public float Rotation;
-        public Vector2 Origin;
-        public Vector2 Scale;
-        public SpriteEffects SpriteEffects;
-    }
 
-    struct DrawSpriteRectangleData {
-        public Texture2D Texture;
-        public Rectangle Destination;
-        public Color Color;
-        public Rectangle? Source;
-        public float Rotation;
-        public Vector2 Origin;
-        public SpriteEffects SpriteEffects;
+        // 4 x [Vertex Positions, Texture Coordinates] in _positionDatas
+        public int PositionDatasIndex;
     }
 
     struct DrawTrailData {
-        public int PositionsIndex;
+        public int PositionDatasIndex;
         public int PositionCount;
         public Func<float, float> Width;
         public Func<float, Color> Color;
-        public int EffectDataIndex;
+        public int EffectDatasIndex;
     }
 
     struct BeginData {
         public float Scale;
-        public int SnapshotDataIndex;
+        public int SnapshotDatasIndex;
     }
 
     struct EffectData {
         public Effect Effect;
-        public int ParameterIndex;
+        public int ParameterDatasIndex;
         public int ParameterCount;
     }
 
@@ -188,13 +173,12 @@ public class Graphics : ModSystem {
 
     static readonly List<EffectParameterData> _effectParameters = [];
 
-    static readonly List<DrawSpritePositionData> _spritePositionDatas = [];
-    static readonly List<DrawSpriteRectangleData> _spriteRectangleDatas = [];
+    static readonly List<DrawSpriteData> _spriteDatas = [];
     static readonly List<DrawTrailData> _trailDatas = [];
     static readonly List<SpriteBatchSnapshot> _snapshotDatas = [];
     static readonly List<BeginData> _beginDatas = [];
     static readonly List<EffectData> _effectDatas = [];
-    static readonly List<Vector2> _trailPositions = [];
+    static readonly List<Vector2> _positionDatas = [];
 
     static Commands _cache = new();
 
@@ -225,6 +209,12 @@ public class Graphics : ModSystem {
     static SpriteBatch SpriteBatch => Main.spriteBatch;
     static RenderTarget2D InitFullScreenTarget => new(GraphicsDevice, Main.screenWidth, Main.screenHeight);
 
+    static Effect _spriteEffect;
+    static nint _spriteMatrix;
+
+    static VertexBuffer _spriteVertexBuffer;
+    static IndexBuffer _spriteIndexBuffer;
+
     public override void Load() {
         Main.QueueMainThreadAction(() =>
         {
@@ -244,6 +234,13 @@ public class Graphics : ModSystem {
             _activeTarget = InitFullScreenTarget;
             _inactiveTarget = InitFullScreenTarget;
             _targetSemaphore.Release();
+
+            _spriteVertexBuffer = new DynamicVertexBuffer(GraphicsDevice, typeof(VertexPositionColorTexture), 4, BufferUsage.WriteOnly);
+            _spriteIndexBuffer = new IndexBuffer(GraphicsDevice, IndexElementSize.SixteenBits, 6, BufferUsage.WriteOnly);
+            _spriteIndexBuffer.SetData(new ushort[] { 0, 1, 2, 3, 2, 1 });
+
+            _spriteEffect = new Effect(GraphicsDevice, Resources.SpriteEffect);
+            _spriteMatrix = _spriteEffect.Parameters["MatrixTransform"].values;
         });
 
         Main.OnResolutionChanged += (screenSize) =>
@@ -279,6 +276,9 @@ public class Graphics : ModSystem {
             _activeTarget.Dispose();
             _inactiveTarget.Dispose();
 
+            _spriteVertexBuffer.Dispose();
+            _spriteIndexBuffer.Dispose();
+            _spriteEffect.Dispose();
         });
     }
 
@@ -296,6 +296,8 @@ public class Graphics : ModSystem {
         CommandRunner.Run(in _beforePlayers);
         orig(self);
         CommandRunner.Run(in _afterPlayers);
+
+        PostDraw();
     }
 
     private void On_Main_DrawNPCs(On_Main.orig_DrawNPCs orig, Main self, bool behindTiles) {
@@ -314,15 +316,23 @@ public class Graphics : ModSystem {
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static void PreDraw() {
+        ScreenTransformMatrix =
+            Main.GameViewMatrix.TransformationMatrix
+            * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+        WorldTransformMatrix =
+            Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f)
+            * ScreenTransformMatrix;
+    }
+
+    static void PostDraw() {
         _effectParameters.Clear();
 
-        _spritePositionDatas.Clear();
-        _spriteRectangleDatas.Clear();
+        _spriteDatas.Clear();
         _trailDatas.Clear();
         _snapshotDatas.Clear();
         _beginDatas.Clear();
         _effectDatas.Clear();
-        _trailPositions.Clear();
+        _positionDatas.Clear();
 
         _beforeTiles.Clear();
         _afterTiles.Clear();
@@ -332,11 +342,6 @@ public class Graphics : ModSystem {
         _afterNPCs.Clear();
         _beforePlayers.Clear();
         _afterPlayers.Clear();
-
-        ScreenTransformMatrix = Main.GameViewMatrix.TransformationMatrix
-            * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
-        WorldTransformMatrix = Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f)
-            * ScreenTransformMatrix;
     }
 
     public static Pipeline BeginPipeline(float scale = 1f, SpriteBatchSnapshot? snapshot = null) {
@@ -346,7 +351,7 @@ public class Graphics : ModSystem {
         _snapshotDatas.Add(snapshot ?? new());
 
         var beginDataIndex = _beginDatas.Count;
-        _beginDatas.Add(new() { Scale = Math.Clamp(scale, 0f, 1f), SnapshotDataIndex = snapshotIndex });
+        _beginDatas.Add(new() { Scale = Math.Clamp(scale, 0f, 1f), SnapshotDatasIndex = snapshotIndex });
 
         _cache.Add(CommandType.Begin, beginDataIndex);
         return new();
@@ -373,17 +378,17 @@ public class Graphics : ModSystem {
         ) {
             var effectDataIndex = AddEffectData(effect, parameters);
 
-            var trailPositionsIndex = _trailPositions.Count;
-            _trailPositions.AddRange(positions);
+            var trailPositionsIndex = _positionDatas.Count;
+            _positionDatas.AddRange(positions);
 
             var trailDataIndex = _trailDatas.Count;
             _trailDatas.Add(new()
             {
-                PositionsIndex = trailPositionsIndex,
+                PositionDatasIndex = trailPositionsIndex,
                 PositionCount = positions.Length,
                 Width = width,
                 Color = color,
-                EffectDataIndex = effectDataIndex,
+                EffectDatasIndex = effectDataIndex,
             });
             _cache.Add(CommandType.DrawTrail, trailDataIndex);
 
@@ -462,7 +467,7 @@ public class Graphics : ModSystem {
             _effectDatas.Add(new()
             {
                 Effect = effect,
-                ParameterIndex = parameterIndex,
+                ParameterDatasIndex = parameterIndex,
                 ParameterCount = parameterCount,
             });
             return index;
@@ -478,20 +483,22 @@ public class Graphics : ModSystem {
             Vector2? scale = null,
             SpriteEffects spriteEffects = SpriteEffects.None
         ) {
-            var index = _spritePositionDatas.Count;
-            _spritePositionDatas.Add(new()
-            {
-                Texture = texture,
-                Position = position,
-                Color = color ?? Color.White,
-                Source = source,
-                Rotation = rotation,
-                Origin = origin ?? Vector2.Zero,
-                Scale = scale ?? Vector2.One,
-                SpriteEffects = spriteEffects,
-            });
-            _cache.Add(CommandType.DrawSpritePosition, index);
-            return this;
+            var actualScale = scale ?? Vector2.One;
+            var actualSource = source ?? new Rectangle(0, 0, texture.Width, texture.Height);
+            return DrawSprite(
+                texture,
+                new Rectangle(
+                    (int)position.X,
+                    (int)position.Y,
+                    (int)(actualSource.Width / actualScale.X),
+                    (int)(actualSource.Height / actualScale.Y)
+                ),
+                color ?? Color.White,
+                actualSource,
+                rotation,
+                origin ?? Vector2.Zero,
+                spriteEffects
+            );
         }
         public readonly Pipeline DrawSprite(
             Texture2D texture,
@@ -502,19 +509,101 @@ public class Graphics : ModSystem {
             Vector2? origin = null,
             SpriteEffects spriteEffects = SpriteEffects.None
         ) {
-            var index = _spriteRectangleDatas.Count;
-            _spriteRectangleDatas.Add(new()
+            return DrawSprite(
+                texture,
+                destination,
+                color ?? Color.White,
+                source ?? new Rectangle(0, 0, texture.Width, texture.Height),
+                rotation,
+                origin ?? Vector2.Zero,
+                spriteEffects
+            );
+        }
+
+        public readonly Pipeline DrawSprite(
+            Texture2D texture,
+            Rectangle destination,
+            Color color,
+            Rectangle source,
+            float rotation,
+            Vector2 origin,
+            SpriteEffects spriteEffects
+        ) {
+            var rCos = MathF.Cos(rotation);
+            var rSin = MathF.Sin(rotation);
+
+            var sourceWidthNormalized =
+                Math.Sign(source.Width) * MathF.Max(MathF.Abs(source.Width), MathHelper.MachineEpsilonFloat) / texture.Width;
+            var sourceHeightNormalized =
+                Math.Sign(source.Height) * MathF.Max(MathF.Abs(source.Height), MathHelper.MachineEpsilonFloat) / texture.Height;
+
+            var originXNormalized = origin.X / sourceWidthNormalized / texture.Width;
+            var originYNormalized = origin.Y / sourceHeightNormalized / texture.Height;
+
+            Span<Vector2> positions = stackalloc Vector2[8];
+
+            var originOffset = new Vector2(
+                -originXNormalized * destination.Width,
+                -originYNormalized * destination.Height
+            );
+            positions[0] = new(
+                -rSin * originOffset.Y + rCos * originOffset.X + destination.X,
+                rCos * originOffset.Y + rSin * originOffset.X + destination.Y
+            );
+
+            originOffset = new Vector2(
+                (1f - originXNormalized) * destination.Width,
+                -originYNormalized * destination.Height
+            );
+            positions[1] = new(
+                -rSin * originOffset.Y + rCos * originOffset.X + destination.X,
+                rCos * originOffset.Y + rSin * originOffset.X + destination.Y
+            );
+
+            originOffset = new Vector2(
+                -originXNormalized * destination.Width,
+                (1f - originYNormalized) * destination.Height
+            );
+            positions[2] = new(
+                -rSin * originOffset.Y + rCos * originOffset.X + destination.X,
+                rCos * originOffset.Y + rSin * originOffset.X + destination.Y
+            );
+
+            originOffset = new Vector2(
+                (1f - originXNormalized) * destination.Width,
+                (1f - originYNormalized) * destination.Height
+            );
+            positions[3] = new(
+                -rSin * originOffset.Y + rCos * originOffset.X + destination.X,
+                rCos * originOffset.Y + rSin * originOffset.X + destination.Y
+            );
+
+            ReadOnlySpan<float> cornerOffsetX = [0f, 1f, 0f, 1f];
+            ReadOnlySpan<float> cornerOffsetY = [0f, 0f, 1f, 1f];
+
+            var effects = (byte)(spriteEffects & (SpriteEffects.FlipHorizontally | SpriteEffects.FlipVertically));
+
+            var sourceXNormalized = source.X / texture.Width;
+            var sourceYNormalized = source.Y / texture.Width;
+
+            for(byte i = 0; i < 4; i++) {
+                positions[i + 4] = new(
+                    cornerOffsetX[i ^ effects] * sourceXNormalized + sourceWidthNormalized,
+                    cornerOffsetY[i ^ effects] * sourceYNormalized + sourceHeightNormalized
+                );
+            }
+
+            var positionDatasIndex = _positionDatas.Count;
+            _positionDatas.AddRange(positions);
+
+            var spriteDatasIndex = _spriteDatas.Count;
+            _spriteDatas.Add(new()
             {
                 Texture = texture,
-                Destination = destination,
-                Color = color ?? Color.White,
-                Source = source,
-                Rotation = rotation,
-                Origin = origin ?? Vector2.Zero,
-                SpriteEffects = spriteEffects,
+                Color = color,
+                PositionDatasIndex = positionDatasIndex,
             });
-
-            _cache.Add(CommandType.DrawSpriteRectangle, index);
+            _cache.Add(CommandType.DrawSprite, spriteDatasIndex);
             return this;
         }
 
@@ -534,7 +623,7 @@ public class Graphics : ModSystem {
             _snapshotDatas.Add(snapshot ?? new());
 
             var beginDataIndex = _beginDatas.Count;
-            _beginDatas.Add(new() { Scale = Math.Clamp(scale, 0f, 1f), SnapshotDataIndex = snapshotIndex });
+            _beginDatas.Add(new() { Scale = Math.Clamp(scale, 0f, 1f), SnapshotDatasIndex = snapshotIndex });
 
             _cache.Add(CommandType.Reset, beginDataIndex);
             return this;
@@ -601,11 +690,8 @@ public class Graphics : ModSystem {
                     case CommandType.DrawTrail:
                         r.RunDrawTrail(dataIndex);
                         break;
-                    case CommandType.DrawSpritePosition:
-                        r.RunDrawSpritePosition(dataIndex);
-                        break;
-                    case CommandType.DrawSpriteRectangle:
-                        r.RunDrawSpriteRectangle(dataIndex);
+                    case CommandType.DrawSprite:
+                        r.RunDrawSprite(dataIndex);
                         break;
                     case CommandType.Begin:
                         r.RunBegin(dataIndex);
@@ -631,14 +717,14 @@ public class Graphics : ModSystem {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunDrawTrail(int index) {
-            var trailData = _trailDatas[index];
-            var trailPositions = CollectionsMarshal
-                .AsSpan(_trailPositions)[trailData.PositionsIndex..(trailData.PositionsIndex + trailData.PositionCount)];
+            var data = _trailDatas[index];
+            var trailPositions =
+                CollectionsMarshal.AsSpan(_positionDatas)[data.PositionDatasIndex..(data.PositionDatasIndex + data.PositionCount)];
 
-            Color color = trailData.Color(0f);
-            Vector2 vertexOffset = trailPositions[0]
+            var color = data.Color(0f);
+            var vertexOffset = trailPositions[0]
                 .DirectionTo(trailPositions[1])
-                .RotatedBy(MathHelper.PiOver2) * trailData.Width(0f) * 0.5f;
+                .RotatedBy(MathHelper.PiOver2) * data.Width(0f) * 0.5f;
 
             _trailVertices[0] = new VertexPositionColorTexture((trailPositions[0] - vertexOffset).ToVector3(), color, Vector2.Zero);
             _trailVertices[1] = new VertexPositionColorTexture((trailPositions[0] + vertexOffset).ToVector3(), color, Vector2.UnitY);
@@ -646,12 +732,12 @@ public class Graphics : ModSystem {
             for(var j = 1; j < trailPositions.Length; j++) {
                 var factor = j / (trailPositions.Length - 1f);
 
-                color = trailData.Color(factor);
+                color = data.Color(factor);
 
                 var currentPosition = trailPositions[j];
                 var previousPosition = trailPositions[j - 1];
 
-                vertexOffset = previousPosition.DirectionTo(currentPosition).RotatedBy(MathHelper.PiOver2) * trailData.Width(factor) * 0.5f;
+                vertexOffset = previousPosition.DirectionTo(currentPosition).RotatedBy(MathHelper.PiOver2) * data.Width(factor) * 0.5f;
 
                 _trailVertices[j * 2] = new VertexPositionColorTexture(
                     (currentPosition - vertexOffset).ToVector3(),
@@ -678,10 +764,10 @@ public class Graphics : ModSystem {
             _trailIndexBuffer.SetData(_trailIndices);
             GraphicsDevice.Indices = _trailIndexBuffer;
 
-            var effectData = _effectDatas[trailData.EffectDataIndex];
+            var effectData = _effectDatas[data.EffectDatasIndex];
             SetEffectParams(effectData);
 
-            foreach(EffectPass pass in effectData.Effect.CurrentTechnique.Passes) {
+            foreach(var pass in effectData.Effect.CurrentTechnique.Passes) {
                 pass.Apply();
                 GraphicsDevice.DrawIndexedPrimitives(
                     PrimitiveType.TriangleList,
@@ -695,44 +781,43 @@ public class Graphics : ModSystem {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly void RunDrawSpritePosition(int index) {
-            var spriteData = _spritePositionDatas[index];
-            SpriteBatch.Draw(
-                spriteData.Texture,
-                spriteData.Position,
-                spriteData.Source,
-                spriteData.Color,
-                spriteData.Rotation,
-                spriteData.Origin,
-                spriteData.Scale,
-                spriteData.SpriteEffects,
-                0f
-            );
-        }
+        readonly void RunDrawSprite(int index) {
+            var data = _spriteDatas[index];
+            var positions = CollectionsMarshal.AsSpan(_positionDatas)[data.PositionDatasIndex..(data.PositionDatasIndex + 8)];
 
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        readonly void RunDrawSpriteRectangle(int index) {
-            var rectangleData = _spriteRectangleDatas[index];
-            SpriteBatch.Draw(
-                rectangleData.Texture,
-                rectangleData.Destination,
-                rectangleData.Source,
-                rectangleData.Color,
-                rectangleData.Rotation,
-                rectangleData.Origin,
-                rectangleData.SpriteEffects,
-                0f
-            );
+
+            _spriteVertexBuffer.SetData<VertexPositionColorTexture>([
+                new(positions[0].ToVector3(), data.Color, positions[4]),
+                new(positions[1].ToVector3(), data.Color, positions[5]),
+                new(positions[2].ToVector3(), data.Color, positions[6]),
+                new(positions[3].ToVector3(), data.Color, positions[7]),
+            ]);
+
+            GraphicsDevice.Textures[0] = data.Texture;
+            GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            GraphicsDevice.SamplerStates[0] = Main.DefaultSamplerState;
+            GraphicsDevice.DepthStencilState = DepthStencilState.None;
+            GraphicsDevice.RasterizerState = Main.Rasterizer;
+
+            GraphicsDevice.SetVertexBuffer(_spriteVertexBuffer);
+            GraphicsDevice.Indices = _spriteIndexBuffer;
+
+            unsafe {
+                *(Matrix*)_spriteMatrix = ScreenTransformMatrix;
+            }
+
+            _spriteEffect.CurrentTechnique.Passes[0].Apply();
+            GraphicsDevice.DrawIndexedPrimitives(PrimitiveType.TriangleList, 0, 0, 4, 0, 2);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void RunApplyEffect(int index) {
-            var effectData = _effectDatas[index];
+            var data = _effectDatas[index];
 
-            SetEffectParams(effectData);
+            SetEffectParams(data);
             var snapshot = SpriteBatch.CaptureEndBegin(new()
             {
-                CustomEffect = effectData.Effect,
+                CustomEffect = data.Effect,
                 TransformMatrix = Matrix.Identity,
             });
 
@@ -752,8 +837,8 @@ public class Graphics : ModSystem {
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         void RunBegin(int index) {
-            var beginData = _beginDatas[index];
-            _targetScale = beginData.Scale;
+            var data = _beginDatas[index];
+            _targetScale = data.Scale;
 
             _cachedBindings = GraphicsDevice.GetRenderTargets();
             if(_cachedBindings != null && _cachedBindings.Length > 0) {
@@ -764,7 +849,7 @@ public class Graphics : ModSystem {
             GraphicsDevice.SetRenderTarget(_activeTarget);
             GraphicsDevice.Clear(Color.Transparent);
 
-            var snapshot = _snapshotDatas[beginData.SnapshotDataIndex];
+            var snapshot = _snapshotDatas[data.SnapshotDatasIndex];
             SpriteBatch.Begin(snapshot with
             {
                 TransformMatrix = snapshot.TransformMatrix * Matrix.CreateScale(_targetScale)
@@ -773,10 +858,10 @@ public class Graphics : ModSystem {
         }
 
         void RunReset(int index) {
-            var beginData = _beginDatas[index];
+            var data = _beginDatas[index];
 
             var previousScale = _targetScale;
-            _targetScale = beginData.Scale;
+            _targetScale = data.Scale;
 
             SpriteBatch.EndBegin(new()
             {
@@ -789,7 +874,7 @@ public class Graphics : ModSystem {
 
             SpriteBatch.Draw(_inactiveTarget, Vector2.Zero, Color.White);
 
-            var snapshot = _snapshotDatas[beginData.SnapshotDataIndex];
+            var snapshot = _snapshotDatas[data.SnapshotDatasIndex];
             SpriteBatch.EndBegin(snapshot with
             {
                 TransformMatrix = snapshot.TransformMatrix * Matrix.CreateScale(_targetScale)
@@ -801,7 +886,11 @@ public class Graphics : ModSystem {
         readonly void RunEnd(int _) {
             SpriteBatch.EndBegin(new()
             {
-                TransformMatrix = Matrix.CreateScale(1f / _targetScale),
+                TransformMatrix = Matrix.CreateScale(
+                    1f / _targetScale * Main.GameViewMatrix.Zoom.X,
+                    1f / _targetScale * Main.GameViewMatrix.Zoom.Y,
+                    1f
+                ),
             });
 
             GraphicsDevice.SetRenderTargets(_cachedBindings);
@@ -822,15 +911,15 @@ public class Graphics : ModSystem {
             GraphicsDevice.Viewport = new(
                 0,
                 0,
-                (int)(Main.screenWidth * _targetScale),
-                (int)(Main.screenHeight * _targetScale)
+                (int)(Main.screenWidth * _targetScale / Main.GameViewMatrix.Zoom.X),
+                (int)(Main.screenHeight * _targetScale / Main.GameViewMatrix.Zoom.Y)
             );
         }
 
         static void SetEffectParams(EffectData effectData) {
             var effect = effectData.Effect;
             for(var j = 0; j < effectData.ParameterCount; j++) {
-                var parameterData = _effectParameters[j + effectData.ParameterIndex];
+                var parameterData = _effectParameters[j + effectData.ParameterDatasIndex];
 
                 var parameter = effect.Parameters.elements[parameterData.Index];
                 switch(parameterData.Value.Type) {

@@ -144,7 +144,7 @@ Mods: {
 			StinkflyNPC.DisplayName: Stinkfly
 			SmallStinkflyNPC.DisplayName: Small Stinkfly
 			SmallStinkflyNpc.DisplayName: Small Stinkfly Npc
-			MarrowEyeNPC.DisplayName: Marrow Eye	
+			MarrowEyeNPC.DisplayName: Marrow Eye
 		}
 
 		Projectiles: {
@@ -153,7 +153,6 @@ Mods: {
 			HellbatSpitProjectile.DisplayName: Hellbat Spit Projectile
 			TerrorBatSpit.DisplayName: Terror Bat Spit
 			SpiritFireball.DisplayName: Spirit Fireball
-			ExplosionVFXProjectile.DisplayName: Explosion V F X Projectile
 			CursehoundMace.DisplayName: Cursehound Mace
 			MaceCrack.DisplayName: Mace Crack
 			MaceShard.DisplayName: Mace Shard
@@ -173,6 +172,7 @@ Mods: {
 			ShadowOrbProjectile.DisplayName: Shadow Orb Projectile
 			CorruptlingProjectile.DisplayName: Corruptling Projectile
 			ExplosionProjectile.DisplayName: Explosion Projectile
+			TendonProjectile.DisplayName: Tendon Projectile
 		}
 
 		Biomes: {

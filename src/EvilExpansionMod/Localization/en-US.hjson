@@ -132,6 +132,11 @@ Mods: {
 				DisplayName: Hell Demonite Bar Item
 				Tooltip: ""
 			}
+
+			ThoughtfulPendantItem: {
+				DisplayName: Thoughtful Pendant
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -179,6 +184,7 @@ Mods: {
 			ExplosionProjectile.DisplayName: Explosion Projectile
 			TendonProjectile.DisplayName: Tendon Projectile
 			MarrowLazerProjectile.DisplayName: Marrow Lazer Projectile
+			FriendlyCulstistPortal.DisplayName: Friendly Culstist Portal
 		}
 
 		Biomes: {

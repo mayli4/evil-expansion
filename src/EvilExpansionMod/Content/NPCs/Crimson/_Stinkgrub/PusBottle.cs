@@ -109,7 +109,7 @@ public class PusBottleNPC : ModNPC {
 
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(),
-                NPC.Center - new Vector2(0, 130),
+                NPC.Center - new Vector2(0, 110),
                 velocity,
                 ModContent.ProjectileType<PusGlob>(),
                 (int)(ParentNPCID != -1 && Main.npc[ParentNPCID].active ? Main.npc[ParentNPCID].damage * 0.75f : 10),

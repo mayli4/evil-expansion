@@ -28,6 +28,9 @@ public class VeinOre : ModTile {
         Main.tileMerge[Type][ModContent.TileType<CrimsonAshGrass>()] = true;
         Main.tileMerge[ModContent.TileType<CrimsonAshGrass>()][Type] = true;
 
+        MineResist = 2f;
+        MinPick = 110;
+        
         AddMapEntry(new Color(140, 83, 14), CreateMapEntryName());
 
         TileLoader.RegisterConversion(TileID.Hellstone, BiomeConversionID.Crimson, (i, j, type, _) =>

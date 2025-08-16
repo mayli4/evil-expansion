@@ -21,6 +21,9 @@ public class UnderworldDemonite : ModTile {
         MinPick = 65;
         HitSound = SoundID.Tink;
         Main.tileSpelunker[Type] = true;
+        
+        MineResist = 2f;
+        MinPick = 110;
 
         Main.tileMerge[Type][ModContent.TileType<CorruptAsh>()] = true;
         Main.tileMerge[ModContent.TileType<CorruptAsh>()][Type] = true;

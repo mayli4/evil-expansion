@@ -124,8 +124,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                 break;
             case CultistState.EyeAttack:
                 NPC.velocity *= 0.99f;
-                if(Target == null) {
-                    ChangeState(CultistState.FlyToTarget);
+                if(Target == null) { 
                 }
                 else if(_timer > 60 && (int)_timer % 30 == 0) {
                     var position = Target.Center + _portalRotation.ToRotationVector2() * Main.rand.NextFloat(300, 400);

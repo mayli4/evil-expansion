@@ -137,6 +137,11 @@ Mods: {
 				DisplayName: Thoughtful Pendant
 				Tooltip: ""
 			}
+
+			ImputedFlameItem: {
+				DisplayName: Imputed Flame Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {

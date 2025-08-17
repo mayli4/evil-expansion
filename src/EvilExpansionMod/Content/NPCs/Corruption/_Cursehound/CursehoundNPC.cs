@@ -1,5 +1,6 @@
 ﻿using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.CameraModifiers;
+using EvilExpansionMod.Content.Items.Corruption;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
@@ -9,6 +10,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.Shaders;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
@@ -95,6 +97,11 @@ public sealed class CursehoundNPC : ModNPC {
     public override void Load() {
         for(int j = 1; j <= 8; j++)
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/CursehoundGore" + j);
+    }
+    
+    public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        npcLoot.Add(ItemDropRule.Common(ItemID.ShadowScale, 1, 3, 6));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 1, 2, 3));
     }
 
     public override void HitEffect(NPC.HitInfo hit) {

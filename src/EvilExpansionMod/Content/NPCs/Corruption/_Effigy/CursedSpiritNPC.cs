@@ -276,6 +276,8 @@ public sealed class CursedSpiritNPC : ModNPC {
                             NPC.GetSource_Death(),
                             NPC.Center,
                             40,
+                            Color.Yellow,
+                            Color.LightGoldenrodYellow,
                             size: ExplosionRange,
                             timeLeft: 35
                         );

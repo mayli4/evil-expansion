@@ -18,10 +18,15 @@ public class ExplosionProjectile : ModProjectile {
         IEntitySource source,
         Vector2 position,
         int damage,
+        Color startColor,
+        Color endColor,
         float knockback = 10f,
         int size = 50,
         int timeLeft = 120
     ) {
+        _startColor = startColor;
+        _endColor = endColor;
+        
         var explosion = Projectile.NewProjectileDirect(
             source,
             position,
@@ -39,6 +44,9 @@ public class ExplosionProjectile : ModProjectile {
     }
 
     private int _maxTimeLeft = -1;
+
+    private static Color _startColor;
+    private static Color _endColor;
 
     public override void SetDefaults() {
         Projectile.aiStyle = -1;
@@ -119,7 +127,7 @@ public class ExplosionProjectile : ModProjectile {
                 explosionEffect,
                 ("time", explosionProgress + Projectile.whoAmI * 438.8239f),
                 ("progress", explosionProgress),
-                ("startColor", Color.Yellow.ToVector4()),
+                ("startColor", _startColor.ToVector4()),
                 ("endColor", Color.Black.ToVector4())
             )
             .DrawSprite(
@@ -138,7 +146,7 @@ public class ExplosionProjectile : ModProjectile {
                 ("time", explosionProgress + Projectile.whoAmI * 638.8239f),
                 ("progress", MathF.Pow(1f - explosionProgress, 4)),
                 ("startColor", Color.Transparent.ToVector4()),
-                ("endColor", Color.LightGoldenrodYellow.ToVector4())
+                ("endColor", _endColor.ToVector4())
             )
             .DrawSprite(
                 noiseTexture1,
@@ -161,7 +169,7 @@ public class ExplosionProjectile : ModProjectile {
             glowTexture,
             Projectile.Center - Main.screenPosition,
             null,
-            Color.Yellow * flashAlpha,
+            _startColor * flashAlpha,
             0f,
             glowTexture.Size() / 2f,
             1.5f * flashScale,
@@ -174,7 +182,7 @@ public class ExplosionProjectile : ModProjectile {
             Projectile.Center - Main.screenPosition
                 + 0.2f * Main.rand.NextVector2Square(-Projectile.width, Projectile.width),
             null,
-            Color.Yellow * flashAlpha,
+            _startColor * flashAlpha,
             Projectile.rotation + Main.rand.NextFloat(),
             glowTexture.Size() / 2f,
             1.8f * flashScale * Main.rand.NextFloat(),

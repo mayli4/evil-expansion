@@ -142,6 +142,11 @@ Mods: {
 				DisplayName: Imputed Flame Item
 				Tooltip: ""
 			}
+
+			PlanetoidLauncherItem: {
+				DisplayName: Planetoid Launcher Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -190,6 +195,7 @@ Mods: {
 			TendonProjectile.DisplayName: Tendon Projectile
 			MarrowLazerProjectile.DisplayName: Marrow Lazer Projectile
 			FriendlyCulstistPortal.DisplayName: Friendly Culstist Portal
+			PlanetoidProjectile.DisplayName: Planetoid Projectile
 		}
 
 		Biomes: {

@@ -21,6 +21,14 @@ public sealed class Smoke : ModDust {
     public override void OnSpawn(Dust dust) {
         dust.frame = new Rectangle(0, 32 * Main.rand.Next(3), 32, 32);
         dust.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+        
+        if (dust.customData is Data data) {
+            dust.color = data.ColorStart;
+            dust.alpha = (int)(255 - (data.InitialOpacity * 255));
+        } else {
+            dust.color = Color.Black;
+            dust.alpha = 255;
+        }
     }
 
     public override bool Update(Dust dust) {

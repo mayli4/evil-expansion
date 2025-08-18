@@ -119,7 +119,7 @@ Mods: {
 			}
 
 			CrimtaneHellstoneBarItem: {
-				DisplayName: Crimtane Hellstone Bar
+				DisplayName: Crimtane Hellstone
 				Tooltip: ""
 			}
 
@@ -129,7 +129,7 @@ Mods: {
 			}
 
 			HellDemoniteBarItem: {
-				DisplayName: Hell Demonite Bar Item
+				DisplayName: Hell Demonite Bar
 				Tooltip: ""
 			}
 
@@ -139,7 +139,7 @@ Mods: {
 			}
 
 			ImputedFlameItem: {
-				DisplayName: Imputed Flame Item
+				DisplayName: Imputed Flame
 				Tooltip: ""
 			}
 

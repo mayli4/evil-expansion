@@ -143,14 +143,13 @@ Mods: {
 				Tooltip: ""
 			}
 
-			PlanetoidLauncherItem: {
-				DisplayName: Planetoid Launcher Item
-				Tooltip: ""
-			}
-
 			PlanetoidSpawnerItem: {
-				DisplayName: Planetoid Spawner Item
-				Tooltip: ""
+				DisplayName: Planetoid Spawner
+				Tooltip:
+					'''
+					Summons planetoids, whos damage scales with size
+					Planetoids explode after holding long enough
+					'''
 			}
 		}
 

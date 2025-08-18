@@ -1,12 +1,7 @@
-using EvilExpansionMod.Common.Graphics;
-using EvilExpansionMod.Content.Dusts;
-using EvilExpansionMod.Content.Projectiles;
-using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -14,18 +9,24 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Corruption;
 
 public class PlanetoidSpawnerItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.Planetoids.KEY_PlanetoidSpawner;
+    public override string Texture => Assets.Assets.Textures.Items.Corruption.Planetoids.KEY_PlanetoidSpawnerItem;
 
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 30;
         Item.useStyle = ItemUseStyleID.Shoot;
-        Item.useTime = 100;
+        Item.useTime = 2;
         Item.useAnimation = 2;
+        
         Item.DamageType = DamageClass.Magic;
         Item.channel = true;
         Item.noMelee = true;
         Item.noUseGraphic = true;
+
+        Item.damage = 20;
+        Item.knockBack = 1f;
+        Item.crit = 4;
+
         Item.shoot = ModContent.ProjectileType<PlanetoidProjectile>();
         Item.shootSpeed = 1f;
         Item.value = Item.sellPrice(gold: 5);

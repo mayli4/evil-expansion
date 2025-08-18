@@ -101,7 +101,7 @@ public class PlanetoidProjectile : ModProjectile {
             Projectile.scale = MathHelper.Clamp(GrowthTimer / growth_time, 0f, 1f); 
 
             float powerFactor = Projectile.scale;
-            Projectile.damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(20 * powerFactor);
+            Projectile.damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(5 * powerFactor);
             Projectile.knockBack = player.GetTotalKnockback(DamageClass.Magic).ApplyTo(1f * powerFactor);
 
             if (GrowthTimer >= growth_time) {

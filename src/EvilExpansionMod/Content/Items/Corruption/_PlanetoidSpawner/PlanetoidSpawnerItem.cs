@@ -16,7 +16,7 @@ public class PlanetoidSpawnerItem : ModItem {
         Item.height = 30;
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.useTime = 2;
-        Item.useAnimation = 2;
+        Item.useAnimation = 3;
         
         Item.DamageType = DamageClass.Magic;
         Item.channel = true;

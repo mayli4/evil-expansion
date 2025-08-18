@@ -1,7 +1,6 @@
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Content.Projectiles;
-using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -12,44 +11,6 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Items.Corruption;
-
-public class PlanetoidLauncherItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.Planetoids.KEY_PlanetoidItem;
-
-    public override void SetDefaults() {
-        Item.width = 30;
-        Item.height = 30;
-        Item.useStyle = ItemUseStyleID.Shoot;
-        Item.useTime = 2;
-        Item.useAnimation = 2;
-        Item.channel = true;
-        Item.noMelee = true;
-        Item.noUseGraphic = true;
-        Item.shoot = ModContent.ProjectileType<PlanetoidProjectile>();
-        Item.shootSpeed = 1f;
-        Item.value = Item.sellPrice(gold: 5);
-        Item.rare = ItemRarityID.Pink;
-    }
-
-    public override bool CanUseItem(Player player) {
-        return player.ownedProjectileCounts[Item.shoot] < 1;
-    }
-
-    public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type,
-        int damage, float knockback) {
-        Projectile.NewProjectile(
-            player.GetSource_ItemUse(Item),
-            Main.MouseWorld,
-            Vector2.Zero,
-            type,
-            (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(damage),
-            knockback,
-            player.whoAmI
-        );
-        return false;
-    }
-}
-
 
 public class PlanetoidProjectile : ModProjectile {
     public override string Texture => Assets.Assets.Textures.Items.Corruption.Planetoids.KEY_SmallPlanetoid; 

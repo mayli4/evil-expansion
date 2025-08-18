@@ -147,6 +147,11 @@ Mods: {
 				DisplayName: Planetoid Launcher Item
 				Tooltip: ""
 			}
+
+			PlanetoidSpawnerItem: {
+				DisplayName: Planetoid Spawner Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -196,6 +201,7 @@ Mods: {
 			MarrowLazerProjectile.DisplayName: Marrow Lazer Projectile
 			FriendlyCulstistPortal.DisplayName: Friendly Culstist Portal
 			PlanetoidProjectile.DisplayName: Planetoid Projectile
+			PlanetoidLauncherHeldProjectile.DisplayName: Planetoid Launcher Held Projectile
 		}
 
 		Biomes: {

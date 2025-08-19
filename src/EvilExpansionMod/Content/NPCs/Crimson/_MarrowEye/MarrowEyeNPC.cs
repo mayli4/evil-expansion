@@ -1,4 +1,5 @@
 ﻿using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.NPCs.Crimson._MarrowEye;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -30,6 +31,11 @@ public class MarrowEyeNPC : ModNPC {
 
     int LaserProjectile = -1;
 
+    int _ring;
+    int _tendonA;
+    int _tendonB;
+    int _tendonC;
+
     public override void SetDefaults() {
         NPC.width = 50;
         NPC.height = 50;
@@ -53,52 +59,64 @@ public class MarrowEyeNPC : ModNPC {
     }
 
     public override void OnSpawn(IEntitySource source) {
-        var randomDirection = (MathF.PI / 2f + Main.rand.NextFloatDirection() * MathF.PI / 8f).ToRotationVector2();
+        var randomRotation = MathF.PI / 2f + Main.rand.NextFloatDirection() * MathF.PI / 6f;
+        var randomDirection = randomRotation.ToRotationVector2();
+        var ringCenter = NPC.Center - new Vector2(2f, 51f);
+        var minLength = 42f;
 
-        var minLength = 50f;
-        var hookPoint = NPC.Center - Vector2.UnitY * 42f;
-        var positionA = hookPoint - randomDirection * minLength / 2f;
+        var startA = ringCenter - randomDirection * minLength / 2f;
+        var endA = ringCenter - randomDirection * minLength;
         for(var i = 0; i < 50; i++) {
-            if(Collision.SolidCollision(positionA, 1, 1)) {
+            if(Collision.SolidCollision(endA, 1, 1)) {
+                endA += randomDirection * 11.33f;
                 break;
             }
 
-            positionA -= randomDirection * 22.67f;
+            endA -= randomDirection * 22.67f;
         }
 
-        var positionB = hookPoint + randomDirection * minLength / 2f;
+        var startB = ringCenter + randomDirection * minLength / 2f;
+        var endB = ringCenter + randomDirection * minLength;
         for(var i = 0; i < 50; i++) {
-            if(Collision.SolidCollision(positionB, 1, 1)) {
+            if(Collision.SolidCollision(endB, 1, 1)) {
+                endB -= randomDirection * 11.33f;
                 break;
             }
 
-            positionB += randomDirection * 22.67f;
+            endB += randomDirection * 22.67f;
         }
 
-        if((positionB - positionA).LengthSquared() > 200) {
-            var positionA2 = positionA + (positionB - positionA) * Main.rand.NextFloat();
-            randomDirection = (
-                randomDirection.ToRotation()
-                + (Main.rand.NextBool() ? 1 : -1)
-                * Main.rand.NextFloat(MathF.PI / 8f, MathF.PI / 4f)
-            ).ToRotationVector2();
+        _tendonA = NewTendon(startA, endA);
+        _tendonB = NewTendon(startB, endB);
 
-            var positionB2 = positionA2 + randomDirection * minLength;
-            for(var i = 0; i < 50; i++) {
-                if(Collision.SolidCollision(positionB2, 1, 1)) {
-                    break;
-                }
+        randomDirection = (
+            randomRotation
+            + (Main.rand.NextBool() ? 1 : -1)
+            * Main.rand.NextFloat(MathF.PI / 4f, MathF.PI * 3f / 4f)
+        ).ToRotationVector2();
 
-                positionB2 += randomDirection * 22.67f;
+        var startC = ringCenter + randomDirection * minLength / 2f;
+        var endC = startC + randomDirection * minLength;
+        for(var i = 0; i < 50; i++) {
+            if(Collision.SolidCollision(endC, 1, 1)) {
+                break;
             }
 
-            NewTendon(positionA2, positionB2);
+            endC += randomDirection * 22.67f;
         }
 
-        NewTendon(positionA, positionB);
+        _tendonC = NewTendon(startC, endC);
+        _ring = Projectile.NewProjectile(
+            NPC.GetSource_FromThis(),
+            ringCenter,
+            Vector2.Zero,
+            ModContent.ProjectileType<RingProjectile>(),
+            0,
+            0f
+        );
     }
 
-    void NewTendon(Vector2 positionA, Vector2 positionB) {
+    int NewTendon(Vector2 positionA, Vector2 positionB) {
         var tendon = Projectile.NewProjectileDirect(
             NPC.GetSource_FromThis(),
             (positionA + positionB) / 2f,
@@ -109,13 +127,13 @@ public class MarrowEyeNPC : ModNPC {
         );
 
         var positionDelta = positionB - positionA;
-        tendon.rotation = positionDelta.ToRotation() - MathF.PI / 2f;
+        tendon.rotation = positionDelta.ToRotation();
 
         var tendonLength = positionDelta.Length();
         tendon.scale = tendonLength;
-        (tendon.ModProjectile as TendonProjectile).AttachedEye = NPC.whoAmI;
-
         tendon.netUpdate = true;
+
+        return tendon.whoAmI;
     }
 
     public override void AI() {
@@ -142,7 +160,6 @@ public class MarrowEyeNPC : ModNPC {
                     break;
                 }
 
-
                 var directionToTarget = NPC.Center.DirectionTo(Target.Center);
                 _lookDirection = Vector2.Lerp(_lookDirection, directionToTarget, 0.04f);
                 NPC.frameCounter = Math.Min(NPC.frameCounter + 0.1, 2);
@@ -161,8 +178,8 @@ public class MarrowEyeNPC : ModNPC {
 
                     var laser = Main.projectile[LaserProjectile];
 
-                    var offset = new Vector2(-4f, -38f);
-                    laser.position = NPC.Center + offset - offset.RotatedBy(NPC.rotation) + _lookDirection * 4f;
+                    var origin = new Vector2(-4f, -38f);
+                    laser.position = NPC.Center + origin + _lookDirection * 7f - origin.RotatedBy(NPC.rotation) - Vector2.UnitY * 4f;
                     laser.velocity = _lookDirection;
                     laser.timeLeft = Math.Max(MarrowLazerProjectile.DisapearFrames, laser.timeLeft);
                 }
@@ -172,6 +189,13 @@ public class MarrowEyeNPC : ModNPC {
                     State = State.Idle;
                 }
                 break;
+        }
+
+        if(Main.netMode != NetmodeID.MultiplayerClient) {
+            Main.projectile[_ring].timeLeft = RingProjectile.DisapearFrames;
+            Main.projectile[_tendonA].timeLeft = TendonProjectile.DisapearFrames;
+            Main.projectile[_tendonB].timeLeft = TendonProjectile.DisapearFrames;
+            Main.projectile[_tendonC].timeLeft = TendonProjectile.DisapearFrames;
         }
     }
 

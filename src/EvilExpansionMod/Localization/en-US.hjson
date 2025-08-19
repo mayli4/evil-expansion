@@ -201,6 +201,7 @@ Mods: {
 			FriendlyCulstistPortal.DisplayName: Friendly Culstist Portal
 			PlanetoidProjectile.DisplayName: Planetoid Projectile
 			PlanetoidLauncherHeldProjectile.DisplayName: Planetoid Launcher Held Projectile
+			RingProjectile.DisplayName: Ring Projectile
 		}
 
 		Biomes: {

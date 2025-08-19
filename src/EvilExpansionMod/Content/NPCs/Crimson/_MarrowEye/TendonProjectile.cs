@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent;
@@ -8,9 +9,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Crimson;
 public class TendonProjectile : ModProjectile {
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.MarrowEye.KEY_Tendon;
-
-    public int AttachedEye { get => (int)Projectile.ai[0]; set => Projectile.ai[0] = value; }
-    static int DisapearFrames = 120;
+    public const int DisapearFrames = 120;
 
     public override void SetDefaults() {
         Projectile.width = 0;
@@ -27,10 +26,6 @@ public class TendonProjectile : ModProjectile {
 
     public override bool ShouldUpdatePosition() => false;
 
-    public override void AI() {
-        if(Main.npc[AttachedEye] != null && Main.npc[AttachedEye].active) Projectile.timeLeft = DisapearFrames;
-    }
-
     public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) {
         behindNPCsAndTiles.Add(index);
     }
@@ -40,16 +35,48 @@ public class TendonProjectile : ModProjectile {
 
         const int CellWidth = 32;
         var index = Projectile.whoAmI % 3;
-        var source = new Rectangle(index * CellWidth, 0, CellWidth, texture.Height);
+
+        var sourceX = index * CellWidth;
+        var alpha = (float)Projectile.timeLeft / DisapearFrames;
+
+        var bulbHeight = 14;
+        var middlePartHeight = texture.Height - bulbHeight * 2;
+
+        var rotation = Projectile.rotation - MathF.PI / 2f;
 
         Main.spriteBatch.Draw(
             texture,
             Projectile.position - Main.screenPosition,
-            source,
-            lightColor * ((float)Projectile.timeLeft / DisapearFrames),
-            Projectile.rotation,
-            source.Size() / 2f,
-            new Vector2(1f, Projectile.scale / texture.Height),
+            new Rectangle(sourceX, bulbHeight, CellWidth, middlePartHeight),
+            lightColor * alpha,
+            rotation,
+            new(CellWidth / 2f, middlePartHeight / 2f),
+            new Vector2(1f, (Projectile.scale - bulbHeight) / middlePartHeight),
+            SpriteEffects.None,
+            0f
+        );
+
+        var rotationVector = Projectile.rotation.ToRotationVector2();
+        Main.spriteBatch.Draw(
+            texture,
+            Projectile.position - Main.screenPosition - rotationVector * Projectile.scale / 2f,
+            new Rectangle(sourceX, 0, CellWidth, bulbHeight),
+            lightColor * alpha,
+            rotation,
+            new(CellWidth / 2f, bulbHeight / 2f),
+            1f,
+            SpriteEffects.None,
+            0f
+        );
+
+        Main.spriteBatch.Draw(
+            texture,
+            Projectile.position - Main.screenPosition + rotationVector * Projectile.scale / 2f,
+            new Rectangle(sourceX, texture.Height - bulbHeight, CellWidth, bulbHeight),
+            lightColor * alpha,
+            rotation,
+            new(CellWidth / 2f, bulbHeight / 2f),
+            1f,
             SpriteEffects.None,
             0f
         );

@@ -34,7 +34,7 @@ public class UnderworldCorruptLavaStyle : ModLavaStyle {
 
     public override void ModifyVertexColors(int x, int y, ref VertexColors colors) {
         var bottomColor = Color.Yellow;
-        var topColor = new Color(170, 143, 36, 255);
+        var topColor = new Color(177, 199, 13, 255);
 
         int topOfActualLiquidSurfaceY = y;
         int solidTilesPassedAboveLiquid = 0;

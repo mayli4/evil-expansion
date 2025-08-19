@@ -73,7 +73,7 @@ public class PlanetoidProjectile : ModProjectile {
     public override void AI() {
         Player player = Main.player[Projectile.owner];
 
-        var shake = 1f;
+        var shake = 0.1f;
 
         if (State == 0f) {
             if (!player.channel || !player.active || player.dead) {
@@ -91,7 +91,7 @@ public class PlanetoidProjectile : ModProjectile {
                 Vector2 targetPos = Main.MouseWorld;
                 Projectile.Center = Vector2.Lerp(Projectile.Center, targetPos, 0.05f + 0.1f * Projectile.scale);
 
-                shake = MathHelper.Lerp(1f, 5f, Projectile.scale);
+                //shake = MathHelper.Lerp(0f, 0f, Projectile.scale);
             }
 
             Projectile.rotation += _rot;
@@ -117,8 +117,9 @@ public class PlanetoidProjectile : ModProjectile {
             if (_hasHitGround == 1f) {
                 Projectile.velocity.X *= 0.98f;
 
-                if (Math.Abs(Projectile.velocity.X) < 0.1f) {
+                if (Math.Abs(Projectile.velocity.X) < 0.3f) {
                     Projectile.velocity.X = 0f;
+                    Projectile.Kill();
                 }
             }
 
@@ -129,7 +130,7 @@ public class PlanetoidProjectile : ModProjectile {
             Projectile.Center = Vector2.Lerp(Projectile.Center, targetPos, 0.05f);
 
             Projectile.timeLeft = (int)(20f - _preExplosionDelayTimer + 5);
-            shake *= 10;
+            shake = 6;
             _preExplosionDelayTimer++;
 
             if (_preExplosionDelayTimer >= 20f) {
@@ -212,7 +213,7 @@ public class PlanetoidProjectile : ModProjectile {
             ExplosionProjectile.New(
                 Projectile.GetSource_Death(),
                 Projectile.Center,
-                (int)Main.player[Projectile.owner].GetTotalDamage(DamageClass.Magic).ApplyTo(140),
+                (int)Main.player[Projectile.owner].GetTotalDamage(DamageClass.Magic).ApplyTo(90),
                 new Color(136, 150, 37),
                 Color.LightGoldenrodYellow,
                 size: 500,
@@ -337,10 +338,8 @@ public class PlanetoidProjectile : ModProjectile {
         Projectile.width = (int)(currentTexture.Width * finalDrawScale);
         Projectile.height = (int)(currentTexture.Height * finalDrawScale);
         
-        if (newTextureIndex == 0) {
-            Projectile.width = Math.Max(1, Projectile.width - 8);
-            Projectile.height = Math.Max(1, Projectile.height - 8);
-        }
+        Projectile.width = Math.Max(1, Projectile.width - 12);
+        Projectile.height = Math.Max(1, Projectile.height - 12);
 
         Main.EntitySpriteDraw(
             currentTexture,

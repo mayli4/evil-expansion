@@ -151,6 +151,11 @@ Mods: {
 					Planetoids explode after holding long enough
 					'''
 			}
+
+			VerletRopeWand: {
+				DisplayName: Verlet Rope Wand
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -201,6 +206,7 @@ Mods: {
 			FriendlyCulstistPortal.DisplayName: Friendly Culstist Portal
 			PlanetoidProjectile.DisplayName: Planetoid Projectile
 			PlanetoidLauncherHeldProjectile.DisplayName: Planetoid Launcher Held Projectile
+			VerletRopeProjectile.DisplayName: Verlet Rope Projectile
 		}
 
 		Biomes: {

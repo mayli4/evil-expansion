@@ -31,6 +31,7 @@ public class PlanetoidSpawnerItem : ModItem {
         Item.shootSpeed = 1f;
         Item.value = Item.sellPrice(gold: 5);
         Item.rare = ItemRarityID.Pink;
+        Item.autoReuse = false;
     }
 
     public override bool CanUseItem(Player player) {

@@ -1,4 +1,5 @@
 using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -12,8 +13,8 @@ namespace EvilExpansionMod.Content.NPCs.Crimson;
 public class PusBottleNPC : ModNPC {
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.Stinkgrub.KEY_PusBottle;
 
-    private int ParentNPCID => (int)NPC.ai[0];
-    private ref float IsDetached => ref NPC.ai[1];
+    public int ParentNPCID => (int)NPC.ai[0];
+    public ref float IsDetached => ref NPC.ai[1];
 
     public ref float SquishTimer => ref NPC.localAI[0];
 
@@ -109,12 +110,20 @@ public class PusBottleNPC : ModNPC {
 
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(),
-                NPC.Center - new Vector2(0, 110),
+                NPC.Center - new Vector2(20, 100),
                 velocity,
                 ModContent.ProjectileType<PusGlob>(),
                 (int)(ParentNPCID != -1 && Main.npc[ParentNPCID].active ? Main.npc[ParentNPCID].damage * 0.75f : 10),
                 0.5f,
                 Main.myPlayer
+            );
+            
+            Dust.NewDustPerfect(
+                NPC.Center - new Vector2(20, 100),
+                ModContent.DustType<PusGas>(),
+                Vector2.Zero,
+                100,
+                new Color(98, 90, 40)
             );
         }
 

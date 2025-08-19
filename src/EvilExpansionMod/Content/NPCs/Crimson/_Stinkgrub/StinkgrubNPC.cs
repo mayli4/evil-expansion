@@ -65,7 +65,7 @@ public sealed class StinkgrubNPC : ModNPC {
     }
 
     public override void OnSpawn(IEntitySource source) {
-        if (Main.rand.NextBool(1)) {
+        if (Main.rand.NextBool(5)) {
             int npcIndex = NPC.NewNPC(
                 NPC.GetSource_FromThis(),
                 (int)NPC.Center.X,

@@ -6,8 +6,8 @@ using Terraria.ObjectData;
 
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
-public class UnderworldCorruptRubble : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_UnderworldCorrupt2x2Rubble;
+public class CorruptionAshRubble : ModTile {
+    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_CorruptionAshRubble;
 
     public override void SetStaticDefaults() {
         Main.tileFrameImportant[Type] = true;
@@ -18,7 +18,7 @@ public class UnderworldCorruptRubble : ModTile {
 
         TileObjectData.newTile.CopyFrom(TileObjectData.Style2xX);
         TileObjectData.newTile.Height = 2;
-        TileObjectData.newTile.Width = 2;
+        TileObjectData.newTile.Width = 3;
         TileObjectData.newTile.Origin = new Terraria.DataStructures.Point16(0, 1);
         TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
         TileObjectData.newTile.StyleHorizontal = true;

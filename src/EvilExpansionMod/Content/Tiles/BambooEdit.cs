@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Tiles;
 
-public class BambooSystem : ILoadable {
+internal class BambooSystem : ILoadable {
     public static bool[] CanGrowBamboo = TileID.Sets.Factory.CreateBoolSet(false, TileID.JungleGrass);
     
     public void Load(Mod mod) {

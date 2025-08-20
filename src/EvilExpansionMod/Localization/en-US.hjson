@@ -155,10 +155,7 @@ Mods: {
 
 			NormalRevolverItem: {
 				DisplayName: Normal Revolver
-				Tooltip:
-					'''
-					Summons a baby planetoid to follow you around
-					'''
+				Tooltip: Summons a baby planetoid to follow you around
 			}
 		}
 
@@ -215,6 +212,7 @@ Mods: {
 			LanternProjectile.DisplayName: Lantern Projectile
 			LingerFlameProjectile.DisplayName: Linger Flame Projectile
 			CirclingPlanetoidProjectile.DisplayName: Circling Planetoid Projectile
+			NormalPlanetoidProjectile.DisplayName: Normal Planetoid Projectile
 		}
 
 		Biomes: {
@@ -257,6 +255,11 @@ Mods: {
 			BloodWardenBuff: {
 				DisplayName: Blood Warden
 				Description: It will protect you!
+			}
+
+			NormalPlanetoidBuff: {
+				DisplayName: Normal Planetoid Buff
+				Description: Mods.EvilExpansionMod.Buffs.NormalPlanetoidBuff.Description
 			}
 		}
 	}

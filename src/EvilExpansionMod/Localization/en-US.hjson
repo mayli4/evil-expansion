@@ -258,8 +258,8 @@ Mods: {
 			}
 
 			NormalPlanetoidBuff: {
-				DisplayName: Normal Planetoid Buff
-				Description: Mods.EvilExpansionMod.Buffs.NormalPlanetoidBuff.Description
+				DisplayName: Normal Planetoid
+				Description: It will follow you!
 			}
 		}
 	}

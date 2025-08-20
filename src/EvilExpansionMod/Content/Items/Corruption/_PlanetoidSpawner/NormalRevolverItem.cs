@@ -59,7 +59,6 @@ public class NormalPlanetoidProjectile : ModProjectile {
 
     public string FaceTexturePath => Assets.Assets.Textures.Items.Corruption.Planetoids.KEY_NormalPlanetoid_Faces;
 
-    public ref float OrbitOffset => ref Projectile.ai[0]; 
     private ref float _currentFaceFrame => ref Projectile.localAI[0];
     private ref float _faceFrameTimer => ref Projectile.localAI[1];
     private ref float _faceAnimationState => ref Projectile.localAI[2];
@@ -69,6 +68,14 @@ public class NormalPlanetoidProjectile : ModProjectile {
     private const int smile_duration = 60;
     private int _expressionDecisionMin = 20;
     private int _expressionDecisionMax = 100;
+    
+    private Vector2 _currentVelocity;
+    private Vector2 _currentRelativePosition;
+    private Vector2 _targetRelativePosition;
+    private float _timeToNextMoveDecision;
+    
+    private float _faceRotationAngle;
+    private float _faceRotationSpeed;
 
     public override void SetStaticDefaults() {
         Main.projPet[Type] = true;
@@ -89,36 +96,55 @@ public class NormalPlanetoidProjectile : ModProjectile {
     }
 
     public override void OnSpawn(IEntitySource source) {
-        OrbitOffset = Main.rand.NextFloat(MathHelper.TwoPi);
-        
         _currentFaceFrame = 0;
         _faceFrameTimer = 0;
         _faceAnimationState = 0;
         _nextExpressionChangeTimer = Main.rand.Next(_expressionDecisionMin, _expressionDecisionMax);
+        
+        _currentRelativePosition = Main.rand.NextVector2Circular(80f, 60f);
+        _targetRelativePosition = _currentRelativePosition;
+        _currentVelocity = Vector2.Zero;
+        _timeToNextMoveDecision = Main.rand.Next(180, 300);
+
+        _faceRotationSpeed = Main.rand.NextFloat(-0.005f, 0.005f);
+        if (_faceRotationSpeed == 0) _faceRotationSpeed = 0.01f;
+        _faceRotationAngle = Main.rand.NextFloat(MathHelper.TwoPi);
     }
 
     public override void AI() {
         Player player = Main.player[Projectile.owner];
-        if (player.dead || !player.active) {
+
+        if (!player.HasBuff(ModContent.BuffType<NormalPlanetoidBuff>())) {
             Projectile.Kill();
             return;
         }
         Projectile.timeLeft = 2;
 
-        var orbitCenter = player.MountedCenter;
+        _timeToNextMoveDecision--;
+        if (_timeToNextMoveDecision <= 0) {
+            float targetRangeX = 50f;
+            float targetRangeY = 50f;
+            _targetRelativePosition = new Vector2(
+                Main.rand.NextFloat(-targetRangeX, targetRangeX),
+                Main.rand.NextFloat(-targetRangeY, targetRangeY)
+            );
+            _timeToNextMoveDecision = Main.rand.Next(180, 300); 
+        }
 
-        float currentAngle = Main.GameUpdateCount * 0.03f + OrbitOffset;
-        var circularOffset = new Vector2(MathF.Cos(currentAngle), MathF.Sin(currentAngle)) * 60f;
+        Vector2 directionToTarget = (_targetRelativePosition - _currentRelativePosition);
+        float approachStrength = 0.0005f;
+        _currentVelocity += directionToTarget * approachStrength;
 
-        float hoverOffset = MathF.Sin(Main.GameUpdateCount * 0.08f + OrbitOffset * 0.5f) * 5f;
-        circularOffset.Y += hoverOffset;
+        float driftMagnitude = 0.05f;
+        _currentVelocity += Main.rand.NextVector2Circular(driftMagnitude, driftMagnitude);
 
-        var targetPosition = orbitCenter + circularOffset;
+        float damping = 0.98f;
+        _currentVelocity *= damping;
 
-        float lerpFactor = 0.1f;
-        Projectile.Center = Vector2.Lerp(Projectile.Center, targetPosition, lerpFactor);
+        _currentRelativePosition += _currentVelocity;
 
-        Projectile.rotation += 0.07f;
+        Projectile.Center = player.MountedCenter + _currentRelativePosition;
+        _faceRotationAngle += _faceRotationSpeed;
 
         _faceFrameTimer++;
 
@@ -200,7 +226,7 @@ public class NormalPlanetoidProjectile : ModProjectile {
             faceDrawPosition - Main.screenPosition,
             faceSourceRect,
             Projectile.GetAlpha(lightColor),
-            0f,
+            _faceRotationAngle,
             faceOrigin,
             Projectile.scale,
             SpriteEffects.None

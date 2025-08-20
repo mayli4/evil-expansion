@@ -149,6 +149,15 @@ Mods: {
 					'''
 					Summons planetoids, whos damage scales with size
 					Planetoids explode after holding long enough
+					Definitely do NOT use purification powder on it...
+					'''
+			}
+
+			NormalRevolverItem: {
+				DisplayName: Normal Revolver
+				Tooltip:
+					'''
+					Summons a baby planetoid to follow you around
 					'''
 			}
 		}
@@ -169,6 +178,7 @@ Mods: {
 			SmallStinkflyNPC.DisplayName: Small Stinkfly
 			SmallStinkflyNpc.DisplayName: Small Stinkfly Npc
 			MarrowEyeNPC.DisplayName: Marrow Eye
+			LanternBatNPC.DisplayName: Lantern Bat N P C
 		}
 
 		Projectiles: {
@@ -202,6 +212,9 @@ Mods: {
 			PlanetoidProjectile.DisplayName: Planetoid Projectile
 			PlanetoidLauncherHeldProjectile.DisplayName: Planetoid Launcher Held Projectile
 			RingProjectile.DisplayName: Ring Projectile
+			LanternProjectile.DisplayName: Lantern Projectile
+			LingerFlameProjectile.DisplayName: Linger Flame Projectile
+			CirclingPlanetoidProjectile.DisplayName: Circling Planetoid Projectile
 		}
 
 		Biomes: {

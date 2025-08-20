@@ -2,6 +2,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -61,6 +62,24 @@ public class PlanetoidSpawnerItem : ModItem {
             player.whoAmI
         );
         return false;
+    }
+
+    public override bool CanRightClick() => true;
+    public override bool ConsumeItem(Player player) => false;
+
+
+    public override void RightClick(Player player) {
+        // Only perform conversion if Purification Powder is held
+        if (player.HeldItem.type == ItemID.PurificationPowder) {
+            SoundEngine.PlaySound(SoundID.Item4, player.Center);
+            player.ConsumeItem(ItemID.PurificationPowder);
+
+            Item.SetDefaults(ModContent.ItemType<NormalRevolverItem>());
+            
+            Item.stack++;
+            player.QuickSpawnItem(player.GetSource_OpenItem(ModContent.ItemType<NormalRevolverItem>()), Item);
+            Item.stack--;
+        }
     }
 }
 

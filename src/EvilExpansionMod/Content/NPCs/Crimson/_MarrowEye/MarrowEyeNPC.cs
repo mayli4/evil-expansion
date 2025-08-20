@@ -65,25 +65,41 @@ public class MarrowEyeNPC : ModNPC {
         var minLength = 42f;
 
         var startA = ringCenter - randomDirection * minLength / 2f;
+
+        var foundEndA = false;
         var endA = ringCenter - randomDirection * minLength;
         for(var i = 0; i < 50; i++) {
             if(Collision.SolidCollision(endA, 1, 1)) {
                 endA += randomDirection * 11.33f;
+                foundEndA = true;
                 break;
             }
 
             endA -= randomDirection * 22.67f;
         }
 
+        if(!foundEndA) {
+            NPC.active = false;
+            return;
+        }
+
         var startB = ringCenter + randomDirection * minLength / 2f;
+
+        var foundEndB = false;
         var endB = ringCenter + randomDirection * minLength;
         for(var i = 0; i < 50; i++) {
             if(Collision.SolidCollision(endB, 1, 1)) {
                 endB -= randomDirection * 11.33f;
+                foundEndB = true;
                 break;
             }
 
             endB += randomDirection * 22.67f;
+        }
+
+        if(!foundEndB) {
+            NPC.active = false;
+            return;
         }
 
         _tendonA = NewTendon(startA, endA);
@@ -96,16 +112,20 @@ public class MarrowEyeNPC : ModNPC {
         ).ToRotationVector2();
 
         var startC = ringCenter + randomDirection * minLength / 2f;
+
+        var foundEndC = false;
         var endC = startC + randomDirection * minLength;
         for(var i = 0; i < 50; i++) {
             if(Collision.SolidCollision(endC, 1, 1)) {
+                foundEndC = true;
                 break;
             }
 
             endC += randomDirection * 22.67f;
         }
 
-        _tendonC = NewTendon(startC, endC);
+        if(foundEndC) _tendonC = NewTendon(startC, endC);
+
         _ring = Projectile.NewProjectile(
             NPC.GetSource_FromThis(),
             ringCenter,

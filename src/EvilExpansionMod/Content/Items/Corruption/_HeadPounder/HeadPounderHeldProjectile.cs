@@ -146,7 +146,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                             Dust.NewDust(hitPosition, hitSize, hitSize, DustID.Stone);
                         }
 
-                        MathUtilities.ForEachNPCInRange(hitCenter, 80f, npc =>
+                        Helper.ForEachNPCInRange(hitCenter, 80f, npc =>
                         {
                             if(npc.dontTakeDamage || npc.friendly) return;
                             var modifiers = npc.GetIncomingStrikeModifiers(

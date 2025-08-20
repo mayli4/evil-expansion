@@ -3,16 +3,7 @@ using System;
 using Terraria;
 
 namespace EvilExpansionMod.Utilities;
-
-public static class MathUtilities {
-    public static float Lerp3(float a, float b, float c, float progress, float upperBound = 0.5f) {
-        if(progress < upperBound) {
-            return MathHelper.Lerp(a, b, progress / upperBound);
-        }
-
-        return MathHelper.Lerp(b, c, (progress - upperBound) / (1f - upperBound));
-    }
-
+public static partial class Helper {
     public static Vector2 InitialVelocityRequiredToHitPosition(Vector2 initialPosition, Vector2 targetPosition, float gravity, float initialSpeed, bool secondAngle = false) {
         Vector2 localTargetPosition = targetPosition - initialPosition;
         localTargetPosition.X = MathF.Abs(localTargetPosition.X);
@@ -29,17 +20,6 @@ public static class MathUtilities {
         return velocity;
     }
 
-    public static void ForEachPlayerInRange(Vector2 position, float range, Action<Player> action) {
-        for(int i = 0; i < Main.maxPlayers; i++) {
-            Player player = Main.player[i];
-            if(player is null || !player.active || !player.Hitbox.Intersects(position, range)) {
-                continue;
-            }
-
-            action(player);
-        }
-    }
-
     public static void ForEachNPCInRange(Vector2 position, float range, Action<NPC> action) {
         for(int i = 0; i < Main.maxNPCs; i++) {
             NPC npc = Main.npc[i];
@@ -49,37 +29,6 @@ public static class MathUtilities {
 
             action(npc);
         }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    /// <param name="center"></param>
-    /// <param name="player"></param>
-    /// <param name="predicate"></param>
-    /// <returns>Distance to the closest player.</returns>
-    public static float ClosestPlayer(Vector2 center, out Player player, Func<Player, bool> predicate = null) {
-        (Player player, float distance)? closest = null;
-        for(int i = 0; i <= Main.maxPlayers; i++) {
-            Player checkPlayer = Main.player[i];
-            if(checkPlayer is null || !checkPlayer.active) {
-                continue;
-            }
-
-            float distance = center.DistanceSQ(checkPlayer.Center);
-            if((closest is null || closest.Value.distance < distance) && (predicate is null || predicate.Invoke(checkPlayer))) {
-                closest = (checkPlayer, distance);
-            }
-        }
-
-
-        if(closest is null) {
-            player = null;
-            return -1f;
-        }
-
-        player = closest.Value.player;
-        return closest.Value.distance;
     }
 
     public static bool HoleAtPosition(NPC npc, float xPosition) {

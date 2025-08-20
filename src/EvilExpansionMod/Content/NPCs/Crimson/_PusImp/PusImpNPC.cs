@@ -104,7 +104,7 @@ public class PusImpNPC : ModNPC {
             var numberOfGlobs = Main.rand.Next(1, 4);
 
             for(int i = 0; i < numberOfGlobs; i++) {
-                var vel = MathUtilities.InitialVelocityRequiredToHitPosition(NPC.Center, Target.Center, 1f, 10f);
+                var vel = Helper.InitialVelocityRequiredToHitPosition(NPC.Center, Target.Center, 1f, 10f);
                 vel = vel.RotatedBy(Main.rand.NextFloat(-MathHelper.Pi / 10, MathHelper.Pi / 10));
                 //vel.Y *= 1.2f;
 

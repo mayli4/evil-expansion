@@ -1,5 +1,4 @@
-﻿using EvilExpansionMod.Utilities;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
@@ -116,7 +115,7 @@ internal sealed class TileMasking : ModSystem {
             if(MaskTarget == null || MaskTarget.IsDisposed || MaskTarget.IsContentLost) return;
         }
 
-        RenderingUtilities.SwitchToRenderTarget(SolidTilesTarget);
+        SwitchToRenderTarget(SolidTilesTarget);
         Main.spriteBatch.Begin(
             SpriteSortMode.Deferred,
             BlendState.AlphaBlend,
@@ -132,7 +131,7 @@ internal sealed class TileMasking : ModSystem {
         );
         Main.spriteBatch.End();
 
-        RenderingUtilities.SwitchToRenderTarget(MaskTarget);
+        SwitchToRenderTarget(MaskTarget);
         Main.spriteBatch.Begin(
             SpriteSortMode.Deferred,
             BlendState.AlphaBlend,
@@ -147,6 +146,17 @@ internal sealed class TileMasking : ModSystem {
 
         Main.spriteBatch.End();
         RenderQueue.Clear();
+
+        static bool SwitchToRenderTarget(RenderTarget2D renderTarget) {
+            GraphicsDevice gD = Main.graphics.GraphicsDevice;
+
+            if(Main.gameMenu || renderTarget is null)
+                return false;
+
+            gD.SetRenderTarget(renderTarget);
+            gD.Clear(Color.Transparent);
+            return true;
+        }
     }
 
     private void DrawSolidMask(On_Main.orig_DrawProjectiles orig, Main self) {

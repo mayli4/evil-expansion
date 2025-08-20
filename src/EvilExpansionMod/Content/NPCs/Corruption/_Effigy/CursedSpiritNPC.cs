@@ -366,7 +366,7 @@ public sealed class CursedSpiritNPC : ModNPC {
             fireballTimer = 0;
 
             var position = NPC.Center;
-            var velocity = MathUtilities.InitialVelocityRequiredToHitPosition(
+            var velocity = Helper.InitialVelocityRequiredToHitPosition(
                 position,
                 Target.Center + Target.velocity * 40f + 40f * Vector2.UnitX * Main.rand.NextFloatDirection(),
                 SpiritFireball.Gravity,

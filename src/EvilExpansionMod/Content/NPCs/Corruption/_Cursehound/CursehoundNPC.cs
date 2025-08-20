@@ -98,7 +98,7 @@ public sealed class CursehoundNPC : ModNPC {
         for(int j = 1; j <= 8; j++)
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/CursehoundGore" + j);
     }
-    
+
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ItemID.ShadowScale, 1, 3, 6));
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 1, 2, 3));
@@ -245,7 +245,7 @@ public sealed class CursehoundNPC : ModNPC {
         }
 
 
-        if(NPC.velocity.Y == 0 && Target.Top.Y < NPC.Bottom.Y && MathUtilities.HoleAtPosition(NPC, NPC.Center.X + NPC.velocity.X)) {
+        if(NPC.velocity.Y == 0 && Target.Top.Y < NPC.Bottom.Y && Helper.HoleAtPosition(NPC, NPC.Center.X + NPC.velocity.X)) {
             NPC.velocity.Y = dynamicJumpVelocity;
         }
 
@@ -277,7 +277,7 @@ public sealed class CursehoundNPC : ModNPC {
 
             float gravity = 0.4f;
 
-            var velocity = MathUtilities.InitialVelocityRequiredToHitPosition(
+            var velocity = Helper.InitialVelocityRequiredToHitPosition(
                 launchOrigin,
                 Target.Center,
                 gravity,
@@ -348,7 +348,7 @@ public sealed class CursehoundNPC : ModNPC {
             if(lavaTiles.Count > 0) {
                 var randomLavaTile = lavaTiles[Main.rand.Next(lavaTiles.Count)];
                 var spawnPos = randomLavaTile.ToWorldCoordinates();
-                var velocity = new Vector2(0, MathUtilities.InitialVelocityRequiredToHitPosition(spawnPos, Target.position - new Vector2(0, 40), 0.4f, 16f).Y);
+                var velocity = new Vector2(0, Helper.InitialVelocityRequiredToHitPosition(spawnPos, Target.position - new Vector2(0, 40), 0.4f, 16f).Y);
                 Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, velocity, ModContent.ProjectileType<SpiritFireball>(), NPC.damage / 2, 0f, Main.myPlayer);
 
                 if(Filters.Scene["WaterDistortion"].GetShader() is not WaterShaderData data) {

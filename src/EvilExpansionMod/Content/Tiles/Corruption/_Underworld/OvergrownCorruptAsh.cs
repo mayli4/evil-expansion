@@ -1,8 +1,5 @@
-using EvilExpansionMod.Content.Tiles.Crimson;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
-using System;
-using System.Reflection;
 using Terraria;
 using Terraria.GameContent.Metadata;
 using Terraria.ID;
@@ -56,7 +53,7 @@ public class OvergrownCorruptAsh : ModTile {
     public override void RandomUpdate(int i, int j) {
         WorldGen.SpreadInfectionToNearbyTile(i, j, BiomeConversionID.Corruption);
 
-        if(SpreadUtilities.Spread(i, j, Type, 2, ModContent.TileType<CorruptAsh>()))
+        if(Helper.Spread(i, j, Type, 2, ModContent.TileType<CorruptAsh>()))
             NetMessage.SendTileSquare(-1, i, j, 3); // try spread grass
 
         GrowTiles(i, j);
@@ -89,6 +86,6 @@ public class OvergrownCorruptAsh : ModTile {
         }
 
         if(Main.rand.NextBool(5) && WorldGen.GrowMoreVines(i, j) && Main.tile[i, j + 1].LiquidType != LiquidID.Lava)
-            TileUtilities.GrowVine(i, j + 1, ModContent.TileType<UnderworldCorruptVines>());
+            Helper.GrowVine(i, j + 1, ModContent.TileType<UnderworldCorruptVines>());
     }
 }

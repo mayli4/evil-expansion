@@ -11,23 +11,21 @@ public class OvergrownCorruptAsh : ModTile {
     public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_OvergrownCorruptAshTile;
 
     public override void SetStaticDefaults() {
-        Main.tileMergeDirt[Type] = true;
-        Main.tileBlockLight[Type] = true;
-        Main.tileSolid[Type] = true;
         Main.tileSolid[Type] = true;
         Main.tileBlockLight[Type] = true;
-        Main.tileBrick[Type] = true;
-        TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Grass"]);
+        Main.tileBlendAll[Type] = true;
 
-        DustType = DustID.CorruptPlants;
-
-        AddMapEntry(new Color(69, 68, 114));
-
-        TileID.Sets.NeedsGrassFraming[Type] = true;
-        TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<CorruptAsh>();
+        this.Merge(ModContent.TileType<CorruptAsh>(), TileID.Grass);
+        TileID.Sets.Grass[Type] = true;
         TileID.Sets.CanBeDugByShovel[Type] = true;
+        TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<CorruptAsh>();
+        TileID.Sets.NeedsGrassFraming[Type] = true;
 
         Main.tileMerge[Type][ModContent.TileType<CorruptAsh>()] = true;
+
+        DustType = DustID.Corruption;
+
+        AddMapEntry(new Color(69, 68, 114));
 
         TileLoader.RegisterConversion(TileID.AshGrass, BiomeConversionID.Corruption, ConvertToCorruption);
         RegisterItemDrop(ModContent.ItemType<CorruptAshItem>());
@@ -40,10 +38,12 @@ public class OvergrownCorruptAsh : ModTile {
 
     public override void Convert(int i, int j, int conversionType) {
         switch(conversionType) {
+            case BiomeConversionID.Chlorophyte:
             case BiomeConversionID.Purity:
                 WorldGen.ConvertTile(i, j, TileID.AshGrass);
                 return;
-            case BiomeConversionID.Corruption:
+            case BiomeConversionID.Sand:
+            case BiomeConversionID.Crimson:
                 WorldGen.ConvertTile(i, j, ModContent.TileType<OvergrownCorruptAsh>());
                 return;
 
@@ -71,11 +71,11 @@ public class OvergrownCorruptAsh : ModTile {
     protected virtual void GrowTiles(int i, int j) {
         var tile = Framing.GetTileSafely(i, j);
         var tileAbove = Framing.GetTileSafely(i, j - 1);
-
+        
         //try place foliage
         if(WorldGen.genRand.NextBool(10) && !tileAbove.HasTile && tileAbove.LiquidAmount < 80) {
             if(!tile.BottomSlope && !tile.TopSlope && !tile.IsHalfBlock && !tile.TopSlope) {
-                tileAbove.TileType = (ushort)ModContent.TileType<OvergrownCorruptAshFoliage>();
+                tileAbove.TileType = (ushort)ModContent.TileType<CorruptFoliage>();
                 tileAbove.HasTile = true;
                 tileAbove.TileFrameY = 0;
                 tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(8) * 18);
@@ -84,8 +84,26 @@ public class OvergrownCorruptAsh : ModTile {
                     NetMessage.SendTileSquare(-1, i, j - 1, 3, TileChangeType.None);
             }
         }
-
-        // if(Main.rand.NextBool(5) && WorldGen.GrowMoreVines(i, j) && Main.tile[i, j + 1].LiquidType != LiquidID.Lava)
-        //     Helper.GrowVine(i, j + 1, ModContent.TileType<UnderworldCorruptVines>());
+        
+        // if(tile.BottomSlope || tile.TopSlope || tile.IsHalfBlock) {
+        //     return;
+        // }
+        // int rubbleSpawnX = i - 1;
+        // int rubbleSpawnY = j - 1;
+        //
+        // int rubbleWidth = 3;
+        //
+        // bool hasSolidGroundBelow = true;
+        // for (int xCheck = 0; xCheck < rubbleWidth; xCheck++) {
+        //     Tile tileBelow = Framing.GetTileSafely(rubbleSpawnX + xCheck, j + 1);
+        //     if (!WorldGen.SolidTile(rubbleSpawnX + xCheck, j + 1) || tileBelow.IsHalfBlock || tileBelow.TopSlope) {
+        //         hasSolidGroundBelow = false;
+        //         break;
+        //     }
+        // }
+        //
+        // if (hasSolidGroundBelow && WorldGen.genRand.NextBool(1)) {
+        //     WorldGen.PlaceObject(rubbleSpawnX, rubbleSpawnY, ModContent.TileType<CorruptionAshRubble>(), false, WorldGen.genRand.Next(3));
+        // }
     }
 }

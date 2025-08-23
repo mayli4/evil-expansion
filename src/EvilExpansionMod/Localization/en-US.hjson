@@ -213,6 +213,9 @@ Mods: {
 			LingerFlameProjectile.DisplayName: Linger Flame Projectile
 			CirclingPlanetoidProjectile.DisplayName: Circling Planetoid Projectile
 			NormalPlanetoidProjectile.DisplayName: Normal Planetoid Projectile
+			LingeringFlameProjectile.DisplayName: Lingering Flame Projectile
+			LingeringFlame.DisplayName: Lingering Flame
+			LanternFlameProjectile.DisplayName: Lantern Flame Projectile
 		}
 
 		Biomes: {
@@ -249,6 +252,7 @@ Mods: {
 			CursedSpiritNPCBestiary: ""
 			CultistEyeBestiary: ""
 			StinkgrubNPCBestiary: ""
+			LanternBatNPCBestiary: ""
 		}
 
 		Buffs: {

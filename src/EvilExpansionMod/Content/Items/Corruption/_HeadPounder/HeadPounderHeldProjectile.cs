@@ -21,8 +21,8 @@ namespace EvilExpansionMod.Content.Items.Corruption;
 public class HeadPounderHeldProjectile : ModProjectile {
     Player Owner => Main.player[Projectile.owner];
 
-    static int PostChargeFrames = 15;
-    static int MaxCharge = 30;
+    readonly static int PostChargeFrames = 15;
+    readonly static int MaxCharge = 30;
 
     int _charge;
     bool _hitCheck;

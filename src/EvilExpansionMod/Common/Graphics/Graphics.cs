@@ -296,6 +296,7 @@ public class Graphics : ModSystem {
         CommandRunner.Run(in _beforePlayers);
         orig(self);
         CommandRunner.Run(in _afterPlayers);
+        PostDraw();
     }
 
     private void On_Main_DrawNPCs(On_Main.orig_DrawNPCs orig, Main self, bool behindTiles) {
@@ -314,6 +315,13 @@ public class Graphics : ModSystem {
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     static void PreDraw() {
+        ScreenTransformMatrix = Main.GameViewMatrix.TransformationMatrix
+            * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
+        WorldTransformMatrix = Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f)
+            * ScreenTransformMatrix;
+    }
+
+    static void PostDraw() {
         _effectParameters.Clear();
 
         _spritePositionDatas.Clear();
@@ -332,11 +340,6 @@ public class Graphics : ModSystem {
         _afterNPCs.Clear();
         _beforePlayers.Clear();
         _afterPlayers.Clear();
-
-        ScreenTransformMatrix = Main.GameViewMatrix.TransformationMatrix
-            * Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
-        WorldTransformMatrix = Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f)
-            * ScreenTransformMatrix;
     }
 
     public static Pipeline BeginPipeline(float scale = 1f, SpriteBatchSnapshot? snapshot = null) {

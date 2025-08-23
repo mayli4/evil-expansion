@@ -4,6 +4,8 @@ using Terraria;
 
 namespace EvilExpansionMod.Utilities;
 public static partial class Helper {
+    public readonly static string PlaceholderTextureKey = "Terraria/Images/Item_0";
+
     public static Vector2 InitialVelocityRequiredToHitPosition(Vector2 initialPosition, Vector2 targetPosition, float gravity, float initialSpeed, bool secondAngle = false) {
         Vector2 localTargetPosition = targetPosition - initialPosition;
         localTargetPosition.X = MathF.Abs(localTargetPosition.X);

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.NPCs.Crimson;
@@ -34,6 +35,13 @@ public class MarrowLazerProjectile : ModProjectile {
             var foundPlayerCollision = false;
             foreach(var player in Main.player[0..Main.maxPlayers]) {
                 if(player.Hitbox.Contains((int)hitPoint.X, (int)hitPoint.Y)) {
+                    player.Hurt(new Player.HurtInfo
+                    {
+                        SoundDisabled = true,
+                        DamageSource = PlayerDeathReason.ByProjectile(player.whoAmI, Projectile.whoAmI),
+                        Damage = 1,
+                        HitDirection = MathF.Sign(player.Center.X - Projectile.position.X),
+                    });
 
                     foundPlayerCollision = true;
                     break;

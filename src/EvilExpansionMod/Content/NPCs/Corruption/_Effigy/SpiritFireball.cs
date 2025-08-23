@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
 public class SpiritFireball : ModProjectile {
-    public override string Texture => "Terraria/Images/Item_0";
+    public override string Texture => Helper.PlaceholderTextureKey;
 
     Vector2[] _trailPositions;
     public static readonly float Gravity = 0.3f;

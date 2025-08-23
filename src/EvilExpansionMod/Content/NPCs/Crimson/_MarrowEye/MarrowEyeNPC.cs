@@ -156,6 +156,12 @@ public class MarrowEyeNPC : ModNPC {
         return tendon.whoAmI;
     }
 
+    public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers) {
+        if(NPC.frameCounter == 0) { // eye closed
+            modifiers.FinalDamage *= 0.001f;
+        }
+    }
+
     public override void AI() {
         NPC.rotation = 0f;
         NPC.rotation = MathF.Sin(Main.GameUpdateCount * 0.03f + NPC.whoAmI * 574f) * 0.1f;

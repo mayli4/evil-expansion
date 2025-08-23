@@ -28,8 +28,7 @@ public class MarrowEyeNPC : ModNPC {
         }
     }
     Vector2 _lookDirection;
-
-    int LaserProjectile = -1;
+    int _shootTimer;
 
     int _ring;
     int _tendonA;
@@ -166,16 +165,24 @@ public class MarrowEyeNPC : ModNPC {
         NPC.rotation = 0f;
         NPC.rotation = MathF.Sin(Main.GameUpdateCount * 0.03f + NPC.whoAmI * 574f) * 0.1f;
 
-        var minDist = 400f;
+        var origin = new Vector2(-4f, -38f);
+        var eyePosition = NPC.Center + origin + _lookDirection * 7f - origin.RotatedBy(NPC.rotation) - Vector2.UnitY * 4f;
+
         switch(State) {
             case State.Idle:
                 _lookDirection *= 0.95f;
                 NPC.frameCounter = Math.Max(NPC.frameCounter - 0.1, 0);
 
                 NPC.TargetClosest();
+
+                var targetingDistance = 400f;
                 if(Target != null) {
-                    if(NPC.Center.DistanceSQ(Target.Center) < minDist * minDist) {
+                    if(
+                        NPC.Center.DistanceSQ(Target.Center) < targetingDistance * targetingDistance
+                        && Collision.CanHit(eyePosition, 1, 1, Target.Center, 1, 1)
+                    ) {
                         State = State.Targeting;
+                        NPC.netUpdate = true;
                     }
                 }
 
@@ -183,6 +190,7 @@ public class MarrowEyeNPC : ModNPC {
             case State.Targeting:
                 if(Target == null || !Target.active) {
                     State = State.Idle;
+                    NPC.netUpdate = true;
                     break;
                 }
 
@@ -190,30 +198,36 @@ public class MarrowEyeNPC : ModNPC {
                 _lookDirection = Vector2.Lerp(_lookDirection, directionToTarget, 0.04f);
                 NPC.frameCounter = Math.Min(NPC.frameCounter + 0.1, 2);
 
-                if(NPC.frameCounter == 2) {
-                    if(LaserProjectile == -1) {
-                        LaserProjectile = Projectile.NewProjectile(
-                            NPC.GetSource_FromAI(),
-                            Vector2.Zero,
-                            directionToTarget,
-                            ModContent.ProjectileType<MarrowLazerProjectile>(),
-                            NPC.damage,
-                            0.1f
+                _shootTimer -= 1;
+                if(Main.netMode != NetmodeID.MultiplayerClient && NPC.frameCounter == 2 && _shootTimer <= 0) {
+                    _shootTimer = Main.rand.Next(30, 90);
+
+                    Projectile.NewProjectile(
+                        NPC.GetSource_FromAI(),
+                        eyePosition,
+                        directionToTarget * 14f,
+                        ProjectileID.EyeLaser,
+                        NPC.damage,
+                        0.1f
+                    );
+
+                    for(var i = 0; i < 15; i++) {
+                        Dust.NewDustPerfect(
+                            eyePosition + Main.rand.NextVector2Unit() * Main.rand.NextFloat(15f),
+                            DustID.PurpleTorch
                         );
                     }
-
-                    var laser = Main.projectile[LaserProjectile];
-
-                    var origin = new Vector2(-4f, -38f);
-                    laser.position = NPC.Center + origin + _lookDirection * 7f - origin.RotatedBy(NPC.rotation) - Vector2.UnitY * 4f;
-                    laser.velocity = _lookDirection;
-                    laser.timeLeft = Math.Max(MarrowLazerProjectile.DisapearFrames, laser.timeLeft);
                 }
 
-                if(NPC.Center.DistanceSQ(Target.Center) > minDist * minDist) {
-                    LaserProjectile = -1;
+                var idleDistance = 800;
+                if(
+                    NPC.Center.DistanceSQ(Target.Center) > idleDistance * idleDistance
+                    || !Collision.CanHit(eyePosition, 1, 1, Target.Center, 1, 1)
+                ) {
                     State = State.Idle;
+                    NPC.netUpdate = true;
                 }
+
                 break;
         }
 

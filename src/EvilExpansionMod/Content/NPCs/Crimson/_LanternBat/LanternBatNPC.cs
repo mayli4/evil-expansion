@@ -37,9 +37,6 @@ public class LanternBatNPC : ModNPC {
     private const int anim_speed = 6;
     private Vector2 _storedDashVelocity;
     
-    private const int trail_length = 15;
-    private Vector2[] _fireTrailPositions;
-    
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 4;
     }
@@ -68,8 +65,6 @@ public class LanternBatNPC : ModNPC {
     }
     
     public override void OnSpawn(IEntitySource source) {
-        _fireTrailPositions = new Vector2[trail_length];
-        for (int i = 0; i < trail_length; i++) _fireTrailPositions[i] = NPC.Center;
     }
 
     public override void AI() {
@@ -90,18 +85,6 @@ public class LanternBatNPC : ModNPC {
                 if (NPC.Distance(Target.Center) < 16 * 25 && StateTimer > Main.rand.Next(60 * 1, 60 * 3)) {
                     Vector2 dashTarget = Target.Center + Target.velocity * 0.5f;
                     _storedDashVelocity = NPC.DirectionTo(dashTarget) * 16;
-                    
-                    for (int i = 0; i < _fireTrailPositions.Length; i++) _fireTrailPositions[i] = NPC.Center;
-                    
-                    Projectile.NewProjectile(
-                        NPC.GetSource_FromAI(),
-                        NPC.Center,
-                        Vector2.Zero,
-                        ModContent.ProjectileType<LingeringFlameProjectile>(),
-                        NPC.damage,
-                        0, Main.myPlayer,
-                        NPC.whoAmI
-                    );
 
                     CurrentState = State.Dashing;
                 }
@@ -112,11 +95,17 @@ public class LanternBatNPC : ModNPC {
                 NPC.noTileCollide = true;
                 NPC.noGravity = true;
 
-                for (int i = _fireTrailPositions.Length - 1; i > 0; i--)
-                {
-                    _fireTrailPositions[i] = _fireTrailPositions[i - 1];
+                if(StateTimer % 10 == 0) {
+                    Projectile.NewProjectile(
+                        NPC.GetSource_FromAI(),
+                        NPC.Center,
+                        Vector2.Zero,
+                        ModContent.ProjectileType<LingeringFlameProjectile>(),
+                        NPC.damage,
+                        0, Main.myPlayer,
+                        NPC.whoAmI
+                    );
                 }
-                _fireTrailPositions[0] = NPC.Center;
 
                 StateTimer++;
                 if (StateTimer >= 45)

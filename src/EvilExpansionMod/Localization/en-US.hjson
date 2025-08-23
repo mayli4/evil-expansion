@@ -157,6 +157,16 @@ Mods: {
 				DisplayName: Normal Revolver
 				Tooltip: Summons a baby planetoid to follow you around
 			}
+
+			LamethrowerItem: {
+				DisplayName: Lamethrower Item
+				Tooltip: ""
+			}
+
+			SlippedWhipItem: {
+				DisplayName: Slipped Whip
+				Tooltip: Has a {0}% chance to cage enemies on hit
+			}
 		}
 
 		NPCs: {
@@ -216,6 +226,10 @@ Mods: {
 			LingeringFlameProjectile.DisplayName: Lingering Flame Projectile
 			LingeringFlame.DisplayName: Lingering Flame
 			LanternFlameProjectile.DisplayName: Lantern Flame Projectile
+			IchorProjectile.DisplayName: Ichor Projectile
+			LamethrowerHeldProjectile.DisplayName: Lamethrower Held Projectile
+			SlippedWhipProjectile.DisplayName: Slipped Whip Projectile
+			SlippedWhipCageProjectile.DisplayName: Slipped Whip Cage Projectile
 		}
 
 		Biomes: {

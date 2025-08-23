@@ -168,6 +168,8 @@ public class UnderworldCrimsonBGSystem : ModSystem {
         Vector2 zero = Vector2.Zero;
         
         float defaultScaleForLayer2 = 0.5f;
+        float newScaleFactorForLayer2 = 0.8f;
+        float heightChange = value.Height * (newScaleFactorForLayer2 - defaultScaleForLayer2);
 
         switch(textureArrayIndex) {
             case 0:
@@ -179,10 +181,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                 break;
             case 2:
                 zero.Y -= 20;
-                float newScaleFactorForLayer2 = 0.8f;
-                float heightChange = value.Height * (newScaleFactorForLayer2 - defaultScaleForLayer2);
                 zero.Y -= heightChange * 0.5f;
-                
                 num8 = newScaleFactorForLayer2;
                 break;
             case 3:

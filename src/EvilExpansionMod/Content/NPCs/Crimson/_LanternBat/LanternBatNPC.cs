@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -18,7 +19,7 @@ public class LanternBatNPC : ModNPC {
     }
     
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.LanternBat.KEY_LanternBatNPC;
-    private string LanternTexturePath => Assets.Assets.Textures.NPCs.Crimson.LanternBat.KEY_LanternBat_Lantern;
+    public string LanternTexturePath => Assets.Assets.Textures.NPCs.Crimson.LanternBat.KEY_LanternBat_Lantern;
 
     public State CurrentState {
         get => (State)NPC.ai[0];
@@ -29,13 +30,15 @@ public class LanternBatNPC : ModNPC {
             NPC.netUpdate = true;
         }
     }
-    private ref float StateTimer => ref NPC.ai[1];
+    public ref float StateTimer => ref NPC.ai[1];
 
-    private Player Target => Main.player[NPC.target];
+    public Player Target => Main.player[NPC.target];
 
     private const int anim_speed = 6;
-
     private Vector2 _storedDashVelocity;
+    
+    private const int trail_length = 15;
+    private Vector2[] _fireTrailPositions;
     
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 4;
@@ -63,12 +66,20 @@ public class LanternBatNPC : ModNPC {
         NPC.buffImmune[BuffID.Bleeding] = true;
         NPC.lavaImmune = true;
     }
+    
+    public override void OnSpawn(IEntitySource source) {
+        _fireTrailPositions = new Vector2[trail_length];
+        for (int i = 0; i < trail_length; i++) _fireTrailPositions[i] = NPC.Center;
+    }
 
     public override void AI() {
         NPC.TargetClosest();
         if (Target.dead || !Target.active) {
             return;
         }
+        
+        Vector2 lanternOffset = new Vector2(NPC.spriteDirection * 15, 40);
+        Vector2 lanternWorldPosition = NPC.Center + lanternOffset;
 
         switch (CurrentState) {
             case State.IdleFlight:
@@ -79,6 +90,18 @@ public class LanternBatNPC : ModNPC {
                 if (NPC.Distance(Target.Center) < 16 * 25 && StateTimer > Main.rand.Next(60 * 1, 60 * 3)) {
                     Vector2 dashTarget = Target.Center + Target.velocity * 0.5f;
                     _storedDashVelocity = NPC.DirectionTo(dashTarget) * 16;
+                    
+                    for (int i = 0; i < _fireTrailPositions.Length; i++) _fireTrailPositions[i] = NPC.Center;
+                    
+                    Projectile.NewProjectile(
+                        NPC.GetSource_FromAI(),
+                        NPC.Center,
+                        Vector2.Zero,
+                        ModContent.ProjectileType<LingeringFlameProjectile>(),
+                        NPC.damage,
+                        0, Main.myPlayer,
+                        NPC.whoAmI
+                    );
 
                     CurrentState = State.Dashing;
                 }
@@ -86,20 +109,14 @@ public class LanternBatNPC : ModNPC {
 
             case State.Dashing:
                 NPC.velocity = _storedDashVelocity; 
-                NPC.noTileCollide = false;
+                NPC.noTileCollide = true;
                 NPC.noGravity = true;
 
-                if (StateTimer % 3 == 0) {
-                    Projectile.NewProjectile(
-                        NPC.GetSource_FromAI(),
-                        NPC.Center,
-                        Vector2.Zero,
-                        ModContent.ProjectileType<LingeringFlame>(),
-                        NPC.damage,
-                        0, Main.myPlayer
-                    );
-                    SoundEngine.PlaySound(SoundID.Item20, NPC.Center);
+                for (int i = _fireTrailPositions.Length - 1; i > 0; i--)
+                {
+                    _fireTrailPositions[i] = _fireTrailPositions[i - 1];
                 }
+                _fireTrailPositions[0] = NPC.Center;
 
                 StateTimer++;
                 if (StateTimer >= 45)
@@ -148,7 +165,7 @@ public class LanternBatNPC : ModNPC {
         float lanternRotation = NPC.velocity.X * 0.05f + MathF.Sin(Main.GameUpdateCount * 0.1f) * 0.1f;
 
         Texture2D lanternTex = ModContent.Request<Texture2D>(LanternTexturePath).Value;
-        Vector2 lanternOrigin = lanternTex.Size() / 2f;
+        Vector2 lanternOrigin = new Vector2(lanternTex.Width / 2, 0);
         
         SpriteEffects lanternEffects = SpriteEffects.None;
         if (NPC.spriteDirection == -1) {

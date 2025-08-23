@@ -157,6 +157,11 @@ Mods: {
 				DisplayName: Normal Revolver
 				Tooltip: Summons a baby planetoid to follow you around
 			}
+
+			LamethrowerItem: {
+				DisplayName: Lamethrower Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -216,6 +221,9 @@ Mods: {
 			LingeringFlameProjectile.DisplayName: Lingering Flame Projectile
 			LingeringFlame.DisplayName: Lingering Flame
 			LanternFlameProjectile.DisplayName: Lantern Flame Projectile
+			LingeringFlameTrailProjectile.DisplayName: Lingering Flame Trail Projectile
+			IchorProjectile.DisplayName: Ichor Projectile
+			LamethrowerHeldProjectile.DisplayName: Lamethrower Held Projectile
 		}
 
 		Biomes: {

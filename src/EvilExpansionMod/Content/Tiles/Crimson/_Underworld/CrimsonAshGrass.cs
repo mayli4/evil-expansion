@@ -11,23 +11,21 @@ public class CrimsonAshGrass : ModTile {
     public override string Texture => Assets.Assets.Textures.Tiles.Crimson.KEY_CrimsonAshGrassTile;
 
     public override void SetStaticDefaults() {
-        Main.tileMergeDirt[Type] = true;
-        Main.tileBlockLight[Type] = true;
-        Main.tileSolid[Type] = true;
         Main.tileSolid[Type] = true;
         Main.tileBlockLight[Type] = true;
-        Main.tileBrick[Type] = true;
-        TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Grass"]);
+        Main.tileBlendAll[Type] = true;
+
+        this.Merge(ModContent.TileType<CrimsonAsh>(), TileID.Grass);
+        TileID.Sets.Grass[Type] = true;
+        TileID.Sets.CanBeDugByShovel[Type] = true;
+        TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<CrimsonAsh>();
+        TileID.Sets.NeedsGrassFraming[Type] = true;
+
+        Main.tileMerge[Type][ModContent.TileType<CrimsonAsh>()] = true;
 
         DustType = DustID.Crimson;
 
         AddMapEntry(new Color(170, 64, 63));
-
-        TileID.Sets.NeedsGrassFraming[Type] = true;
-        TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<CrimsonAsh>();
-        TileID.Sets.CanBeDugByShovel[Type] = true;
-
-        Main.tileMerge[Type][ModContent.TileType<CrimsonAsh>()] = true;
 
         TileLoader.RegisterConversion(TileID.AshGrass, BiomeConversionID.Crimson, ConvertToCrimson);
         RegisterItemDrop(ModContent.ItemType<CrimsonAshItem>());
@@ -53,7 +51,7 @@ public class CrimsonAshGrass : ModTile {
     }
 
     public override void RandomUpdate(int i, int j) {
-        WorldGen.SpreadInfectionToNearbyTile(i, j, BiomeConversionID.Corruption);
+        WorldGen.SpreadInfectionToNearbyTile(i, j, BiomeConversionID.Crimson);
 
         if(Helper.Spread(i, j, Type, 2, ModContent.TileType<CrimsonAsh>()))
             NetMessage.SendTileSquare(-1, i, j, 3); // try spread grass

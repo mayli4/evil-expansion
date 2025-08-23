@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 using Terraria.ID;
+using Terraria.ModLoader;
 using Terraria.ObjectData;
 
 namespace EvilExpansionMod.Utilities;
@@ -123,5 +124,26 @@ static partial class Helper {
         }
 
         return true;
+    }
+    
+    public static void AnchorSelfTo(this ModTile tile, params int[] types) => AnchorSelfTo(tile.Type, types);
+
+    /// <inheritdoc cref="AnchorSelfTo"/>
+    public static void AnchorSelfTo(int modTileType, params int[] types)
+    {
+        foreach (int type in types)
+        {
+            if (TileObjectData.GetTileData(type, 0) is TileObjectData data && data.AnchorValidTiles != null)
+                data.AnchorValidTiles = [.. data.AnchorValidTiles, modTileType];
+        }
+    }
+    
+    public static void Merge(this ModTile tile, params int[] otherIds)
+    {
+        foreach (int id in otherIds)
+        {
+            Main.tileMerge[tile.Type][id] = true;
+            Main.tileMerge[id][tile.Type] = true;
+        }
     }
 }

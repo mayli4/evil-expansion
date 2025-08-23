@@ -149,12 +149,13 @@ Mods: {
 					'''
 					Summons planetoids, whos damage scales with size
 					Planetoids explode after holding long enough
+					Definitely do NOT use purification powder on it...
 					'''
 			}
 
-			LamethrowerItem: {
-				DisplayName: Lamethrower Item
-				Tooltip: ""
+			NormalRevolverItem: {
+				DisplayName: Normal Revolver
+				Tooltip: Summons a baby planetoid to follow you around
 			}
 		}
 
@@ -174,6 +175,7 @@ Mods: {
 			SmallStinkflyNPC.DisplayName: Small Stinkfly
 			SmallStinkflyNpc.DisplayName: Small Stinkfly Npc
 			MarrowEyeNPC.DisplayName: Marrow Eye
+			LanternBatNPC.DisplayName: Lantern Bat N P C
 		}
 
 		Projectiles: {
@@ -207,8 +209,13 @@ Mods: {
 			PlanetoidProjectile.DisplayName: Planetoid Projectile
 			PlanetoidLauncherHeldProjectile.DisplayName: Planetoid Launcher Held Projectile
 			RingProjectile.DisplayName: Ring Projectile
-			IchorProjectile.DisplayName: Ichor Projectile
-			LamethrowerHeldProjectile.DisplayName: Lamethrower Held Projectile
+			LanternProjectile.DisplayName: Lantern Projectile
+			LingerFlameProjectile.DisplayName: Linger Flame Projectile
+			CirclingPlanetoidProjectile.DisplayName: Circling Planetoid Projectile
+			NormalPlanetoidProjectile.DisplayName: Normal Planetoid Projectile
+			LingeringFlameProjectile.DisplayName: Lingering Flame Projectile
+			LingeringFlame.DisplayName: Lingering Flame
+			LanternFlameProjectile.DisplayName: Lantern Flame Projectile
 		}
 
 		Biomes: {
@@ -245,12 +252,18 @@ Mods: {
 			CursedSpiritNPCBestiary: ""
 			CultistEyeBestiary: ""
 			StinkgrubNPCBestiary: ""
+			LanternBatNPCBestiary: ""
 		}
 
 		Buffs: {
 			BloodWardenBuff: {
 				DisplayName: Blood Warden
 				Description: It will protect you!
+			}
+
+			NormalPlanetoidBuff: {
+				DisplayName: Normal Planetoid
+				Description: It will follow you!
 			}
 		}
 	}

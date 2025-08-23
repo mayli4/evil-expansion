@@ -1,3 +1,4 @@
+using EvilExpansionMod.Content.Tiles.Crimson;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -6,8 +7,8 @@ using Terraria.ObjectData;
 
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
-public class UnderworldCorruptRubble : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_UnderworldCorrupt2x2Rubble;
+public class CrimsonAshRubble : ModTile {
+    public override string Texture => Assets.Assets.Textures.Tiles.Crimson.KEY_CrimsonAshRubble;
 
     public override void SetStaticDefaults() {
         Main.tileFrameImportant[Type] = true;
@@ -18,16 +19,17 @@ public class UnderworldCorruptRubble : ModTile {
 
         TileObjectData.newTile.CopyFrom(TileObjectData.Style2xX);
         TileObjectData.newTile.Height = 2;
-        TileObjectData.newTile.Width = 2;
+        TileObjectData.newTile.Width = 3;
         TileObjectData.newTile.Origin = new Terraria.DataStructures.Point16(0, 1);
         TileObjectData.newTile.CoordinateHeights = new int[] { 16, 16 };
         TileObjectData.newTile.StyleHorizontal = true;
         TileObjectData.newTile.RandomStyleRange = 3;
-        TileObjectData.newTile.AnchorValidTiles = new int[] { ModContent.TileType<CorruptAsh>(), ModContent.TileType<OvergrownCorruptAsh>() };
+        TileObjectData.newTile.DrawYOffset = 2;
+        TileObjectData.newTile.AnchorValidTiles = new int[] { ModContent.TileType<CrimsonAsh>(), ModContent.TileType<CrimsonAshGrass>() };
         TileObjectData.addTile(Type);
 
-        DustType = DustID.Corruption;
+        DustType = DustID.Crimson;
 
-        AddMapEntry(new Color(69, 68, 114));
+        AddMapEntry(new Color(170, 64, 63));
     }
 }

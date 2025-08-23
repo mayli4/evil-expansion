@@ -35,6 +35,10 @@ public class UnderworldDemonite : ModTile {
 
         TileLoader.RegisterConversion(TileID.Hellstone, BiomeConversionID.Corruption, ConvertToCorruption);
     }
+    
+    public override void FloorVisuals(Player player) {
+        player.AddBuff(BuffID.Burning, 10, false);
+    }
 
     public bool ConvertToCorruption(int i, int j, int type, int conversionType) {
         WorldGen.ConvertTile(i, j, Type);

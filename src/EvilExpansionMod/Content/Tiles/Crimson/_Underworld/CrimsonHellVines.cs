@@ -1,22 +1,17 @@
-using EvilExpansionMod.Core.World;
-using EvilExpansionMod.Utilities;
+using EvilExpansionMod.Content.Tiles.Corruption;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using Microsoft.Xna.Framework.Input;
-using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.Enums;
-using Terraria.GameContent.Drawing;
-using Terraria.GameContent.Generation;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
-namespace EvilExpansionMod.Content.Tiles.Corruption;
+namespace EvilExpansionMod.Content.Tiles.Crimson;
 
-public class UnderworldCorruptVines : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_UnderworldCorruptVines;
+public class CrimsonHellVines : ModTile {
+    public override string Texture => Assets.Assets.Textures.Tiles.Crimson.KEY_CrimsonHellVines;
 
     public override void SetStaticDefaults() {
         Main.tileBlockLight[Type] = true;
@@ -29,7 +24,7 @@ public class UnderworldCorruptVines : ModTile {
         TileID.Sets.ReplaceTileBreakDown[Type] = true;
 
         HitSound = SoundID.Grass;
-        DustType = DustID.Corruption;
+        DustType = DustID.Crimson;
 
         TileObjectData.newTile.CopyFrom(TileObjectData.Style1x1);
         TileObjectData.newTile.AnchorBottom = AnchorData.Empty;
@@ -42,9 +37,9 @@ public class UnderworldCorruptVines : ModTile {
 
         TileObjectData.addTile(Type);
 
-        AddMapEntry(new Color(128, 123, 88));
+        AddMapEntry(new Color(132, 38, 51));
 
-        TileLoader.RegisterConversion(TileID.AshVines, BiomeConversionID.Corruption, ConvertToCorruption);
+        TileLoader.RegisterConversion(TileID.AshVines, BiomeConversionID.Crimson, ConvertToCorruption);
     }
 
     public bool ConvertToCorruption(int i, int j, int type, int conversionType) {
@@ -54,12 +49,10 @@ public class UnderworldCorruptVines : ModTile {
 
     public override void Convert(int i, int j, int conversionType) {
         switch(conversionType) {
-            case BiomeConversionID.Chlorophyte:
             case BiomeConversionID.Purity:
                 WorldGen.ConvertTile(i, j, TileID.AshVines);
                 return;
-            case BiomeConversionID.Sand:
-            case BiomeConversionID.Corruption:
+            case BiomeConversionID.Crimson:
                 WorldGen.ConvertTile(i, j, ModContent.TileType<UnderworldCorruptVines>());
                 return;
 
@@ -83,13 +76,13 @@ public class UnderworldCorruptVines : ModTile {
 }
 
 //from examplemod
-internal class UnderworldCorruptVinesGlobalTile : GlobalTile {
-    private int _corruptVine;
-    private int _overgrownCorruptAsh;
+internal class CrimsonHellVinesGlobalTile : GlobalTile {
+    private int _crimsonHellVine;
+    private int _crimsonAshGrass;
 
     public override void SetStaticDefaults() {
-        _corruptVine = ModContent.TileType<UnderworldCorruptVines>();
-        _overgrownCorruptAsh = ModContent.TileType<OvergrownCorruptAsh>();
+        _crimsonHellVine = ModContent.TileType<CrimsonHellVines>();
+        _crimsonAshGrass = ModContent.TileType<CrimsonAshGrass>();
     }
 
     // Random growth behavior:
@@ -104,9 +97,9 @@ internal class UnderworldCorruptVinesGlobalTile : GlobalTile {
         }
 
         // Vine tiles usually grow on themselves (from the tip) or on any tile they spawn from (grass tiles usually). GrowMoreVines checks that the nearby area isn't already full of vines.
-        if ((tile.TileType == _corruptVine || tile.TileType == _overgrownCorruptAsh) && WorldGen.GrowMoreVines(i, j)) {
+        if ((tile.TileType == _crimsonHellVine || tile.TileType == _crimsonAshGrass) && WorldGen.GrowMoreVines(i, j)) {
             int growChance = 70;
-            if (tile.TileType == _corruptVine) {
+            if (tile.TileType == _crimsonHellVine) {
                 growChance = 7; // 10 times more likely to extend an existing vine than start a new vine
             }
 
@@ -121,7 +114,7 @@ internal class UnderworldCorruptVinesGlobalTile : GlobalTile {
                         return;
                     }
 
-                    if (tileAbove.HasTile && tileAbove.TileType == _overgrownCorruptAsh && !tileAbove.BottomSlope) {
+                    if (tileAbove.HasTile && tileAbove.TileType == _crimsonAshGrass && !tileAbove.BottomSlope) {
                         vineIsHangingOffValidTile = true;
                         break;
                     }
@@ -129,7 +122,7 @@ internal class UnderworldCorruptVinesGlobalTile : GlobalTile {
 
                 if (vineIsHangingOffValidTile) {
                     // If all the checks succeed, place the tile, copy paint from the tile we grew from, and sync the tile change.
-                    tileBelow.TileType = (ushort)_corruptVine;
+                    tileBelow.TileType = (ushort)_crimsonHellVine;
                     tileBelow.HasTile = true;
                     tileBelow.CopyPaintAndCoating(tile);
                     WorldGen.SquareTileFrame(i, below);
@@ -157,8 +150,8 @@ internal class UnderworldCorruptVinesGlobalTile : GlobalTile {
         // If this tile isn't the same as the one above, we need to verify that the above tile is valid.
         if (type != aboveTileType) {
             // If the above tile is a valid ExampleVine anchor, but this tile isn't ExampleVine, we change this tile into ExampleVine.
-            if ((aboveTileType == _overgrownCorruptAsh || aboveTileType == _corruptVine) && type != _corruptVine) {
-                tile.TileType = (ushort)_corruptVine;
+            if ((aboveTileType == _crimsonAshGrass || aboveTileType == _crimsonHellVine) && type != _crimsonHellVine) {
+                tile.TileType = (ushort)_crimsonHellVine;
                 WorldGen.SquareTileFrame(i, j);
                 return true;
             }
@@ -166,7 +159,7 @@ internal class UnderworldCorruptVinesGlobalTile : GlobalTile {
             // Finally, we need to handle the case where there is not longer a valid placement for ExampleVine.
             // Due to the ordering of hooks with respect to vanilla code, it is not easy to do this in a mod-compatible manner directly. Vanilla vine code or vine code from other mods might convert the vine to a new tile type, but we can't know that here.
             // If the anchor tile is invalid, we kill the tile, otherwise we change the vine tile to TileID.Vines and let the vanilla code that will run after this handle the remaining logic.
-            if (type == _corruptVine && aboveTileType != _overgrownCorruptAsh) {
+            if (type == _crimsonHellVine && aboveTileType != _crimsonAshGrass) {
                 if (aboveTileType == -1) {
                     WorldGen.KillTile(i, j);
                 }

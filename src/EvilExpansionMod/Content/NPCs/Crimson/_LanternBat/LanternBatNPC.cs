@@ -36,6 +36,7 @@ public class LanternBatNPC : ModNPC {
 
     private const int anim_speed = 6;
     private Vector2 _storedDashVelocity;
+    private ref float _lanternLightIntensity => ref NPC.localAI[1];
     
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 4;
@@ -65,6 +66,7 @@ public class LanternBatNPC : ModNPC {
     }
     
     public override void OnSpawn(IEntitySource source) {
+        _lanternLightIntensity = 0f;
     }
 
     public override void AI() {
@@ -75,6 +77,7 @@ public class LanternBatNPC : ModNPC {
         
         Vector2 lanternOffset = new Vector2(NPC.spriteDirection * 15, 40);
         Vector2 lanternWorldPosition = NPC.Center + lanternOffset;
+        
 
         switch (CurrentState) {
             case State.IdleFlight:
@@ -82,26 +85,37 @@ public class LanternBatNPC : ModNPC {
                 NPC.velocity = Vector2.Lerp(NPC.velocity, NPC.DirectionTo(idealIdlePosition) * 4, 0.05f);
 
                 StateTimer++;
-                if (NPC.Distance(Target.Center) < 16 * 25 && StateTimer > Main.rand.Next(60 * 1, 60 * 3)) {
+                int minIdleTime = 60 * 1;
+                int maxIdleTime = 60 * 3;
+                int dashRange = 16 * 25;
+
+                float dashThresholdProgress = Math.Min(1f, (StateTimer - minIdleTime) / (maxIdleTime - minIdleTime));
+
+                _lanternLightIntensity = MathF.Pow(dashThresholdProgress, 3f) * 2.5f;
+                _lanternLightIntensity = Math.Min(_lanternLightIntensity, 2.5f);
+                _lanternLightIntensity = Math.Max(0.2f, _lanternLightIntensity);
+
+                if (NPC.Distance(Target.Center) < dashRange && StateTimer > Main.rand.Next(minIdleTime, maxIdleTime)) {
                     Vector2 dashTarget = Target.Center + Target.velocity * 0.5f;
                     _storedDashVelocity = NPC.DirectionTo(dashTarget) * 16;
 
                     CurrentState = State.Dashing;
                 }
                 break;
-
             case State.Dashing:
                 NPC.velocity = _storedDashVelocity; 
                 NPC.noTileCollide = true;
                 NPC.noGravity = true;
 
+                _lanternLightIntensity = 1.5f;
+                
                 if(StateTimer % 10 == 0) {
                     Projectile.NewProjectile(
                         NPC.GetSource_FromAI(),
                         NPC.Center,
                         Vector2.Zero,
                         ModContent.ProjectileType<LingeringFlameProjectile>(),
-                        NPC.damage,
+                        20,
                         0, Main.myPlayer,
                         NPC.whoAmI
                     );
@@ -121,6 +135,9 @@ public class LanternBatNPC : ModNPC {
                 NPC.velocity = Vector2.Lerp(NPC.velocity, NPC.DirectionTo(Target.Center) * 4, 0.03f);
                 
                 StateTimer++;
+                _lanternLightIntensity = Math.Max(0f, 1.5f * (1f - StateTimer / (float)(60 * 2)));
+                _lanternLightIntensity = Math.Max(0.2f, _lanternLightIntensity);
+                
                 if (StateTimer >= 60 * 2) {
                     CurrentState = State.IdleFlight;
                 }
@@ -151,15 +168,31 @@ public class LanternBatNPC : ModNPC {
 
         Vector2 lanternDrawPosition = NPC.Center + lanternOffsetVector;
 
+        Lighting.AddLight(lanternDrawPosition, Color.Orange.ToVector3() * _lanternLightIntensity);
+        
         float lanternRotation = NPC.velocity.X * 0.05f + MathF.Sin(Main.GameUpdateCount * 0.1f) * 0.1f;
 
-        Texture2D lanternTex = ModContent.Request<Texture2D>(LanternTexturePath).Value;
+        Texture2D lanternTex = Assets.Assets.Textures.NPCs.Crimson.LanternBat.LanternBat_Lantern.Value;
+        Texture2D lanternInside = Assets.Assets.Textures.NPCs.Crimson.LanternBat.LanternBat_LanternFlame.Value;
         Vector2 lanternOrigin = new Vector2(lanternTex.Width / 2, 0);
         
         SpriteEffects lanternEffects = SpriteEffects.None;
         if (NPC.spriteDirection == -1) {
             lanternEffects = SpriteEffects.FlipHorizontally;
         }
+        
+        Color lightEffectColor = Color.Orange * _lanternLightIntensity;
+        
+        Main.EntitySpriteDraw(
+            lanternInside,
+            lanternDrawPosition - screenPos,
+            null,
+            lightEffectColor,
+            lanternRotation,
+            lanternOrigin,
+            NPC.scale,
+            lanternEffects
+        );
         
         Main.EntitySpriteDraw(
             lanternTex,

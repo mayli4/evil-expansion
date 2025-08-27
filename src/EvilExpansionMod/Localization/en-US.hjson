@@ -159,13 +159,18 @@ Mods: {
 			}
 
 			LamethrowerItem: {
-				DisplayName: Lamethrower Item
+				DisplayName: Lamethrower
 				Tooltip: ""
 			}
 
 			SlippedWhipItem: {
 				DisplayName: Slipped Whip
 				Tooltip: Has a {0}% chance to cage enemies on hit
+			}
+
+			MeatAxeItem: {
+				DisplayName: Meat Axe
+				Tooltip: ""
 			}
 		}
 
@@ -230,6 +235,7 @@ Mods: {
 			LamethrowerHeldProjectile.DisplayName: Lamethrower Held Projectile
 			SlippedWhipProjectile.DisplayName: Slipped Whip Projectile
 			SlippedWhipCageProjectile.DisplayName: Slipped Whip Cage Projectile
+			MeatAxeHeldProjectile.DisplayName: Meat Axe Held Projectile
 		}
 
 		Biomes: {

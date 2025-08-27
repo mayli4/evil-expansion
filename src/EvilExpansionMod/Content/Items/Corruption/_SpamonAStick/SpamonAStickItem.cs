@@ -114,7 +114,6 @@ public class SpamOnAStickProjectile : ModProjectile {
 		Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Quarter, (Projectile.Center - Owner.Center).ToRotation() - MathHelper.PiOver2 - 0.1f * Owner.direction);
 		Owner.direction = Projectile.Center.X > Owner.Center.X ? 1 : -1;
 
-
 		if (State == 0)
 		{
 			Projectile.velocity.X *= ExtendDrag;

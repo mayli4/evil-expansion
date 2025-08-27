@@ -177,6 +177,16 @@ Mods: {
 				DisplayName: Meat Axe Item
 				Tooltip: ""
 			}
+
+			CorruptionJackhammerItem: {
+				DisplayName: Corruption Jackhammer Item
+				Tooltip: ""
+			}
+
+			CrimsonDrillItem: {
+				DisplayName: Crimson Drill Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -243,6 +253,8 @@ Mods: {
 			SpamOnAStickProjectile.DisplayName: Spam On A Stick Projectile
 			MeatAxeHeldProjectile.DisplayName: Meat Axe Held Projectile
 			SpamonAStickProjectile.DisplayName: Spamon A Stick Projectile
+			CorruptionJackhammerProjectile.DisplayName: Corruption Jackhammer Projectile
+			CrimsonDrillProjectile.DisplayName: Crimson Drill Projectile
 		}
 
 		Biomes: {

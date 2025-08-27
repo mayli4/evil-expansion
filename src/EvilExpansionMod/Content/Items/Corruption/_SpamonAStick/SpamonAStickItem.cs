@@ -48,7 +48,6 @@ public class SpamOnAStickProjectile : ModProjectile {
     protected Asset<Texture2D> ChainAsset => Assets.Assets.Textures.Items.Corruption.SpamonAStick.SpamonAStick_Chain;
 	protected Asset<Texture2D> BlockAsset => Assets.Assets.Textures.Items.Corruption.SpamonAStick.SpamonAStick_Block;
 
-
 	public int MaxLength = 650;
 
 	public ref float Timer => ref Projectile.ai[0];
@@ -58,12 +57,12 @@ public class SpamOnAStickProjectile : ModProjectile {
     private ref float _visualTimer => ref Projectile.localAI[0];
     private ref float _hasBounced => ref Projectile.localAI[1];
 
-	protected Player Owner => Main.player[Projectile.owner];
+    public Player Owner => Main.player[Projectile.owner];
 
-    private float ExtendGravity = 0.5f;
-    private float ExtendDrag = 0.99f;
-    private float RetractSpeed = 25f;
-    private float GroundSplatDuration = 30f;
+    public float ExtendGravity = 0.5f;
+    public float ExtendDrag = 0.99f;
+    public float RetractSpeed = 25f;
+    public float GroundSplatDuration = 30f;
     
 	public virtual void OnImpact(bool wasTile) { 
         _visualTimer = GroundSplatDuration;

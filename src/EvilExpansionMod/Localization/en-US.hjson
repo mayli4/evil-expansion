@@ -168,8 +168,13 @@ Mods: {
 				Tooltip: Has a {0}% chance to cage enemies on hit
 			}
 
+			SpamonAStickItem: {
+				DisplayName: Spam On A Stick
+				Tooltip: ""
+			}
+
 			MeatAxeItem: {
-				DisplayName: Meat Axe
+				DisplayName: Meat Axe Item
 				Tooltip: ""
 			}
 		}
@@ -188,9 +193,9 @@ Mods: {
 			PusBottleNPC.DisplayName: Pus Bottle
 			StinkflyNPC.DisplayName: Stinkfly
 			SmallStinkflyNPC.DisplayName: Small Stinkfly
-			SmallStinkflyNpc.DisplayName: Small Stinkfly Npc
+			SmallStinkflyNpc.DisplayName: Small Stinkfly
 			MarrowEyeNPC.DisplayName: Marrow Eye
-			LanternBatNPC.DisplayName: Lantern Bat N P C
+			LanternBatNPC.DisplayName: Lantern Bat
 		}
 
 		Projectiles: {
@@ -235,7 +240,9 @@ Mods: {
 			LamethrowerHeldProjectile.DisplayName: Lamethrower Held Projectile
 			SlippedWhipProjectile.DisplayName: Slipped Whip Projectile
 			SlippedWhipCageProjectile.DisplayName: Slipped Whip Cage Projectile
+			SpamOnAStickProjectile.DisplayName: Spam On A Stick Projectile
 			MeatAxeHeldProjectile.DisplayName: Meat Axe Held Projectile
+			SpamonAStickProjectile.DisplayName: Spamon A Stick Projectile
 		}
 
 		Biomes: {
@@ -246,12 +253,12 @@ Mods: {
 
 			UnderworldCorruption: {
 				DisplayName: Underworld Corruption
-				TownNPCDialogueName: the Underworld Corruption
+				TownNPCDialogueName: The Underworld Corruption
 			}
 
 			UnderworldCrimsonBiome: {
 				DisplayName: Underworld Crimson Biome
-				TownNPCDialogueName: the Underworld Crimson Biome
+				TownNPCDialogueName: The Underworld Crimson Biome
 			}
 		}
 

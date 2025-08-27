@@ -3,8 +3,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
-using System.Collections.Generic;
-using System.Linq; // Required for .ToList() etc.
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -22,19 +20,17 @@ public class SpamonAStickItem : ModItem {
         Item.useAnimation = 10;
         Item.useTime = 10;
         Item.channel = true;
-        Item.shootSpeed = 12; // Initial launch speed of the flail
+        Item.shootSpeed = 12;
         Item.noMelee = true;
         Item.noUseGraphic = true;
         Item.useStyle = ItemUseStyleID.Swing;
 
         Item.shoot = ModContent.ProjectileType<SpamOnAStickProjectile>();
         
-        // --- TOOLTIP STATS ---
-        Item.damage = 30; // Base damage for tooltip
-        Item.knockBack = 6f; // Base knockback for tooltip
-        Item.crit = 4; // Base crit for tooltip
-        Item.value = Item.sellPrice(gold: 1); // Example value
-        Item.rare = ItemRarityID.LightRed; // Example rarity
+        Item.damage = 30; 
+        Item.knockBack = 6f;
+        Item.crit = 4;
+        Item.value = Item.sellPrice(gold: 1);
     }
     
     public override bool CanShoot(Player player) {

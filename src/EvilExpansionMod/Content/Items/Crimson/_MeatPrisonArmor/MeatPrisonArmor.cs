@@ -28,6 +28,14 @@ public class MeatPrisonHead : ModItem {
         Item.DamageType = DamageClass.Summon;
     }
     
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient<CrimtaneHellstoneBarItem>(7)
+            .AddIngredient<BoneSlicesItem>(2)
+            .AddTile(TileID.MythrilAnvil)
+            .Register();
+    }
+    
     public override void UpdateEquip(Player player) {
         player.GetDamage(DamageClass.Summon) += 0.08f;
         player.maxMinions += 1;
@@ -40,10 +48,6 @@ public class MeatPrisonHead : ModItem {
 
     public override bool IsArmorSet(Item head, Item body, Item legs) {
         return body.type == ModContent.ItemType<MeatPrisonBody>() && legs.type == ModContent.ItemType<MeatPrisonLegs>();
-    }
-
-    public override void ModifyTooltips(List<TooltipLine> tooltips) {
-        
     }
 }
 
@@ -73,6 +77,14 @@ public class MeatPrisonBody : ModItem {
     public override bool IsArmorSet(Item head, Item body, Item legs) {
         return head.type == ModContent.ItemType<MeatPrisonHead>() && legs.type == ModContent.ItemType<MeatPrisonLegs>();
     }
+    
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient<CrimtaneHellstoneBarItem>(15)
+            .AddIngredient<BoneSlicesItem>(5)
+            .AddTile(TileID.MythrilAnvil)
+            .Register();
+    }
 }
 
 [AutoloadEquip(EquipType.Legs)]
@@ -98,6 +110,14 @@ public class MeatPrisonLegs : ModItem {
     
     public override bool IsArmorSet(Item head, Item body, Item legs) {
         return head.type == ModContent.ItemType<MeatPrisonHead>() && body.type == ModContent.ItemType<MeatPrisonBody>();
+    }
+    
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient<CrimtaneHellstoneBarItem>(2)
+            .AddIngredient<BoneSlicesItem>(5)
+            .AddTile(TileID.MythrilAnvil)
+            .Register();
     }
 }
 

@@ -14,6 +14,8 @@ public class HellDemoniteBarItem : ModItem {
         Item.width = 20;
         Item.height = 20;
         Item.value = 750;
+        
+        Item.maxStack = Terraria.Item.CommonMaxStack;
     }
 
     public override void AddRecipes() {

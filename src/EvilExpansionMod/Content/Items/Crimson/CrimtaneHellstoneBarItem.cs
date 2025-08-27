@@ -14,11 +14,14 @@ public class CrimtaneHellstoneBarItem : ModItem {
         Item.width = 20;
         Item.height = 20;
         Item.value = 750;
+        
+        Item.maxStack = Terraria.Item.CommonMaxStack;
     }
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<Tiles.Crimson.VeinOreItem>(4)
+            .AddIngredient<Tiles.Crimson.VeinOreItem>(3)
+            .AddIngredient<PusClumpItem>()
             .AddTile(TileID.Furnaces)
             .Register();
     }

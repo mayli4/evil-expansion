@@ -174,17 +174,52 @@ Mods: {
 			}
 
 			MeatAxeItem: {
-				DisplayName: Meat Axe Item
+				DisplayName: Meat Axe
 				Tooltip: ""
 			}
 
 			CorruptionJackhammerItem: {
-				DisplayName: Corruption Jackhammer Item
+				DisplayName: Corruption Jackhammer
 				Tooltip: ""
 			}
 
 			CrimsonDrillItem: {
-				DisplayName: Crimson Drill Item
+				DisplayName: Crimson Drill
+				Tooltip: ""
+			}
+
+			RawShadowScalesItem: {
+				DisplayName: Raw Shadow Scales
+				Tooltip: ""
+			}
+
+			BoneSlicesItem: {
+				DisplayName: Bone Slices
+				Tooltip: ""
+			}
+
+			PusClumpItem: {
+				DisplayName: Pus Clump
+				Tooltip: ""
+			}
+
+			CarolinaReaper: {
+				DisplayName: Carolina Reaper
+				Tooltip: ""
+			}
+
+			CowHeart: {
+				DisplayName: Cow Heart
+				Tooltip: ""
+			}
+
+			Lime: {
+				DisplayName: Lime
+				Tooltip: ""
+			}
+
+			Soursop: {
+				DisplayName: Soursop
 				Tooltip: ""
 			}
 		}

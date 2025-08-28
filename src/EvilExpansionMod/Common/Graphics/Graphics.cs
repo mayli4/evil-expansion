@@ -635,6 +635,8 @@ public class Graphics : ModSystem {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunDrawTrail(int index) {
             var trailData = _trailDatas[index];
+            if(trailData.PositionCount < 2) return;
+
             var trailPositions = CollectionsMarshal
                 .AsSpan(_trailPositions)[trailData.PositionsIndex..(trailData.PositionsIndex + trailData.PositionCount)];
 

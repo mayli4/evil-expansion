@@ -236,6 +236,7 @@ Mods: {
 			SlippedWhipProjectile.DisplayName: Slipped Whip Projectile
 			SlippedWhipCageProjectile.DisplayName: Slipped Whip Cage Projectile
 			MeatAxeHeldProjectile.DisplayName: Meat Axe Held Projectile
+			CutProjectile.DisplayName: Cut Projectile
 		}
 
 		Biomes: {

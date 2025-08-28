@@ -1,4 +1,5 @@
 ﻿using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Items.Crimson._MeatAxe;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -6,6 +7,7 @@ using System.Linq;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Items.Crimson;
@@ -17,6 +19,8 @@ public class MeatAxeHeldProjectile : ModProjectile {
     Vector2 _rotationVector;
 
     ref float TargetRotation => ref Projectile.ai[0];
+    int CutProjectile { get => (int)Projectile.ai[1]; set => Projectile.ai[1] = value; }
+    int _cutUpdateTimer;
 
     public override string Texture => Assets.Assets.Textures.Items.Crimson.MeatAxe.KEY_MeatAxeItem;
     public override void SetDefaults() {
@@ -39,6 +43,9 @@ public class MeatAxeHeldProjectile : ModProjectile {
 
     public override void OnSpawn(IEntitySource source) {
         TargetRotation = Owner.Center.DirectionTo(Main.MouseWorld).ToRotation();
+
+        CutProjectile = -1;
+        Projectile.netUpdate = true;
     }
 
     public override bool PreAI() {
@@ -58,6 +65,36 @@ public class MeatAxeHeldProjectile : ModProjectile {
         Projectile.rotation = TargetRotation - arc / 2f + arc * t;
 
         _rotationVector = Projectile.rotation.ToRotationVector2();
+
+        if(Progress > 0.3f && Progress < 0.7f) {
+            if(CutProjectile == -1) {
+                if(Main.netMode != NetmodeID.MultiplayerClient) {
+                    CutProjectile = Projectile.NewProjectile(
+                        Projectile.GetSource_FromAI(),
+                        Projectile.position,
+                        Vector2.Zero,
+                        ModContent.ProjectileType<CutProjectile>(),
+                        30,
+                        0f
+                    );
+                    Projectile.netUpdate = true;
+                }
+            }
+            else {
+                var cut = Main.projectile[CutProjectile].ModProjectile as CutProjectile;
+                cut.TrailPositions.Add(Projectile.position + _rotationVector * 80f);
+
+                if(Progress > 0.4f) {
+                    for(var i = 0; i < 5; i++) {
+                        Dust.NewDustPerfect(
+                            Projectile.position + _rotationVector * 75f + Main.rand.NextVector2Unit() * Main.rand.NextFloat(15f),
+                            DustID.Blood,
+                            _rotationVector.RotatedBy(MathHelper.PiOver2 * Owner.direction) * 12f
+                        );
+                    }
+                }
+            }
+        }
 
         Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2);
         Projectile.position = Owner.RotatedRelativePoint(Owner.MountedCenter) + new Vector2(-4 * Owner.direction, -2);

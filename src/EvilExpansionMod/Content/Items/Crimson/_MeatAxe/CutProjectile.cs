@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Items.Crimson._MeatAxe;
@@ -12,6 +13,8 @@ public class CutProjectile : ModProjectile {
     public override string Texture => Helper.PlaceholderTextureKey;
 
     public List<Vector2> TrailPositions = [];
+
+    static int MaxTimeLeft = 120;
 
     public override void SetDefaults() {
         Projectile.width = 0;
@@ -21,7 +24,7 @@ public class CutProjectile : ModProjectile {
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
         Projectile.penetrate = -1;
-        Projectile.timeLeft = 120;
+        Projectile.timeLeft = MaxTimeLeft;
         Projectile.DamageType = DamageClass.Melee;
 
         Projectile.usesLocalNPCImmunity = true;
@@ -29,6 +32,12 @@ public class CutProjectile : ModProjectile {
     }
 
     public override bool ShouldUpdatePosition() => false;
+
+    public override void AI() {
+        for(var i = 0; i < TrailPositions.Count - 1; i++) {
+            TrailPositions[i] += Vector2.UnitY * 0.25f * i / TrailPositions.Count;
+        }
+    }
 
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
         for(var i = 0; i < TrailPositions.Count - 1; i++) {
@@ -49,20 +58,40 @@ public class CutProjectile : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
+        var progress = 1f - (float)Projectile.timeLeft / MaxTimeLeft;
+        var pipeline = Graphics.BeginPipeline(0.5f);
+
+        var buf = new Vector2[2];
+        for(var i = 1; i < TrailPositions.Count - 2; i++) {
+            buf[0] = TrailPositions[i];
+            buf[1] = buf[0]
+                + Vector2.UnitY * 20f
+                * MathF.Sin(progress * MathHelper.Pi)
+                * ((MathF.Sin(4f * MathHelper.Pi * i / TrailPositions.Count) + 1f) / 2f);
+
+            pipeline.DrawBasicTrail(
+                buf,
+                t => MathF.Max((1f - t) * 3f, 2.1f),
+                TextureAssets.MagicPixel.Value,
+                Color.DarkRed
+            );
+        }
+
         var effect = Assets.Assets.Effects.Trail.AxeCut.Value;
         var positions = CollectionsMarshal.AsSpan(TrailPositions);
-        var texture = Assets.Assets.Textures.Gores.PlanetoidGore0.Value;
-        Graphics.BeginPipeline(0.5f)
+        var texture = Assets.Assets.Textures.Items.Crimson.MeatAxe.CutTexture.Value;
+        pipeline
             .DrawTrail(
                 positions,
-                t => MathF.Sin(t * MathHelper.Pi) * 20f
-                    * MathF.Pow(MathF.Sin(MathHelper.PiOver2 * Projectile.timeLeft / 120f), 2),
+                t => MathF.Sin(t * MathHelper.Pi) * 30f * (1f + 0.2f * MathF.Sin(t * MathHelper.Pi * 6f))
+                    * MathF.Pow(MathF.Sin(MathHelper.PiOver2 * (1f - progress)), 2),
                 static _ => Color.Red,
                 effect,
                 ("uImage0Texture", texture),
                 ("uImage0Size", texture.Size()),
                 ("uTransformMatrix", Graphics.WorldTransformMatrix)
             )
+            .ApplyOutline(Color.DarkRed)
             .Flush();
 
         return false;

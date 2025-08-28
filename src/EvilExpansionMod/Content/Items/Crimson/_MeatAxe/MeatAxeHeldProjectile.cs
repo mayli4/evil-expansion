@@ -81,17 +81,19 @@ public class MeatAxeHeldProjectile : ModProjectile {
                 }
             }
             else {
-                var cut = Main.projectile[CutProjectile].ModProjectile as CutProjectile;
-                cut.TrailPositions.Add(Projectile.position + _rotationVector * 80f);
+                var cutPosition = Projectile.position
+                    + _rotationVector * 75f
+                    + _rotationVector.RotatedBy(MathHelper.PiOver2) * 30f;
 
-                if(Progress > 0.4f) {
-                    for(var i = 0; i < 5; i++) {
-                        Dust.NewDustPerfect(
-                            Projectile.position + _rotationVector * 75f + Main.rand.NextVector2Unit() * Main.rand.NextFloat(15f),
-                            DustID.Blood,
-                            _rotationVector.RotatedBy(MathHelper.PiOver2 * Owner.direction) * 12f
-                        );
-                    }
+                var cut = Main.projectile[CutProjectile].ModProjectile as CutProjectile;
+                cut.TrailPositions.Add(cutPosition);
+
+                for(var i = 0; i < 4; i++) {
+                    Dust.NewDustPerfect(
+                        cutPosition + Main.rand.NextVector2Unit() * Main.rand.NextFloat(30f),
+                        DustID.Blood,
+                        _rotationVector.RotatedBy((-Main.rand.NextFloat(MathHelper.PiOver2) - MathHelper.PiOver2) * Owner.direction) * 8f
+                    );
                 }
             }
         }

@@ -290,6 +290,7 @@ Mods: {
 			SpamonAStickProjectile.DisplayName: Spamon A Stick Projectile
 			CorruptionJackhammerProjectile.DisplayName: Corruption Jackhammer Projectile
 			CrimsonDrillProjectile.DisplayName: Crimson Drill Projectile
+			CutProjectile.DisplayName: Cut Projectile
 		}
 
 		Biomes: {

@@ -3,7 +3,9 @@ using EvilExpansionMod.Content.Items.Crimson._MeatAxe;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.InteropServices;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
@@ -88,12 +90,25 @@ public class MeatAxeHeldProjectile : ModProjectile {
                 var cut = Main.projectile[CutProjectile].ModProjectile as CutProjectile;
                 cut.TrailPositions.Add(cutPosition);
 
-                for(var i = 0; i < 4; i++) {
-                    Dust.NewDustPerfect(
-                        cutPosition + Main.rand.NextVector2Unit() * Main.rand.NextFloat(30f),
-                        DustID.Blood,
-                        _rotationVector.RotatedBy((-Main.rand.NextFloat(MathHelper.PiOver2) - MathHelper.PiOver2) * Owner.direction) * 8f
-                    );
+                if(Progress > 0.6f) {
+                    for(var i = 0; i < 3; i++) {
+                        BloodSpraySystem.SpawnParticle(
+                            cutPosition + Main.rand.NextVector2Unit() * Main.rand.NextFloat(7f),
+                            _rotationVector
+                                .RotatedBy(-MathHelper.PiOver2 * Owner.direction + 0.7f)
+                                .RotatedByRandom(0.1f)
+                                * Main.rand.NextFloat(5f, 28f),
+                            Main.rand.NextFloatDirection() * 0.05f,
+                            Color.DarkRed,
+                            Main.rand.NextFloat(1.75f, 3.5f)
+                        );
+
+                        // Dust.NewDustPerfect(
+                        //     cutPosition + Main.rand.NextVector2Unit() * Main.rand.NextFloat(30f),
+                        //     DustID.Blood,
+                        //     _rotationVector.RotatedBy((-Main.rand.NextFloat(MathHelper.PiOver2) - MathHelper.PiOver2) * Owner.direction) * 8f
+                        // );
+                    }
                 }
             }
         }
@@ -163,5 +178,97 @@ public class MeatAxeHeldProjectile : ModProjectile {
         );
 
         return false;
+    }
+}
+
+public class BloodSpraySystem : ModSystem {
+    const int TrailPositionCount = 7;
+    struct Particle {
+        public Vector2 Velocity;
+        public float Angular;
+        public Color Color;
+        public float Scale;
+        public int TrailPositionsIndex;
+    }
+
+    static List<Particle> _particles = [];
+    static List<Vector2> _trailPositions = [];
+
+    public static void SpawnParticle(
+        Vector2 position,
+        Vector2 velocity,
+        float angular,
+        Color color,
+        float scale
+    ) {
+        var index = _trailPositions.Count;
+        _trailPositions.AddRange([.. Enumerable.Repeat(position, TrailPositionCount)]);
+        _particles.Add(new()
+        {
+            Velocity = velocity,
+            Angular = angular,
+            Color = color,
+            Scale = scale,
+            TrailPositionsIndex = index,
+        });
+    }
+
+    public override void PostUpdateEverything() {
+        for(var i = 0; i < _particles.Count; i++) {
+            var p = _particles[i];
+
+            var positions = CollectionsMarshal.AsSpan(_trailPositions)[p.TrailPositionsIndex..(p.TrailPositionsIndex + TrailPositionCount)];
+            positions[0] += p.Velocity * 2f;
+
+            for(var j = TrailPositionCount - 1; j > 0; j -= 1) {
+                positions[j] = positions[j - 1];
+            }
+
+            p.Velocity = p.Velocity.RotatedBy(p.Angular);
+            p.Velocity *= 0.75f;
+
+            if(p.Velocity.LengthSquared() < 0.15f) {
+                if(_particles.Count > 1) {
+                    for(var j = 0; j < TrailPositionCount; j++) {
+                        positions[j] = _trailPositions[_trailPositions.Count - j - 1];
+                    }
+                    _trailPositions.RemoveRange(_trailPositions.Count - TrailPositionCount, TrailPositionCount);
+
+                    _particles[^1] = _particles[^1] with
+                    {
+                        TrailPositionsIndex = p.TrailPositionsIndex,
+                    };
+
+                    (_particles[i], _particles[^1]) = (_particles[^1], _particles[i]);
+                    _particles.RemoveAt(_particles.Count - 1);
+                }
+                else {
+                    _particles.Clear();
+                    _trailPositions.Clear();
+                }
+
+                i -= 1;
+                continue;
+            }
+
+            _particles[i] = p;
+        }
+    }
+
+    public override void PostDrawTiles() {
+        var pipeline = Graphics.BeginPipeline(0.5f);
+        for(var i = 0; i < _particles.Count; i++) {
+            var p = _particles[i];
+            var positions = CollectionsMarshal.AsSpan(_trailPositions)[p.TrailPositionsIndex..(p.TrailPositionsIndex + TrailPositionCount)];
+            pipeline.DrawBasicTrail(
+                positions,
+                t => Math.Clamp(p.Scale * 0.35f * p.Velocity.LengthSquared() * MathF.Sin(MathHelper.PiOver2 * (1f + t)), 2f, 12f),
+                TextureAssets.MagicPixel.Value,
+                _ => p.Color
+            );
+        }
+
+        pipeline
+            .Schedule(RenderLayer.AfterPlayers);
     }
 }

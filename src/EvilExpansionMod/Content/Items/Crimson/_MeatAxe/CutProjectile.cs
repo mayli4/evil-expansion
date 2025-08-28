@@ -91,7 +91,7 @@ public class CutProjectile : ModProjectile {
                 ("uImage0Size", texture.Size()),
                 ("uTransformMatrix", Graphics.WorldTransformMatrix)
             )
-            .ApplyOutline(Color.DarkRed)
+            .ApplyOutline(Color.Lerp(Color.DarkRed, Color.Black, 0.5f))
             .Flush();
 
         return false;

@@ -1,4 +1,5 @@
-﻿using Terraria.ID;
+﻿using EvilExpansionMod.Content.Items.Corruption;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Items.Crimson;
@@ -14,11 +15,16 @@ public class HellDemoniteBarItem : ModItem {
         Item.width = 20;
         Item.height = 20;
         Item.value = 750;
+        
+        Item.maxStack = Terraria.Item.CommonMaxStack;
+        
+        Item.rare = ItemRarityID.Orange;
     }
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<Tiles.Corruption.UnderworldDemoniteItem>(4)
+            .AddIngredient<Tiles.Corruption.UnderworldDemoniteItem>(3)
+            .AddIngredient<RawShadowScalesItem>()
             .AddTile(TileID.Furnaces)
             .Register();
     }

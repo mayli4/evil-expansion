@@ -22,10 +22,18 @@ public class MeatPrisonHead : ModItem {
         Item.width = 30;
         Item.height = 20;
         Item.value = 30000;
-        Item.rare = ItemRarityID.Blue;
+        Item.rare = ItemRarityID.LightRed;
         Item.defense = 6;
         
         Item.DamageType = DamageClass.Summon;
+    }
+    
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient<CrimtaneHellstoneBarItem>(7)
+            .AddIngredient<BoneSlicesItem>(2)
+            .AddTile(TileID.Anvils)
+            .Register();
     }
     
     public override void UpdateEquip(Player player) {
@@ -41,10 +49,6 @@ public class MeatPrisonHead : ModItem {
     public override bool IsArmorSet(Item head, Item body, Item legs) {
         return body.type == ModContent.ItemType<MeatPrisonBody>() && legs.type == ModContent.ItemType<MeatPrisonLegs>();
     }
-
-    public override void ModifyTooltips(List<TooltipLine> tooltips) {
-        
-    }
 }
 
 [AutoloadEquip(EquipType.Body)]
@@ -58,7 +62,7 @@ public class MeatPrisonBody : ModItem {
         Item.width = 30;
         Item.height = 20;
         Item.value = 30000;
-        Item.rare = ItemRarityID.Blue;
+        Item.rare = ItemRarityID.LightRed;
         Item.defense = 14;
         
         Item.DamageType = DamageClass.Summon;
@@ -73,6 +77,14 @@ public class MeatPrisonBody : ModItem {
     public override bool IsArmorSet(Item head, Item body, Item legs) {
         return head.type == ModContent.ItemType<MeatPrisonHead>() && legs.type == ModContent.ItemType<MeatPrisonLegs>();
     }
+    
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient<CrimtaneHellstoneBarItem>(15)
+            .AddIngredient<BoneSlicesItem>(5)
+            .AddTile(TileID.Anvils)
+            .Register();
+    }
 }
 
 [AutoloadEquip(EquipType.Legs)]
@@ -86,7 +98,7 @@ public class MeatPrisonLegs : ModItem {
         Item.width = 30;
         Item.height = 20;
         Item.value = Item.buyPrice(gold: 1);
-        Item.rare = ItemRarityID.Blue;
+        Item.rare = ItemRarityID.LightRed;
         Item.defense = 8;
         
         Item.DamageType = DamageClass.Summon;
@@ -98,6 +110,14 @@ public class MeatPrisonLegs : ModItem {
     
     public override bool IsArmorSet(Item head, Item body, Item legs) {
         return head.type == ModContent.ItemType<MeatPrisonHead>() && body.type == ModContent.ItemType<MeatPrisonBody>();
+    }
+    
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient<CrimtaneHellstoneBarItem>(5)
+            .AddIngredient<BoneSlicesItem>(2)
+            .AddTile(TileID.Anvils)
+            .Register();
     }
 }
 

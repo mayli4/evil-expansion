@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using EvilExpansionMod.Content.Tiles.Corruption;
+using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -25,7 +26,7 @@ public class HellbringerHead : ModItem {
         Item.width = 30;
         Item.height = 20;
         Item.value = 30000;
-        Item.rare = ItemRarityID.Blue;
+        Item.rare = ItemRarityID.LightRed;
         Item.defense = 6;
     }
 
@@ -36,6 +37,14 @@ public class HellbringerHead : ModItem {
 
     public override bool IsArmorSet(Item head, Item body, Item legs) {
         return body.type == ModContent.ItemType<HellbringerBody>() && legs.type == ModContent.ItemType<HellbringerLegs>();
+    }
+
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient<UnderworldDemoniteItem>(7)
+            .AddIngredient<ImputedFlameItem>(2)
+            .AddTile(TileID.Anvils)
+            .Register();
     }
 }
 
@@ -55,7 +64,7 @@ public class HellbringerBody : ModItem {
         Item.width = 30;
         Item.height = 20;
         Item.value = 30000;
-        Item.rare = ItemRarityID.Blue;
+        Item.rare = ItemRarityID.LightRed;
         Item.defense = 14;
     }
 
@@ -66,6 +75,14 @@ public class HellbringerBody : ModItem {
 
     public override bool IsArmorSet(Item head, Item body, Item legs) {
         return head.type == ModContent.ItemType<HellbringerHead>() && legs.type == ModContent.ItemType<HellbringerLegs>();
+    }
+
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient<UnderworldDemoniteItem>(15)
+            .AddIngredient<ImputedFlameItem>(5)
+            .AddTile(TileID.Anvils)
+            .Register();
     }
 }
 
@@ -84,7 +101,7 @@ public class HellbringerLegs : ModItem {
         Item.width = 30;
         Item.height = 20;
         Item.value = 30000;
-        Item.rare = ItemRarityID.Blue;
+        Item.rare = ItemRarityID.LightRed;
         Item.defense = 8;
     }
 
@@ -94,5 +111,13 @@ public class HellbringerLegs : ModItem {
 
     public override bool IsArmorSet(Item head, Item body, Item legs) {
         return head.type == ModContent.ItemType<HellbringerHead>() && body.type == ModContent.ItemType<HellbringerBody>();
+    }
+    
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient<UnderworldDemoniteItem>(2)
+            .AddIngredient<ImputedFlameItem>(2)
+            .AddTile(TileID.Anvils)
+            .Register();
     }
 }

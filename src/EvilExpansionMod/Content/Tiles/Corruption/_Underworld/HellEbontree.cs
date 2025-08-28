@@ -1,3 +1,4 @@
+using EvilExpansionMod.Content.Items.Food;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -736,13 +737,9 @@ public class HellEbontree : ModTile {
             }
             Item.NewItem(GetItemSource_FromTreeShake(x, y), x * 16, y * 16, 16, 16, type, num2);
         }
-
-        else if(genRand.NextBool(50) && !Main.dayTime) {
-            int type3 = Main.rand.NextFromList(new short[3] { NPCID.FairyCritterPink, NPCID.FairyCritterGreen, NPCID.FairyCritterBlue });
-            if(Main.tenthAnniversaryWorld && !Main.rand.NextBool(4)) {
-                type3 = NPCID.FairyCritterPink;
-            }
-            NPC.NewNPC(new EntitySource_ShakeTree(x, y), x * 16, y * 16, type3);
+        else if (genRand.NextBool(1)) {
+            int secondaryItemStack = ((!genRand.NextBool(2)) ? ModContent.ItemType<Lime>() : ModContent.ItemType<Soursop>());
+            Item.NewItem(GetItemSource_FromTreeShake(x, y), x * 16, y * 16, 16, 16, secondaryItemStack);
         }
         /*else if (genRand.NextBool(20)&& !IsPalmOasisTree(x)) { //Type == CreamPalmTree
             NPC.NewNPC(new EntitySource_ShakeTree(x, y), x * 16, y * 16, NPCID.Seagull2);

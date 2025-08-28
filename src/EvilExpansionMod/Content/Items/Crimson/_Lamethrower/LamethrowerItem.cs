@@ -3,7 +3,7 @@ using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Content.Items.Corruption;
+namespace EvilExpansionMod.Content.Items.Crimson;
 
 public class LamethrowerItem : ModItem {
     public override string Texture => Assets.Assets.Textures.Items.Corruption.Lamethrower.KEY_LamethrowerItem;

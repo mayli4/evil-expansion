@@ -2,7 +2,6 @@
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Dusts;
-using EvilExpansionMod.Content.Items.Corruption._HeadPounder;
 using EvilExpansionMod.Content.NPCs.Corruption;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
@@ -18,6 +17,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Items.Corruption;
+
 public class HeadPounderHeldProjectile : ModProjectile {
     Player Owner => Main.player[Projectile.owner];
 

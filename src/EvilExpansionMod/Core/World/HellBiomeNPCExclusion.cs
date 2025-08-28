@@ -1,40 +1,23 @@
 using EvilExpansionMod.Content.Biomes;
-using MonoMod.Cil;
-using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Core.World;
 
-//would be nice to be able to include modded npcs, but idk
-
-//broken lol, fix later
-internal sealed class HellBiomeExclusionSystem : ModSystem {
-    // public override void Load() {
-    //     IL_NPC.SpawnNPC += NPCSpawningEdit;
-    // }
-    //
-    // public override void Unload() {
-    //     IL_NPC.SpawnNPC -= NPCSpawningEdit;
-    // }
-    //
-    // //removes vanilla npcs from hell spawn pool while in an evil biome
-    // private void NPCSpawningEdit(ILContext il) {
-    //     ILCursor c = new ILCursor(il);
-    //     ILLabel IL_10d3d = null;
-    //     c.TryGotoNext(MoveType.After,
-    //         i => i.MatchBr(out _),
-    //         i => i.MatchLdloc(5),
-    //         i => i.MatchLdsfld<Main>("maxTilesY"),
-    //         i => i.MatchLdcI4(190),
-    //         i => i.MatchSub(),
-    //         i => i.MatchBle(out IL_10d3d));
-    //
-    //     c.EmitLdloc(14);
-    //     c.EmitDelegate((int k) =>
-    //     {
-    //         return !Main.player[k].InModBiome<UnderworldCorruptionBiome>() || Main.player[k].InModBiome<UnderworldCrimsonBiome>();
-    //     });
-    //     c.EmitBrfalse(IL_10d3d);
-    // }
+internal sealed class HellBiomeExclusionSystem : GlobalNPC {
+    public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo) {
+        foreach(var player in Main.ActivePlayers) {
+            if(player.InModBiome<UnderworldCorruptionBiome>()) {
+                if (pool.ContainsKey(0)) {
+                    pool[0] = 0f;
+                }
+            }
+            if(player.InModBiome<UnderworldCrimsonBiome>()) {
+                if (pool.ContainsKey(0)) {
+                    pool[0] = 0f;
+                }
+            }
+        }
+    }
 }

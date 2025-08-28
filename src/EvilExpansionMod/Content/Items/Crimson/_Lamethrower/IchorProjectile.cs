@@ -6,7 +6,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Content.Items.Corruption;
+namespace EvilExpansionMod.Content.Items.Crimson;
 public class IchorProjectile : ModProjectile {
     public override string Texture => Helper.PlaceholderTextureKey;
     public override void SetDefaults() {

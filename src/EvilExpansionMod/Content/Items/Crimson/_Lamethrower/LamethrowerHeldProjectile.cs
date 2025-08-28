@@ -9,7 +9,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Content.Items.Corruption;
+namespace EvilExpansionMod.Content.Items.Crimson;
 
 using Textures = Assets.Assets.Textures;
 

@@ -54,6 +54,7 @@ public class StinkflyNPC : ModNPC {
 
         NPC.aiStyle = NPCAIStyleID.Butterfly;
     }
+    
 
     public override void PostAI() {
         NPC closestGrub = null;

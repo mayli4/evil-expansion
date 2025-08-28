@@ -16,6 +16,8 @@ public class CrimtaneHellstoneBarItem : ModItem {
         Item.value = 750;
         
         Item.maxStack = Terraria.Item.CommonMaxStack;
+        
+        Item.rare = ItemRarityID.Orange;
     }
 
     public override void AddRecipes() {

@@ -1,4 +1,5 @@
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Items.Crimson;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -6,6 +7,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -63,6 +65,12 @@ public class LanternBatNPC : ModNPC {
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.buffImmune[BuffID.Bleeding] = true;
         NPC.lavaImmune = true;
+    }
+    
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.2f : 0;
+
+    public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
     }
     
     public override void OnSpawn(IEntitySource source) {

@@ -1,5 +1,6 @@
 ﻿using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Items.Crimson;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -9,6 +10,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -61,6 +63,10 @@ public class ThoughtfulCultistNPC : ModNPC {
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.05f : 0;
+    }
+
+    public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
     }
 
     public override void OnSpawn(IEntitySource source) {

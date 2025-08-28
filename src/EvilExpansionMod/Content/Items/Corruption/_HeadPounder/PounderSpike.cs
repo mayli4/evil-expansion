@@ -7,7 +7,8 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Content.Items.Corruption._HeadPounder;
+namespace EvilExpansionMod.Content.Items.Corruption;
+
 public class PounderSpike : ModProjectile {
     public override string Texture => Assets.Assets.Textures.Items.Corruption.HeadPounder.KEY_PounderSpike;
 

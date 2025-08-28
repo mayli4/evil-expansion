@@ -1,4 +1,5 @@
 ﻿using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Items.Crimson;
 using EvilExpansionMod.Content.NPCs.Crimson._MarrowEye;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -6,6 +7,7 @@ using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -57,6 +59,12 @@ public class MarrowEyeNPC : ModNPC {
         NPC.lavaImmune = true;
     }
 
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.2f : 0;
+
+    public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
+    }
+    
     public override void OnSpawn(IEntitySource source) {
         var randomRotation = MathF.PI / 2f + Main.rand.NextFloatDirection() * MathF.PI / 6f;
         var randomDirection = randomRotation.ToRotationVector2();

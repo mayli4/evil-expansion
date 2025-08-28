@@ -22,7 +22,7 @@ public class MeatPrisonHead : ModItem {
         Item.width = 30;
         Item.height = 20;
         Item.value = 30000;
-        Item.rare = ItemRarityID.Blue;
+        Item.rare = ItemRarityID.LightRed;
         Item.defense = 6;
         
         Item.DamageType = DamageClass.Summon;
@@ -32,7 +32,7 @@ public class MeatPrisonHead : ModItem {
         CreateRecipe()
             .AddIngredient<CrimtaneHellstoneBarItem>(7)
             .AddIngredient<BoneSlicesItem>(2)
-            .AddTile(TileID.MythrilAnvil)
+            .AddTile(TileID.Anvils)
             .Register();
     }
     
@@ -62,7 +62,7 @@ public class MeatPrisonBody : ModItem {
         Item.width = 30;
         Item.height = 20;
         Item.value = 30000;
-        Item.rare = ItemRarityID.Blue;
+        Item.rare = ItemRarityID.LightRed;
         Item.defense = 14;
         
         Item.DamageType = DamageClass.Summon;
@@ -82,7 +82,7 @@ public class MeatPrisonBody : ModItem {
         CreateRecipe()
             .AddIngredient<CrimtaneHellstoneBarItem>(15)
             .AddIngredient<BoneSlicesItem>(5)
-            .AddTile(TileID.MythrilAnvil)
+            .AddTile(TileID.Anvils)
             .Register();
     }
 }
@@ -98,7 +98,7 @@ public class MeatPrisonLegs : ModItem {
         Item.width = 30;
         Item.height = 20;
         Item.value = Item.buyPrice(gold: 1);
-        Item.rare = ItemRarityID.Blue;
+        Item.rare = ItemRarityID.LightRed;
         Item.defense = 8;
         
         Item.DamageType = DamageClass.Summon;
@@ -114,9 +114,9 @@ public class MeatPrisonLegs : ModItem {
     
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<CrimtaneHellstoneBarItem>(2)
-            .AddIngredient<BoneSlicesItem>(5)
-            .AddTile(TileID.MythrilAnvil)
+            .AddIngredient<CrimtaneHellstoneBarItem>(5)
+            .AddIngredient<BoneSlicesItem>(2)
+            .AddTile(TileID.Anvils)
             .Register();
     }
 }

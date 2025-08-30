@@ -1,3 +1,4 @@
+using EvilExpansionMod.Content.Items.Crimson;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -10,27 +11,20 @@ namespace EvilExpansionMod.Content.Items.Corruption;
 
 public class NormalRevolverItem : ModItem {
     public override string Texture => Assets.Assets.Textures.Items.Corruption.Planetoids.KEY_NormalRevolver;
-
+    
     public override void SetDefaults() {
-        Item.DefaultToVanitypet(ModContent.ProjectileType<NormalPlanetoidProjectile>(), BuffID.AbigailMinion);
-        
+        Item.CloneDefaults(ItemID.ZephyrFish);
+
         Item.shoot = ModContent.ProjectileType<NormalPlanetoidProjectile>();
         Item.buffType = ModContent.BuffType<NormalPlanetoidBuff>();
-        
-        Item.width = 30;
-        Item.height = 30;
-        Item.value = Item.sellPrice(gold: 5);
-        Item.rare = ItemRarityID.Pink;
-    }
-    
-    
-    public override bool? UseItem(Player player) {
-        if (player.altFunctionUse == 2) {
-            return false;
-        }
 
-        player.AddBuff(Item.buffType, 2); 
-        return true;
+        Item.value = Item.sellPrice(0, 5, 0, 0);
+    }
+
+    public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
+        player.AddBuff(Item.buffType, 2);
+
+        return false;
     }
 }
 
@@ -38,18 +32,13 @@ public class NormalPlanetoidBuff : ModBuff {
     public override string Texture => Assets.Assets.Textures.Items.Corruption.Planetoids.KEY_NormalPlanetoidBuff;
 
     public override void SetStaticDefaults() {
-        Main.buffNoSave[Type] = true;
         Main.buffNoTimeDisplay[Type] = true;
+        Main.vanityPet[Type] = true;
     }
 
     public override void Update(Player player, ref int buffIndex) {
-        if (player.ownedProjectileCounts[ModContent.ProjectileType<NormalPlanetoidProjectile>()] > 0) {
-            player.buffTime[buffIndex] = 18000;
-        }
-        else {
-            Projectile.NewProjectile(player.GetSource_Buff(buffIndex), player.Center, Vector2.Zero, ModContent.ProjectileType<NormalPlanetoidProjectile>(), 0, 0f, player.whoAmI);
-            player.buffTime[buffIndex] = 18000;
-        }
+        bool _ = false;
+        player.BuffHandle_SpawnPetIfNeededAndSetTime(buffIndex, ref _, ModContent.ProjectileType<NormalPlanetoidProjectile>());
     }
 }
 
@@ -78,8 +67,18 @@ public class NormalPlanetoidProjectile : ModProjectile {
     private float _faceRotationSpeed;
 
     public override void SetStaticDefaults() {
-        Main.projPet[Type] = true;
-        ProjectileID.Sets.LightPet[Type] = false;
+        Main.projPet[Projectile.type] = true;
+        ProjectileID.Sets.CharacterPreviewAnimations[Projectile.type] = ProjectileID.Sets.SimpleLoop(0, Main.projFrames[Projectile.type], 5)
+            .WithOffset(-2, -22f)
+            .WithCode(CharacterPreviewCustomization);
+    }
+    
+    public static void CharacterPreviewCustomization(Projectile proj, bool walking) {
+        float half = 0.5f;
+        float timer = (float)Main.timeForVisualEffects % 60f / 60f;
+        float speed = 1f;
+        proj.position.Y += half + (float)(Math.Cos(timer * MathHelper.TwoPi * speed) * half * 2f);
+        proj.position.X -= 10;
     }
 
     public override void SetDefaults() {

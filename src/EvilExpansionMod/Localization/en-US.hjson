@@ -330,6 +330,11 @@ Mods: {
 				DisplayName: Underworld Crimson Biome
 				TownNPCDialogueName: The Underworld Crimson Biome
 			}
+
+			UnderworldCrimson: {
+				DisplayName: Underworld Crimson
+				TownNPCDialogueName: the Underworld Crimson
+			}
 		}
 
 		Tiles: {

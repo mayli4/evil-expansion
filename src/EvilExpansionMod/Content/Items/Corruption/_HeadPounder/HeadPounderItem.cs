@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using EvilExpansionMod.Content.Items.Crimson;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -44,4 +45,9 @@ public class HeadPounderItem : ModItem {
     public override bool CanUseItem(Player player) {
         return player.ownedProjectileCounts[Item.shoot] == 0;
     }
+
+    public override void AddRecipes() 
+        => CreateRecipe()
+            .AddIngredient(ModContent.ItemType<HellDemoniteBarItem>(), 18)
+            .Register();
 }

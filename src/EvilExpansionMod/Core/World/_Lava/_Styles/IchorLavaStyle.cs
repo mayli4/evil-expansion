@@ -43,8 +43,7 @@ public class IchorLavaStyle : ModLavaStyle {
         const int max_solid_tiles_per_scan = 5;
 
         for(int i = 0; i < max_scan_range; i++) {
-
-            Tile scanTile = Main.tile[x, currentScanY];
+            var scanTile = Main.tile[x, currentScanY];
 
             if(scanTile.LiquidType == LiquidID.Lava && scanTile.LiquidAmount > 0) {
                 solidTilesPassedAboveLiquid = 0;

@@ -192,7 +192,7 @@ public class CorruptFireblossom : ModTile {
 }
 
 public sealed class CorruptFireblossomSeeds : ModItem {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_CorruptFireblossom;
+    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_CorruptFireblossomSeeds;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 25;
     }

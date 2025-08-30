@@ -222,6 +222,26 @@ Mods: {
 				DisplayName: Soursop
 				Tooltip: ""
 			}
+
+			CorruptAshwoodItem: {
+				DisplayName: Corrupt Ashwood Item
+				Tooltip: ""
+			}
+
+			Crytapete: {
+				DisplayName: Crytapete
+				Tooltip: ""
+			}
+
+			CharredBloodwoodItem: {
+				DisplayName: Charred Bloodwood Item
+				Tooltip: ""
+			}
+
+			CrytapeteItem: {
+				DisplayName: Crytapete Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -290,6 +310,8 @@ Mods: {
 			SpamonAStickProjectile.DisplayName: Spamon A Stick Projectile
 			CorruptionJackhammerProjectile.DisplayName: Corruption Jackhammer Projectile
 			CrimsonDrillProjectile.DisplayName: Crimson Drill Projectile
+			CrytapeteFlame.DisplayName: Crytapete Flame
+			CrytapeteMinion.DisplayName: Crytapete Minion
 			CutProjectile.DisplayName: Cut Projectile
 		}
 
@@ -339,6 +361,11 @@ Mods: {
 			NormalPlanetoidBuff: {
 				DisplayName: Normal Planetoid
 				Description: It will follow you!
+			}
+
+			CrytapeteBuff: {
+				DisplayName: Crytapete Buff
+				Description: Mods.EvilExpansionMod.Buffs.CrytapeteBuff.Description
 			}
 		}
 	}

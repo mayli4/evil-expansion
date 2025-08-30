@@ -51,4 +51,8 @@ public static class VectorExtensions {
         direction = preRotationDirection.RotatedBy(-MathF.Atan(offset / length));
         return vector + preRotationDirection.RotatedBy(MathHelper.PiOver2) * offset;
     }
+    
+    public static Vector2 ToNearestPixel(this Vector2 vector) {
+        return new Vector2((float)Math.Round(vector.X), (float)Math.Round(vector.Y));
+    }
 }

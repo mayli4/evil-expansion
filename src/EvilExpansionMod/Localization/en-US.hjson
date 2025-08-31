@@ -241,6 +241,11 @@ Mods: {
 					They randomly start crying, making their tears inaccurate
 					'''
 			}
+
+			PusSlugItem: {
+				DisplayName: Pus Slug
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -254,12 +259,13 @@ Mods: {
 			CultistEye.DisplayName: Cultist Eye
 			PusImpNPC.DisplayName: Pus Imp
 			StinkgrubNPC.DisplayName: Stinkgrub
-			PusBottleNPC.DisplayName: Pus Bottle
+			PusBottleNPC.DisplayName: 
 			StinkflyNPC.DisplayName: Stinkfly
 			SmallStinkflyNPC.DisplayName: Small Stinkfly
 			SmallStinkflyNpc.DisplayName: Small Stinkfly
 			MarrowEyeNPC.DisplayName: Marrow Eye
 			LanternBatNPC.DisplayName: Lantern Bat
+			PusSlugCritter.DisplayName: Pus Slug
 		}
 
 		Projectiles: {

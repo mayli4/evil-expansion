@@ -13,8 +13,8 @@ public sealed class PusSlugCritter : ModNPC {
     }
     
     public override void SetDefaults() {
-        NPC.width = 14;
-        NPC.height = 14;
+        NPC.width = 1;
+        NPC.height = 4;
         NPC.lifeMax = 15;
         NPC.value = 0f;
         NPC.noTileCollide = false;

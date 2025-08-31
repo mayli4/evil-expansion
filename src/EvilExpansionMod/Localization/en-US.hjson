@@ -296,8 +296,8 @@ Mods: {
 			MarrowEyeNPC.DisplayName: Marrow Eye
 			LanternBatNPC.DisplayName: Lantern Bat
 			PusSlugCritter.DisplayName: Pus Slug
-			CursedCanariCritter.DisplayName: Cursed Canari Critter
-			LavaLizardCritter.DisplayName: Lava Lizard Critter
+			CursedCanariCritter.DisplayName: Cursed Canari
+			LavaLizardCritter.DisplayName: Lava Lizard
 		}
 
 		Projectiles: {

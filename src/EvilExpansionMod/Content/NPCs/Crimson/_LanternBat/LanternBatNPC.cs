@@ -1,5 +1,6 @@
 using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.Items.Crimson;
+using EvilExpansionMod.Content.Tiles.Banners;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -65,6 +66,9 @@ public class LanternBatNPC : ModNPC {
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.buffImmune[BuffID.Bleeding] = true;
         NPC.lavaImmune = true;
+        
+        Banner = NPC.type;
+        BannerItem = ModContent.ItemType<LanternBatBannerItem>();
     }
     
     public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.2f : 0;

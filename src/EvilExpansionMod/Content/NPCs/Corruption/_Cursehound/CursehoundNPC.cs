@@ -18,8 +18,6 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
-//todo balancing, stalactite telegraph and more sounds
-
 public sealed class CursehoundNPC : ModNPC {
     public enum State {
         Idle,
@@ -100,7 +98,7 @@ public sealed class CursehoundNPC : ModNPC {
     }
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
-        npcLoot.Add(ItemDropRule.Common(ItemID.ShadowScale, 1, 3, 6));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>(), 1, 1, 2));
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 1, 2, 3));
     }
 
@@ -482,6 +480,8 @@ public sealed class CursehoundNPC : ModNPC {
                 NPC.frameCounter += 0.2f;
                 if(NPC.frameCounter >= 6) {
                     NPC.frameCounter = 0;
+                    //ueah i hate this but im lazy
+                    SoundEngine.PlaySound(Assets.Assets.Sounds.Cursehound.CursehoundStep1 with { Pitch = 0.0f, PitchVariance = 0.4f }, NPC.Center);
                 }
                 NPC.frame.Y = (23 + (int)NPC.frameCounter) * frameHeight;
                 break;

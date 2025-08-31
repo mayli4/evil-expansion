@@ -1,6 +1,7 @@
 ﻿using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.Items.Crimson;
+using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -57,8 +58,8 @@ public class ThoughtfulCultistNPC : ModNPC {
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
 
-        // Banner = NPC.type;
-        // BannerItem = ModContent.ItemType<CursedSpiritBannerItem>();
+        Banner = NPC.type;
+        BannerItem = ModContent.ItemType<ThoughtfulCultistBannerItem>();
     }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {

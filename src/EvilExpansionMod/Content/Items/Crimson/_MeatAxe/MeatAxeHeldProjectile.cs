@@ -115,7 +115,7 @@ public class MeatAxeHeldProjectile : ModProjectile {
         }
 
         if(Progress == 0f) {
-            var swing2 = Assets.Assets.Sounds.Item.MeatAxeSwing with { Pitch = 0.0f, PitchVariance = 0.5f };
+            var swing2 = Assets.Assets.Sounds.Item.MeatAxeSwing with { Pitch = 0.0f, PitchVariance = 0.3f };
             SoundEngine.PlaySound(swing2, Projectile.Center);
         }
 

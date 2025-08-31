@@ -23,27 +23,27 @@ Mods: {
 
 			CursedSpiritBannerItem: {
 				DisplayName: Cursed Spirit Banner
-				Tooltip: ""
+				Tooltip: Nearby Players get a bonus against: Cursed Spirit
 			}
 
 			CursehoundBannerItem: {
 				DisplayName: Cursehound Banner
-				Tooltip: ""
+				Tooltip: Nearby Players get a bonus against: Cursehound
 			}
 
 			DevilOWarBannerItem: {
 				DisplayName: Devil O War Banner
-				Tooltip: ""
+				Tooltip: Nearby Players get a bonus against: Devil O' war
 			}
 
 			EffigyBannerItem: {
 				DisplayName: Effigy Banner
-				Tooltip: ""
+				Tooltip: Nearby Players get a bonus against: Effigy
 			}
 
 			TerrorbatBannerItem: {
 				DisplayName: Terrorbat Banner
-				Tooltip: ""
+				Tooltip: Nearby Players get a bonus against: Terror Bat
 			}
 
 			CorruptFireblossomItem: {
@@ -248,8 +248,33 @@ Mods: {
 			}
 
 			LavaLizardItem: {
-				DisplayName: Lava Lizard Item
+				DisplayName: Lava Lizard
 				Tooltip: ""
+			}
+
+			LanternBatBannerItem: {
+				DisplayName: Lantern Bat Banner
+				Tooltip: Nearby Players get a bonus against: Lantern Bat
+			}
+
+			MarrowEyeBannerItem: {
+				DisplayName: Marrow Eye Banner
+				Tooltip: Nearby Players get a bonus against: Marrow Eye
+			}
+
+			PusImpBannerItem: {
+				DisplayName: Pus Imp Banner
+				Tooltip: Nearby Players get a bonus against: Pus Imp
+			}
+
+			StinkgrubBannerItem: {
+				DisplayName: Stinkgrub Banner
+				Tooltip: Nearby Players get a bonus against: Stinkgrub
+			}
+
+			ThoughtfulCultistBannerItem: {
+				DisplayName: Thoughtful Cultist Banner
+				Tooltip: Nearby Players get a bonus against: Thoughtful Cultist
 			}
 		}
 

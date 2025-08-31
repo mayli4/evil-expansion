@@ -1,5 +1,6 @@
 using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.Items.Crimson;
+using EvilExpansionMod.Content.Tiles.Banners;
 using Microsoft.Xna.Framework;
 using System;
 using System.Runtime.CompilerServices;
@@ -62,6 +63,9 @@ public sealed class StinkgrubNPC : ModNPC {
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.buffImmune[BuffID.Poisoned] = true;
         NPC.lavaImmune = true;
+        
+        Banner = NPC.type;
+        BannerItem = ModContent.ItemType<StinkgrubBannerItem>();
     }
     
     public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.2f : 0;

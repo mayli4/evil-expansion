@@ -1,6 +1,7 @@
 ﻿using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.Items.Crimson;
-using EvilExpansionMod.Content.NPCs.Crimson._MarrowEye;
+using EvilExpansionMod.Content.NPCs.Crimson;
+using EvilExpansionMod.Content.Tiles.Banners;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -57,6 +58,9 @@ public class MarrowEyeNPC : ModNPC {
         NPC.buffImmune[BuffID.Ichor] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
+        
+        Banner = NPC.type;
+        BannerItem = ModContent.ItemType<MarrowEyeBannerItem>();
     }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.2f : 0;

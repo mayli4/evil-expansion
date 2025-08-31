@@ -1,4 +1,5 @@
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -68,6 +69,9 @@ public class PusImpNPC : ModNPC {
         NPC.buffImmune[BuffID.Ichor] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
+        
+        Banner = NPC.type;
+        BannerItem = ModContent.ItemType<PusImpBannerItem>();
     }
 
     public override void AI() {

@@ -1,26 +1,54 @@
-﻿using Terraria.ID;
+﻿using EvilExpansionMod.Content.NPCs.Corruption;
+using EvilExpansionMod.Content.NPCs.Crimson;
+using Terraria;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Tiles.Banners;
 
 internal sealed class DevilOWarBannerTile : ModBannerTile {
     public override string Texture => Assets.Assets.Textures.Tiles.Banners.KEY_DevilOWarBannerTile;
+    
+    public override void NearbyEffects(int i, int j, bool closer) {
+        Main.SceneMetrics.hasBanner = true;
+        Main.SceneMetrics.NPCBannerBuff[ModContent.NPCType<DevilOWarNPC>()] = true;
+    }
 }
 
 internal sealed class TerrorbatBannerTile : ModBannerTile {
     public override string Texture => Assets.Assets.Textures.Tiles.Banners.KEY_TerrorbatBannerTile;
+    
+    public override void NearbyEffects(int i, int j, bool closer) {
+        Main.SceneMetrics.hasBanner = true;
+        Main.SceneMetrics.NPCBannerBuff[ModContent.NPCType<TerrorBatNPC>()] = true;
+    }
 }
 
 internal sealed class CursehoundBannerTile : ModBannerTile {
     public override string Texture => Assets.Assets.Textures.Tiles.Banners.KEY_CursehoundBannerTile;
+    
+    public override void NearbyEffects(int i, int j, bool closer) {
+        Main.SceneMetrics.hasBanner = true;
+        Main.SceneMetrics.NPCBannerBuff[ModContent.NPCType<CursehoundNPC>()] = true;
+    }
 }
 
 internal sealed class CursedSpiritBannerTile : ModBannerTile {
     public override string Texture => Assets.Assets.Textures.Tiles.Banners.KEY_CursedSpiritBannerTile;
+    
+    public override void NearbyEffects(int i, int j, bool closer) {
+        Main.SceneMetrics.hasBanner = true;
+        Main.SceneMetrics.NPCBannerBuff[ModContent.NPCType<CursedSpiritNPC>()] = true;
+    }
 }
 
 internal sealed class EffigyBannerTile : ModBannerTile {
     public override string Texture => Assets.Assets.Textures.Tiles.Banners.KEY_EffigyBannerTile;
+    
+    public override void NearbyEffects(int i, int j, bool closer) {
+        Main.SceneMetrics.hasBanner = true;
+        Main.SceneMetrics.NPCBannerBuff[ModContent.NPCType<EffigyNPC>()] = true;
+    }
 }
 
 public class DevilOWarBannerItem : ModItem {
@@ -39,6 +67,8 @@ public class DevilOWarBannerItem : ModItem {
         Item.createTile = ModContent.TileType<DevilOWarBannerTile>();
         Item.width = 12;
         Item.height = 12;
+        
+        Item.rare = ItemRarityID.Blue;
     }
 }
 
@@ -58,6 +88,8 @@ public class TerrorbatBannerItem : ModItem {
         Item.createTile = ModContent.TileType<TerrorbatBannerTile>();
         Item.width = 12;
         Item.height = 12;
+        
+        Item.rare = ItemRarityID.Blue;
     }
 }
 
@@ -77,6 +109,8 @@ public class CursehoundBannerItem : ModItem {
         Item.createTile = ModContent.TileType<CursehoundBannerTile>();
         Item.width = 12;
         Item.height = 12;
+        
+        Item.rare = ItemRarityID.Blue;
     }
 }
 
@@ -96,6 +130,8 @@ public class CursedSpiritBannerItem : ModItem {
         Item.createTile = ModContent.TileType<CursedSpiritBannerTile>();
         Item.width = 12;
         Item.height = 12;
+        
+        Item.rare = ItemRarityID.Blue;
     }
 }
 
@@ -115,5 +151,7 @@ public class EffigyBannerItem : ModItem {
         Item.createTile = ModContent.TileType<EffigyBannerTile>();
         Item.width = 12;
         Item.height = 12;
+        
+        Item.rare = ItemRarityID.Blue;
     }
 }

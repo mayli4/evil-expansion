@@ -228,19 +228,18 @@ Mods: {
 				Tooltip: ""
 			}
 
-			Crytapete: {
-				DisplayName: Crytapete
-				Tooltip: ""
-			}
-
 			CharredBloodwoodItem: {
 				DisplayName: Charred Bloodwood Item
 				Tooltip: ""
 			}
 
 			CrytapeteItem: {
-				DisplayName: Crytapete Item
-				Tooltip: ""
+				DisplayName: Crytapete
+				Tooltip:
+					'''
+					Summons crytapetes who ride atop your head
+					They randomly start crying, making their tears inaccurate
+					'''
 			}
 		}
 
@@ -313,6 +312,7 @@ Mods: {
 			CrytapeteFlame.DisplayName: Crytapete Flame
 			CrytapeteMinion.DisplayName: Crytapete Minion
 			CutProjectile.DisplayName: Cut Projectile
+			CrytapeteTear.DisplayName: Crytapete Tear
 		}
 
 		Biomes: {

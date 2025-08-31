@@ -246,6 +246,11 @@ Mods: {
 				DisplayName: Pus Slug
 				Tooltip: ""
 			}
+
+			LavaLizardItem: {
+				DisplayName: Lava Lizard Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -259,13 +264,15 @@ Mods: {
 			CultistEye.DisplayName: Cultist Eye
 			PusImpNPC.DisplayName: Pus Imp
 			StinkgrubNPC.DisplayName: Stinkgrub
-			PusBottleNPC.DisplayName: 
-			StinkflyNPC.DisplayName: Stinkfly
+			PusBottleNPC.DisplayName: StinkflyNPC.DisplayName: Stinkfly
 			SmallStinkflyNPC.DisplayName: Small Stinkfly
 			SmallStinkflyNpc.DisplayName: Small Stinkfly
 			MarrowEyeNPC.DisplayName: Marrow Eye
 			LanternBatNPC.DisplayName: Lantern Bat
 			PusSlugCritter.DisplayName: Pus Slug
+			CursedCanariCritter.DisplayName: Cursed Canari Critter
+			LavaLizardCritter.DisplayName: Lava Lizard Critter
+			StinkflyNPC.DisplayName: Stinkfly N P C
 		}
 
 		Projectiles: {

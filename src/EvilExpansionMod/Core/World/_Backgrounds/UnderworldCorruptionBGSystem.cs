@@ -46,7 +46,7 @@ public class UnderworldCorruptionBGSystem : ModSystem {
     public override void PostUpdateEverything() {
         var inBiome = Main.LocalPlayer.InModBiome<UnderworldCorruptionBiome>();
 
-        if (inBiome) {
+        if(inBiome) {
             _fadeOpacity = Math.Min(_fadeOpacity + fade_speed, 1f);
         }
         else {
@@ -83,7 +83,7 @@ public class UnderworldCorruptionBGSystem : ModSystem {
     }
 
     protected void DrawCorruptionUnderworldBackground(bool flat) {
-        if (_fadeOpacity <= 0f)
+        if(_fadeOpacity <= 0f)
             return;
 
         if(!(Main.screenPosition.Y + Main.screenHeight < (Main.maxTilesY - 220) * 16f)) {
@@ -182,6 +182,7 @@ public class UnderworldCorruptionBGSystem : ModSystem {
                 break;
         }
 
+        num8 *= 1.2f;
         if(flat) {
             num8 *= 1.5f;
         }

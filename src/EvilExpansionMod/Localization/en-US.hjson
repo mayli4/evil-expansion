@@ -361,6 +361,7 @@ Mods: {
 			CutProjectile.DisplayName: Cut Projectile
 			CrytapeteTear.DisplayName: Crytapete Tear
 			FireInALanternFlame.DisplayName: Fire In A Lantern Flame
+			LingeringIchorProjectile.DisplayName: Lingering Ichor Projectile
 		}
 
 		Biomes: {

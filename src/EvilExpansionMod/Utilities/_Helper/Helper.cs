@@ -1,5 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using System;
+using System.Runtime.CompilerServices;
 using Terraria;
 
 namespace EvilExpansionMod.Utilities;
@@ -48,5 +49,38 @@ public static partial class Helper {
         }
 
         return true;
+    }
+
+    public static bool SAT(ReadOnlySpan<Vector2> p1, ReadOnlySpan<Vector2> p2) {
+        if(!CheckFirst(p1, p2)) return false;
+        return CheckFirst(p2, p1);
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static bool CheckFirst(ReadOnlySpan<Vector2> p1, ReadOnlySpan<Vector2> p2) {
+            for(var i = 0; i < p1.Length; i++) {
+                var a = p1[i];
+                var b = p1[(i + 1) % p1.Length];
+
+                var normal = new Vector2(b.Y - a.Y, a.X - b.X);
+                var (minP1, maxP1) = MinMaxProjection(p1, normal);
+                var (minP2, maxP2) = MinMaxProjection(p2, normal);
+                if(maxP1 < minP2 || maxP2 < minP1) return false;
+            }
+
+            return true;
+
+            static (float, float) MinMaxProjection(ReadOnlySpan<Vector2> points, Vector2 normal) {
+                var value0 = points[0].X * normal.X + points[0].Y * normal.Y;
+                var min = value0;
+                var max = value0;
+                for(var i = 1; i < points.Length; i++) {
+                    var value = points[i].X * normal.X + points[i].Y * normal.Y;
+                    if(value < min) min = value;
+                    if(value > max) max = value;
+                }
+
+                return (min, max);
+            }
+        }
     }
 }

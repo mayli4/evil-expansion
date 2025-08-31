@@ -125,25 +125,79 @@ static partial class Helper {
 
         return true;
     }
-    
+
     public static void AnchorSelfTo(this ModTile tile, params int[] types) => AnchorSelfTo(tile.Type, types);
 
     /// <inheritdoc cref="AnchorSelfTo"/>
-    public static void AnchorSelfTo(int modTileType, params int[] types)
-    {
-        foreach (int type in types)
-        {
-            if (TileObjectData.GetTileData(type, 0) is TileObjectData data && data.AnchorValidTiles != null)
+    public static void AnchorSelfTo(int modTileType, params int[] types) {
+        foreach(int type in types) {
+            if(TileObjectData.GetTileData(type, 0) is TileObjectData data && data.AnchorValidTiles != null)
                 data.AnchorValidTiles = [.. data.AnchorValidTiles, modTileType];
         }
     }
-    
-    public static void Merge(this ModTile tile, params int[] otherIds)
-    {
-        foreach (int id in otherIds)
-        {
+
+    public static void Merge(this ModTile tile, params int[] otherIds) {
+        foreach(int id in otherIds) {
             Main.tileMerge[tile.Type][id] = true;
             Main.tileMerge[id][tile.Type] = true;
         }
+    }
+
+    public static int TilesLineCollision(Span<Point> tiles, Vector2 start, Vector2 end, float width) {
+        if(tiles.Length == 0) return 0;
+
+        var delta = end - start;
+        var length = delta.Length();
+        if(length == 0) {
+            tiles[0] = start.ToTileCoordinates();
+            return 1;
+        }
+
+        var borderOffset = new Vector2(-delta.Y, delta.X) / length * width / 2f;
+        Span<Vector2> points =
+        [
+            start - borderOffset,
+            start + borderOffset,
+            end + borderOffset,
+            end - borderOffset,
+        ];
+
+        var minX = points[0].X;
+        var maxX = points[0].X;
+        var minY = points[0].Y;
+        var maxY = points[0].Y;
+        for(var i = 1; i < points.Length; i++) {
+            if(points[i].X < minX) minX = points[i].X;
+            if(points[i].X > maxX) maxX = points[i].X;
+            if(points[i].Y < minY) minY = points[i].Y;
+            if(points[i].Y > maxY) maxY = points[i].Y;
+        }
+
+        var mink = (int)(minX / 16);
+        var maxK = (int)(maxX / 16) + 1;
+        var l = (int)(minY / 16);
+        var maxL = (int)(maxY / 16) + 1;
+
+        var j = 0;
+        for(; l < maxL; l++) {
+            for(var k = mink; k < maxK; k++) {
+                Span<Vector2> tilePoints =
+                [
+                    new(k * 16f, l * 16f),
+                    new((k + 1) * 16f, l * 16f),
+                    new((k + 1) * 16f, (l + 1) * 16f),
+                    new(k * 16f, (l + 1) * 16f),
+                ];
+
+                if(SAT(points, tilePoints)) {
+                    if(tiles.Length == j) return j;
+
+                    tiles[j] = new(k, l);
+                    j += 1;
+                }
+            }
+        }
+
+        return j;
     }
 }

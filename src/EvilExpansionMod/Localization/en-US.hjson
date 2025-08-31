@@ -360,6 +360,7 @@ Mods: {
 			CrytapeteMinion.DisplayName: Crytapete Minion
 			CutProjectile.DisplayName: Cut Projectile
 			CrytapeteTear.DisplayName: Crytapete Tear
+			FireInALanternFlame.DisplayName: Fire In A Lantern Flame
 		}
 
 		Biomes: {

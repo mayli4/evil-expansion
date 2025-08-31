@@ -67,18 +67,35 @@ public class PlanetoidSpawnerItem : ModItem {
     public override bool CanRightClick() => true;
     public override bool ConsumeItem(Player player) => false;
 
+    public override void Update(ref float gravity, ref float maxFallSpeed) {
+        if (Main.netMode == NetmodeID.MultiplayerClient) {
+            return;
+        }
 
-    public override void RightClick(Player player) {
-        // Only perform conversion if Purification Powder is held
-        if (player.HeldItem.type == ItemID.PurificationPowder) {
-            SoundEngine.PlaySound(SoundID.Item4, player.Center);
-            player.ConsumeItem(ItemID.PurificationPowder);
+        for (int i = 0; i < Main.maxProjectiles; i++) {
+            Projectile proj = Main.projectile[i];
+            if (proj.active && proj.friendly && proj.Hitbox.Intersects(Item.Hitbox)) {
+                bool shouldConvert = false;
 
-            Item.SetDefaults(ModContent.ItemType<NormalRevolverItem>());
-            
-            Item.stack++;
-            player.QuickSpawnItem(player.GetSource_OpenItem(ModContent.ItemType<NormalRevolverItem>()), Item);
-            Item.stack--;
+                if (proj.type == ProjectileID.PurificationPowder || proj.type == ProjectileID.HolyWater || proj.type == ProjectileID.PureSpray) {
+                    shouldConvert = true;
+                }
+
+                if (shouldConvert) {
+                    SoundEngine.PlaySound(SoundID.Item4, Item.Center);
+
+                    Item.NewItem(
+                        Item.GetSource_OnHit(proj),
+                        Item.Center,
+                        ModContent.ItemType<NormalRevolverItem>(),
+                        Item.stack
+                    );
+
+                    Item.stack = 0; 
+                    Item.active = false;
+                    break; 
+                }
+            }
         }
     }
 }

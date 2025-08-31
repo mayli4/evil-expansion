@@ -81,5 +81,7 @@ public class VeinOreItem : ModItem {
         Item.autoReuse = true;
         Item.useAnimation = 15;
         Item.useTime = 10;
+        
+        Item.rare = ItemRarityID.Orange;
     }
 }

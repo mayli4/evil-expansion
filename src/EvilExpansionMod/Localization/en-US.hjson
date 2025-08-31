@@ -135,7 +135,7 @@ Mods: {
 
 			ThoughtfulPendantItem: {
 				DisplayName: Thoughtful Pendant
-				Tooltip: ""
+				Tooltip: Has a chance to summon portals around the players cursor while attacking
 			}
 
 			ImputedFlameItem: {
@@ -275,6 +275,15 @@ Mods: {
 			ThoughtfulCultistBannerItem: {
 				DisplayName: Thoughtful Cultist Banner
 				Tooltip: Nearby Players get a bonus against: Thoughtful Cultist
+			}
+
+			FireInALanternItem: {
+				DisplayName: Fire In A Lantern
+				Tooltip:
+					'''
+					Allows the user to double jump
+					Emits flames
+					'''
 			}
 		}
 

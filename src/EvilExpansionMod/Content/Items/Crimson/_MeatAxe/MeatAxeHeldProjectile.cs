@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -111,6 +112,11 @@ public class MeatAxeHeldProjectile : ModProjectile {
                     }
                 }
             }
+        }
+
+        if(Progress == 0f) {
+            var swing2 = Assets.Assets.Sounds.Item.MeatAxeSwing with { Pitch = 0.0f, PitchVariance = 0.5f };
+            SoundEngine.PlaySound(swing2, Projectile.Center);
         }
 
         Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2);

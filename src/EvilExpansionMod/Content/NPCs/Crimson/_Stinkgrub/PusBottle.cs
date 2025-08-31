@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -38,6 +39,10 @@ public class PusBottleNPC : ModNPC {
 
         NPC.HitSound = SoundID.NPCHit3;
         NPC.DeathSound = SoundID.Shatter;
+    }
+    
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        database.Entries.Remove(bestiaryEntry);
     }
 
     public override void AI() {

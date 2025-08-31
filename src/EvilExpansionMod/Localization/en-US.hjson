@@ -264,7 +264,8 @@ Mods: {
 			CultistEye.DisplayName: Cultist Eye
 			PusImpNPC.DisplayName: Pus Imp
 			StinkgrubNPC.DisplayName: Stinkgrub
-			PusBottleNPC.DisplayName: StinkflyNPC.DisplayName: Stinkfly
+			PusBottleNPC.DisplayName: Bottle
+			StinkflyNPC.DisplayName: Stinkfly N P C
 			SmallStinkflyNPC.DisplayName: Small Stinkfly
 			SmallStinkflyNpc.DisplayName: Small Stinkfly
 			MarrowEyeNPC.DisplayName: Marrow Eye
@@ -272,7 +273,6 @@ Mods: {
 			PusSlugCritter.DisplayName: Pus Slug
 			CursedCanariCritter.DisplayName: Cursed Canari Critter
 			LavaLizardCritter.DisplayName: Lava Lizard Critter
-			StinkflyNPC.DisplayName: Stinkfly N P C
 		}
 
 		Projectiles: {

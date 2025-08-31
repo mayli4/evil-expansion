@@ -41,7 +41,7 @@ public class ThoughtfulPendantItem : ModItem {
             _portalCooldown--;
         }
         
-        if (player.controlUseItem && player.itemAnimation > 0 && _portalCooldown <= 0 && Main.rand.NextBool(1)) {
+        if (player.controlUseItem && player.itemAnimation > 0 && _portalCooldown <= 0 && Main.rand.NextBool(30)) {
             Vector2 summonPosition = Main.MouseWorld;
 
             var position = summonPosition - 105f * _portalRotation.ToRotationVector2();

@@ -1,4 +1,5 @@
 using EvilExpansionMod.Content.Items.Crimson;
+using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -46,8 +47,6 @@ public class NormalPlanetoidBuff : ModBuff {
 public class NormalPlanetoidProjectile : ModProjectile {
     public override string Texture => Assets.Assets.Textures.Items.Corruption.Planetoids.KEY_NormalPlanetoid;
 
-    public string FaceTexturePath => Assets.Assets.Textures.Items.Corruption.Planetoids.KEY_NormalPlanetoid_Faces;
-
     private ref float _currentFaceFrame => ref Projectile.localAI[0];
     private ref float _faceFrameTimer => ref Projectile.localAI[1];
     private ref float _faceAnimationState => ref Projectile.localAI[2];
@@ -68,6 +67,7 @@ public class NormalPlanetoidProjectile : ModProjectile {
 
     public override void SetStaticDefaults() {
         Main.projPet[Projectile.type] = true;
+        
         ProjectileID.Sets.CharacterPreviewAnimations[Projectile.type] = ProjectileID.Sets.SimpleLoop(0, Main.projFrames[Projectile.type], 5)
             .WithOffset(-2, -22f)
             .WithCode(CharacterPreviewCustomization);
@@ -82,13 +82,13 @@ public class NormalPlanetoidProjectile : ModProjectile {
     }
 
     public override void SetDefaults() {
+        Projectile.CloneDefaults(ProjectileID.EyeOfCthulhuPet);
+        
         Projectile.width = 44; 
         Projectile.height = 40;
         Projectile.friendly = true;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
-        Projectile.minion = true;
-        Projectile.minionSlots = 0;
         Projectile.penetrate = -1;
         Projectile.timeLeft = 18000;
         Projectile.aiStyle = -1;
@@ -197,20 +197,10 @@ public class NormalPlanetoidProjectile : ModProjectile {
         }
     }
 
-    public override bool PreDraw(ref Color lightColor) {
-        Texture2D planetoidTexture = ModContent.Request<Texture2D>(Texture).Value;
-        Texture2D faceTexture = ModContent.Request<Texture2D>(FaceTexturePath).Value;
-
-        Main.EntitySpriteDraw(
-            planetoidTexture,
-            Projectile.Center - Main.screenPosition,
-            null,
-            Projectile.GetAlpha(lightColor),
-            Projectile.rotation, 
-            planetoidTexture.Size() / 2f,
-            Projectile.scale,
-            SpriteEffects.None
-        );
+    public override void PostDraw(Color lightColor) {
+        Texture2D planetoidTexture = Assets.Assets.Textures.Items.Corruption.Planetoids.NormalPlanetoid.Value;
+        Texture2D planetoidGrassTexture = Assets.Assets.Textures.Items.Corruption.Planetoids.NormalPlanetoid_Grass.Value;
+        Texture2D faceTexture = Assets.Assets.Textures.Items.Corruption.Planetoids.NormalPlanetoid_Faces.Value;
 
         int faceFrameWidth = 16;
         int faceFrameHeight = 18;
@@ -219,18 +209,27 @@ public class NormalPlanetoidProjectile : ModProjectile {
 
         var faceDrawPosition = Projectile.Center;
         var faceOrigin = faceSourceRect.Size() / 2f;
-
+        
         Main.EntitySpriteDraw(
-            faceTexture,
-            faceDrawPosition - Main.screenPosition,
-            faceSourceRect,
-            Projectile.GetAlpha(lightColor),
-            _faceRotationAngle,
-            faceOrigin,
+            planetoidGrassTexture,
+            Projectile.Center - Main.screenPosition,
+            null,
+            lightColor,
+            Projectile.rotation, 
+            planetoidTexture.Size() / 2f,
             Projectile.scale,
             SpriteEffects.None
         );
+
+        var snapshot =  Main.spriteBatch.CaptureEndBegin(new());
         
+        Main.spriteBatch.Draw(planetoidTexture, Projectile.Center - Main.screenPosition, null, lightColor, Projectile.rotation, planetoidTexture.Size() / 2f, Projectile.scale, SpriteEffects.None, 0f);
+        Main.spriteBatch.Draw(faceTexture, faceDrawPosition - Main.screenPosition, faceSourceRect, lightColor, _faceRotationAngle, faceOrigin, Projectile.scale, SpriteEffects.None, 0f);
+        
+        Main.spriteBatch.EndBegin(snapshot);
+    }
+
+    public override bool PreDraw(ref Color lightColor) {
         return false;
     }
 }

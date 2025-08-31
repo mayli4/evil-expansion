@@ -68,30 +68,32 @@ public class FireInALanternItem : ModItem {
             );
                     
             newDust.customData = newDustData;
+
+            for(int i = 0; i < 5; i++) {
+                Dust.NewDust(
+                    position, 
+                    20, 
+                    20,
+                    DustID.Firefly,
+                    player.velocity.X / 2,
+                    player.velocity.Y / 2,
+                    100, 
+                    default,
+                    Main.rand.NextFloat(0.8f, 1.2f)
+                );
             
-            Dust.NewDust(
-                position, 
-                20, 
-                20,
-                DustID.Firefly,
-                player.velocity.X / 2,
-                player.velocity.Y / 2,
-                100, 
-                default,
-                Main.rand.NextFloat(0.8f, 1.2f)
-            );
-            
-            Dust.NewDust(
-                position, 
-                20, 
-                20,
-                DustID.Torch,
-                player.velocity.X / 2,
-                player.velocity.Y / 2,
-                100, 
-                default,
-                Main.rand.NextFloat(0.8f, 1.2f)
-            );
+                Dust.NewDust(
+                    position, 
+                    20, 
+                    20,
+                    DustID.Torch,
+                    player.velocity.X / 2,
+                    player.velocity.Y / 2,
+                    100, 
+                    default,
+                    Main.rand.NextFloat(0.8f, 1.2f)
+                );
+            }
             
             var flameSpawnPosition = player.Bottom + new Vector2(Main.rand.NextFloat(-player.width / 4f, player.width / 4f), 0f);
                 

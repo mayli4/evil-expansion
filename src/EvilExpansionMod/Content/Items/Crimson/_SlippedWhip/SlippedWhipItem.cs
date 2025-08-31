@@ -3,6 +3,7 @@ using Terraria.Localization;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Items.Crimson;
+
 public class SlippedWhipItem : ModItem {
     public override string Texture => Assets.Assets.Textures.Items.Crimson.SlippedWhip.KEY_SlippedWhipItem;
 
@@ -28,5 +29,13 @@ public class SlippedWhipItem : ModItem {
 
     public override bool MeleePrefix() {
         return true;
+    }
+
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient(ModContent.ItemType<CrimtaneHellstoneBarItem>(), 18)
+            .AddIngredient(ModContent.ItemType<BoneSlicesItem>(), 8)
+            .AddTile(TileID.Anvils)
+            .Register();
     }
 }

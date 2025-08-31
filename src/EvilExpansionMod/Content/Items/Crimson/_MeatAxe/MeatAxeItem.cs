@@ -39,4 +39,11 @@ public class MeatAxeItem : ModItem {
     public override bool CanUseItem(Player player) {
         return player.ownedProjectileCounts[Item.shoot] == 0;
     }
+    
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient(ModContent.ItemType<CrimtaneHellstoneBarItem>(), 20)
+            .AddTile(TileID.Anvils)
+            .Register();
+    }
 }

@@ -1,3 +1,4 @@
+using EvilExpansionMod.Content.Items.Crimson;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -58,6 +59,13 @@ public class CrytapeteItem : ModItem {
         Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback, player.whoAmI);
         return false; 
     }
+    
+    public override void AddRecipes() 
+        => CreateRecipe()
+            .AddIngredient(ModContent.ItemType<HellDemoniteBarItem>(), 12)
+            .AddIngredient(ModContent.ItemType<RawShadowScalesItem>(), 8)
+            .AddIngredient(ModContent.ItemType<ImputedFlameItem>(), 4)
+            .Register();
 }
 
 public class CrytapeteBuff : ModBuff {

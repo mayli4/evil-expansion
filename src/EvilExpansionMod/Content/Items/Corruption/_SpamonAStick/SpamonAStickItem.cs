@@ -1,4 +1,5 @@
 using EvilExpansionMod.Content.CameraModifiers;
+using EvilExpansionMod.Content.Items.Crimson;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -39,6 +40,14 @@ public class SpamonAStickItem : ModItem {
 
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
         return true;
+    }
+    
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient(ModContent.ItemType<HellDemoniteBarItem>(), 12)
+            .AddIngredient(ItemID.RottenChunk, 8)
+            .AddTile(TileID.Anvils)
+            .Register();
     }
 }
 

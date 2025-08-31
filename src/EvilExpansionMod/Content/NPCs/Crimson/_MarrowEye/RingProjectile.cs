@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.Xna.Framework;
+using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -23,10 +25,21 @@ public class RingProjectile : ModProjectile {
     public override bool ShouldUpdatePosition() => false;
 
     public override void AI() {
-        Projectile.alpha = 255 - (int)(255f * (float)Projectile.timeLeft / DisapearFrames);
+        //Projectile.alpha = 255 - (int)(255f * (float)Projectile.timeLeft / DisapearFrames);
     }
 
     public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) {
         behindNPCsAndTiles.Add(index);
+    }
+    
+    public override void OnKill(int timeLeft) {
+        var rotation = Main.rand.NextFloat();
+        var direction = rotation.ToRotationVector2();
+        Gore.NewGoreDirect(
+            Projectile.GetSource_Death(),
+            Projectile.Center + direction * 10f - new Vector2(8, 8),
+            direction * Main.rand.NextFloat(3f, 5f),
+            Mod.Find<ModGore>("RingGore").Type
+        );
     }
 }

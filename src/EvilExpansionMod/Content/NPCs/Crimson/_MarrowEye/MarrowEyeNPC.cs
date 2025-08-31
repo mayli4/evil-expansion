@@ -65,6 +65,17 @@ public class MarrowEyeNPC : ModNPC {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
     }
     
+    public override void HitEffect(NPC.HitInfo hit) {
+        if(Main.netMode == NetmodeID.Server || NPC.life > 0) return;
+        
+        for(var i = 0; i < 5; i++) Gore.NewGoreDirect(
+            NPC.GetSource_Death(),
+            NPC.Center + Main.rand.NextVector2Unit() * 5f - Vector2.UnitY * 30f,
+            Main.rand.NextVector2Unit(rotationRange: -MathF.PI) * 3f,
+            Mod.Find<ModGore>($"MarroweyeGore{i}").Type
+        );
+    }
+    
     public override void OnSpawn(IEntitySource source) {
         var randomRotation = MathF.PI / 2f + Main.rand.NextFloatDirection() * MathF.PI / 6f;
         var randomDirection = randomRotation.ToRotationVector2();

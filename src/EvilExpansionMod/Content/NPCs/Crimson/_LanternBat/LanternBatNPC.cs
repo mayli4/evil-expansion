@@ -76,16 +76,32 @@ public class LanternBatNPC : ModNPC {
     public override void OnSpawn(IEntitySource source) {
         _lanternLightIntensity = 0f;
     }
+    
+    public override void HitEffect(NPC.HitInfo hit) {
+        if(Main.netMode == NetmodeID.Server || NPC.life > 0) return;
+
+        for(var i = 0; i < 2; i++) {
+            Gore.NewGoreDirect(
+                NPC.GetSource_Death(),
+                NPC.Center + Main.rand.NextVector2Unit() * 5f - Vector2.UnitY * 30f,
+                Main.rand.NextVector2Unit(rotationRange: -MathF.PI) * 3f,
+                Mod.Find<ModGore>($"LanternBatGore{i}").Type
+            );
+        }
+
+        Gore.NewGoreDirect(
+            NPC.GetSource_Death(),
+            NPC.Center + new Vector2(NPC.spriteDirection * 15, 40) + Main.rand.NextVector2Unit() * 5f - Vector2.UnitY * 30f,
+            Main.rand.NextVector2Unit(rotationRange: -MathF.PI) * 3f,
+            Mod.Find<ModGore>("LanternGore").Type
+        );
+    }
 
     public override void AI() {
         NPC.TargetClosest();
         if (Target.dead || !Target.active) {
             return;
         }
-        
-        Vector2 lanternOffset = new Vector2(NPC.spriteDirection * 15, 40);
-        Vector2 lanternWorldPosition = NPC.Center + lanternOffset;
-        
 
         switch (CurrentState) {
             case State.IdleFlight:

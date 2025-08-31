@@ -7,6 +7,7 @@ using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.NPCs.Crimson;
+
 public class TendonProjectile : ModProjectile {
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.MarrowEye.KEY_Tendon;
     public const int DisapearFrames = 120;
@@ -25,6 +26,21 @@ public class TendonProjectile : ModProjectile {
     }
 
     public override bool ShouldUpdatePosition() => false;
+
+    public override void OnKill(int timeLeft) {
+        var rotation = Main.rand.NextFloat();
+        for(var i = 0; i < 1; i++) {
+            var direction = rotation.ToRotationVector2();
+            Gore.NewGoreDirect(
+                Projectile.GetSource_Death(),
+                Projectile.Center + direction * 10f - new Vector2(8, 8),
+                direction * Main.rand.NextFloat(3f, 5f),
+                Mod.Find<ModGore>("MuscleGore" + i).Type
+            );
+
+            rotation += MathF.PI * 2f / 3f + Main.rand.NextFloatDirection() * 0.2f;
+        }
+    }
 
     public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) {
         behindNPCsAndTiles.Add(index);
@@ -48,7 +64,7 @@ public class TendonProjectile : ModProjectile {
             texture,
             Projectile.position - Main.screenPosition,
             new Rectangle(sourceX, bulbHeight, CellWidth, middlePartHeight),
-            lightColor * alpha,
+            lightColor,
             rotation,
             new(CellWidth / 2f, middlePartHeight / 2f),
             new Vector2(1f, (Projectile.scale - bulbHeight) / middlePartHeight),
@@ -61,7 +77,7 @@ public class TendonProjectile : ModProjectile {
             texture,
             Projectile.position - Main.screenPosition - rotationVector * Projectile.scale / 2f,
             new Rectangle(sourceX, 0, CellWidth, bulbHeight),
-            lightColor * alpha,
+            lightColor,
             rotation,
             new(CellWidth / 2f, bulbHeight / 2f),
             1f,
@@ -73,7 +89,7 @@ public class TendonProjectile : ModProjectile {
             texture,
             Projectile.position - Main.screenPosition + rotationVector * Projectile.scale / 2f,
             new Rectangle(sourceX, texture.Height - bulbHeight, CellWidth, bulbHeight),
-            lightColor * alpha,
+            lightColor,
             rotation,
             new(CellWidth / 2f, bulbHeight / 2f),
             1f,

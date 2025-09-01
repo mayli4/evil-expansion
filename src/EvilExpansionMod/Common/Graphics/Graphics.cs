@@ -364,11 +364,12 @@ public class Graphics : ModSystem {
     // TODO: Place project specific methods in an extension class (ApplyOutline, DrawBasicTrail, etc.).
     public struct Pipeline {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        public readonly Pipeline ApplyOutline(Color color) {
+        public readonly Pipeline ApplyOutline(Color color, float threshold = 0.001f) {
             ApplyEffect(
                 Assets.Assets.Effects.Pixel.Outline.Value,
-                ("color", color.ToVector4()),
-                ("size", Main.ScreenSize.ToVector2())
+                ("uColor", color.ToVector4()),
+                ("uSize", Main.ScreenSize.ToVector2()),
+                ("uThreshold", threshold)
             );
             return this;
         }

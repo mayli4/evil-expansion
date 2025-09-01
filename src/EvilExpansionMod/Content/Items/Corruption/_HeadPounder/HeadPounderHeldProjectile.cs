@@ -277,7 +277,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                  scale: Vector2.One * Projectile.scale,
                  spriteEffects: Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
             )
-            .ApplyOutline(trailColor)
+            .ApplyOutline(trailColor, 0.99f)
             .ApplyOutline(new Color(230, 255, 5) * _outlineAlpha)
             .Flush();
 

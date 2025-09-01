@@ -182,8 +182,8 @@ public class LamethrowerHeldProjectile : ModProjectile {
         var noiseTexture1 = Textures.Sample.Pebbles.Value;
         var circleTexture = Textures.Misc.Circle.Value;
 
-        Main.graphics.GraphicsDevice.Textures[0] = circleTexture;
         Graphics.BeginPipeline(0.5f)
+            .SetTexture(0, circleTexture)
             .DrawTrail(
                 _trailPositions.Select(p => p + _trailOrigin).ToArray(),
                 static _ => FlameWidth,

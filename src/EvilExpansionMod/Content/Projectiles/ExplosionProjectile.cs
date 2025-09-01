@@ -116,9 +116,6 @@ public class ExplosionProjectile : ModProjectile {
         var explosionEffect = Assets.Assets.Effects.Pixel.Explosion.Value;
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
-
-        Main.graphics.GraphicsDevice.Textures[1] = noiseTexture2;
-
         var progress = 1f - (float)Projectile.timeLeft / _maxTimeLeft;
 
         var explosionProgress = 1f - MathF.Pow(progress - 1f, 2);
@@ -130,6 +127,7 @@ public class ExplosionProjectile : ModProjectile {
                 ("startColor", _startColor.ToVector4()),
                 ("endColor", Color.Black.ToVector4())
             )
+            .SetTexture(1, noiseTexture2)
             .DrawSprite(
                 noiseTexture1,
                 new Rectangle(

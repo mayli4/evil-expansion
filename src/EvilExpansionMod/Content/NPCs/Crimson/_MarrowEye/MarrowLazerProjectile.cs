@@ -93,7 +93,6 @@ public class MarrowLazerProjectile : ModProjectile {
         var texture1 = Assets.Assets.Textures.Sample.PlasmaNoise.Value;
         var effect = Assets.Assets.Effects.Pixel.MarrowLaser.Value;
 
-        Main.graphics.GraphicsDevice.Textures[1] = texture1;
         Graphics.BeginPipeline(0.5f)
             .EffectParams(
                 effect,
@@ -102,6 +101,7 @@ public class MarrowLazerProjectile : ModProjectile {
                 ("uColor2", mainColor.ToVector4()),
                 ("uTime", Main.GameUpdateCount * 0.2f)
             )
+            .SetTexture(1, texture1)
             .DrawSprite(
                 texture0,
                 Projectile.position - Main.screenPosition,

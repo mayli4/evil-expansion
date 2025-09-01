@@ -55,10 +55,12 @@ public class Graphics : ModSystem {
         EffectParams,
 
         SetBlendState,
+        SetTexture,
         SetSamplerState,
     }
 
     record struct SamplerStateData(int Index, SamplerState State);
+    record struct TextureData(int Index, Texture2D Texture);
 
     record struct DrawSpriteData(
         Texture2D Texture,
@@ -165,6 +167,7 @@ public class Graphics : ModSystem {
 
     static readonly List<EffectParameterData> _effectParameters = [];
 
+    static readonly List<TextureData> _textureDatas = [];
     static readonly List<DrawSpriteData> _spriteDatas = [];
     static readonly List<SamplerStateData> _samplerStateDatas = [];
     static readonly List<BlendState> _blendStateData = [];
@@ -329,6 +332,7 @@ public class Graphics : ModSystem {
     static void PostDraw() {
         _effectParameters.Clear();
 
+        _textureDatas.Clear();
         _spriteDatas.Clear();
         _samplerStateDatas.Clear();
         _blendStateData.Clear();
@@ -446,6 +450,17 @@ public class Graphics : ModSystem {
             _samplerStateDatas.Add(new(index, samplerState));
 
             _cache.Add(CommandType.SetSamplerState, i);
+            return this;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Pipeline SetTexture(int index, Texture2D texture, SamplerState samplerState = null) {
+            if(samplerState is { } state) SetSamplerState(index, state);
+
+            var i = _textureDatas.Count;
+            _textureDatas.Add(new(index, texture));
+
+            _cache.Add(CommandType.SetTexture, i);
             return this;
         }
 
@@ -707,6 +722,9 @@ public class Graphics : ModSystem {
                     case CommandType.SetBlendState:
                         r.RunSetBlendState(dataIndex);
                         break;
+                    case CommandType.SetTexture:
+                        r.RunSetTexture(dataIndex);
+                        break;
                     case CommandType.SetSamplerState:
                         r.RunSetSamplerState(dataIndex);
                         break;
@@ -726,6 +744,12 @@ public class Graphics : ModSystem {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         readonly void RunSetBlendState(int index) {
             GraphicsDevice.BlendState = _blendStateData[index];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly void RunSetTexture(int index) {
+            var textureData = _textureDatas[index];
+            GraphicsDevice.Textures[textureData.Index] = textureData.Texture;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

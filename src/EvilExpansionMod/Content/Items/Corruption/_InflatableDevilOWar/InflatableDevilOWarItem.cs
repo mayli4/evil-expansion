@@ -1,4 +1,5 @@
 using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,7 +12,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Corruption;
 
 public class InflatableDevilOWarItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.InflatableDevilOWar.KEY_InflatableDevilOWarItem;
+    public override string Texture => Assets.Assets.Textures.Items.Corruption.InflatableDevilOWar.KEY_InflatableDevilOWarItem; 
 
     private int _projectileID = -1;
 
@@ -21,6 +22,27 @@ public class InflatableDevilOWarItem : ModItem {
         Item.accessory = true;
         Item.rare = ItemRarityID.Pink;
         Item.value = Item.sellPrice(gold: 3);
+    }
+
+    public override void UpdateVanity(Player player) {
+        if (player.whoAmI == Main.myPlayer) {
+            if (_projectileID != -1 && Main.projectile[_projectileID].active && Main.projectile[_projectileID].owner == player.whoAmI && Main.projectile[_projectileID].type == ModContent.ProjectileType<InflatableDevilOWarProjectile>()) {
+                Main.projectile[_projectileID].timeLeft = 2;
+                Main.projectile[_projectileID].ai[0] = 0f; 
+                Main.projectile[_projectileID].netUpdate = true;
+            } else {
+                _projectileID = Projectile.NewProjectile(
+                    player.GetSource_Accessory(Item),
+                    player.Center,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<InflatableDevilOWarProjectile>(),
+                    0,
+                    0f,
+                    player.whoAmI,
+                    0f
+                );
+            }
+        }
     }
 
     public override void UpdateAccessory(Player player, bool hideVisual) {
@@ -108,6 +130,8 @@ public class InflatableDevilOWarProjectile : ModProjectile {
 
         Projectile.hide = IsHidden;
     }
+
+    public override bool? CanCutTiles() => false;
 
     private void PopulateTrailsForDrawing(Vector2 interpolatedBodyPosition, Color _, Player player) {
         float Equation(float x) {
@@ -216,6 +240,7 @@ public class InflatableDevilOWarProjectile : ModProjectile {
         }
 
         var insidesOffset = new Vector2(0, 24 * Projectile.scale).RotatedBy(Projectile.rotation);
+        
         Main.spriteBatch.Draw(
             insidesTexture,
             Projectile.Center + insidesOffset - Main.screenPosition,

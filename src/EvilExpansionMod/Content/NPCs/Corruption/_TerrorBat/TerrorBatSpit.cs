@@ -14,7 +14,6 @@ namespace EvilExpansionMod.Content.NPCs.Corruption;
 public class TerrorBatSpit : ModProjectile {
     public override string Texture => "Terraria/Images/NPC_112";
 
-    private PrimitiveTrail sparkleTrail;
     private PositionCache positionCache;
     private bool trailInit;
 
@@ -45,11 +44,6 @@ public class TerrorBatSpit : ModProjectile {
         Projectile.extraUpdates = 1;
 
         positionCache = new(30);
-        sparkleTrail = new PrimitiveTrail(
-            positionCache.Positions,
-            _ => TRAIL_SIZE * Scale,
-            _ => new Color(72, 96, 36, 255)
-        );
     }
 
     public override void AI() {
@@ -69,9 +63,7 @@ public class TerrorBatSpit : ModProjectile {
         }
 
         Dust.NewDustDirect(Projectile.position, 10, 10, DustID.CursedTorch);
-
         positionCache.Add(pos);
-        sparkleTrail.Positions = positionCache.Positions;
     }
 
     public override bool OnTileCollide(Vector2 oldVelocity) {
@@ -95,15 +87,20 @@ public class TerrorBatSpit : ModProjectile {
 
     public override bool PreDraw(ref Color lightColor) {
         var shader = Assets.Assets.Effects.Trail.CursedSpiritFire.Value;
-
-        shader.Parameters["time"].SetValue(0.025f * Main.GameUpdateCount);
-        shader.Parameters["mat"].SetValue(Graphics.WorldTransformMatrix);
-        shader.Parameters["stepY"].SetValue(0.25f);
-        shader.Parameters["scale"].SetValue(0.25f);
-        shader.Parameters["texture1"].SetValue(Assets.Assets.Textures.Sample.Pebbles.Value);
-        shader.Parameters["texture2"].SetValue(Assets.Assets.Textures.Sample.Noise2.Value);
-
-        sparkleTrail.Draw(shader);
+        Graphics.BeginPipeline(0.5f)
+            .DrawTrail(
+                positionCache.Positions,
+                _ => TRAIL_SIZE * Scale,
+                static _ => new Color(72, 96, 36, 255),
+                shader,
+                ("time", 0.025f * Main.GameUpdateCount),
+                ("mat", Graphics.WorldTransformMatrix),
+                ("stepY", 0.25f),
+                ("scale", 0.25f),
+                ("texture1", Assets.Assets.Textures.Sample.Pebbles.Value),
+                ("texture2", Assets.Assets.Textures.Sample.Noise2.Value)
+            )
+            .Flush();
 
         var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;
 

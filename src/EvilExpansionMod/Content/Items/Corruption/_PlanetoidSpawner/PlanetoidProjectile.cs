@@ -374,6 +374,7 @@ public class PlanetoidProjectile : ModProjectile {
                     ("drawColor", Projectile.GetAlpha(lightColor).ToVector4()),
                     ("sourceFrame", new Vector4(0, 0, currentTexture.Width, currentTexture.Height)),
                     ("texSize", currentTexture.Size()))
+                .SetBlendState(BlendState.NonPremultiplied)
                 .DrawSprite(
                     currentTexture,
                     Projectile.Center - Main.screenPosition,
@@ -382,8 +383,7 @@ public class PlanetoidProjectile : ModProjectile {
                     Projectile.rotation,
                     currentTexture.Size() / 2f,
                     new Vector2(finalDrawScale, finalDrawScale),
-                    effect: crackShader,
-                    blendState: BlendState.NonPremultiplied
+                    effect: crackShader
                 )
                 .Flush();
         }

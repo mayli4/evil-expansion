@@ -217,6 +217,7 @@ public class FireInALanternFlame : ModProjectile {
                 ("flameSize", currentFlameSize),
                 ("tex1", noiseTexture1)
             )
+            .SetBlendState(BlendState.Additive)
             .DrawSprite(
                 circleTexture,
                 new Rectangle(
@@ -227,8 +228,7 @@ public class FireInALanternFlame : ModProjectile {
                 ),
                 color: Projectile.GetAlpha(lightColor),
                 rotation: Projectile.rotation,
-                effect: flameShader,
-                blendState: BlendState.Additive
+                effect: flameShader
             )
             .Flush();
 
@@ -244,6 +244,7 @@ public class FireInALanternFlame : ModProjectile {
                 ("flameSize", currentFlameSize),
                 ("tex1", noiseTexture1)
             )
+            .SetBlendState(BlendState.Additive)
             .DrawSprite(
                 circleTexture,
                 new Rectangle(
@@ -254,8 +255,7 @@ public class FireInALanternFlame : ModProjectile {
                 ),
                 color: Projectile.GetAlpha(lightColor),
                 rotation: Projectile.rotation,
-                effect: flameShader,
-                blendState: BlendState.Additive
+                effect: flameShader
             )
             .ApplyOutline(new Color(255, 150, 0))
             .Flush();

@@ -121,6 +121,7 @@ public class LingeringFlameProjectile : ModProjectile {
                 ("flameSize", currentFlameSize),
                 ("tex1", noiseTexture1)
             )
+            .SetBlendState(BlendState.Additive)
             .DrawSprite(
                 circleTexture,
                 new Rectangle(
@@ -131,8 +132,7 @@ public class LingeringFlameProjectile : ModProjectile {
                 ),
                 color: Projectile.GetAlpha(lightColor),
                 rotation: Projectile.rotation,
-                effect: flameShader,
-                blendState: BlendState.Additive
+                effect: flameShader
             )
             .ApplyOutline(Color.Black * 0.4f)
             .Flush();
@@ -149,6 +149,7 @@ public class LingeringFlameProjectile : ModProjectile {
                 ("flameSize", currentFlameSize),
                 ("tex1", noiseTexture1)
             )
+            .SetBlendState(BlendState.Additive)
             .DrawSprite(
                 circleTexture,
                 new Rectangle(
@@ -159,8 +160,7 @@ public class LingeringFlameProjectile : ModProjectile {
                 ),
                 color: Projectile.GetAlpha(lightColor),
                 rotation: Projectile.rotation,
-                effect: flameShader,
-                blendState: BlendState.Additive
+                effect: flameShader
             )
             .ApplyOutline(new Color(255, 150, 0))
             .Flush();

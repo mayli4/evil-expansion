@@ -53,16 +53,19 @@ public class Graphics : ModSystem {
 
         ApplyEffect,
         EffectParams,
+
+        SetBlendState,
+        SetSamplerState,
     }
+
+    record struct SamplerStateData(int Index, SamplerState State);
 
     record struct DrawSpriteData(
         Texture2D Texture,
         Color Color,
         Matrix Matrix,
         Vector4 Source,
-        Effect Effect,
-        SamplerState SamplerState,
-        BlendState BlendState
+        Effect Effect
     );
 
     record struct DrawTrailData(
@@ -163,6 +166,8 @@ public class Graphics : ModSystem {
     static readonly List<EffectParameterData> _effectParameters = [];
 
     static readonly List<DrawSpriteData> _spriteDatas = [];
+    static readonly List<SamplerStateData> _samplerStateDatas = [];
+    static readonly List<BlendState> _blendStateData = [];
     static readonly List<DrawTrailData> _trailDatas = [];
     static readonly List<BeginData> _beginDatas = [];
     static readonly List<EffectData> _effectDatas = [];
@@ -325,6 +330,8 @@ public class Graphics : ModSystem {
         _effectParameters.Clear();
 
         _spriteDatas.Clear();
+        _samplerStateDatas.Clear();
+        _blendStateData.Clear();
         _trailDatas.Clear();
         _beginDatas.Clear();
         _effectDatas.Clear();
@@ -425,6 +432,24 @@ public class Graphics : ModSystem {
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Pipeline SetBlendState(BlendState blendState) {
+            var index = _blendStateData.Count;
+            _blendStateData.Add(blendState);
+
+            _cache.Add(CommandType.SetBlendState, index);
+            return this;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public readonly Pipeline SetSamplerState(int index, SamplerState samplerState) {
+            var i = _samplerStateDatas.Count;
+            _samplerStateDatas.Add(new(index, samplerState));
+
+            _cache.Add(CommandType.SetSamplerState, i);
+            return this;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly Pipeline EffectParams(
             Effect effect,
             params ReadOnlySpan<(string, ParameterValue)> parameters
@@ -475,9 +500,7 @@ public class Graphics : ModSystem {
             Vector2? origin = null,
             Vector2? scale = null,
             SpriteEffects spriteEffects = SpriteEffects.None,
-            Effect effect = null,
-            BlendState blendState = null,
-            SamplerState samplerState = null
+            Effect effect = null
         ) {
             var actualScale = scale ?? Vector2.One;
             var actualSource = source ?? new Rectangle(0, 0, texture.Width, texture.Height);
@@ -495,8 +518,6 @@ public class Graphics : ModSystem {
                 origin ?? Vector2.Zero,
                 spriteEffects,
                 ScreenTransformMatrix,
-                samplerState ?? Main.DefaultSamplerState,
-                blendState ?? BlendState.AlphaBlend,
                 effect
             );
         }
@@ -509,9 +530,7 @@ public class Graphics : ModSystem {
             float rotation = 0f,
             Vector2? origin = null,
             SpriteEffects spriteEffects = SpriteEffects.None,
-            Effect effect = null,
-            BlendState blendState = null,
-            SamplerState samplerState = null
+            Effect effect = null
         ) {
             return DrawSprite(
                 texture,
@@ -522,8 +541,6 @@ public class Graphics : ModSystem {
                 origin ?? Vector2.Zero,
                 spriteEffects,
                 ScreenTransformMatrix,
-                samplerState ?? Main.DefaultSamplerState,
-                blendState ?? BlendState.AlphaBlend,
                 effect
             );
         }
@@ -537,8 +554,6 @@ public class Graphics : ModSystem {
             Vector2 origin,
             SpriteEffects spriteEffects,
             Matrix transformMatrix,
-            SamplerState samplerState,
-            BlendState blendState,
             Effect effect
         ) {
             var sin = MathF.Sin(rotation);
@@ -597,8 +612,6 @@ public class Graphics : ModSystem {
                 Source = sourceNormalized,
                 Matrix = matrix,
                 Effect = effect,
-                BlendState = blendState,
-                SamplerState = samplerState,
             });
             _cache.Add(CommandType.DrawSprite, spriteDatasIndex);
             return this;
@@ -691,11 +704,28 @@ public class Graphics : ModSystem {
                     case CommandType.EffectParams:
                         r.RunEffectParams(dataIndex);
                         break;
+                    case CommandType.SetBlendState:
+                        r.RunSetBlendState(dataIndex);
+                        break;
+                    case CommandType.SetSamplerState:
+                        r.RunSetSamplerState(dataIndex);
+                        break;
                 }
             }
 
             if(snapshot != null) Main.spriteBatch.Begin(snapshot.Value);
             _targetSemaphore.Release();
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly void RunSetBlendState(int index) {
+            GraphicsDevice.BlendState = _blendStateData[index];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        readonly void RunSetSamplerState(int index) {
+            var samplerStateData = _samplerStateDatas[index];
+            GraphicsDevice.SamplerStates[samplerStateData.Index] = samplerStateData.State;
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -770,12 +800,8 @@ public class Graphics : ModSystem {
             Matrix matrix,
             Vector4 source,
             Color color,
-            BlendState blendState,
-            SamplerState samplerState,
             Effect effect
         ) {
-            GraphicsDevice.BlendState = blendState;
-            GraphicsDevice.SamplerStates[0] = samplerState;
             GraphicsDevice.DepthStencilState = DepthStencilState.None;
             GraphicsDevice.RasterizerState = Main.Rasterizer;
 
@@ -831,8 +857,6 @@ public class Graphics : ModSystem {
                 ),
                 new(0, 0, 1, 1),
                 Color.White,
-                BlendState.AlphaBlend,
-                SamplerState.PointWrap,
                 effect
             );
         }
@@ -845,8 +869,6 @@ public class Graphics : ModSystem {
                 spriteData.Matrix,
                 spriteData.Source,
                 spriteData.Color,
-                spriteData.BlendState,
-                spriteData.SamplerState,
                 spriteData.Effect
             );
         }
@@ -867,6 +889,9 @@ public class Graphics : ModSystem {
             });
             Main.spriteBatch.Draw(_inactiveTarget, Vector2.Zero, Color.White);
             Main.spriteBatch.End();
+
+            GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            GraphicsDevice.SamplerStates[0] = Main.DefaultSamplerState;
 
             SetTargetViewport();
         }
@@ -889,6 +914,10 @@ public class Graphics : ModSystem {
 
             GraphicsDevice.SetRenderTarget(_activeTarget);
             GraphicsDevice.Clear(Color.Transparent);
+
+            GraphicsDevice.BlendState = BlendState.AlphaBlend;
+            GraphicsDevice.SamplerStates[0] = Main.DefaultSamplerState;
+
             SetTargetViewport();
         }
 
@@ -908,6 +937,12 @@ public class Graphics : ModSystem {
                 ),
             });
             Main.spriteBatch.Draw(_activeTarget, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), null, Color.White);
+            Main.spriteBatch.End();
+
+            // This fixes the issue with vanilla trail being drawn 2x bigger in case of half size target..
+            // The spritebatch sets the transformation matrix in `End`
+            // and the trails depend on it so it needs to be set back to normal.
+            Main.spriteBatch.Begin(new());
             Main.spriteBatch.End();
 
             // DrawFullscreenQuad(_activeTarget, 1f / _targetScale, null);

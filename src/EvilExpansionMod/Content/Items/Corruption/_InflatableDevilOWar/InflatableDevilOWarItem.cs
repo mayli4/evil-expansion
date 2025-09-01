@@ -1,5 +1,4 @@
 using EvilExpansionMod.Common.Graphics;
-using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -12,7 +11,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Corruption;
 
 public class InflatableDevilOWarItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.InflatableDevilOWar.KEY_InflatableDevilOWarItem; 
+    public override string Texture => Assets.Assets.Textures.Items.Corruption.InflatableDevilOWar.KEY_InflatableDevilOWarItem;
 
     private int _projectileID = -1;
 
@@ -27,12 +26,13 @@ public class InflatableDevilOWarItem : ModItem {
     public override void UpdateAccessory(Player player, bool hideVisual) {
         player.jumpSpeedBoost += 3.5f;
 
-        if (player.whoAmI == Main.myPlayer) {
-            if (_projectileID != -1 && Main.projectile[_projectileID].active && Main.projectile[_projectileID].owner == player.whoAmI && Main.projectile[_projectileID].type == ModContent.ProjectileType<InflatableDevilOWarProjectile>()) {
+        if(player.whoAmI == Main.myPlayer) {
+            if(_projectileID != -1 && Main.projectile[_projectileID].active && Main.projectile[_projectileID].owner == player.whoAmI && Main.projectile[_projectileID].type == ModContent.ProjectileType<InflatableDevilOWarProjectile>()) {
                 Main.projectile[_projectileID].timeLeft = 2;
-                Main.projectile[_projectileID].ai[0] = hideVisual ? 1f : 0f; 
+                Main.projectile[_projectileID].ai[0] = hideVisual ? 1f : 0f;
                 Main.projectile[_projectileID].netUpdate = true;
-            } else {
+            }
+            else {
                 _projectileID = Projectile.NewProjectile(
                     player.GetSource_Accessory(Item),
                     player.Center,
@@ -48,7 +48,7 @@ public class InflatableDevilOWarItem : ModItem {
     }
 }
 public class InflatableDevilOWarProjectile : ModProjectile {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.InflatableDevilOWar.KEY_InflatableDevilOWarHead; 
+    public override string Texture => Assets.Assets.Textures.Items.Corruption.InflatableDevilOWar.KEY_InflatableDevilOWarHead;
 
     private Vector2[][] _tentacleTrailPositions;
     private float[] _tentacleWaveDirections;
@@ -56,7 +56,7 @@ public class InflatableDevilOWarProjectile : ModProjectile {
     private const int tentacle_segment_count = 8;
     private const float base_scale = 0.5f;
     private const int string_segment_count = 3;
-    
+
     private bool IsHidden => Projectile.ai[0] == 1f;
 
     public override void SetDefaults() {
@@ -85,9 +85,9 @@ public class InflatableDevilOWarProjectile : ModProjectile {
         for(int i = 0; i < _tentacleWaveDirections.Length; i++) {
             _tentacleWaveDirections[i] = Main.rand.NextFloat(MathHelper.TwoPi);
         }
-        
+
         _stringTrailPositions = new Vector2[string_segment_count];
-        for (int i = 0; i < string_segment_count; i++) {
+        for(int i = 0; i < string_segment_count; i++) {
             _stringTrailPositions[i] = Projectile.Center;
         }
     }
@@ -97,15 +97,15 @@ public class InflatableDevilOWarProjectile : ModProjectile {
         Vector2 targetPos = player.Center + new Vector2(player.direction * 20f, -player.height / 2f - 40f);
 
         Projectile.spriteDirection = -player.direction;
-        
+
         float speed = 0.3f;
         Vector2 velocityToTarget = (targetPos - Projectile.Center);
         Projectile.velocity = velocityToTarget * speed;
-        
+
         Projectile.velocity.Y += MathF.Sin(Main.GameUpdateCount * 0.05f + Projectile.whoAmI * 0.1f) * 1.0f;
 
         Projectile.rotation = -Projectile.velocity.X * 0.02f;
-        
+
         Projectile.hide = IsHidden;
     }
 
@@ -134,7 +134,7 @@ public class InflatableDevilOWarProjectile : ModProjectile {
             var perpendicular = new Vector2(-moveDirection.Y, moveDirection.X);
             perpendicular = perpendicular.RotatedBy(_tentacleWaveDirections[i]);
 
-            float phaseOffset = Projectile.whoAmI * 0.123f; 
+            float phaseOffset = Projectile.whoAmI * 0.123f;
 
             for(int j = 1; j < tentacle_segment_count; j++) {
                 float factor = j / (tentacle_segment_count - 1f);
@@ -151,18 +151,18 @@ public class InflatableDevilOWarProjectile : ModProjectile {
         _stringTrailPositions[0] = player.MountedCenter + new Vector2(0, player.height / 4f);
         _stringTrailPositions[string_segment_count - 1] = interpolatedBodyPosition + new Vector2(0, 10);
 
-        if (string_segment_count > 2) {
+        if(string_segment_count > 2) {
             var start = _stringTrailPositions[0];
             var end = _stringTrailPositions[string_segment_count - 1];
             var midPoint = (start + end) / 2f;
-            
-            float swayAmplitude = 5f * Projectile.scale; 
+
+            float swayAmplitude = 5f * Projectile.scale;
             var swayDirection = Projectile.velocity.RotatedBy(MathHelper.PiOver2).SafeNormalize(Vector2.UnitY);
-            
+
             midPoint += swayDirection * MathF.Sin(Main.GameUpdateCount * 0.1f + Projectile.whoAmI * 0.5f) * swayAmplitude;
             midPoint.Y += 10f * Projectile.scale;
 
-            for (int i = 1; i < string_segment_count - 1; i++) {
+            for(int i = 1; i < string_segment_count - 1; i++) {
                 float t = i / (string_segment_count - 1f);
                 _stringTrailPositions[i] = Vector2.Lerp(start, midPoint, t) + Vector2.Lerp(midPoint, end, t) - midPoint;
             }
@@ -170,13 +170,13 @@ public class InflatableDevilOWarProjectile : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        if (IsHidden) {
+        if(IsHidden) {
             return false;
         }
-        
+
         var player = Main.player[Projectile.owner];
         PopulateTrailsForDrawing(Projectile.Center, lightColor, player);
-        
+
         var headTexture = ModContent.Request<Texture2D>(Texture).Value;
         var insidesTexture = Assets.Assets.Textures.Items.Corruption.InflatableDevilOWar.InflatableDevilOWarBody.Value;
         var tentacleTexture = Assets.Assets.Textures.Items.Corruption.InflatableDevilOWar.InflatableDevilOWarTentacle.Value;
@@ -187,10 +187,11 @@ public class InflatableDevilOWarProjectile : ModProjectile {
         var origin = headTexture.Size() / 2f;
         origin.X = flipped ? headTexture.Width - origin.X : origin.X;
 
-        if (_tentacleTrailPositions != null) {
-            var tentaclePipeline = Graphics.BeginPipeline(1.0f, new SpriteBatchSnapshot() with { SamplerState = SamplerState.PointClamp });
+        if(_tentacleTrailPositions != null) {
+            var tentaclePipeline = Graphics.BeginPipeline(1.0f);
+            tentaclePipeline.SetSamplerState(0, SamplerState.PointClamp);
 
-            foreach (Vector2[] positions in _tentacleTrailPositions) {
+            foreach(Vector2[] positions in _tentacleTrailPositions) {
                 tentaclePipeline.DrawBasicTrail(
                     positions,
                     static _ => 10,
@@ -198,24 +199,26 @@ public class InflatableDevilOWarProjectile : ModProjectile {
                     lightColor
                 );
             }
-            
+
             tentaclePipeline.Flush();
-            
-            if (_stringTrailPositions != null) {
-                Graphics.BeginPipeline(0.5f, new SpriteBatchSnapshot() with { SamplerState = SamplerState.PointClamp }).DrawBasicTrail(
-                    _stringTrailPositions,
-                    static _ => 2f,
-                    TextureAssets.MagicPixel.Value,
-                    Color.White
-                )
-                .Flush();
+
+            if(_stringTrailPositions != null) {
+                Graphics.BeginPipeline(0.5f)
+                    .SetSamplerState(0, SamplerState.PointClamp)
+                    .DrawBasicTrail(
+                        _stringTrailPositions,
+                        static _ => 2f,
+                        TextureAssets.MagicPixel.Value,
+                        Color.White
+                    )
+                    .Flush();
             }
         }
 
         var insidesOffset = new Vector2(0, 24 * Projectile.scale).RotatedBy(Projectile.rotation);
         Main.spriteBatch.Draw(
             insidesTexture,
-            Projectile.Center + insidesOffset - Main.screenPosition, 
+            Projectile.Center + insidesOffset - Main.screenPosition,
             null,
             lightColor,
             Projectile.rotation,
@@ -228,7 +231,7 @@ public class InflatableDevilOWarProjectile : ModProjectile {
         Vector2 headOffset = new Vector2(0, -4 * Projectile.scale).RotatedBy(Projectile.rotation);
         Main.spriteBatch.Draw(
             headTexture,
-            Projectile.Center + headOffset - Main.screenPosition, 
+            Projectile.Center + headOffset - Main.screenPosition,
             null,
             lightColor * 0.8f,
             Projectile.rotation,

@@ -40,7 +40,7 @@ public class PusBottleNPC : ModNPC {
         NPC.HitSound = SoundID.NPCHit3;
         NPC.DeathSound = SoundID.Shatter;
     }
-    
+
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         database.Entries.Remove(bestiaryEntry);
     }
@@ -122,7 +122,7 @@ public class PusBottleNPC : ModNPC {
                 0.5f,
                 Main.myPlayer
             );
-            
+
             Dust.NewDustPerfect(
                 NPC.Center - new Vector2(20, 100),
                 ModContent.DustType<PusGas>(),
@@ -180,7 +180,7 @@ public class PusBottleNPC : ModNPC {
         var origin = new Vector2(texture.Width / 2, 94);
 
         float intensityFactor = Math.Clamp(SquishTimer / _maxSquishTime, 0f, 1f);
-        float easedIntensity = MathF.Pow(intensityFactor, 0.5f); 
+        float easedIntensity = MathF.Pow(intensityFactor, 0.5f);
 
         var shakeOffset = Main.rand.NextVector2Circular(1 * easedIntensity, 1 * easedIntensity);
 
@@ -189,11 +189,11 @@ public class PusBottleNPC : ModNPC {
         float finalRotation = NPC.rotation + additionalRotation;
 
         Vector2 finalScale = Vector2.One * NPC.scale;
-        
+
         var fluidEffect = Assets.Assets.Effects.Pixel.DevilOWarFluid.Value;
 
         if(!NPC.IsABestiaryIconDummy) {
-            Graphics.BeginPipeline(0.5f, new() { CustomEffect = fluidEffect })
+            Graphics.BeginPipeline(0.5f)
                 .EffectParams(
                     fluidEffect,
                     ("level", 0.3f),
@@ -207,7 +207,17 @@ public class PusBottleNPC : ModNPC {
                     ("uNoise2ScrollVector", new Vector2(0.1f, 0.1f)),
                     ("uNoise2Scale", 1.0f),
                     ("uTime", Main.GameUpdateCount * 0.05f))
-                .DrawSprite(textureInside, NPC.Center - screenPos + shakeOffset, drawColor, null, finalRotation, origin, finalScale, NPC.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally)
+                .DrawSprite(
+                    textureInside,
+                    NPC.Center - screenPos + shakeOffset,
+                    drawColor,
+                    null,
+                    finalRotation,
+                    origin,
+                    finalScale,
+                    NPC.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
+                    effect: fluidEffect
+                )
                 .ApplyOutline(new Color(132, 122, 61))
                 .Flush();
         }

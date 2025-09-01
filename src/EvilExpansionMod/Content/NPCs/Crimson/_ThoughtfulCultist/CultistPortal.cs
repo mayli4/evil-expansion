@@ -159,7 +159,7 @@ public class CultistPortal : ModProjectile {
             .ApplyOutline(middleColor)
             .Flush();
 
-        Graphics.BeginPipeline(0.5f, new() { CustomEffect = effect })
+        Graphics.BeginPipeline(0.5f)
             .EffectParams(
                 effect,
                 ("tex1", sampleTexture1),
@@ -172,7 +172,8 @@ public class CultistPortal : ModProjectile {
                 sampleTexture0,
                 destination,
                 rotation: rotation,
-                origin: new(Projectile.width, Projectile.height * 4 - 7)
+                origin: new(Projectile.width, Projectile.height * 4 - 7),
+                effect: effect
             )
             .ApplyOutline(color2)
             .ApplyOutline(middleColor)

@@ -13,9 +13,9 @@ namespace EvilExpansionMod.Content.NPCs.Crimson;
 
 public class LingeringFlameProjectile : ModProjectile {
     public override string Texture => "Terraria/Images/Projectile_0";
-    
+
     public int ParentNPCID => (int)Projectile.ai[0];
-    
+
     private int max_lifetime = 60 * 5;
 
     public override void SetDefaults() {
@@ -38,30 +38,31 @@ public class LingeringFlameProjectile : ModProjectile {
     public override bool ShouldUpdatePosition() => false;
 
     public override void AI() {
-        if (Projectile.timeLeft > max_lifetime / 2 && Projectile.alpha > 0) {
+        if(Projectile.timeLeft > max_lifetime / 2 && Projectile.alpha > 0) {
             Projectile.alpha -= 15;
-            if (Projectile.alpha < 0) Projectile.alpha = 0;
+            if(Projectile.alpha < 0) Projectile.alpha = 0;
         }
-        else if (Projectile.timeLeft < 30 && Projectile.alpha < 255) {
+        else if(Projectile.timeLeft < 30 && Projectile.alpha < 255) {
             Projectile.alpha += 8;
-            if (Projectile.alpha > 255) Projectile.alpha = 255;
+            if(Projectile.alpha > 255) Projectile.alpha = 255;
         }
 
         if(Main.rand.NextBool(15)) {
             Dust.NewDust(
-                Projectile.position, 
-                100, 
+                Projectile.position,
+                100,
                 100,
                 DustID.Firefly,
                 Main.rand.NextFloat(-1f, 1f),
                 Main.rand.NextFloat(-1f, 1f) - 0.5f,
-                100, 
+                100,
                 default,
                 Main.rand.NextFloat(0.8f, 1.2f)
             );
         }
-                
-        var newDustData = new Smoke.Data() {
+
+        var newDustData = new Smoke.Data()
+        {
             InitialLifetime = 40,
             ElapsedFrames = 0,
             InitialOpacity = 0.5f,
@@ -70,7 +71,7 @@ public class LingeringFlameProjectile : ModProjectile {
             Spin = 0f,
             InitialScale = Main.rand.NextFloat(0.5f, 2f)
         };
-        
+
         if(Main.rand.NextBool(15)) {
             var newDust = Dust.NewDustPerfect(
                 Projectile.Center - new Vector2(0, 30),
@@ -80,10 +81,10 @@ public class LingeringFlameProjectile : ModProjectile {
                 newColor: Color.White,
                 newDustData.InitialScale
             );
-                    
+
             newDust.customData = newDustData;
         }
-        
+
         Lighting.AddLight(Projectile.Center, Color.OrangeRed.ToVector3());
     }
 
@@ -99,7 +100,7 @@ public class LingeringFlameProjectile : ModProjectile {
 
 
         float flameScaleFactor = 1f;
-        if (Projectile.timeLeft < max_lifetime / 2) {
+        if(Projectile.timeLeft < max_lifetime / 2) {
             flameScaleFactor = Projectile.timeLeft / (max_lifetime / 2f);
         }
         flameScaleFactor = MathHelper.Clamp(flameScaleFactor, 0.1f, 1f);
@@ -109,7 +110,7 @@ public class LingeringFlameProjectile : ModProjectile {
         currentFlameSize *= alphaFactor;
         currentFlameSize = Math.Max(currentFlameSize, 0.0f);
 
-        Graphics.BeginPipeline(0.5f, new() { CustomEffect = flameShader, BlendState = BlendState.Additive })
+        Graphics.BeginPipeline(0.5f)
             .EffectParams(
                 flameShader,
                 ("time", 0.01f * Main.GameUpdateCount + Projectile.whoAmI + 10),
@@ -129,12 +130,14 @@ public class LingeringFlameProjectile : ModProjectile {
                     200
                 ),
                 color: Projectile.GetAlpha(lightColor),
-                rotation: Projectile.rotation
+                rotation: Projectile.rotation,
+                effect: flameShader,
+                blendState: BlendState.Additive
             )
             .ApplyOutline(Color.Black * 0.4f)
             .Flush();
 
-        Graphics.BeginPipeline(0.5f, new() { CustomEffect = flameShader, BlendState = BlendState.Additive })
+        Graphics.BeginPipeline(0.5f)
             .EffectParams(
                 flameShader,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI + 10),
@@ -155,13 +158,15 @@ public class LingeringFlameProjectile : ModProjectile {
                     150
                 ),
                 color: Projectile.GetAlpha(lightColor),
-                rotation: Projectile.rotation
+                rotation: Projectile.rotation,
+                effect: flameShader,
+                blendState: BlendState.Additive
             )
             .ApplyOutline(new Color(255, 150, 0))
             .Flush();
-        
+
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
-        
+
         Main.spriteBatch.Draw(
             glowTexture,
             Projectile.Center - Main.screenPosition - new Vector2(),
@@ -173,9 +178,9 @@ public class LingeringFlameProjectile : ModProjectile {
             SpriteEffects.None,
             0f
         );
-        
+
         Main.spriteBatch.EndBegin(snapshot);
-        
+
         return false;
     }
 }

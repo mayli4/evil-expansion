@@ -75,8 +75,8 @@ public class PlanetoidProjectile : ModProjectile {
 
         var shake = 0.1f;
 
-        if (State == 0f) {
-            if (!player.channel || !player.active || player.dead) {
+        if(State == 0f) {
+            if(!player.channel || !player.active || player.dead) {
                 State = 1f;
                 Projectile.netUpdate = true;
                 Projectile.tileCollide = true;
@@ -85,7 +85,8 @@ public class PlanetoidProjectile : ModProjectile {
 
                 Projectile.timeLeft = 3600;
                 return;
-            } else {
+            }
+            else {
                 Projectile.timeLeft = 2;
 
                 Vector2 targetPos = Main.MouseWorld;
@@ -104,27 +105,29 @@ public class PlanetoidProjectile : ModProjectile {
             Projectile.damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(5 * powerFactor);
             Projectile.knockBack = player.GetTotalKnockback(DamageClass.Magic).ApplyTo(1f * powerFactor);
 
-            if (GrowthTimer >= growth_time) {
+            if(GrowthTimer >= growth_time) {
                 _canExplode = true;
                 State = 2f;
                 Projectile.netUpdate = true;
                 _preExplosionDelayTimer = 0;
             }
-        } else if (State == 1f) {
+        }
+        else if(State == 1f) {
             Projectile.velocity.Y += 0.2f;
-            if (Projectile.velocity.Y > 16f) Projectile.velocity.Y = 16f;
+            if(Projectile.velocity.Y > 16f) Projectile.velocity.Y = 16f;
 
-            if (_hasHitGround == 1f) {
+            if(_hasHitGround == 1f) {
                 Projectile.velocity.X *= 0.98f;
 
-                if (Math.Abs(Projectile.velocity.X) < 0.3f) {
+                if(Math.Abs(Projectile.velocity.X) < 0.3f) {
                     Projectile.velocity.X = 0f;
                     Projectile.Kill();
                 }
             }
 
             Projectile.rotation += Projectile.velocity.X * 0.05f;
-        } else if (State == 2f) {
+        }
+        else if(State == 2f) {
             Projectile.rotation += _rot;
             Vector2 targetPos = Main.MouseWorld;
             Projectile.Center = Vector2.Lerp(Projectile.Center, targetPos, 0.05f);
@@ -133,13 +136,13 @@ public class PlanetoidProjectile : ModProjectile {
             shake = 6;
             _preExplosionDelayTimer++;
 
-            if (_preExplosionDelayTimer >= 20f) {
+            if(_preExplosionDelayTimer >= 20f) {
                 Projectile.Kill();
                 SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, Projectile.Center);
             }
         }
 
-        if (State != 1f) {
+        if(State != 1f) {
             Vector2 randomOffset = Main.rand.NextVector2Circular(shake, shake);
             Projectile.Center += randomOffset;
         }
@@ -148,8 +151,8 @@ public class PlanetoidProjectile : ModProjectile {
     public override bool OnTileCollide(Vector2 oldVelocity) {
         var player = Main.player[Projectile.owner];
 
-        if (State == 1f) {
-            if (_hasHitGround == 0f && oldVelocity.Y > 0) {
+        if(State == 1f) {
+            if(_hasHitGround == 0f && oldVelocity.Y > 0) {
                 SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
                 SoundEngine.PlaySound(SoundID.DD2_SonicBoomBladeSlash, Projectile.Center);
 
@@ -157,11 +160,12 @@ public class PlanetoidProjectile : ModProjectile {
                 Projectile.velocity.X = player.direction * initialRollSpeed;
                 Projectile.velocity.Y = -oldVelocity.Y * 0.5f;
 
-                for (int i = 0; i < 8; i++) {
+                for(int i = 0; i < 8; i++) {
                     var randomDirection = Main.rand.NextVector2Unit();
                     var dustPos = Projectile.Center + randomDirection * Main.rand.NextFloat(Projectile.width * 0.5f);
 
-                    var newDustData = new Smoke.Data() {
+                    var newDustData = new Smoke.Data()
+                    {
                         InitialLifetime = 40,
                         ElapsedFrames = 0,
                         InitialOpacity = 0.5f,
@@ -187,14 +191,16 @@ public class PlanetoidProjectile : ModProjectile {
                 }
                 _hasHitGround = 1f;
                 Projectile.timeLeft = Math.Min(Projectile.timeLeft, 60 * 5);
-            } else if (_hasHitGround == 1f) {
-                if (Projectile.velocity.X != oldVelocity.X) {
+            }
+            else if(_hasHitGround == 1f) {
+                if(Projectile.velocity.X != oldVelocity.X) {
                     Projectile.velocity.X = -oldVelocity.X * 0.7f;
                 }
-                if (Projectile.velocity.Y != oldVelocity.Y) {
-                    if (oldVelocity.Y > 0) {
+                if(Projectile.velocity.Y != oldVelocity.Y) {
+                    if(oldVelocity.Y > 0) {
                         Projectile.velocity.Y = -oldVelocity.Y * 0.5f;
-                    } else {
+                    }
+                    else {
                         Projectile.velocity.Y = 0f;
                     }
                 }
@@ -206,10 +212,10 @@ public class PlanetoidProjectile : ModProjectile {
     }
 
     public override void OnKill(int timeLeft) {
-        if (Main.netMode == NetmodeID.Server)
+        if(Main.netMode == NetmodeID.Server)
             return;
 
-        if (_canExplode) {
+        if(_canExplode) {
             ExplosionProjectile.New(
                 Projectile.GetSource_Death(),
                 Projectile.Center,
@@ -221,7 +227,7 @@ public class PlanetoidProjectile : ModProjectile {
             );
 
             var rotation = Main.rand.NextFloat();
-            for (var i = 0; i < 7; i++) {
+            for(var i = 0; i < 7; i++) {
                 var direction = rotation.ToRotationVector2();
                 Gore.NewGoreDirect(
                     Projectile.GetSource_Death(),
@@ -233,18 +239,19 @@ public class PlanetoidProjectile : ModProjectile {
                 rotation += MathF.PI * 2f / 3f + Main.rand.NextFloatDirection() * 0.2f;
             }
 
-            for (var i = 0; i < 8; i++) {
+            for(var i = 0; i < 8; i++) {
                 var additionalSize = 30;
                 Dust.NewDust(Projectile.position - Vector2.One * additionalSize / 2f, Projectile.width + additionalSize, Projectile.height + additionalSize, DustID.Corruption);
             }
         }
 
         if(_hasHitGround == 1f) {
-            for (int i = 0; i < 8; i++) {
+            for(int i = 0; i < 8; i++) {
                 var randomDirection = Main.rand.NextVector2Unit();
                 var dustPos = Projectile.Center + randomDirection * Main.rand.NextFloat(Projectile.width * 0.5f);
 
-                var newDustData = new Smoke.Data() {
+                var newDustData = new Smoke.Data()
+                {
                     InitialLifetime = 40,
                     ElapsedFrames = 0,
                     InitialOpacity = 0.5f,
@@ -277,8 +284,8 @@ public class PlanetoidProjectile : ModProjectile {
         float previousThreshold = 0f;
         int newTextureIndex = 0;
 
-        for (int i = 0; i < _growthThresholds.Length; i++) {
-            if (Projectile.scale <= _growthThresholds[i]) {
+        for(int i = 0; i < _growthThresholds.Length; i++) {
+            if(Projectile.scale <= _growthThresholds[i]) {
                 currentTexture = ModContent.Request<Texture2D>(_texturePaths[i]).Value;
                 newTextureIndex = i;
 
@@ -289,20 +296,21 @@ public class PlanetoidProjectile : ModProjectile {
             previousThreshold = _growthThresholds[i];
         }
 
-        if (currentTexture == null) {
+        if(currentTexture == null) {
             currentTexture = ModContent.Request<Texture2D>(_texturePaths[_texturePaths.Length - 1]).Value;
             newTextureIndex = _texturePaths.Length - 1;
             drawProgress = 1f;
         }
 
         //this shouldnt be here but idc
-        if (newTextureIndex != _currentTextureIndex && GrowthTimer > 1) {
-            for (int i = 0; i < 8; i++) {
+        if(newTextureIndex != _currentTextureIndex && GrowthTimer > 1) {
+            for(int i = 0; i < 8; i++) {
                 var randomDirection = Main.rand.NextVector2Unit();
                 var dustPos =
                     Projectile.Center + randomDirection * Main.rand.NextFloat(Projectile.width * 0.5f);
 
-                var newDustData = new Smoke.Data() {
+                var newDustData = new Smoke.Data()
+                {
                     InitialLifetime = 40,
                     ElapsedFrames = 0,
                     InitialOpacity = 0.5f,
@@ -337,7 +345,7 @@ public class PlanetoidProjectile : ModProjectile {
 
         Projectile.width = (int)(currentTexture.Width * finalDrawScale);
         Projectile.height = (int)(currentTexture.Height * finalDrawScale);
-        
+
         Projectile.width = Math.Max(1, Projectile.width - 12);
         Projectile.height = Math.Max(1, Projectile.height - 12);
 
@@ -353,11 +361,11 @@ public class PlanetoidProjectile : ModProjectile {
         );
 
         float crackProgress = _preExplosionDelayTimer / 20f;
-        if (State == 2f && crackProgress > 0f) {
+        if(State == 2f && crackProgress > 0f) {
             float easedCrackProgress = MathF.Pow(crackProgress, 2f);
             var crackShader = Assets.Assets.Effects.Pixel.PlanetoidCracks.Value;
 
-            Graphics.BeginPipeline(1.0f, new() { CustomEffect = crackShader, BlendState = BlendState.NonPremultiplied })
+            Graphics.BeginPipeline(1.0f)
                 .EffectParams(
                     crackShader,
                     ("sampleTexture2", Assets.Assets.Textures.Sample.CrackMap.Value),
@@ -373,7 +381,9 @@ public class PlanetoidProjectile : ModProjectile {
                     null,
                     Projectile.rotation,
                     currentTexture.Size() / 2f,
-                    new Vector2(finalDrawScale, finalDrawScale)
+                    new Vector2(finalDrawScale, finalDrawScale),
+                    effect: crackShader,
+                    blendState: BlendState.NonPremultiplied
                 )
                 .Flush();
         }

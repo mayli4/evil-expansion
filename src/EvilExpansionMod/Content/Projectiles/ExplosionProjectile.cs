@@ -26,7 +26,7 @@ public class ExplosionProjectile : ModProjectile {
     ) {
         _startColor = startColor;
         _endColor = endColor;
-        
+
         var explosion = Projectile.NewProjectileDirect(
             source,
             position,
@@ -122,7 +122,7 @@ public class ExplosionProjectile : ModProjectile {
         var progress = 1f - (float)Projectile.timeLeft / _maxTimeLeft;
 
         var explosionProgress = 1f - MathF.Pow(progress - 1f, 2);
-        Graphics.BeginPipeline(0.5f, new() { CustomEffect = explosionEffect })
+        Graphics.BeginPipeline(0.5f)
             .EffectParams(
                 explosionEffect,
                 ("time", explosionProgress + Projectile.whoAmI * 438.8239f),
@@ -137,10 +137,10 @@ public class ExplosionProjectile : ModProjectile {
                     (int)(Projectile.position.Y - Main.screenPosition.Y),
                     Projectile.width,
                     Projectile.height
-                )
+                ),
+                effect: explosionEffect
             )
             .ApplyOutline(Color.Lerp(Color.DarkRed, Color.Transparent, explosionProgress))
-            .Reset(0.5f, new() { CustomEffect = explosionEffect })
             .EffectParams(
                 explosionEffect,
                 ("time", explosionProgress + Projectile.whoAmI * 638.8239f),
@@ -155,7 +155,8 @@ public class ExplosionProjectile : ModProjectile {
                     (int)(Projectile.position.Y - Main.screenPosition.Y),
                     Projectile.width,
                     Projectile.height
-                )
+                ),
+                effect: explosionEffect
             )
             .Flush();
 

@@ -94,7 +94,7 @@ public class MarrowLazerProjectile : ModProjectile {
         var effect = Assets.Assets.Effects.Pixel.MarrowLaser.Value;
 
         Main.graphics.GraphicsDevice.Textures[1] = texture1;
-        Graphics.BeginPipeline(0.5f, new() { CustomEffect = effect })
+        Graphics.BeginPipeline(0.5f)
             .EffectParams(
                 effect,
                 ("uLength", Projectile.scale),
@@ -110,7 +110,8 @@ public class MarrowLazerProjectile : ModProjectile {
                 rotation,
                 new Vector2(0, texture0.Height / 2f),
                 new Vector2(Projectile.scale / texture0.Width, scale * 5f / texture0.Height),
-                SpriteEffects.None
+                SpriteEffects.None,
+                effect: effect
             )
             .ApplyOutline(mainColor)
             .ApplyOutline(secondaryColor)

@@ -6,7 +6,7 @@ matrix uMatrix;
 
 struct VSInput
 {
-    float vertexId : TEXCOORD0;
+    float id : TEXCOORD0;
 };
 
 struct VSOutput
@@ -32,10 +32,10 @@ const float4 sources[8] = {
 VSOutput vert(VSInput input)
 {
     VSOutput output;
-    output.position = mul(float4(positions[input.vertexId], 0, 1.0), uMatrix);
+    output.position = mul(float4(positions[input.id], 0, 1.0), uMatrix);
 
-    float4 uvx = uSource * sources[input.vertexId * 2];
-    float4 uvy = uSource * sources[input.vertexId * 2 + 1];
+    float4 uvx = uSource * sources[input.id * 2];
+    float4 uvy = uSource * sources[input.id * 2 + 1];
     output.uv = float2(
         uvx.x + uvx.y + uvx.z + uvx.w,
         uvy.x + uvy.y + uvy.z + uvy.w

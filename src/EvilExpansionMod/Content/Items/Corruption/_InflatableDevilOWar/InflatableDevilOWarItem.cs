@@ -24,6 +24,27 @@ public class InflatableDevilOWarItem : ModItem {
         Item.value = Item.sellPrice(gold: 3);
     }
 
+    public override void UpdateVanity(Player player) {
+        if (player.whoAmI == Main.myPlayer) {
+            if (_projectileID != -1 && Main.projectile[_projectileID].active && Main.projectile[_projectileID].owner == player.whoAmI && Main.projectile[_projectileID].type == ModContent.ProjectileType<InflatableDevilOWarProjectile>()) {
+                Main.projectile[_projectileID].timeLeft = 2;
+                Main.projectile[_projectileID].ai[0] = 0f; 
+                Main.projectile[_projectileID].netUpdate = true;
+            } else {
+                _projectileID = Projectile.NewProjectile(
+                    player.GetSource_Accessory(Item),
+                    player.Center,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<InflatableDevilOWarProjectile>(),
+                    0,
+                    0f,
+                    player.whoAmI,
+                    0f
+                );
+            }
+        }
+    }
+
     public override void UpdateAccessory(Player player, bool hideVisual) {
         player.jumpSpeedBoost += 3.5f;
 
@@ -109,6 +130,8 @@ public class InflatableDevilOWarProjectile : ModProjectile {
         Projectile.hide = IsHidden;
     }
 
+    public override bool? CanCutTiles() => false;
+
     private void PopulateTrailsForDrawing(Vector2 interpolatedBodyPosition, Color _, Player player) {
         float Equation(float x) {
             return 0.2f * MathF.Sin(x) + 0.8f * MathF.Cos(x + MathHelper.PiOver4);
@@ -188,7 +211,7 @@ public class InflatableDevilOWarProjectile : ModProjectile {
         origin.X = flipped ? headTexture.Width - origin.X : origin.X;
 
         if (_tentacleTrailPositions != null) {
-            var tentaclePipeline = Graphics.BeginPipeline(1.0f, new SpriteBatchSnapshot() with { SamplerState = SamplerState.PointClamp });
+            var tentaclePipeline = Graphics.BeginPipeline(1.0f);
 
             foreach (Vector2[] positions in _tentacleTrailPositions) {
                 tentaclePipeline.DrawBasicTrail(
@@ -202,7 +225,8 @@ public class InflatableDevilOWarProjectile : ModProjectile {
             tentaclePipeline.Flush();
             
             if (_stringTrailPositions != null) {
-                Graphics.BeginPipeline(0.5f, new SpriteBatchSnapshot() with { SamplerState = SamplerState.PointClamp }).DrawBasicTrail(
+                Graphics.BeginPipeline(0.5f)
+                    .DrawBasicTrail(
                     _stringTrailPositions,
                     static _ => 2f,
                     TextureAssets.MagicPixel.Value,
@@ -213,6 +237,7 @@ public class InflatableDevilOWarProjectile : ModProjectile {
         }
 
         var insidesOffset = new Vector2(0, 24 * Projectile.scale).RotatedBy(Projectile.rotation);
+        
         Main.spriteBatch.Draw(
             insidesTexture,
             Projectile.Center + insidesOffset - Main.screenPosition, 

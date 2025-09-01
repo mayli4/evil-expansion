@@ -285,6 +285,11 @@ Mods: {
 					Emits flames
 					'''
 			}
+
+			InflatableDevilOWarItem: {
+				DisplayName: Inflatable Devil O War Item
+				Tooltip: "Increases jump height"
+			}
 		}
 
 		NPCs: {
@@ -361,6 +366,7 @@ Mods: {
 			CutProjectile.DisplayName: Cut Projectile
 			CrytapeteTear.DisplayName: Crytapete Tear
 			FireInALanternFlame.DisplayName: Fire In A Lantern Flame
+			InflatableDevilOWarProjectile.DisplayName: Inflatable Devil O War Projectile
 			LingeringIchorProjectile.DisplayName: Lingering Ichor Projectile
 		}
 

@@ -101,7 +101,6 @@ public class LamethrowerHeldProjectile : ModProjectile {
             _trailOrigin + _trailPositions[^1],
             FlameWidth * FlameScale
         );
-        Main.NewText(count);
 
         foreach(var tile in tiles[..count]) {
             if(

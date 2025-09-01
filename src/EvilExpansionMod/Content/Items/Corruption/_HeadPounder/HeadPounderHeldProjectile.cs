@@ -268,6 +268,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                 TextureAssets.MagicPixel.Value,
                 trailColor
             )
+            .SetSamplerState(0, SamplerState.PointClamp)
             .DrawSprite(
                  texture,
                  Projectile.position - Main.screenPosition,
@@ -277,7 +278,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                  scale: Vector2.One * Projectile.scale,
                  spriteEffects: Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
             )
-            .ApplyOutline(trailColor, 0.99f)
+            .ApplyOutline(trailColor)
             .ApplyOutline(new Color(230, 255, 5) * _outlineAlpha)
             .Flush();
 

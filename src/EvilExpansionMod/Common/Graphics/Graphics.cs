@@ -209,16 +209,7 @@ public class Graphics : ModSystem {
     static VertexBuffer _spriteVertexBuffer;
 
     static GraphicsDevice GraphicsDevice => Main.graphics.GraphicsDevice;
-    static RenderTarget2D InitFullScreenTarget => new(
-        GraphicsDevice,
-        Main.screenWidth,
-        Main.screenHeight,
-        false,
-        SurfaceFormat.Color,
-        DepthFormat.None,
-        0,
-        RenderTargetUsage.PreserveContents
-    );
+    static RenderTarget2D InitFullScreenTarget => new(GraphicsDevice, Main.screenWidth, Main.screenHeight);
 
     public override void Load() {
         Main.QueueMainThreadAction(() =>

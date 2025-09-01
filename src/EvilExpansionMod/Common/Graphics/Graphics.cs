@@ -713,6 +713,12 @@ public class Graphics : ModSystem {
                 }
             }
 
+            // This fixes the issue with vanilla trail being drawn 2x bigger in case of half size target..
+            // The spritebatch sets the transformation matrix in `End`
+            // and the trails depend on it so it needs to be set back to normal.
+            Main.spriteBatch.Begin(new());
+            Main.spriteBatch.End();
+
             if(snapshot != null) Main.spriteBatch.Begin(snapshot.Value);
             _targetSemaphore.Release();
         }
@@ -937,12 +943,6 @@ public class Graphics : ModSystem {
                 ),
             });
             Main.spriteBatch.Draw(_activeTarget, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), null, Color.White);
-            Main.spriteBatch.End();
-
-            // This fixes the issue with vanilla trail being drawn 2x bigger in case of half size target..
-            // The spritebatch sets the transformation matrix in `End`
-            // and the trails depend on it so it needs to be set back to normal.
-            Main.spriteBatch.Begin(new());
             Main.spriteBatch.End();
 
             // DrawFullscreenQuad(_activeTarget, 1f / _targetScale, null);

@@ -37,7 +37,9 @@ public class UnderworldDemonite : ModTile {
     }
     
     public override void FloorVisuals(Player player) {
-        player.AddBuff(BuffID.Burning, 10, false);
+        if(!player.fireWalk) {
+            player.AddBuff(BuffID.Burning, 10, false);
+        }
     }
 
     public bool ConvertToCorruption(int i, int j, int type, int conversionType) {

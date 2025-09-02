@@ -53,7 +53,9 @@ public class VeinOre : ModTile {
     }
 
     public override void FloorVisuals(Player player) {
-        player.AddBuff(BuffID.Burning, 10, false);
+        if(!player.fireWalk) {
+            player.AddBuff(BuffID.Burning, 10, false);
+        }
     }
 
     public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {

@@ -290,6 +290,11 @@ Mods: {
 				DisplayName: Inflatable Devil O War Item
 				Tooltip: Increases jump height
 			}
+
+			GulpyYoyoItem: {
+				DisplayName: Gulpy Yoyo Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {

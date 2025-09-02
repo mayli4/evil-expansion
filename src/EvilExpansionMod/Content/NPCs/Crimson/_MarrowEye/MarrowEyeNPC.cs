@@ -1,6 +1,5 @@
 ﻿using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.Items.Crimson;
-using EvilExpansionMod.Content.NPCs.Crimson;
 using EvilExpansionMod.Content.Tiles.Banners;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -58,7 +57,7 @@ public class MarrowEyeNPC : ModNPC {
         NPC.buffImmune[BuffID.Ichor] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
-        
+
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<MarrowEyeBannerItem>();
     }
@@ -68,18 +67,18 @@ public class MarrowEyeNPC : ModNPC {
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
     }
-    
+
     public override void HitEffect(NPC.HitInfo hit) {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) return;
-        
-        for(var i = 0; i < 5; i++) Gore.NewGoreDirect(
+
+        for(var i = 0; i < 4; i++) Gore.NewGoreDirect(
             NPC.GetSource_Death(),
             NPC.Center + Main.rand.NextVector2Unit() * 5f - Vector2.UnitY * 30f,
             Main.rand.NextVector2Unit(rotationRange: -MathF.PI) * 3f,
             Mod.Find<ModGore>($"MarroweyeGore{i}").Type
         );
     }
-    
+
     public override void OnSpawn(IEntitySource source) {
         var randomRotation = MathF.PI / 2f + Main.rand.NextFloatDirection() * MathF.PI / 6f;
         var randomDirection = randomRotation.ToRotationVector2();

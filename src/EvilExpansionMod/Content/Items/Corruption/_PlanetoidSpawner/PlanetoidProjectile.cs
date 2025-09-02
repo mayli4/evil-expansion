@@ -343,11 +343,10 @@ public class PlanetoidProjectile : ModProjectile {
         float easedDrawProgress = MathF.Pow(drawProgress, 0.5f);
         float finalDrawScale = MathHelper.Lerp(startingScale, 1.0f, easedDrawProgress);
 
-        Projectile.width = (int)(currentTexture.Width * finalDrawScale);
-        Projectile.height = (int)(currentTexture.Height * finalDrawScale);
+        var width = (int)(currentTexture.Width * finalDrawScale);
+        var height = (int)(currentTexture.Height * finalDrawScale);
 
-        Projectile.width = Math.Max(1, Projectile.width - 12);
-        Projectile.height = Math.Max(1, Projectile.height - 12);
+        Projectile.Resize(Math.Max(1, width - 12), Math.Max(1, height - 12));
 
         Main.EntitySpriteDraw(
             currentTexture,

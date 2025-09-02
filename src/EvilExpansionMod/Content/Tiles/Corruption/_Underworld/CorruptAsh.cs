@@ -16,6 +16,13 @@ public class CorruptAsh : ModTile {
         Main.tileSolid[Type] = true;
 
         DustType = DustID.Corruption;
+        
+        Main.tileMerge[Type][TileID.Ash] = true;
+        Main.tileMerge[TileID.Ash][Type] = true;
+        Main.tileMerge[Type][TileID.ObsidianBrick] = true;
+        Main.tileMerge[TileID.ObsidianBrick][Type] = true;
+        Main.tileMerge[Type][TileID.HellstoneBrick] = true;
+        Main.tileMerge[TileID.HellstoneBrick][Type] = true;
 
         AddMapEntry(new Color(53, 37, 62));
         Main.tileMerge[Type][ModContent.TileType<OvergrownCorruptAsh>()] = true;

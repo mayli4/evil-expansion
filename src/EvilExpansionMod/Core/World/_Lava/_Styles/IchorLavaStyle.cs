@@ -33,7 +33,7 @@ public class IchorLavaStyle : ModLavaStyle {
 
     public override void ModifyVertexColors(int x, int y, ref VertexColors colors) {
         var bottomColor = Color.Yellow;
-        var topColor = new Color(250, 125, 0, 255);
+        var topColor = new Color(250, 195, 0, 255);
 
         int topOfActualLiquidSurfaceY = y;
         int solidTilesPassedAboveLiquid = 0;

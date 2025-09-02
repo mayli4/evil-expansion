@@ -21,6 +21,13 @@ public class OvergrownCorruptAsh : ModTile {
         TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<CorruptAsh>();
         TileID.Sets.NeedsGrassFraming[Type] = true;
 
+        Main.tileMerge[Type][TileID.Ash] = true;
+        Main.tileMerge[TileID.Ash][Type] = true;
+        Main.tileMerge[Type][TileID.ObsidianBrick] = true;
+        Main.tileMerge[TileID.ObsidianBrick][Type] = true;
+        Main.tileMerge[Type][TileID.HellstoneBrick] = true;
+        Main.tileMerge[TileID.HellstoneBrick][Type] = true;
+
         Main.tileMerge[Type][ModContent.TileType<CorruptAsh>()] = true;
 
         DustType = DustID.Corruption;

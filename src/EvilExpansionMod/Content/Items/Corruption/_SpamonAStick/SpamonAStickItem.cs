@@ -147,6 +147,13 @@ public class SpamOnAStickProjectile : ModProjectile {
                 State = 4;
                 Projectile.netUpdate = true;
             }
+            
+            if (Vector2.Distance(Owner.Center, Projectile.Center) >= MaxLength) {
+                Projectile.velocity = Vector2.Zero;
+                Length = MaxLength;
+                State = 4;
+                Projectile.netUpdate = true;
+            }
 		}
 		else if (State == 4) {
             Timer++;

@@ -20,6 +20,13 @@ public class CrimsonAshGrass : ModTile {
         TileID.Sets.CanBeDugByShovel[Type] = true;
         TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<CrimsonAsh>();
         TileID.Sets.NeedsGrassFraming[Type] = true;
+        
+        Main.tileMerge[Type][TileID.Ash] = true;
+        Main.tileMerge[TileID.Ash][Type] = true;
+        Main.tileMerge[Type][TileID.ObsidianBrick] = true;
+        Main.tileMerge[TileID.ObsidianBrick][Type] = true;
+        Main.tileMerge[Type][TileID.HellstoneBrick] = true;
+        Main.tileMerge[TileID.HellstoneBrick][Type] = true;
 
         Main.tileMerge[Type][ModContent.TileType<CrimsonAsh>()] = true;
 

@@ -38,23 +38,30 @@ public class StinkflyNPC : ModNPC {
 
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 2;
-    }
+        Main.npcCatchable[Type] = true;
+        NPCID.Sets.CountsAsCritter[Type] = true;
+        NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
+    } 
 
     public override void SetDefaults() {
-        NPC.width = 14;
-        NPC.height = 14;
-        NPC.lifeMax = 15;
+        NPC.width = 20;
+        NPC.height = 15;
+        NPC.lifeMax = 5;
+        NPC.damage = 0;
+        NPC.defense = 0;
         NPC.value = 0f;
-        NPC.noTileCollide = false;
-        NPC.noGravity = true;
+        NPC.knockBackResist = 0.4f;
+        NPC.catchItem = ModContent.ItemType<StinkflyItem>();
         
-        NPCID.Sets.CountsAsCritter[NPC.type] = true;
-        Main.npcCatchable[NPC.type] = true;
-        NPC.catchItem = (short)ModContent.ItemType<StinkflyItem>();
-
+        NPC.noGravity = true;
+        NPC.noTileCollide = false;
+        NPC.lavaImmune = true;
         NPC.aiStyle = NPCAIStyleID.Butterfly;
+        
+        NPC.DeathSound = SoundID.NPCDeath1;
+        
+        SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
     }
-    
 
     public override void PostAI() {
         NPC closestGrub = null;
@@ -66,8 +73,7 @@ public class StinkflyNPC : ModNPC {
             NPC grub = Main.npc[i];
             if (grub.active && grub.type == ModContent.NPCType<StinkgrubNPC>()) {
                 float distSq = NPC.DistanceSQ(grub.Center);
-                if (distSq < closestDistSq && distSq < detectionRadiusSq)
-                {
+                if (distSq < closestDistSq && distSq < detectionRadiusSq) {
                     closestDistSq = distSq;
                     closestGrub = grub;
                 }
@@ -106,12 +112,10 @@ public class StinkflyNPC : ModNPC {
     
     public override void FindFrame(int frameHeight) {
         NPC.frameCounter++;
-        if (NPC.frameCounter >= 6)
-        {
+        if (NPC.frameCounter >= 6) {
             NPC.frameCounter = 0;
             NPC.frame.Y += frameHeight;
-            if (NPC.frame.Y >= Main.npcFrameCount[NPC.type] * frameHeight)
-            {
+            if (NPC.frame.Y >= Main.npcFrameCount[NPC.type] * frameHeight) {
                 NPC.frame.Y = 0;
             }
         }

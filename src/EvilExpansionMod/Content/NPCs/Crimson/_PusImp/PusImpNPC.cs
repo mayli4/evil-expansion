@@ -1,4 +1,5 @@
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Items.Crimson;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
@@ -6,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Runtime.CompilerServices;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -72,6 +74,12 @@ public class PusImpNPC : ModNPC {
         
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<PusImpBannerItem>();
+    }
+    
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.2f : 0;
+
+    public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PusClumpItem>(), 1, 2, 4));
     }
 
     public override void AI() {

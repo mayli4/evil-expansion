@@ -131,7 +131,7 @@ public sealed class CursedSpiritNPC : ModNPC {
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-        return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.4f : 0;
+        return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.2f : 0;
     }
 
     public override void OnSpawn(IEntitySource source) {
@@ -362,7 +362,7 @@ public sealed class CursedSpiritNPC : ModNPC {
         }
 
         fireballTimer += 1;
-        if(fireballTimer > 90 && Target != null) {
+        if(fireballTimer > 190 && Target != null) {
             fireballTimer = 0;
 
             var position = NPC.Center;
@@ -373,7 +373,7 @@ public sealed class CursedSpiritNPC : ModNPC {
                 12f
             );
 
-            for(var i = -1; i < 2; i++) {
+            for(var i = -1; i < 1; i++) {
                 Projectile.NewProjectile(
                     NPC.GetSource_FromAI(),
                     NPC.Center,

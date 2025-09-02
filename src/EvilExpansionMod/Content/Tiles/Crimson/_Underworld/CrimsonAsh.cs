@@ -12,6 +12,13 @@ public class CrimsonAsh : ModTile {
         Main.tileMergeDirt[Type] = true;
         Main.tileBlockLight[Type] = true;
         Main.tileSolid[Type] = true;
+        
+        Main.tileMerge[Type][TileID.Ash] = true;
+        Main.tileMerge[TileID.Ash][Type] = true;
+        Main.tileMerge[Type][TileID.ObsidianBrick] = true;
+        Main.tileMerge[TileID.ObsidianBrick][Type] = true;
+        Main.tileMerge[Type][TileID.HellstoneBrick] = true;
+        Main.tileMerge[TileID.HellstoneBrick][Type] = true;
 
         DustType = DustID.Crimson;
 

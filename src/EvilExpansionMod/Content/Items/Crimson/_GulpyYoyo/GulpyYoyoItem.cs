@@ -30,7 +30,7 @@ public class GulpyYoyoItem : ModItem {
         Item.rare = ItemRarityID.LightRed;
         Item.value = Item.buyPrice(gold: 1);
 
-        // Item.shoot = ModContent.ProjectileType<>();
+        Item.shoot = ModContent.ProjectileType<GulpyYoyoProjectile>();
         Item.shootSpeed = 16f;
     }
 }

@@ -227,12 +227,12 @@ Mods: {
 			}
 
 			CorruptAshwoodItem: {
-				DisplayName: Corrupt Ashwood Item
+				DisplayName: Corrupt Ashwood
 				Tooltip: ""
 			}
 
 			CharredBloodwoodItem: {
-				DisplayName: Charred Bloodwood Item
+				DisplayName: Charred Bloodwood
 				Tooltip: ""
 			}
 
@@ -290,12 +290,12 @@ Mods: {
 			}
 
 			InflatableDevilOWarItem: {
-				DisplayName: Inflatable Devil O War Item
+				DisplayName: Inflatable Devil O War
 				Tooltip: Increases jump height
 			}
 
 			GulpyYoyoItem: {
-				DisplayName: Gulpy Yoyo Item
+				DisplayName: Gulpy Yoyo
 				Tooltip: ""
 			}
 		}
@@ -376,6 +376,7 @@ Mods: {
 			FireInALanternFlame.DisplayName: Fire In A Lantern Flame
 			InflatableDevilOWarProjectile.DisplayName: Inflatable Devil O War Projectile
 			LingeringIchorProjectile.DisplayName: Lingering Ichor Projectile
+			GulpyYoyoProjectile.DisplayName: Gulpy Yoyo Projectile
 		}
 
 		Biomes: {

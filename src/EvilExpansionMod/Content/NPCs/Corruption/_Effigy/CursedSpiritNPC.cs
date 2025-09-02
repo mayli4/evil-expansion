@@ -361,9 +361,9 @@ public sealed class CursedSpiritNPC : ModNPC {
             default: throw new Exception();
         }
 
-        fireballTimer += 1;
-        if(fireballTimer > 190 && Target != null) {
-            fireballTimer = 0;
+        fireballTimer -= 1;
+        if(fireballTimer <= 0 && Target != null) {
+            fireballTimer = Main.rand.Next(220, 300);
 
             var position = NPC.Center;
             var velocity = Helper.InitialVelocityRequiredToHitPosition(

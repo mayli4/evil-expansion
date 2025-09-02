@@ -86,16 +86,23 @@ public class SlippedWhipProjectile : ModProjectile {
         Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
         Projectile.damage = (int)(Projectile.damage * 0.7f); // multihit penalty
 
-        if(Main.rand.NextFloat() < SlippedWhipItem.CageSpawnChance) Projectile.NewProjectile(
-            Projectile.GetSource_OnHit(target),
-            target.Center,
-            Vector2.Zero,
-            ModContent.ProjectileType<SlippedWhipCageProjectile>(),
-            0,
-            0f,
-            Projectile.owner,
-            target.whoAmI
-        );
+        if(Main.rand.NextFloat() < SlippedWhipItem.CageSpawnChance) {
+            var actualTarget = target.whoAmI;
+            if(target.realLife >= 0 && Main.npc[target.realLife] != null && Main.npc[target.realLife].active) {
+                actualTarget = target.realLife;
+            }
+
+            Projectile.NewProjectile(
+                Projectile.GetSource_OnHit(target),
+                target.Center,
+                Vector2.Zero,
+                ModContent.ProjectileType<SlippedWhipCageProjectile>(),
+                0,
+                0f,
+                Projectile.owner,
+                actualTarget
+            );
+        }
     }
 
     public override bool PreDraw(ref Color lightColor) {

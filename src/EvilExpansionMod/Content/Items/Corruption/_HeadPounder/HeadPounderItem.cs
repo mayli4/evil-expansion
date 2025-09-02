@@ -39,14 +39,15 @@ public class HeadPounderItem : ModItem {
     }
 
     public override void ModifyTooltips(List<TooltipLine> tooltips) {
-        tooltips.Find(t => t.Name == "Damage").Text = $"1-{Item.damage} damage (based on charge time)";
+        tooltips.Find(t => t.Name == "Damage").Text =
+            Mod.GetLocalization($"{LocalizationCategory}.{nameof(HeadPounderItem)}.Damage").Format(Item.damage);
     }
 
     public override bool CanUseItem(Player player) {
         return player.ownedProjectileCounts[Item.shoot] == 0;
     }
 
-    public override void AddRecipes() 
+    public override void AddRecipes()
         => CreateRecipe()
             .AddIngredient(ModContent.ItemType<HellDemoniteBarItem>(), 18)
             .Register();

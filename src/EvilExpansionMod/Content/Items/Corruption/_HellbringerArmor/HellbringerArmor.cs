@@ -9,15 +9,15 @@ namespace EvilExpansionMod.Content.Items.Corruption;
 [AutoloadEquip(EquipType.Head)]
 public class HellbringerHead : ModItem {
     public static float ShadowOrbSpawnRange = 800;
-    public static float ShadowOrbSpawnChance = 1f;
+    public static float ShadowOrbSpawnChance = 0.74f;
     public static int CorruptlingDamage = 20;
 
     public override string Texture => Assets.Assets.Textures.Items.Corruption.HellbringerArmor.KEY_HellbringerHead;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-        
+
         int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Head);
-        
+
         ArmorIDs.Head.Sets.DrawHead[equipSlot] = false;
         ArmorIDs.Head.Sets.DrawHead[equipSlot] = false;
     }
@@ -39,6 +39,11 @@ public class HellbringerHead : ModItem {
         return body.type == ModContent.ItemType<HellbringerBody>() && legs.type == ModContent.ItemType<HellbringerLegs>();
     }
 
+    public override void UpdateArmorSet(Player player) {
+        player.setBonus = Mod.GetLocalization($"{LocalizationCategory}.{nameof(HellbringerHead)}.SetBonus")
+            .Format((int)(100f * ShadowOrbSpawnChance));
+    }
+
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient<UnderworldDemoniteItem>(7)
@@ -53,9 +58,9 @@ public class HellbringerBody : ModItem {
     public override string Texture => Assets.Assets.Textures.Items.Corruption.HellbringerArmor.KEY_HellbringerBody;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-        
+
         int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Body);
-        
+
         ArmorIDs.Body.Sets.HidesTopSkin[equipSlot] = true;
         ArmorIDs.Body.Sets.HidesArms[equipSlot] = true;
     }
@@ -91,9 +96,9 @@ public class HellbringerLegs : ModItem {
     public override string Texture => Assets.Assets.Textures.Items.Corruption.HellbringerArmor.KEY_HellbringerLegs;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
-        
+
         int equipSlot = EquipLoader.GetEquipSlot(Mod, Name, EquipType.Legs);
-        
+
         ArmorIDs.Legs.Sets.HidesBottomSkin[equipSlot] = true;
     }
 
@@ -112,7 +117,7 @@ public class HellbringerLegs : ModItem {
     public override bool IsArmorSet(Item head, Item body, Item legs) {
         return head.type == ModContent.ItemType<HellbringerHead>() && body.type == ModContent.ItemType<HellbringerBody>();
     }
-    
+
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient<UnderworldDemoniteItem>(2)

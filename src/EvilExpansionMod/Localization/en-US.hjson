@@ -377,6 +377,7 @@ Mods: {
 			InflatableDevilOWarProjectile.DisplayName: Inflatable Devil O War Projectile
 			LingeringIchorProjectile.DisplayName: Lingering Ichor Projectile
 			GulpyYoyoProjectile.DisplayName: Gulpy Yoyo Projectile
+			GulpyHandProjectile.DisplayName: Gulpy Hand Projectile
 		}
 
 		Biomes: {

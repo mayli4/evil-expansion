@@ -1,4 +1,4 @@
-﻿using EvilExpansionMod.Utilities._Extensions;
+﻿using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;

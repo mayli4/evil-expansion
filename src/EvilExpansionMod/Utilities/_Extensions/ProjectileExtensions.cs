@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Terraria;
 
-namespace EvilExpansionMod.Utilities._Extensions;
+namespace EvilExpansionMod.Utilities;
 public static class ProjectileExtensions {
     public static bool MinionValidTarget(this Projectile projectile, NPC npc, float radius, bool lineOfSight, bool originPlayer) {
         Player owner = Main.player[projectile.owner];

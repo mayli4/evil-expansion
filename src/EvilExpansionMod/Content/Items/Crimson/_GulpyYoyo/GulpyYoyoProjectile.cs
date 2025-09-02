@@ -1,4 +1,6 @@
-﻿using Terraria;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -22,6 +24,19 @@ public class GulpyYoyoProjectile : ModProjectile {
         Projectile.friendly = true;
         Projectile.DamageType = DamageClass.MeleeNoSpeed;
         Projectile.penetrate = -1;
+    }
+
+    public override void OnSpawn(IEntitySource source) {
+        Projectile.NewProjectile(
+            Projectile.GetSource_FromThis(),
+            Projectile.Center,
+            Vector2.Zero,
+            ModContent.ProjectileType<GulpyHandProjectile>(),
+            0,
+            0f,
+            Projectile.owner,
+            Projectile.whoAmI
+        );
     }
 
     // notes for aiStyle 99: 

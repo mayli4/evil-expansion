@@ -83,7 +83,7 @@ Mods: {
 					Increases summon damage by 5%
 					Increases your max number of minions by 1
 					'''
-				SetBonus: "{0}% chance to spawn a shadow orb on kill that summons a Corruptling when touched"
+				SetBonus: "{0}% chance to spawn a shadow orb on hit that summons a Corruptling when touched"
 			}
 
 			HellbringerLegs: {

@@ -5,8 +5,17 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Corruption._HellbringerArmor;
 
 public class HellbringerGlobalNPC : GlobalNPC {
-    public override void OnKill(NPC npc) {
-        if(npc.boss) return;
+
+    public override void OnHitByItem(NPC npc, Player player, Item item, NPC.HitInfo hit, int damageDone) {
+        OnHit(npc);
+    }
+
+    public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone) {
+        OnHit(npc);
+    }
+
+    static void OnHit(NPC npc) {
+        if(npc.friendly) return;
         for(var i = 0; i < Main.maxPlayers; i++) {
             Player player = Main.player[i];
             if(
@@ -22,7 +31,7 @@ public class HellbringerGlobalNPC : GlobalNPC {
                 Projectile.NewProjectile(
                     player.GetSource_FromThis(),
                     npc.Center,
-                    Vector2.Zero,
+                    npc.Center.DirectionTo(player.Center).RotatedByRandom(MathHelper.PiOver4 * 0.25f) * 14f,
                     ModContent.ProjectileType<ShadowOrbProjectile>(),
                     HellbringerHead.CorruptlingDamage,
                     0.5f,

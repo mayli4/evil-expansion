@@ -67,7 +67,7 @@ public sealed class LavaLizardCritter : ModNPC {
     public override void SetDefaults() {
         NPC.width = 20;
         NPC.height = 15;
-        NPC.lifeMax = 5;
+        NPC.lifeMax = 15;
         NPC.damage = 0;
         NPC.defense = 0;
         NPC.value = 0f;

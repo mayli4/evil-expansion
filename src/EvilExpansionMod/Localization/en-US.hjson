@@ -63,6 +63,7 @@ Mods: {
 
 			HeadPounderItem: {
 				DisplayName: Head Pounder
+				Damage: "1-{0} melee damage based on charge time"
 				Tooltip: ""
 			}
 

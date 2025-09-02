@@ -1,5 +1,4 @@
 using EvilExpansionMod.Common.Graphics;
-using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -20,11 +19,9 @@ public sealed class BloodWarden : ModProjectile {
         Attacking
     }
 
-    public State CurrentState
-    {
+    public State CurrentState {
         get => (State)Projectile.ai[0];
-        set
-        {
+        set {
             Projectile.ai[0] = (float)value;
             Timer = 0;
             Projectile.netUpdate = true;
@@ -39,11 +36,11 @@ public sealed class BloodWarden : ModProjectile {
     private const float attack_range = 30 * 16; // 30 tiles
     private const float follow_speed_max = 10f;
     private const float attack_speed_max = 15f;
-    
+
     private const int anim_speed = 6;
-    
+
     private static readonly Vector2 attachmentPoint = new Vector2(15f, 40f);
-    
+
     private bool _canDealDamage;
 
     public override void SetStaticDefaults() {
@@ -57,7 +54,7 @@ public sealed class BloodWarden : ModProjectile {
 
         Projectile.tileCollide = false;
 
-        Projectile.minion = true; 
+        Projectile.minion = true;
         Projectile.penetrate = -1;
         Projectile.timeLeft = 5000;
         Projectile.friendly = true;
@@ -65,7 +62,7 @@ public sealed class BloodWarden : ModProjectile {
         Projectile.localNPCHitCooldown = 15;
 
         Projectile.damage = 50;
-        
+
         Projectile.DamageType = DamageClass.Summon;
     }
 
@@ -79,64 +76,64 @@ public sealed class BloodWarden : ModProjectile {
 
     public override void AI() {
         _canDealDamage = false;
-        
-        if (Owner.HasBuff<BloodWardenBuff>())
+
+        if(Owner.HasBuff<BloodWardenBuff>())
             Projectile.timeLeft = 2;
         else
             Projectile.Kill();
 
         Projectile.spriteDirection = (Owner.Center.X < Projectile.Center.X) ? -1 : 1;
-        
+
         NPC target = FindTarget();
 
-        if (Projectile.Distance(Owner.Center) > 100 * 16) {
+        if(Projectile.Distance(Owner.Center) > 100 * 16) {
             Projectile.Center = Owner.Center;
         }
-        if (CurrentState == State.Idle) {
-            if (target != null) {
+        if(CurrentState == State.Idle) {
+            if(target != null) {
                 CurrentState = State.Attacking;
                 TargetNPCID = target.whoAmI;
             }
         }
-        else if (CurrentState == State.Attacking) {
-            if (target == null || target.whoAmI != TargetNPCID || !target.active || !target.CanBeChasedBy(this) && target.CountsAsACritter) {
+        else if(CurrentState == State.Attacking) {
+            if(target == null || target.whoAmI != TargetNPCID || !target.active || !target.CanBeChasedBy(this) && target.CountsAsACritter) {
                 CurrentState = State.Idle;
                 TargetNPCID = -1;
             }
         }
 
-        if (CurrentState == State.Idle) {
+        if(CurrentState == State.Idle) {
             DoIdleMovement();
         }
-        else if (CurrentState == State.Attacking) {
+        else if(CurrentState == State.Attacking) {
             DoAttackMovement(target);
-            if (Projectile.Distance(target.Center) < Projectile.width + 20) {
+            if(Projectile.Distance(target.Center) < Projectile.width + 20) {
                 Projectile.Center = Vector2.Lerp(Projectile.Center, target.Center, 0.1f);
             }
         }
-        
+
         Timer++;
-        
+
         Projectile.frameCounter++;
 
-        if (CurrentState == State.Idle) {
-            if (Projectile.frameCounter >= anim_speed) {
+        if(CurrentState == State.Idle) {
+            if(Projectile.frameCounter >= anim_speed) {
                 Projectile.frameCounter = 0;
                 Projectile.frame++;
-                if (Projectile.frame > 4) {
+                if(Projectile.frame > 4) {
                     Projectile.frame = 0;
                 }
             }
         }
-        else if (CurrentState == State.Attacking) {
-            if (Projectile.frameCounter >= anim_speed) {
+        else if(CurrentState == State.Attacking) {
+            if(Projectile.frameCounter >= anim_speed) {
                 Projectile.frameCounter = 0;
-                Projectile.frame++; 
-                if (Projectile.frame > 12) {
+                Projectile.frame++;
+                if(Projectile.frame > 12) {
                     Projectile.frame = 5;
                 }
                 //lol?
-                if (Projectile.frame == 6 || Projectile.frame == 8 || Projectile.frame == 10 || Projectile.frame == 12) {
+                if(Projectile.frame == 6 || Projectile.frame == 8 || Projectile.frame == 10 || Projectile.frame == 12) {
                     _canDealDamage = true;
                 }
             }
@@ -144,14 +141,16 @@ public sealed class BloodWarden : ModProjectile {
     }
 
     private NPC FindTarget() {
+        if(Owner.HasMinionAttackTargetNPC) return Main.npc[Owner.MinionAttackTargetNPC];
+
         NPC bestTarget = null;
         float bestDistanceSq = attack_range * attack_range;
 
-        for (int i = 0; i < Main.maxNPCs; i++) {
+        for(int i = 0; i < Main.maxNPCs; i++) {
             NPC npc = Main.npc[i];
-            if (npc.active && !npc.friendly && !npc.dontTakeDamage && !npc.immortal && !npc.hide && npc.CanBeChasedBy(this, false)) {
+            if(npc.active && !npc.friendly && !npc.dontTakeDamage && !npc.immortal && !npc.hide && npc.CanBeChasedBy(this, false)) {
                 float distanceSq = Projectile.DistanceSQ(npc.Center);
-                if (distanceSq < bestDistanceSq) {
+                if(distanceSq < bestDistanceSq) {
                     bestDistanceSq = distanceSq;
                     bestTarget = npc;
                 }
@@ -170,19 +169,20 @@ public sealed class BloodWarden : ModProjectile {
         Vector2 vectorToTarget = targetPos - Projectile.Center;
         float distance = vectorToTarget.Length();
 
-        if (distance > 20f) { 
+        if(distance > 20f) {
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, vectorToTarget.SafeNormalize(Vector2.Zero) * follow_speed_max, 0.1f);
-        } else {
+        }
+        else {
             Projectile.velocity *= 0.9f;
         }
 
-        if (Projectile.velocity.Length() < 0.1f) {
+        if(Projectile.velocity.Length() < 0.1f) {
             Projectile.velocity.Y += 0.05f * (float)Math.Sin(Main.GameUpdateCount * 0.1f);
         }
     }
 
     private void DoAttackMovement(NPC target) {
-        if (target == null) {
+        if(target == null) {
             CurrentState = State.Idle;
             return;
         }
@@ -190,9 +190,10 @@ public sealed class BloodWarden : ModProjectile {
         Vector2 vectorToTarget = target.Center - Projectile.Center;
         float distance = vectorToTarget.Length();
 
-        if (distance > 20f) {
+        if(distance > 20f) {
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, vectorToTarget.SafeNormalize(Vector2.Zero) * attack_speed_max, 0.1f);
-        } else {
+        }
+        else {
             Projectile.velocity = Vector2.Lerp(Projectile.velocity, Vector2.Zero, 0.1f);
         }
 
@@ -201,29 +202,29 @@ public sealed class BloodWarden : ModProjectile {
 
     public override bool PreDraw(ref Color lightColor) {
         var effects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
-        
+
         var texture = ModContent.Request<Texture2D>(Texture).Value;
         var chainTexture = Assets.Assets.Textures.Items.Crimson.MeatPrisonArmor.BloodWardenCord.Value;
         var shader = GameShaders.Armor.GetShaderFromItemId(Main.LocalPlayer.dye[1].type);
-        
+
         var origin = new Vector2(texture.Width / 2f, texture.Height / Main.projFrames[Projectile.type] / 2f);
-        
+
         int frameHeight = texture.Height / Main.projFrames[Projectile.type];
         var sourceRectangle = new Rectangle(0, Projectile.frame * frameHeight, texture.Width, frameHeight);
-        var attachmentOffsetFromFrameCenter = attachmentPoint - new Vector2(35 , 30);
+        var attachmentOffsetFromFrameCenter = attachmentPoint - new Vector2(35, 30);
 
-        if (Projectile.spriteDirection == -1) {
+        if(Projectile.spriteDirection == -1) {
             attachmentOffsetFromFrameCenter.X = -attachmentOffsetFromFrameCenter.X;
         }
-        
+
         var chainStart = Projectile.Center + attachmentOffsetFromFrameCenter + new Vector2(0f, Projectile.gfxOffY);
 
         var chainEnd = Owner.Center;
-        
+
         List<Vector2> chainPoints = new();
         GenerateWavyChainPoints(chainPoints, chainStart, chainEnd, 20, 5, 0.5f, 0.2f);
 
-        
+
         Graphics.BeginPipeline()
             .DrawBasicTrail(chainPoints.ToArray(), static _ => 6, chainTexture, Color.White)
             .Flush();
@@ -239,10 +240,10 @@ public sealed class BloodWarden : ModProjectile {
             effects,
             0f
         );
-        
+
         return false;
     }
-    
+
     private void GenerateWavyChainPoints(List<Vector2> pointsList, Vector2 start, Vector2 end, int segments, float waveAmplitude, float waveFrequency, float waveSpeed) {
         pointsList.Clear();
         pointsList.Add(start);
@@ -252,12 +253,12 @@ public sealed class BloodWarden : ModProjectile {
 
         float instancePhaseOffset = Main.GameUpdateCount * waveSpeed + Projectile.whoAmI * 0.1f;
 
-        for (int i = 1; i < segments - 1; i++) {
+        for(int i = 1; i < segments - 1; i++) {
             float t = (float)i / (segments - 1);
             Vector2 basePoint = Vector2.Lerp(start, end, t);
-            
+
             float waveDisplacement = (float)Math.Sin(t * MathHelper.TwoPi * waveFrequency + instancePhaseOffset)
-                                     * waveAmplitude * (1f - t); 
+                                     * waveAmplitude * (1f - t);
 
             pointsList.Add(basePoint + perpendicular * waveDisplacement);
         }

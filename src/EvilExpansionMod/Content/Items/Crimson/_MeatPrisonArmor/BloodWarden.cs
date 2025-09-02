@@ -30,12 +30,15 @@ public sealed class BloodWarden : ModProjectile {
 
     private ref float Timer => ref Projectile.ai[1];
     private ref float TargetNPCID => ref Projectile.ai[2];
+    private ref float IdleDelay => ref Projectile.localAI[0];
 
     public Player Owner => Main.player[Projectile.owner];
 
-    private const float attack_range = 30 * 16; // 30 tiles
+    private const float attack_range = 30 * 16;
     private const float follow_speed_max = 10f;
     private const float attack_speed_max = 15f;
+    private const float return_distance_from_player = 30 * 16;
+    private const int forced_idle_time = 60;
 
     private const int anim_speed = 6;
 
@@ -84,64 +87,72 @@ public sealed class BloodWarden : ModProjectile {
 
         Projectile.spriteDirection = (Owner.Center.X < Projectile.Center.X) ? -1 : 1;
 
-        NPC target = FindTarget();
+        if (IdleDelay > 0) {
+            IdleDelay--;
+        }
 
+        if (Projectile.Distance(Owner.Center) > return_distance_from_player) {
+            if (CurrentState != State.Idle) {
+                CurrentState = State.Idle;
+                IdleDelay = forced_idle_time;
+            }
+            TargetNPCID = -1;
+            
+            Vector2 vectorToOwner = Owner.Center - Projectile.Center;
+            Projectile.velocity = vectorToOwner.SafeNormalize(Vector2.Zero) * follow_speed_max;
+
+            DoAnimation();
+            Timer++;
+            return;
+        }
+        
+        NPC target = FindTarget();
+        
         if(Projectile.Distance(Owner.Center) > 100 * 16) {
             Projectile.Center = Owner.Center;
+            CurrentState = State.Idle;
+            IdleDelay = forced_idle_time;
+            TargetNPCID = -1;
+            Projectile.netUpdate = true;
+            DoAnimation();
+            Timer++;
+            return;
         }
+
         if(CurrentState == State.Idle) {
-            if(target != null) {
+            if (IdleDelay <= 0 && target != null) {
                 CurrentState = State.Attacking;
                 TargetNPCID = target.whoAmI;
             }
         }
         else if(CurrentState == State.Attacking) {
-            if(target == null || target.whoAmI != TargetNPCID || !target.active || !target.CanBeChasedBy(this) && target.CountsAsACritter) {
+            if(target == null || target.whoAmI != TargetNPCID || !target.active || (!target.CanBeChasedBy(this) && target.CountsAsACritter)) {
                 CurrentState = State.Idle;
+                IdleDelay = forced_idle_time;
                 TargetNPCID = -1;
             }
         }
-
         if(CurrentState == State.Idle) {
             DoIdleMovement();
         }
         else if(CurrentState == State.Attacking) {
             DoAttackMovement(target);
-            if(Projectile.Distance(target.Center) < Projectile.width + 20) {
+            if(target != null && Projectile.Distance(target.Center) < Projectile.width + 20) {
                 Projectile.Center = Vector2.Lerp(Projectile.Center, target.Center, 0.1f);
             }
         }
 
         Timer++;
-
-        Projectile.frameCounter++;
-
-        if(CurrentState == State.Idle) {
-            if(Projectile.frameCounter >= anim_speed) {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
-                if(Projectile.frame > 4) {
-                    Projectile.frame = 0;
-                }
-            }
-        }
-        else if(CurrentState == State.Attacking) {
-            if(Projectile.frameCounter >= anim_speed) {
-                Projectile.frameCounter = 0;
-                Projectile.frame++;
-                if(Projectile.frame > 12) {
-                    Projectile.frame = 5;
-                }
-                //lol?
-                if(Projectile.frame == 6 || Projectile.frame == 8 || Projectile.frame == 10 || Projectile.frame == 12) {
-                    _canDealDamage = true;
-                }
-            }
-        }
+        DoAnimation();
     }
 
     private NPC FindTarget() {
-        if(Owner.HasMinionAttackTargetNPC) return Main.npc[Owner.MinionAttackTargetNPC];
+        if(Owner.HasMinionAttackTargetNPC) {
+            NPC customTarget = Main.npc[Owner.MinionAttackTargetNPC];
+            if(customTarget.active && !customTarget.friendly && !customTarget.dontTakeDamage && !customTarget.immortal && customTarget.Distance(Projectile.Center) < attack_range * 1.5f && customTarget.CanBeChasedBy(this, false)) {
+                 return customTarget;
+            }
+        }
 
         NPC bestTarget = null;
         float bestDistanceSq = attack_range * attack_range;
@@ -184,6 +195,8 @@ public sealed class BloodWarden : ModProjectile {
     private void DoAttackMovement(NPC target) {
         if(target == null) {
             CurrentState = State.Idle;
+            IdleDelay = forced_idle_time;
+            TargetNPCID = -1;
             return;
         }
 
@@ -198,6 +211,32 @@ public sealed class BloodWarden : ModProjectile {
         }
 
         Projectile.spriteDirection = (target.Center.X < Projectile.Center.X) ? -1 : 1;
+    }
+
+    private void DoAnimation() {
+        Projectile.frameCounter++;
+
+        if(CurrentState == State.Idle) {
+            if(Projectile.frameCounter >= anim_speed) {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+                if(Projectile.frame > 4) {
+                    Projectile.frame = 0;
+                }
+            }
+        }
+        else if(CurrentState == State.Attacking) {
+            if(Projectile.frameCounter >= anim_speed) {
+                Projectile.frameCounter = 0;
+                Projectile.frame++;
+                if(Projectile.frame > 12) {
+                    Projectile.frame = 5;
+                }
+                if(Projectile.frame == 6 || Projectile.frame == 8 || Projectile.frame == 10 || Projectile.frame == 12) {
+                    _canDealDamage = true;
+                }
+            }
+        }
     }
 
     public override bool PreDraw(ref Color lightColor) {
@@ -226,7 +265,7 @@ public sealed class BloodWarden : ModProjectile {
 
 
         Graphics.BeginPipeline()
-            .DrawBasicTrail(chainPoints.ToArray(), static _ => 6, chainTexture, Color.White)
+            .DrawBasicTrail(chainPoints.ToArray(), static _ => 6, chainTexture, lightColor)
             .Flush();
 
         Main.spriteBatch.Draw(

@@ -168,7 +168,12 @@ Mods: {
 
 			SlippedWhipItem: {
 				DisplayName: Slipped Whip
-				Tooltip: Has a {0}% chance to cage enemies on hit
+				Tooltip:
+					'''
+					Your summons will focus struck enemies
+					Has a {0}% chance to cage enemies on hit
+					Caged enemies take {1}% increased damage from minions
+					'''
 			}
 
 			SpamonAStickItem: {
@@ -436,6 +441,11 @@ Mods: {
 			CrytapeteBuff: {
 				DisplayName: Crytapete Buff
 				Description: Mods.EvilExpansionMod.Buffs.CrytapeteBuff.Description
+			}
+
+			RibcagedNPCDebuff: {
+				DisplayName: Ribcaged N P C Debuff
+				Description: Mods.EvilExpansionMod.Buffs.RibcagedNPCDebuff.Description
 			}
 		}
 	}

@@ -8,11 +8,15 @@ public class SlippedWhipItem : ModItem {
     public override string Texture => Assets.Assets.Textures.Items.Crimson.SlippedWhip.KEY_SlippedWhipItem;
 
     public readonly static float CageSpawnChance = 0.1f;
-    public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs((int)(100f * CageSpawnChance));
+    public readonly static float CageMinionDamageMultiplier = 0.1f;
+    public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(
+        (int)(100f * CageSpawnChance),
+        (int)(100f * CageMinionDamageMultiplier)
+    );
 
     public override void SetDefaults() {
         Item.DamageType = DamageClass.SummonMeleeSpeed;
-        Item.damage = 20;
+        Item.damage = 50;
         Item.knockBack = 2;
         Item.rare = ItemRarityID.Green;
 

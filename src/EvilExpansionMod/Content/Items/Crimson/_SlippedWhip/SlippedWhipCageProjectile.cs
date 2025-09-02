@@ -1,5 +1,6 @@
 ﻿using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.CameraModifiers;
+using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -14,7 +15,7 @@ namespace EvilExpansionMod.Content.Items.Crimson;
 public class SlippedWhipCageProjectile : ModProjectile {
     public override string Texture => Assets.Assets.Textures.Items.Crimson.SlippedWhip.KEY_SlippedWhipRibcageMain;
 
-    public readonly static int MaxTimeLeft = 120;
+    public readonly static int MaxTimeLeft = 240;
     public readonly static int LockFrames = 15;
 
     NPC _target;
@@ -35,7 +36,6 @@ public class SlippedWhipCageProjectile : ModProjectile {
 
     public override void OnSpawn(IEntitySource source) {
         _target = Main.npc[(int)Projectile.ai[0]];
-        _target.GetGlobalNPC<RibcagedNPC>().CageProjectile = Projectile.whoAmI;
         Projectile.rotation = Main.rand.NextFloatDirection() * 0.75f;
     }
 
@@ -49,6 +49,8 @@ public class SlippedWhipCageProjectile : ModProjectile {
             Projectile.Center = _target.Center;
         }
         else if(Projectile.timeLeft == MaxTimeLeft - LockFrames) {
+            _target.AddBuff(ModContent.BuffType<RibcagedNPCDebuff>(), MaxTimeLeft - LockFrames);
+
             Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(3f, 0.35f));
             for(var i = 0; i < 10; i++) {
                 var size = 80;
@@ -136,7 +138,7 @@ public class SlippedWhipCageProjectile : ModProjectile {
                 scale,
                 SpriteEffects.None
             )
-             .ApplyTint(Color.Purple * flashAlpha * 0.5f)
+            .ApplyTint(Color.Purple * flashAlpha * 0.2f)
             .ApplyOutline(flashColor)
             .ApplyOutline(flashColor)
             .Flush();
@@ -145,19 +147,20 @@ public class SlippedWhipCageProjectile : ModProjectile {
     }
 }
 
+public class RibcagedNPCDebuff : ModBuff {
+    public override string Texture => Helper.PlaceholderTextureKey;
+    public override void SetStaticDefaults() {
+        BuffID.Sets.IsATagBuff[Type] = true;
+    }
+}
+
 public class RibcagedNPC : GlobalNPC {
-    public override bool InstancePerEntity => true;
+    public override bool PreAI(NPC npc) => !npc.HasBuff<RibcagedNPCDebuff>();
 
-    public int CageProjectile = -1;
-    public override bool PreAI(NPC npc) {
-        if(CageProjectile == -1) return true;
+    public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers) {
+        if(!npc.HasBuff<RibcagedNPCDebuff>() && !(projectile.npcProj || projectile.trap || projectile.IsMinionOrSentryRelated)) return;
 
-        var projectile = Main.projectile[CageProjectile];
-        if(!projectile.active) {
-            CageProjectile = -1;
-            return true;
-        }
-
-        return projectile.timeLeft > SlippedWhipCageProjectile.MaxTimeLeft - SlippedWhipCageProjectile.LockFrames;
+        var tagMultiplier = ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type];
+        modifiers.ScalingBonusDamage += SlippedWhipItem.CageMinionDamageMultiplier * tagMultiplier;
     }
 }

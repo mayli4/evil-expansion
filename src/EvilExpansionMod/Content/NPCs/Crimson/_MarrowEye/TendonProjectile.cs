@@ -12,6 +12,8 @@ public class TendonProjectile : ModProjectile {
     public override string Texture => Assets.Assets.Textures.NPCs.Crimson.MarrowEye.KEY_Tendon;
     public const int DisapearFrames = 120;
 
+    float _alpha;
+
     public override void SetDefaults() {
         Projectile.width = 0;
         Projectile.height = 0;
@@ -42,6 +44,10 @@ public class TendonProjectile : ModProjectile {
         }
     }
 
+    public override void AI() {
+        _alpha = MathF.Min(_alpha + 0.075f, 1f);
+    }
+
     public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) {
         behindNPCsAndTiles.Add(index);
     }
@@ -53,7 +59,6 @@ public class TendonProjectile : ModProjectile {
         var index = Projectile.whoAmI % 3;
 
         var sourceX = index * CellWidth;
-        var alpha = (float)Projectile.timeLeft / DisapearFrames;
 
         var bulbHeight = 14;
         var middlePartHeight = texture.Height - bulbHeight * 2;
@@ -64,7 +69,7 @@ public class TendonProjectile : ModProjectile {
             texture,
             Projectile.position - Main.screenPosition,
             new Rectangle(sourceX, bulbHeight, CellWidth, middlePartHeight),
-            lightColor,
+            lightColor * _alpha,
             rotation,
             new(CellWidth / 2f, middlePartHeight / 2f),
             new Vector2(1f, (Projectile.scale - bulbHeight) / middlePartHeight),
@@ -77,7 +82,7 @@ public class TendonProjectile : ModProjectile {
             texture,
             Projectile.position - Main.screenPosition - rotationVector * Projectile.scale / 2f,
             new Rectangle(sourceX, 0, CellWidth, bulbHeight),
-            lightColor,
+            lightColor * _alpha,
             rotation,
             new(CellWidth / 2f, bulbHeight / 2f),
             1f,
@@ -89,7 +94,7 @@ public class TendonProjectile : ModProjectile {
             texture,
             Projectile.position - Main.screenPosition + rotationVector * Projectile.scale / 2f,
             new Rectangle(sourceX, texture.Height - bulbHeight, CellWidth, bulbHeight),
-            lightColor,
+            lightColor * _alpha,
             rotation,
             new(CellWidth / 2f, bulbHeight / 2f),
             1f,

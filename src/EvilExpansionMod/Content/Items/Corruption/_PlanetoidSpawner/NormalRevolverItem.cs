@@ -19,7 +19,7 @@ public class NormalRevolverItem : ModItem {
         Item.shoot = ModContent.ProjectileType<NormalPlanetoidProjectile>();
         Item.buffType = ModContent.BuffType<NormalPlanetoidBuff>();
 
-        Item.value = Item.sellPrice(0, 5, 0, 0);
+        Item.value = Item.sellPrice(0, 5);
     }
 
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
@@ -209,6 +209,20 @@ public class NormalPlanetoidProjectile : ModProjectile {
 
         var faceDrawPosition = Projectile.Center;
         var faceOrigin = faceSourceRect.Size() / 2f;
+
+        if(Projectile.isAPreviewDummy) {
+            Main.EntitySpriteDraw(
+                Assets.Assets.Textures.Items.Corruption.Planetoids.NormalPlanetoid_Preview.Value,
+                Projectile.Center - Main.screenPosition,
+                null,
+                lightColor,
+                Projectile.rotation, 
+                planetoidTexture.Size() / 2f,
+                Projectile.scale,
+                SpriteEffects.None
+            );
+            return;
+        }
         
         Main.EntitySpriteDraw(
             planetoidGrassTexture,

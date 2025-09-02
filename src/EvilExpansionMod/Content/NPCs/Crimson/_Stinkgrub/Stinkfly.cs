@@ -41,24 +41,26 @@ public class StinkflyNPC : ModNPC {
         Main.npcCatchable[Type] = true;
         NPCID.Sets.CountsAsCritter[Type] = true;
         NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
-    }
+    } 
 
     public override void SetDefaults() {
-        NPC.width = 14;
-        NPC.height = 14;
-        NPC.lifeMax = 15;
+        NPC.width = 20;
+        NPC.height = 15;
+        NPC.lifeMax = 5;
+        NPC.damage = 0;
+        NPC.defense = 0;
         NPC.value = 0f;
-        NPC.noTileCollide = false;
-        NPC.noGravity = true;
+        NPC.knockBackResist = 0.4f;
+        NPC.catchItem = ModContent.ItemType<StinkflyItem>();
         
-        NPCID.Sets.CountsAsCritter[NPC.type] = true;
-        Main.npcCatchable[NPC.type] = true;
-        NPC.catchItem = (short)ModContent.ItemType<StinkflyItem>();
-
+        NPC.noGravity = true;
+        NPC.noTileCollide = false;
+        NPC.lavaImmune = true;
         NPC.aiStyle = NPCAIStyleID.Butterfly;
         
         NPC.DeathSound = SoundID.NPCDeath1;
         
+        SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
     }
 
     public override void PostAI() {

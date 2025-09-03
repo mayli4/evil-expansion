@@ -57,6 +57,7 @@ public class CrytapeteItem : ModItem {
         player.AddBuff(Item.buffType, 2);
         
         Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback, player.whoAmI);
+        SoundEngine.PlaySound(SoundID.Item103, player.Center);
         return false; 
     }
     

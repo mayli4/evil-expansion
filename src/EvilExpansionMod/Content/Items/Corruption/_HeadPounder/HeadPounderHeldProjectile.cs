@@ -97,7 +97,10 @@ public class HeadPounderHeldProjectile : ModProjectile {
                     var hitPosition = hitCenter - Vector2.One * hitSize / 2f;
                     if(Collision.SolidTiles(hitPosition, hitSize, hitSize)) {
                         SoundEngine.PlaySound(
-                            Assets.Assets.Sounds.Cursehound.MaceSlam,
+                            Assets.Assets.Sounds.Cursehound.MaceSlam with
+                            {
+                                Pitch = Main.rand.NextFloatDirection() * 0.1f,
+                            },
                             Projectile.position
                         );
 

@@ -13,15 +13,15 @@ public class LamethrowerItem : ModItem {
     }
 
     public override void SetDefaults() {
-        Item.damage = 25;
+        Item.damage = 12;
         Item.crit = 4;
         Item.DamageType = DamageClass.Ranged;
-        Item.knockBack = 8;
+        Item.knockBack = 0.025f;
 
         Item.width = 68;
         Item.height = 46;
 
-        Item.useTime = Item.useAnimation = 50;
+        Item.useTime = Item.useAnimation = 5;
         Item.useStyle = ItemUseStyleID.Shoot;
 
         Item.value = 17500;
@@ -35,12 +35,14 @@ public class LamethrowerItem : ModItem {
 
         Item.channel = true;
         Item.useTurn = false;
+
+        Item.UseSound = SoundID.Item100;
     }
 
     public override bool CanUseItem(Player player) {
         return player.ownedProjectileCounts[Item.shoot] == 0;
     }
-    
+
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient(ModContent.ItemType<CrimtaneHellstoneBarItem>(), 18)

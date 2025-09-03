@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -28,6 +29,10 @@ public class ShadowOrbProjectile : ModProjectile {
     }
 
     public override void AI() {
+        if(Projectile.timeLeft == MaxTimeLeft) {
+            SoundEngine.PlaySound(SoundID.Item106, Projectile.Center);
+        }
+
         Projectile.velocity *= 0.92f;
         if(Projectile.velocity.X != 0f && Projectile.velocity.Y != 0f) {
             Projectile.rotation = Projectile.velocity.ToRotation();
@@ -53,6 +58,7 @@ public class ShadowOrbProjectile : ModProjectile {
             Hit = true;
 
             Projectile.netUpdate = true;
+            SoundEngine.PlaySound(SoundID.Tink, Projectile.Center);
         }
 
         if(Projectile.timeLeft == 1 && Hit) {
@@ -93,6 +99,8 @@ public class ShadowOrbProjectile : ModProjectile {
                     Main.rand.Next(3)
                 );
             }
+
+            SoundEngine.PlaySound(SoundID.Item27, Projectile.Center);
         }
     }
 

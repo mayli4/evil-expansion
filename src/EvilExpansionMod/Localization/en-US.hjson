@@ -303,6 +303,11 @@ Mods: {
 				DisplayName: Gulpy Yoyo
 				Tooltip: ""
 			}
+
+			CursedCanariItem: {
+				DisplayName: Cursed Canari
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {

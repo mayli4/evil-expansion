@@ -69,7 +69,7 @@ public class CrytapeteItem : ModItem {
 }
 
 public class CrytapeteBuff : ModBuff {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.Crytapete.KEY_CrytapeteItem;
+    public override string Texture => Assets.Assets.Textures.Items.Corruption.Crytapete.KEY_CrytapeteBuff;
     
     public override void SetStaticDefaults() {
         Main.buffNoSave[Type] = true;

@@ -1,5 +1,7 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EvilExpansionMod.Content.Tiles.Corruption;
+using Microsoft.Xna.Framework;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -71,6 +73,10 @@ public class VeinOre : ModTile {
 
 public class VeinOreItem : ModItem {
     public override string Texture => Assets.Assets.Textures.Tiles.Crimson.KEY_VeinOreItem;
+
+    public override void SetStaticDefaults() {
+        ItemTrader.ChlorophyteExtractinator.AddOption_OneWay(Type, 1, ModContent.ItemType<UnderworldDemoniteItem>(), 1);
+    }
 
     public override void SetDefaults() {
         Item.DefaultToPlaceableTile(ModContent.TileType<VeinOre>());

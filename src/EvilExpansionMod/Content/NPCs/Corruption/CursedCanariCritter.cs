@@ -13,10 +13,12 @@ public sealed class CursedCanariCritter : ModNPC {
 
     int State { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; }
     Player Target => Main.player[NPC.target];
+    
+    bool ValidTarget => Target != null && Target.active;
 
     public override void SetStaticDefaults() {
-        Main.npcFrameCount[Type] = 17; // Copy animation frames
-        Main.npcCatchable[Type] = true; // This is for certain release situations
+        Main.npcFrameCount[Type] = 17;
+        Main.npcCatchable[Type] = true;
 
         NPCID.Sets.CountsAsCritter[Type] = true;
         NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
@@ -25,7 +27,7 @@ public sealed class CursedCanariCritter : ModNPC {
 
     public override void SetDefaults() {
         NPC.width = 12;
-        NPC.height = 10;
+        NPC.height = 10; 
         NPC.damage = 0;
         NPC.aiStyle = NPCAIStyleID.Bird;
         NPC.defense = 0;
@@ -33,15 +35,18 @@ public sealed class CursedCanariCritter : ModNPC {
         NPC.gravity = 0.1f;
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
-        NPC.catchItem = 2121;
         NPC.catchItem = ModContent.ItemType<CursedCanariItem>();
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
+
+        NPC.lavaImmune = true;
     }
 
-    bool ValidTarget => Target != null && Target.active;
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+        return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.2f : 0f;
+    }
 
-    public override void AI() {
+    public override void PostAI() {
         NPC.TargetClosest(false);
 
         var range = 440;
@@ -50,46 +55,67 @@ public sealed class CursedCanariCritter : ModNPC {
         switch(State) {
             case 0:
             case 1:
-                if(!NPC.collideY || targetInRange) {
+                NPC.noGravity = false;
+                NPC.noTileCollide = false;
+                NPC.velocity.X = 0f;
+                if (NPC.collideY) {
+                    NPC.velocity.Y = 0f;
+                } else {
+                    NPC.velocity.Y += NPC.gravity;
+                }
+
+                if(targetInRange) {
                     State = 2;
                     NPC.netUpdate = true;
                     NPC.velocity.Y -= 0.4f;
+                    NPC.ai[1] = 0f;
                     break;
                 }
 
                 if(NPC.ai[1] <= 0f) {
-                    NPC.ai[1] = Main.rand.NextFloat(60, 120);
+                    NPC.ai[1] = Main.rand.NextFloat(60, 180);
                     State = Main.rand.Next(2);
                     NPC.netUpdate = true;
+                } else {
+                    NPC.ai[1] -= 1f;
                 }
-                else NPC.ai[1] -= 1f;
                 break;
+
             case 2:
-                if(!targetInRange) {
+                NPC.noGravity = false;
+                NPC.noTileCollide = false;
+
+                var hasLavaBelow = false;
+                var i1 = (int)(NPC.Center.X / 16f);
+                var jOffset1 = (int)(NPC.Center.Y / 16f);
+                for(var j = 0; !hasLavaBelow && j < 8; j++) {
+                    if(j + jOffset1 < Main.maxTilesY &&  Main.tile[i1, j + jOffset1].LiquidAmount >= 1) hasLavaBelow = true;
+                }
+
+                if(!targetInRange && !hasLavaBelow) {
                     if(NPC.collideY) {
                         State = Main.rand.Next(2);
                         NPC.velocity = Vector2.Zero;
                         NPC.netUpdate = true;
+                        NPC.ai[1] = 0f;
                     }
-
                     break;
                 }
 
                 if(NPC.collideX) {
-                    NPC.velocity.X = -NPC.velocity.X * 2f;
+                    NPC.velocity.X = -NPC.velocity.X;
                 }
 
                 var hasTilesBelow = false;
-
                 var i = (int)(NPC.Center.X / 16f);
                 var jOffset = (int)(NPC.Center.Y / 16f);
                 for(var j = 0; !hasTilesBelow && j < 8; j++) {
-                    if(j + jOffset < Main.maxTilesY && Main.tile[i, j + jOffset].HasTile) hasTilesBelow = true;
+                    if(j + jOffset < Main.maxTilesY && Main.tile[i, j + jOffset].HasTile || Main.tile[i, j + jOffset].LiquidAmount >= 1) hasTilesBelow = true;
                 }
 
-                if(hasTilesBelow) NPC.velocity.Y -= Main.rand.NextFloat() * 0.15f;
+                if(hasTilesBelow) NPC.velocity.Y -= Main.rand.NextFloat() * 1.15f;
 
-                var flyDirection = ValidTarget ? Math.Sign(NPC.Center.X - Target.Center.X) : 1;
+                var flyDirection = ValidTarget ? Math.Sign(NPC.Center.X - Target.Center.X) : NPC.spriteDirection;
                 NPC.velocity.X += flyDirection * 0.1f;
 
                 NPC.spriteDirection = flyDirection;
@@ -138,7 +164,6 @@ public sealed class CursedCanariItem : ModItem {
         Item.consumable = true;
         Item.noUseGraphic = true;
         Item.value = Item.buyPrice(0, 0, 40);
-        Item.bait = 1;
         Item.makeNPC = (short)ModContent.NPCType<CursedCanariCritter>();
         Item.rare = ItemRarityID.Green;
     }

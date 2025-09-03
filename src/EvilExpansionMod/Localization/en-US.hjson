@@ -445,7 +445,7 @@ Mods: {
 
 			CrytapeteBuff: {
 				DisplayName: Crytapete Buff
-				Description: Mods.EvilExpansionMod.Buffs.CrytapeteBuff.Description
+				Description: It wont stop crying.
 			}
 
 			RibcagedNPCDebuff: {

@@ -1,4 +1,5 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EvilExpansionMod.Common.Graphics;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
@@ -54,17 +55,19 @@ public class PortalGore : ModProjectile {
             AssetRequestMode.ImmediateLoad
         ).Value;
 
-        Main.spriteBatch.Draw(
-            texture,
-            Projectile.Center - Main.screenPosition,
-            null,
-            lightColor,
-            Projectile.rotation,
-            texture.Size() / 2f,
-            1f,
-            SpriteEffects.None,
-            0f
-        );
+        Graphics.BeginPipeline(1.0f)
+            .DrawSprite(            
+                texture,
+                Projectile.Center - Main.screenPosition,
+                lightColor,
+                null,
+                Projectile.rotation,
+                texture.Size() / 2f,
+                new Vector2(1f)
+                )
+            .ApplyOutline(Color.Red * 0.9f)
+            .ApplyOutline(Color.Red * 0.6f)
+            .Flush();
 
         return false;
     }

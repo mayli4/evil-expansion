@@ -20,19 +20,17 @@ public sealed class PusSlugCritter : ModNPC {
         NPC.height = 4;
         NPC.lifeMax = 15;
         NPC.damage = 0;
-        NPC.defense = 0;
-        NPC.value = 0f;
-        NPC.knockBackResist = 0.4f;
-        NPC.catchItem = ModContent.ItemType<LavaLizardItem>();
-        
-        NPC.noGravity = false;
-        NPC.noTileCollide = false;
-        NPC.lavaImmune = true;
         NPC.aiStyle = NPCAIStyleID.Snail;
-        
+        NPC.defense = 0;
+        NPC.lifeMax = 5;
+        NPC.gravity = 0.1f;
+        NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;
-        
+        NPC.catchItem = ModContent.ItemType<PusSlugItem>();
+
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
+
+        NPC.lavaImmune = true;
     }
     
     public override void FindFrame(int frameHeight) {

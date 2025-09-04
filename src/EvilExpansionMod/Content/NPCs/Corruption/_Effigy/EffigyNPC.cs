@@ -55,6 +55,10 @@ public sealed class EffigyNPC : ModNPC {
         BannerItem = ModContent.ItemType<EffigyBannerItem>();
     }
 
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+        return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.1f : 0f;
+    }
+    
     public override void Load() {
         for(int j = 1; j <= 5; j++)
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/EffigyGore" + j);

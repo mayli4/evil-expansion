@@ -104,6 +104,7 @@ public sealed class CursedCanariCritter : ModNPC {
 
                 if(NPC.collideX) {
                     NPC.velocity.X = -NPC.velocity.X;
+                    NPC.direction *= -1;
                 }
 
                 var hasTilesBelow = false;

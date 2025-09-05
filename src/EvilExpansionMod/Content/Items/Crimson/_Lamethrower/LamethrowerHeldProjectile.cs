@@ -153,9 +153,10 @@ public class LamethrowerHeldProjectile : ModProjectile {
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
 
         var glowTexture = Textures.Sample.Glow1.Value;
+        var glowPosition = _trailOrigin + _rotationVector * 2f;
         Main.spriteBatch.Draw(
             glowTexture,
-            _trailOrigin - Main.screenPosition,
+            glowPosition - Main.screenPosition,
             null,
             flameColor * 0.35f,
             Projectile.rotation,
@@ -249,7 +250,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
         Main.spriteBatch.EndBegin(new() { BlendState = BlendState.Additive });
         Main.spriteBatch.Draw(
             glowTexture,
-            _trailOrigin - Main.screenPosition,
+            glowPosition - Main.screenPosition,
             null,
             flameColor,
             0f,

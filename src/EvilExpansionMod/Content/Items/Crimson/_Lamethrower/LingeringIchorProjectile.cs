@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Crimson;
 public class LingeringIchorProjectile : ModProjectile, ITileMask {
     public override string Texture => Helper.PlaceholderTextureKey;
-    static int DisappearFrames = 40;
+    readonly static int DisappearFrames = 40;
     public override void SetDefaults() {
         Projectile.width = 52;
         Projectile.height = 40;

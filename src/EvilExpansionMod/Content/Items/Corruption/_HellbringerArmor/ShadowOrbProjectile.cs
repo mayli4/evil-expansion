@@ -12,7 +12,7 @@ namespace EvilExpansionMod.Content.Items.Corruption._HellbringerArmor;
 public class ShadowOrbProjectile : ModProjectile {
     public override string Texture => Assets.Assets.Textures.Items.Corruption.HellbringerArmor.KEY_ShadowOrb;
 
-    static int MaxTimeLeft = 360;
+    readonly static int MaxTimeLeft = 360;
     ref float FlashAlpha => ref Projectile.ai[0];
     bool Hit { get => Projectile.ai[1] == 1; set => Projectile.ai[1] = value ? 1 : 0; }
 

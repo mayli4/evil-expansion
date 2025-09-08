@@ -16,18 +16,16 @@ using Effects = Assets.Assets.Effects;
 using Textures = Assets.Assets.Textures;
 
 public class LamethrowerHeldProjectile : ModProjectile {
-    static int FullFlameFrames = 60;
+    readonly static int FullFlameFrames = 60;
 
-    static float FlameWidth = 90;
-    static float FlameLength = 450;
+    readonly static float FlameWidth = 90;
+    readonly static float FlameLength = 450;
 
     float FlameScale => MathF.Sin(MathF.PI * Projectile.timeLeft / FullFlameFrames / 2);
 
     Player Owner => Main.player[Projectile.owner];
     Vector2 _rotationVector;
     Vector2 _trailOrigin;
-
-    int _lastShotFrames;
 
     Vector2[] _trailPositions;
 
@@ -153,9 +151,10 @@ public class LamethrowerHeldProjectile : ModProjectile {
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
 
         var glowTexture = Textures.Sample.Glow1.Value;
+        var glowPosition = _trailOrigin + _rotationVector * 2f;
         Main.spriteBatch.Draw(
             glowTexture,
-            _trailOrigin - Main.screenPosition,
+            glowPosition - Main.screenPosition,
             null,
             flameColor * 0.35f,
             Projectile.rotation,
@@ -202,36 +201,6 @@ public class LamethrowerHeldProjectile : ModProjectile {
             .ApplyOutline(flameColor)
             .Flush();
 
-        // var effect = Assets.Assets.Effects.Trail.Lamethrower.Value;
-        // for(var i = 0; i < 3; i++) {
-        //     Main.graphics.GraphicsDevice.SamplerStates[i].AddressU =
-        //         Main.graphics.GraphicsDevice.SamplerStates[i].AddressV = TextureAddressMode.Wrap;
-        // }
-
-        // var textures = Main.graphics.GraphicsDevice.Textures;
-        // textures[0] = Textures.Sample.PerlinNoise.Value;
-        // textures[1] = Textures.Sample.PlasmaNoise.Value;
-        // textures[2] = Textures.Sample.PortalNoise.Value;
-
-        // Graphics.BeginPipeline(0.5f)
-        //     .EffectParams(
-        //         effect,
-        //         ("uTransformMatrix", Graphics.WorldTransformMatrix),
-        //         ("uTime", Main.GameUpdateCount * 0.025f),
-        //         ("uColor", outlineColor.ToVector4())
-        //     )
-        //     .DrawTrail(
-        //         _trailPositions.Select(
-        //             p => p + Projectile.position + _rotationVector * 85f
-        //         ).ToArray(),
-        //         static _ => FlameWidth,
-        //         t => Color.Lerp(flameColor, outlineColor, t),
-        //         effect
-        //     )
-        //     .ApplyOutline(outlineColor)
-        //     .ApplyOutline(flameColor)
-        //     .Flush();
-
         var texture = TextureAssets.Projectile[Type].Value;
         var origin = new Vector2(-8, 18);
         Main.spriteBatch.Draw(
@@ -249,7 +218,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
         Main.spriteBatch.EndBegin(new() { BlendState = BlendState.Additive });
         Main.spriteBatch.Draw(
             glowTexture,
-            _trailOrigin - Main.screenPosition,
+            glowPosition - Main.screenPosition,
             null,
             flameColor,
             0f,

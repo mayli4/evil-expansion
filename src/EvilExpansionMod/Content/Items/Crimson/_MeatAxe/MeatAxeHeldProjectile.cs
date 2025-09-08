@@ -23,7 +23,6 @@ public class MeatAxeHeldProjectile : ModProjectile {
 
     ref float TargetRotation => ref Projectile.ai[0];
     int CutProjectile { get => (int)Projectile.ai[1]; set => Projectile.ai[1] = value; }
-    int _cutUpdateTimer;
 
     public override string Texture => Assets.Assets.Textures.Items.Crimson.MeatAxe.KEY_MeatAxeItem;
     public override void SetDefaults() {
@@ -103,12 +102,6 @@ public class MeatAxeHeldProjectile : ModProjectile {
                             Color.DarkRed,
                             Main.rand.NextFloat(1.75f, 3.5f)
                         );
-
-                        // Dust.NewDustPerfect(
-                        //     cutPosition + Main.rand.NextVector2Unit() * Main.rand.NextFloat(30f),
-                        //     DustID.Blood,
-                        //     _rotationVector.RotatedBy((-Main.rand.NextFloat(MathHelper.PiOver2) - MathHelper.PiOver2) * Owner.direction) * 8f
-                        // );
                     }
                 }
             }
@@ -197,8 +190,8 @@ public class BloodSpraySystem : ModSystem {
         public int TrailPositionsIndex;
     }
 
-    static List<Particle> _particles = [];
-    static List<Vector2> _trailPositions = [];
+    readonly static List<Particle> _particles = [];
+    readonly static List<Vector2> _trailPositions = [];
 
     public static void SpawnParticle(
         Vector2 position,

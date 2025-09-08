@@ -1,6 +1,7 @@
 ﻿using EvilExpansionMod.Common.Bestiary;
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Items.Corruption;
 using EvilExpansionMod.Content.Projectiles;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
@@ -16,6 +17,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -132,6 +134,11 @@ public sealed class CursedSpiritNPC : ModNPC {
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.2f : 0;
+    }
+    
+    public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>()));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 1, 2, 3));
     }
 
     public override void OnSpawn(IEntitySource source) {

@@ -9,8 +9,7 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Core.World;
 
-public class HellLightRemovalSystem : ModSystem {
-
+internal sealed class HellLightRemovalSystem : ModSystem {
     public override void Load() {
         On_TileLightScanner.ApplyHellLight += TileLightScanner_ApplyHellLight;
     }

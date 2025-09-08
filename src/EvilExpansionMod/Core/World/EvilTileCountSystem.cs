@@ -6,7 +6,7 @@ using CorruptAsh = EvilExpansionMod.Content.Tiles.Corruption.CorruptAsh;
 
 namespace EvilExpansionMod.Core.World;
 
-public class EvilTileCountSystem : ModSystem {
+public sealed class EvilTileCountSystem : ModSystem {
     internal static int[] CorruptTypes;
     internal static int[] CrimsonTypes;
     private int _corruptCount;

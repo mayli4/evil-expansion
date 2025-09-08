@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Core;
 
-public class TileTextureReplacements : ILoadable {
+internal sealed class TileTextureReplacements : ILoadable {
     public void Load(Mod mod) {
         Main.instance.LoadTiles(TileID.CorruptJungleGrass);
         TextureAssets.Tile[TileID.CorruptJungleGrass] = Assets.Assets.Textures.Tiles.Corruption.Jungle.CorruptJungleGrass;

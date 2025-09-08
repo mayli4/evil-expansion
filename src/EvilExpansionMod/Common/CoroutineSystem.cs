@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Common;
 
-public class CoroutineSystem : ModSystem {
+internal sealed class CoroutineSystem : ModSystem {
     static CoroutineSystem _instance;
     public CoroutineSystem() {
         _instance = this;

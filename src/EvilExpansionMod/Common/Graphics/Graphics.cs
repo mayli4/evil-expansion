@@ -212,6 +212,10 @@ public class Graphics : ModSystem {
     static RenderTarget2D InitFullScreenTarget => new(GraphicsDevice, Main.screenWidth, Main.screenHeight);
 
     public override void Load() {
+        if (Main.dedServ) {
+            return;
+        }
+        
         Main.QueueMainThreadAction(() =>
         {
             _trailVertexBuffer = new DynamicVertexBuffer(
@@ -268,6 +272,10 @@ public class Graphics : ModSystem {
     }
 
     public override void Unload() {
+        if (Main.dedServ) {
+            return;
+        }
+        
         On_Main.DrawNPCs -= On_Main_DrawNPCs;
         On_Main.DrawSuperSpecialProjectiles -= On_Main_DrawSuperSpecialProjectiles;
         On_Main.DrawPlayers_AfterProjectiles -= On_Main_DrawPlayers_AfterProjectiles;

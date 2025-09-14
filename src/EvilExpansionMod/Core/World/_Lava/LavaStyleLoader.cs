@@ -76,6 +76,12 @@ public class LavaStyleLoader : ModSystem {
 
         // buff changes
         IL_Player.Update += PlayerLavaDebuff;
+
+        if(ModLoader.TryGetMod("LiquidSlopesPatch", out Mod lsp)) {
+            Type rlr = lsp.Code.GetType("LiquidSlopesPatch.Common.RewrittenLiquidRenderer")!;
+            MonoModHooks.Modify(rlr.GetMethod("DrawNormalLiquids", BindingFlags.Instance | BindingFlags.Public), ChangeWaterQuadColorsLiquidSlopesPatch);
+            MonoModHooks.Modify(rlr.GetMethod("InternalPrepareDraw", BindingFlags.Instance | BindingFlags.NonPublic), ChangeLavaBubbleDust_LiquidRenderer);
+        }
     }
 
     private void ChangeLavaBubbleDust_LiquidRenderer(ILContext il) {
@@ -278,6 +284,39 @@ public class LavaStyleLoader : ModSystem {
         cursor.Emit(OpCodes.Ldloc, 8);
         cursor.Emit(OpCodes.Ldloc, 3);
         cursor.Emit(OpCodes.Ldloc, 4);
+
+        cursor.EmitDelegate<Func<VertexColors, Texture2D, int, int, int, VertexColors>>((initialColor, initialTexture, liquidType, x, y) =>
+        {
+            if(liquidType == LiquidID.Lava && _cachedModLavaStyle != default) {
+                initialColor = SelectLavaQuadColor(initialTexture, ref initialColor);
+                _cachedModLavaStyle.ModifyVertexColors(x, y, ref initialColor);
+            }
+
+            return initialColor;
+        });
+    }
+    
+    private static void ChangeWaterQuadColorsLiquidSlopesPatch(ILContext il) {
+        ILCursor cursor = new ILCursor(il);
+
+        cursor.TryGotoNext(c => c.MatchLdfld<LiquidRenderer>("_liquidTextures"));
+
+        // locate liquid tex value
+        cursor.TryGotoNext(MoveType.After, c => c.MatchCallvirt(textureGetValueMethod));
+
+        cursor.EmitDelegate<Func<Texture2D, Texture2D>>(initialTexture => SelectLavaTexture(initialTexture, LiquidTileType.Fall));
+
+        // locate liquid light color
+        cursor.TryGotoNext(MoveType.After, c => c.MatchLdloc(11));
+
+        // dont fuck with non liquid textures!
+        cursor.Emit(OpCodes.Ldarg_0);
+        cursor.Emit(OpCodes.Ldfld, typeof(LiquidRenderer).GetField("_liquidTextures")!);
+        cursor.Emit(OpCodes.Ldloc, 8);
+        cursor.Emit(OpCodes.Ldelem_Ref);
+        cursor.Emit(OpCodes.Ldloc, 8);
+        cursor.Emit(OpCodes.Ldloc, 9);
+        cursor.Emit(OpCodes.Ldloc, 10);
 
         cursor.EmitDelegate<Func<VertexColors, Texture2D, int, int, int, VertexColors>>((initialColor, initialTexture, liquidType, x, y) =>
         {

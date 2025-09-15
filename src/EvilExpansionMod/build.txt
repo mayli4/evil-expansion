@@ -5,3 +5,5 @@ hideCode = false
 hideResources = true
 includeSource = true
 includePDB = true
+
+sortAfter = LiquidSlopesPatch

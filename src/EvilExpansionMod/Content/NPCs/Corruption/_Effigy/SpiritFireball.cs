@@ -53,7 +53,7 @@ public class SpiritFireball : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;
+        var glowTexture = Assets.Textures.Sample.Glow1;
         var blinker = (MathF.Sin(0.1f * Main.GameUpdateCount + 23.2f * Projectile.whoAmI) +
             MathF.Cos(0.06f * Main.GameUpdateCount) + 2f) / 4f;
         var bigGlowColor = CursedSpiritNPC.GhostColor2 * (0.25f + 0.25f * blinker);
@@ -73,7 +73,7 @@ public class SpiritFireball : ModProjectile {
         );
         Main.spriteBatch.EndBegin(snapshot);
 
-        var trailEffect = Assets.Assets.Effects.Trail.CursedSpiritFire.Value;
+        var trailEffect = Assets.Effects.Trail.CursedSpiritFire;
         Graphics.BeginPipeline(0.5f)
             .DrawTrail(
                 _trailPositions,
@@ -84,11 +84,11 @@ public class SpiritFireball : ModProjectile {
                 ("mat", Graphics.WorldTransformMatrix),
                 ("stepY", 0.25f),
                 ("scale", 0.25f),
-                ("texture1", Assets.Assets.Textures.Sample.Pebbles.Value),
-                ("texture2", Assets.Assets.Textures.Sample.Noise3.Value)
+                ("texture1", Assets.Textures.Sample.Pebbles),
+                ("texture2", Assets.Textures.Sample.Noise3)
             )
             .DrawSprite(
-                Assets.Assets.Textures.Misc.Circle.Value,
+                Assets.Textures.Misc.Circle,
                 Projectile.Center - Main.screenPosition,
                 color: smallGlowColor,
                 origin: 16f * Vector2.One,

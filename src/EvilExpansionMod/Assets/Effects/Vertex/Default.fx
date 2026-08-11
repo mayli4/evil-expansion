@@ -1,4 +1,4 @@
-﻿matrix transformationMatrix;
+matrix transformationMatrix;
 
 struct VSInput
 {

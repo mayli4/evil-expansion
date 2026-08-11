@@ -12,7 +12,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Crimson;
 
 public class FireInALanternItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Crimson.KEY_FlameInALanternItem;
+    public override string Texture => Assets.Textures.Items.Crimson.KEY_FlameInALanternItem;
 
     public override void SetDefaults() {
         Item.DefaultToAccessory(20, 26);
@@ -189,10 +189,10 @@ public class FireInALanternFlame : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var flameShader = Assets.Assets.Effects.Pixel.LingeringFlame.Value;
-        var noiseTexture1 = Assets.Assets.Textures.Sample.Pebbles.Value;
-        var circleTexture = Assets.Assets.Textures.Misc.Circle.Value;
-        var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;
+        var flameShader = Assets.Effects.Pixel.LingeringFlame;
+        var noiseTexture1 = Assets.Textures.Sample.Pebbles;
+        var circleTexture = Assets.Textures.Misc.Circle;
+        var glowTexture = Assets.Textures.Sample.Glow1;
 
         float flameScaleFactor = 1f;
         if(Projectile.timeLeft < lifetime / 2) {

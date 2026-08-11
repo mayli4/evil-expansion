@@ -2,13 +2,12 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
 public class Sleep : ModDust {
-    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.TerrorBat.KEY_TerrorBatSleepDust;
+    public override string Texture => Assets.Textures.NPCs.Corruption.TerrorBat.KEY_TerrorBatSleepDust;
 
     public override bool Update(Dust dust) {
 
@@ -31,7 +30,7 @@ public class Sleep : ModDust {
     }
 
     public override bool PreDraw(Dust dust) {
-        var tex = Assets.Assets.Textures.NPCs.Corruption.TerrorBat.TerrorBatSleepDust.Value;
+        var tex = Assets.Textures.NPCs.Corruption.TerrorBat.TerrorBatSleepDust;
         Vector2 drawOrigin = new Vector2(tex.Width * 0.5f, tex.Height * 0.5f);
 
         Main.EntitySpriteDraw(tex, dust.position - Main.screenPosition, dust.frame, Color.White, dust.rotation, drawOrigin, dust.scale, SpriteEffects.None);

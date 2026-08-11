@@ -1,14 +1,13 @@
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.GameContent.Metadata;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Tiles.Crimson;
 
 public class CrimsonAshGrass : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Crimson.KEY_CrimsonAshGrassTile;
+    public override string Texture => Assets.Textures.Tiles.Crimson.KEY_CrimsonAshGrassTile;
 
     public override void SetStaticDefaults() {
         Main.tileSolid[Type] = true;
@@ -20,7 +19,7 @@ public class CrimsonAshGrass : ModTile {
         TileID.Sets.CanBeDugByShovel[Type] = true;
         TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<CrimsonAsh>();
         TileID.Sets.NeedsGrassFraming[Type] = true;
-        
+
         Main.tileMerge[Type][TileID.Ash] = true;
         Main.tileMerge[TileID.Ash][Type] = true;
         Main.tileMerge[Type][TileID.ObsidianBrick] = true;

@@ -12,6 +12,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Projectiles;
+
 public class ExplosionProjectile : ModProjectile {
     public override string Texture => "Terraria/Images/Item_0";
     public static void New(
@@ -109,11 +110,11 @@ public class ExplosionProjectile : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;
-        var starTexture = Assets.Assets.Textures.Sample.Star3.Value;
-        var noiseTexture1 = Assets.Assets.Textures.Sample.Noise1.Value;
-        var noiseTexture2 = Assets.Assets.Textures.Sample.Noise2.Value;
-        var explosionEffect = Assets.Assets.Effects.Pixel.Explosion.Value;
+        var glowTexture = Assets.Textures.Sample.Glow1;
+        var starTexture = Assets.Textures.Sample.Star3;
+        var noiseTexture1 = Assets.Textures.Sample.Noise1;
+        var noiseTexture2 = Assets.Textures.Sample.Noise2;
+        var explosionEffect = Assets.Effects.Pixel.Explosion;
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
         var progress = 1f - (float)Projectile.timeLeft / _maxTimeLeft;

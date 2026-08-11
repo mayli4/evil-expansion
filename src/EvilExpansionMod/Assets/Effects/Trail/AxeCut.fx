@@ -1,4 +1,4 @@
-﻿texture uImage0Texture;
+texture uImage0Texture;
 sampler uImage0 = sampler_state
 {
     texture = <uImage0Texture>;

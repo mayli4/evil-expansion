@@ -1,4 +1,3 @@
-using EvilExpansionMod.Content.Tiles.Crimson;
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
@@ -12,8 +11,8 @@ using Terraria.ObjectData;
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
 public sealed class CorruptFoliage : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_CorruptAshFoliage;
-    
+    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_CorruptAshFoliage;
+
     public const int StyleRange = 6;
 
     public override void SetStaticDefaults() {
@@ -46,22 +45,21 @@ public sealed class CorruptFoliage : ModTile {
     }
 
     public override void NumDust(int i, int j, bool fail, ref int num) => num = 3;
-    public override IEnumerable<Item> GetItemDrops(int i, int j)
-    {
-        if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HeldItem.type == ItemID.Sickle)
+    public override IEnumerable<Item> GetItemDrops(int i, int j) {
+        if(Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HeldItem.type == ItemID.Sickle)
             yield return new Item(ItemID.Hay, Main.rand.Next(1, 3));
 
-        if (Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HasItem(ItemID.Blowpipe))
+        if(Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HasItem(ItemID.Blowpipe))
             yield return new Item(ItemID.Seed, Main.rand.Next(1, 3));
     }
-    
+
     public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak) {
         var tileBelow = Framing.GetTileSafely(i, j + 1);
         int type = -1;
-        if (tileBelow.HasTile && !tileBelow.BottomSlope) {
+        if(tileBelow.HasTile && !tileBelow.BottomSlope) {
             type = tileBelow.TileType;
         }
-        if (type == ModContent.TileType<OvergrownCorruptAsh>() || type == Type) {
+        if(type == ModContent.TileType<OvergrownCorruptAsh>() || type == Type) {
             return true;
         }
         WorldGen.KillTile(i, j);

@@ -12,7 +12,7 @@ namespace EvilExpansionMod.Content.Items.Crimson;
 
 
 public sealed class BloodWarden : ModProjectile {
-    public override string Texture => Assets.Assets.Textures.Items.Crimson.MeatPrisonArmor.KEY_BloodWarden;
+    public override string Texture => Assets.Textures.Items.Crimson.MeatPrisonArmor.KEY_BloodWarden;
 
     public enum State {
         Idle,
@@ -87,17 +87,17 @@ public sealed class BloodWarden : ModProjectile {
 
         Projectile.spriteDirection = (Owner.Center.X < Projectile.Center.X) ? -1 : 1;
 
-        if (IdleDelay > 0) {
+        if(IdleDelay > 0) {
             IdleDelay--;
         }
 
-        if (Projectile.Distance(Owner.Center) > return_distance_from_player) {
-            if (CurrentState != State.Idle) {
+        if(Projectile.Distance(Owner.Center) > return_distance_from_player) {
+            if(CurrentState != State.Idle) {
                 CurrentState = State.Idle;
                 IdleDelay = forced_idle_time;
             }
             TargetNPCID = -1;
-            
+
             Vector2 vectorToOwner = Owner.Center - Projectile.Center;
             Projectile.velocity = vectorToOwner.SafeNormalize(Vector2.Zero) * follow_speed_max;
 
@@ -105,9 +105,9 @@ public sealed class BloodWarden : ModProjectile {
             Timer++;
             return;
         }
-        
+
         NPC target = FindTarget();
-        
+
         if(Projectile.Distance(Owner.Center) > 100 * 16) {
             Projectile.Center = Owner.Center;
             CurrentState = State.Idle;
@@ -120,7 +120,7 @@ public sealed class BloodWarden : ModProjectile {
         }
 
         if(CurrentState == State.Idle) {
-            if (IdleDelay <= 0 && target != null) {
+            if(IdleDelay <= 0 && target != null) {
                 CurrentState = State.Attacking;
                 TargetNPCID = target.whoAmI;
             }
@@ -150,7 +150,7 @@ public sealed class BloodWarden : ModProjectile {
         if(Owner.HasMinionAttackTargetNPC) {
             NPC customTarget = Main.npc[Owner.MinionAttackTargetNPC];
             if(customTarget.active && !customTarget.friendly && !customTarget.dontTakeDamage && !customTarget.immortal && customTarget.Distance(Projectile.Center) < attack_range * 1.5f && customTarget.CanBeChasedBy(this, false)) {
-                 return customTarget;
+                return customTarget;
             }
         }
 
@@ -243,7 +243,7 @@ public sealed class BloodWarden : ModProjectile {
         var effects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
         var texture = ModContent.Request<Texture2D>(Texture).Value;
-        var chainTexture = Assets.Assets.Textures.Items.Crimson.MeatPrisonArmor.BloodWardenCord.Value;
+        var chainTexture = Assets.Textures.Items.Crimson.MeatPrisonArmor.BloodWardenCord;
         var shader = GameShaders.Armor.GetShaderFromItemId(Main.LocalPlayer.dye[1].type);
 
         var origin = new Vector2(texture.Width / 2f, texture.Height / Main.projFrames[Projectile.type] / 2f);

@@ -212,10 +212,10 @@ public class Graphics : ModSystem {
     static RenderTarget2D InitFullScreenTarget => new(GraphicsDevice, Main.screenWidth, Main.screenHeight);
 
     public override void Load() {
-        if (Main.dedServ) {
+        if(Main.dedServ) {
             return;
         }
-        
+
         Main.QueueMainThreadAction(() =>
         {
             _trailVertexBuffer = new DynamicVertexBuffer(
@@ -243,7 +243,7 @@ public class Graphics : ModSystem {
             );
             _spriteVertexBuffer.SetData([0f, 1f, 2f, 3f]);
 
-            _spriteEffect = Assets.Assets.Effects.Trail.Quad.Value;
+            _spriteEffect = Assets.Effects.Trail.Quad;
             _spriteMatrix = _spriteEffect.Parameters["uMatrix"].values;
             _spriteColor = _spriteEffect.Parameters["uColor"].values;
             _spriteSource = _spriteEffect.Parameters["uSource"].values;
@@ -272,10 +272,10 @@ public class Graphics : ModSystem {
     }
 
     public override void Unload() {
-        if (Main.dedServ) {
+        if(Main.dedServ) {
             return;
         }
-        
+
         On_Main.DrawNPCs -= On_Main_DrawNPCs;
         On_Main.DrawSuperSpecialProjectiles -= On_Main_DrawSuperSpecialProjectiles;
         On_Main.DrawPlayers_AfterProjectiles -= On_Main_DrawPlayers_AfterProjectiles;
@@ -365,7 +365,7 @@ public class Graphics : ModSystem {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly Pipeline ApplyOutline(Color color, float threshold = 0.001f) {
             ApplyEffect(
-                Assets.Assets.Effects.Pixel.Outline.Value,
+                Assets.Effects.Pixel.Outline,
                 ("uColor", color.ToVector4()),
                 ("uSize", Main.ScreenSize.ToVector2()),
                 ("uThreshold", threshold)
@@ -406,7 +406,7 @@ public class Graphics : ModSystem {
             Color color,
             int spriteRotation = 0
         ) {
-            var effect = Assets.Assets.Effects.Trail.Default.Value;
+            var effect = Assets.Effects.Trail.Default;
             ReadOnlySpan<(string, ParameterValue)> parameters = [
                 ("sampleTexture", texture),
                 ("color", color.ToVector4()),
@@ -424,7 +424,7 @@ public class Graphics : ModSystem {
             Func<float, Color> color,
             int spriteRotation = 0
         ) {
-            var effect = Assets.Assets.Effects.Trail.Default.Value;
+            var effect = Assets.Effects.Trail.Default;
             ReadOnlySpan<(string, ParameterValue)> parameters = [
                 ("sampleTexture", texture),
                 ("color", Color.White.ToVector4()),
@@ -633,7 +633,7 @@ public class Graphics : ModSystem {
         }
 
         public readonly Pipeline ApplyTint(Color color) {
-            ApplyEffect(Assets.Assets.Effects.Pixel.Tint.Value, ("color", color.ToVector4()));
+            ApplyEffect(Assets.Effects.Pixel.Tint, ("color", color.ToVector4()));
             return this;
         }
 

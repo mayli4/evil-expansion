@@ -1,5 +1,4 @@
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.ID;
@@ -8,7 +7,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
 public sealed class DevilOWarStingerProjectile : ModProjectile {
-    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.DevilOWar.KEY_DevilOWarTentacle;
+    public override string Texture => Assets.Textures.NPCs.Corruption.DevilOWar.KEY_DevilOWarTentacle;
 
     public Player TargetPlayer => Main.player[(int)Projectile.ai[0]];
     public NPC ParentNPC => Main.npc[(int)Projectile.ai[1]];

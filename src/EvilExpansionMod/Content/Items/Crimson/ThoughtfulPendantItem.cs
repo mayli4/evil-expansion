@@ -13,9 +13,9 @@ internal sealed class FriendlyCulstistPortal : CultistPortal {
         base.SetDefaults();
         Projectile.hostile = false;
         Projectile.friendly = true;
-        
+
         Projectile.DamageType = DamageClass.Magic;
-        
+
         Projectile.knockBack = 5f;
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = 30;
@@ -23,11 +23,11 @@ internal sealed class FriendlyCulstistPortal : CultistPortal {
 }
 
 public class ThoughtfulPendantItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Crimson.KEY_CursedPendant;
-    
+    public override string Texture => Assets.Textures.Items.Crimson.KEY_CursedPendant;
+
     private int _portalCooldown;
     float _portalRotation;
-    
+
     public override void SetDefaults() {
         Item.width = 24;
         Item.height = 24;
@@ -37,16 +37,16 @@ public class ThoughtfulPendantItem : ModItem {
     }
 
     public override void UpdateAccessory(Player player, bool hideVisual) {
-        if (_portalCooldown > 0) {
+        if(_portalCooldown > 0) {
             _portalCooldown--;
         }
-        
-        if (player.controlUseItem && player.itemAnimation > 0 && _portalCooldown <= 0 && Main.rand.NextBool(30)) {
+
+        if(player.controlUseItem && player.itemAnimation > 0 && _portalCooldown <= 0 && Main.rand.NextBool(30)) {
             Vector2 summonPosition = Main.MouseWorld;
 
             var position = summonPosition - 105f * _portalRotation.ToRotationVector2();
             var direction = position.DirectionTo(summonPosition);
-            
+
             Projectile.NewProjectile(
                 player.GetSource_Accessory(Item),
                 position,
@@ -60,7 +60,7 @@ public class ThoughtfulPendantItem : ModItem {
 
             _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
             SoundEngine.PlaySound(SoundID.Item79, position);
-            
+
             _portalCooldown = player.itemAnimationMax;
         }
     }

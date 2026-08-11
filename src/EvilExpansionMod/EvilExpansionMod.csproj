@@ -33,8 +33,21 @@
         <Publicize Include="FNA" IncludeCompilerGeneratedMembers="false" />
     </ItemGroup>
 
+	<!-- NOTE: BeforeTargets="CoreCompile" makes it run before the assets generator-->
+    <Target Name="CompileEffects" BeforeTargets="CoreCompile">
+      <ItemGroup>
+    	<EffectFiles Include="Assets/Effects/**/*.fx" />
+        <CompiledEffects Include="Assets/Effects/.compiled/**/*.fxc" />
+        <ExpectedCompiled Include="@(EffectFiles->'Assets/Effects/.compiled/%(RecursiveDir)%(Filename).fxc')" />
+        <OrphanedEffects Include="@(CompiledEffects)" Exclude="@(ExpectedCompiled)" />
+      </ItemGroup>
+      <MakeDir Directories="Assets/Effects/.compiled/%(EffectFiles.RecursiveDir)" Condition="'@(EffectFiles)' != ''" />
+      <Exec Command="&quot;$(ProjectDir)Tools/fxc.exe&quot; /T fx_2_0 &quot;$(ProjectDir)%(EffectFiles.Identity)&quot; /I &quot;$(ProjectDir)Assets/Effects&quot; /Fo &quot;$(ProjectDir)Assets/Effects/.compiled/%(EffectFiles.RecursiveDir)%(EffectFiles.Filename).fxc&quot; /O3 /Op" Condition="'@(EffectFiles)' != ''" />
+      <Delete Files="@(OrphanedEffects)" Condition="'@(OrphanedEffects)' != ''" />
+    </Target>
+
     <ItemGroup>
-      <ProjectReference Include="..\EvilExpansionGeneration\EvilExpansionGeneration.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
+      <ProjectReference Include="..\EvilExpansionMod.Generation\EvilExpansionMod.Generation.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
 
     <ItemGroup>

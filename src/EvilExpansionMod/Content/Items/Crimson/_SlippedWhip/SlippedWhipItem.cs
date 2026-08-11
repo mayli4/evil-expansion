@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Crimson;
 
 public class SlippedWhipItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Crimson.SlippedWhip.KEY_SlippedWhipItem;
+    public override string Texture => Assets.Textures.Items.Crimson.SlippedWhip.KEY_SlippedWhipItem;
 
     public readonly static float CageSpawnChance = 0.1f;
     public readonly static float CageMinionDamageMultiplier = 0.1f;

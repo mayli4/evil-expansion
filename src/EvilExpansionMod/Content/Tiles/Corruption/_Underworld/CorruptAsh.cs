@@ -1,5 +1,3 @@
-using EvilExpansionMod.Core.World;
-using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -8,7 +6,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
 public class CorruptAsh : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_CorruptAshTile;
+    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_CorruptAshTile;
 
     public override void SetStaticDefaults() {
         Main.tileMergeDirt[Type] = true;
@@ -16,7 +14,7 @@ public class CorruptAsh : ModTile {
         Main.tileSolid[Type] = true;
 
         DustType = DustID.Corruption;
-        
+
         Main.tileMerge[Type][TileID.Ash] = true;
         Main.tileMerge[TileID.Ash][Type] = true;
         Main.tileMerge[Type][TileID.ObsidianBrick] = true;
@@ -64,7 +62,7 @@ public class CorruptAsh : ModTile {
 }
 
 public class CorruptAshItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_CorruptAshItem;
+    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_CorruptAshItem;
 
     public override void SetDefaults() {
         Item.DefaultToPlaceableTile(ModContent.TileType<CorruptAsh>());

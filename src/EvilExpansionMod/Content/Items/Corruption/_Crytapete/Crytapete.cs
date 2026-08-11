@@ -14,7 +14,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Corruption;
 
 public class CrytapeteItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.Crytapete.KEY_CrytapeteItem;
+    public override string Texture => Assets.Textures.Items.Corruption.Crytapete.KEY_CrytapeteItem;
 
     public override void SetStaticDefaults() {
         ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
@@ -43,25 +43,25 @@ public class CrytapeteItem : ModItem {
     }
 
     public override bool CanUseItem(Player player) {
-        if (player.ownedProjectileCounts[Item.shoot] < player.maxMinions) {
+        if(player.ownedProjectileCounts[Item.shoot] < player.maxMinions) {
             return true;
         }
         return false;
     }
 
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
-        if (player.altFunctionUse == 2) {
+        if(player.altFunctionUse == 2) {
             return false;
         }
 
         player.AddBuff(Item.buffType, 2);
-        
+
         Projectile.NewProjectile(source, player.Center, Vector2.Zero, type, damage, knockback, player.whoAmI);
         SoundEngine.PlaySound(SoundID.Item103, player.Center);
-        return false; 
+        return false;
     }
-    
-    public override void AddRecipes() 
+
+    public override void AddRecipes()
         => CreateRecipe()
             .AddIngredient(ModContent.ItemType<HellDemoniteBarItem>(), 12)
             .AddIngredient(ModContent.ItemType<RawShadowScalesItem>(), 8)
@@ -70,20 +70,20 @@ public class CrytapeteItem : ModItem {
 }
 
 public class CrytapeteBuff : ModBuff {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.Crytapete.KEY_CrytapeteBuff;
-    
+    public override string Texture => Assets.Textures.Items.Corruption.Crytapete.KEY_CrytapeteBuff;
+
     public override void SetStaticDefaults() {
         Main.buffNoSave[Type] = true;
         Main.buffNoTimeDisplay[Type] = true;
     }
 
     public override void Update(Player player, ref int buffIndex) {
-        if (player.ownedProjectileCounts[ModContent.ProjectileType<CrytapeteMinion>()] > 0) {
+        if(player.ownedProjectileCounts[ModContent.ProjectileType<CrytapeteMinion>()] > 0) {
             player.buffTime[buffIndex] = 18000;
         }
         else {
             player.DelBuff(buffIndex);
-            buffIndex--; 
+            buffIndex--;
         }
     }
 }
@@ -126,7 +126,7 @@ public class CrytapeteFlame : ModProjectile {
 }
 
 public class CrytapeteTear : ModProjectile {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.Crytapete.KEY_CrytapeteTear;
+    public override string Texture => Assets.Textures.Items.Corruption.Crytapete.KEY_CrytapeteTear;
 
     public static float Gravity = 0.2f;
 
@@ -155,8 +155,8 @@ public class CrytapeteTear : ModProjectile {
 
         Projectile.rotation += Projectile.velocity.Length() * 0.05f * Projectile.direction;
         Projectile.velocity = Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.02f, 0.02f));
-        
-        if (Main.rand.NextBool(5)) {
+
+        if(Main.rand.NextBool(5)) {
             Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 4f, Projectile.height / 4f), ModContent.DustType<TinyCrytapeteTear>(), Vector2.Zero, 0, Color.LightBlue, 0.5f);
             Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 4f, Projectile.height / 4f), ModContent.DustType<SmallCrytapeteTear>(), Vector2.Zero, 0, Color.LightBlue, 0.5f);
         }
@@ -164,9 +164,9 @@ public class CrytapeteTear : ModProjectile {
 }
 
 public class CrytapeteMinion : ModProjectile {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.Crytapete.KEY_CrytapeteMinion;
+    public override string Texture => Assets.Textures.Items.Corruption.Crytapete.KEY_CrytapeteMinion;
 
-    public ref float AnimationTimer => ref Projectile.localAI[0]; 
+    public ref float AnimationTimer => ref Projectile.localAI[0];
     public ref float CryingTimer => ref Projectile.localAI[1];
     public ref float StackPosition => ref Projectile.localAI[2];
 
@@ -175,9 +175,9 @@ public class CrytapeteMinion : ModProjectile {
 
     public override void SetStaticDefaults() {
         Main.projFrames[Type] = 4;
-        
-        ProjectileID.Sets.MinionTargettingFeature[Type] = true; 
-        ProjectileID.Sets.MinionSacrificable[Type] = false; 
+
+        ProjectileID.Sets.MinionTargettingFeature[Type] = true;
+        ProjectileID.Sets.MinionSacrificable[Type] = false;
     }
 
     public override void SetDefaults() {
@@ -195,31 +195,31 @@ public class CrytapeteMinion : ModProjectile {
         Projectile.aiStyle = -1;
     }
 
-    public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) 
+    public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI)
         => overPlayers.Add(index);
 
     public override void AI() {
         Player player = Main.player[Projectile.owner];
 
-        if (!player.active || player.dead || !player.HasBuff<CrytapeteBuff>()) {
+        if(!player.active || player.dead || !player.HasBuff<CrytapeteBuff>()) {
             Projectile.Kill();
             return;
         }
         Projectile.timeLeft = 2;
-        
+
         var ownedCrytapetes = Main.projectile.Where(p =>
             p.active && p.owner == Projectile.owner && p.type == Projectile.type
         ).OrderBy(p => p.whoAmI).ToList();
 
         int myIndex = ownedCrytapetes.FindIndex(p => p.whoAmI == Projectile.whoAmI);
-        if (myIndex == -1) {
+        if(myIndex == -1) {
             Projectile.Kill();
             return;
         }
         StackPosition = myIndex;
-        
-        Vector2 playerVisualCenter = player.MountedCenter; 
-        
+
+        Vector2 playerVisualCenter = player.MountedCenter;
+
         Vector2 initialRelativeOffset = new Vector2(
             player.direction * 2f,
             -(player.height / 2f) - 6f
@@ -228,38 +228,38 @@ public class CrytapeteMinion : ModProjectile {
         float bobbingOffset = 0f;
         int currentFrameIndex = player.bodyFrame.Y / 56;
 
-        if (currentFrameIndex >= (int)PlayerFrames.Walk1 && currentFrameIndex <= (int)PlayerFrames.Walk14) {
-            switch (currentFrameIndex) {
+        if(currentFrameIndex >= (int)PlayerFrames.Walk1 && currentFrameIndex <= (int)PlayerFrames.Walk14) {
+            switch(currentFrameIndex) {
                 case (int)PlayerFrames.Walk2: bobbingOffset = -2f; break;
                 case (int)PlayerFrames.Walk3: bobbingOffset = -2f; break;
                 case (int)PlayerFrames.Walk4: bobbingOffset = -2f; break;
-                
-                
-                case (int)PlayerFrames.Walk9:bobbingOffset = -2f; break;
-                case (int)PlayerFrames.Walk10:bobbingOffset = -2f; break;
-                case (int)PlayerFrames.Walk11:bobbingOffset = -2f; break;
+
+
+                case (int)PlayerFrames.Walk9: bobbingOffset = -2f; break;
+                case (int)PlayerFrames.Walk10: bobbingOffset = -2f; break;
+                case (int)PlayerFrames.Walk11: bobbingOffset = -2f; break;
                 default: bobbingOffset = 0f; break;
             }
         }
-        
+
         var bobbingVector = new Vector2(0, bobbingOffset);
         var rotatedBobbingOffset = bobbingVector.RotatedBy(player.fullRotation);
-        
+
         float offsetYPerCrytapete = frame_height * Projectile.scale * 0.5f;
         var finalOffset = (initialRelativeOffset + new Vector2(0, -StackPosition * offsetYPerCrytapete)).RotatedBy(player.fullRotation);
 
         var rounded = new Vector2(
             (float)Math.Round(playerVisualCenter.X + finalOffset.X + rotatedBobbingOffset.X),
             (float)Math.Round(playerVisualCenter.Y + finalOffset.Y + rotatedBobbingOffset.Y));
-        
+
         Projectile.Center = rounded;
 
         Projectile.velocity = Vector2.Zero;
         Projectile.rotation = player.fullRotation;
 
-        if (Projectile.ai[2] == 0) {
+        if(Projectile.ai[2] == 0) {
             CryingTimer++;
-            if (CryingTimer >= 60 * 5 && Main.rand.NextBool(5) && player.ownedProjectileCounts[Projectile.type] < player.maxMinions * 0.75f) {
+            if(CryingTimer >= 60 * 5 && Main.rand.NextBool(5) && player.ownedProjectileCounts[Projectile.type] < player.maxMinions * 0.75f) {
                 Projectile.ai[2] = 1;
                 CryingTimer = 0;
                 Projectile.netUpdate = true;
@@ -267,7 +267,7 @@ public class CrytapeteMinion : ModProjectile {
         }
         else {
             CryingTimer++;
-            if (CryingTimer >= Main.rand.Next(60 * 3, 60 * 10)) {
+            if(CryingTimer >= Main.rand.Next(60 * 3, 60 * 10)) {
                 Projectile.ai[2] = 0;
                 CryingTimer = 0;
                 Projectile.netUpdate = true;
@@ -275,27 +275,27 @@ public class CrytapeteMinion : ModProjectile {
         }
 
         NPC targetNPC = null;
-        if (player.HasMinionAttackTargetNPC) {
+        if(player.HasMinionAttackTargetNPC) {
             NPC potentialTarget = Main.npc[player.MinionAttackTargetNPC];
-            if (potentialTarget.active 
+            if(potentialTarget.active
                 && !potentialTarget.dontTakeDamage
-                && !potentialTarget.friendly 
-                && potentialTarget.Distance(Projectile.Center) < 600f * 1.5f 
+                && !potentialTarget.friendly
+                && potentialTarget.Distance(Projectile.Center) < 600f * 1.5f
                 && Collision.CanHitLine(Projectile.position, Projectile.width, Projectile.height, potentialTarget.position, potentialTarget.width, potentialTarget.height)) {
                 targetNPC = potentialTarget;
             }
         }
-        
-        if (targetNPC == null) {
+
+        if(targetNPC == null) {
             float maxDetectRange = 600f;
-            for (int i = 0; i < Main.maxNPCs; i++) {
+            for(int i = 0; i < Main.maxNPCs; i++) {
                 NPC npc = Main.npc[i];
-                if (npc.active 
-                    && !npc.dontTakeDamage 
-                    && !npc.friendly 
-                    && npc.lifeMax > 5 
-                    && !npc.immortal 
-                    && npc.Distance(Projectile.Center) < maxDetectRange 
+                if(npc.active
+                    && !npc.dontTakeDamage
+                    && !npc.friendly
+                    && npc.lifeMax > 5
+                    && !npc.immortal
+                    && npc.Distance(Projectile.Center) < maxDetectRange
                     && Collision.CanHitLine(Projectile.position, Projectile.width, Projectile.height, npc.position, npc.width, npc.height)) {
                     maxDetectRange = npc.Distance(Projectile.Center);
                     targetNPC = npc;
@@ -303,16 +303,16 @@ public class CrytapeteMinion : ModProjectile {
             }
         }
 
-        if (targetNPC != null) {
+        if(targetNPC != null) {
             Projectile.spriteDirection = player.direction;
         }
         else {
             Projectile.spriteDirection = player.direction;
         }
 
-        if (targetNPC != null && targetNPC.active && targetNPC.Distance(Projectile.Center) < 600f) {
+        if(targetNPC != null && targetNPC.active && targetNPC.Distance(Projectile.Center) < 600f) {
             Projectile.ai[1]++;
-            if (Projectile.ai[1] >= Main.rand.Next(60 - 15, 60 + 15)) {
+            if(Projectile.ai[1] >= Main.rand.Next(60 - 15, 60 + 15)) {
                 FireCrytapeteProjectile(targetNPC, Projectile.ai[2] == 1);
                 Projectile.ai[1] = 0;
                 Projectile.ai[0] = 1;
@@ -323,14 +323,14 @@ public class CrytapeteMinion : ModProjectile {
             Projectile.ai[1] = Math.Max(0, Projectile.ai[1] - 1);
             Projectile.ai[0] = 0;
         }
-        if (AnimationTimer > 0) {
+        if(AnimationTimer > 0) {
             AnimationTimer--;
-            if (AnimationTimer <= 0) {
-                Projectile.ai[0] = 0; 
+            if(AnimationTimer <= 0) {
+                Projectile.ai[0] = 0;
             }
         }
 
-        if (Projectile.ai[0] == 0) {
+        if(Projectile.ai[0] == 0) {
             Projectile.frame = (Projectile.ai[2] == 0) ? 0 : 2;
         }
         else {
@@ -347,23 +347,24 @@ public class CrytapeteMinion : ModProjectile {
     }
 
     private void FireCrytapeteProjectile(NPC target, bool isCryingShot) {
-        if (Main.myPlayer != Projectile.owner) return;
+        if(Main.myPlayer != Projectile.owner) return;
 
         Vector2 shootBaseOffset = new Vector2(Projectile.spriteDirection * (frame_width / 2f), -frame_height / 4f);
         Vector2 spawnPosition = Projectile.Center + shootBaseOffset.RotatedBy(Projectile.rotation);
 
-        if (isCryingShot) {
+        if(isCryingShot) {
             int burstCount = Main.rand.Next(2, 4);
-            for (int i = 0; i < burstCount; i++) {
+            for(int i = 0; i < burstCount; i++) {
                 Vector2 velocity;
                 float projectileSpeed = Main.rand.NextFloat(5f, 8f);
                 float horizontalSpread = 80f;
-                
-                if (Main.rand.NextBool(5)) {
+
+                if(Main.rand.NextBool(5)) {
                     velocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY) * projectileSpeed;
                     velocity = velocity.RotatedBy(Main.rand.NextFloat(-0.05f, 0.05f));
                     SoundEngine.PlaySound(SoundID.Item20, spawnPosition);
-                } else {
+                }
+                else {
                     Vector2 targetLandingSpot = target.Center + new Vector2(Main.rand.NextFloat(-horizontalSpread, horizontalSpread), 0f);
 
                     float heightAdjustment = 50f;
@@ -376,7 +377,7 @@ public class CrytapeteMinion : ModProjectile {
                         projectileSpeed
                     );
 
-                    if (velocity == Vector2.Zero || float.IsNaN(velocity.X) || float.IsNaN(velocity.Y)) {
+                    if(velocity == Vector2.Zero || float.IsNaN(velocity.X) || float.IsNaN(velocity.Y)) {
                         velocity = (targetLandingSpot - spawnPosition).SafeNormalize(Vector2.UnitY) * projectileSpeed;
                         velocity.Y -= Main.rand.NextFloat(0f, 3f);
                     }
@@ -394,12 +395,13 @@ public class CrytapeteMinion : ModProjectile {
                     Projectile.owner
                 );
             }
-        } else {
+        }
+        else {
             float projectileSpeed = 12f;
             Vector2 velocity = (target.Center - spawnPosition).SafeNormalize(Vector2.UnitY) * projectileSpeed;
             velocity = velocity.RotatedBy(Main.rand.NextFloat(-0.05f, 0.05f));
             SoundEngine.PlaySound(SoundID.Item20, spawnPosition);
-            
+
             Projectile.NewProjectile(
                 Projectile.GetSource_FromThis(),
                 spawnPosition,

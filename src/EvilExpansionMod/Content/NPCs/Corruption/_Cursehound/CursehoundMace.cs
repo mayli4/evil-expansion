@@ -13,7 +13,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
 public sealed class CursehoundMace : ModProjectile {
-    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.Cursehound.KEY_CursehoundMace;
+    public override string Texture => Assets.Textures.NPCs.Corruption.Cursehound.KEY_CursehoundMace;
 
     public enum State {
         Launched,
@@ -114,7 +114,7 @@ public sealed class CursehoundMace : ModProjectile {
     public override bool OnTileCollide(Vector2 oldVelocity) {
         if(CurrentState == State.Launched) {
             CurrentState = State.Embedded;
-            SoundEngine.PlaySound(Assets.Assets.Sounds.Cursehound.MaceSlam, Vector2.Lerp(Main.LocalPlayer.Center, Projectile.Center, 0.7f));
+            SoundEngine.PlaySound(Assets.Sounds.Cursehound.MaceSlam, Vector2.Lerp(Main.LocalPlayer.Center, Projectile.Center, 0.7f));
 
             for(int i = 0; i < 5; i++) {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Stone);
@@ -180,7 +180,7 @@ public sealed class CursehoundMace : ModProjectile {
             var unit = diff / length;
             float rotation = unit.ToRotation() + MathHelper.PiOver2;
 
-            var chainTexture = Assets.Assets.Textures.NPCs.Corruption.Cursehound.CursehoundMace_Chain.Value;
+            var chainTexture = Assets.Textures.NPCs.Corruption.Cursehound.CursehoundMace_Chain;
 
             var chainRect = new Rectangle(0, 0, 10, 12);
             var baseRect = new Rectangle(0, 14, 10, 10);
@@ -195,7 +195,7 @@ public sealed class CursehoundMace : ModProjectile {
         }
 
         Texture2D maceTexture = TextureAssets.Projectile[Type].Value;
-        Texture2D maceGlow = Assets.Assets.Textures.NPCs.Corruption.Cursehound.CursehoundMace_Glow.Value;
+        Texture2D maceGlow = Assets.Textures.NPCs.Corruption.Cursehound.CursehoundMace_Glow;
         Vector2 drawOrigin = maceTexture.Size() / 2f;
         Main.EntitySpriteDraw(maceTexture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
         Main.EntitySpriteDraw(maceGlow, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
@@ -216,7 +216,7 @@ public sealed class CursehoundMace : ModProjectile {
 }
 
 internal class MaceDebris : ModProjectile {
-    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.Cursehound.KEY_Debris;
+    public override string Texture => Assets.Textures.NPCs.Corruption.Cursehound.KEY_Debris;
 
     private Rectangle _frame;
 

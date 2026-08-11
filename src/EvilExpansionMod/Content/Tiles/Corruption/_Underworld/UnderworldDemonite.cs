@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
 public class UnderworldDemonite : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_HellDemonite;
+    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_HellDemonite;
 
     public override void SetStaticDefaults() {
         Main.tileOreFinderPriority[Type] = 450;
@@ -23,7 +23,7 @@ public class UnderworldDemonite : ModTile {
         MinPick = 65;
         HitSound = SoundID.Tink;
         Main.tileSpelunker[Type] = true;
-        
+
         MineResist = 2f;
         MinPick = 110;
 
@@ -37,7 +37,7 @@ public class UnderworldDemonite : ModTile {
 
         TileLoader.RegisterConversion(TileID.Hellstone, BiomeConversionID.Corruption, ConvertToCorruption);
     }
-    
+
     public override void FloorVisuals(Player player) {
         if(!player.fireWalk) {
             player.AddBuff(BuffID.Burning, 10, false);
@@ -73,8 +73,8 @@ public class UnderworldDemonite : ModTile {
 }
 
 public class UnderworldDemoniteItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_HellDemoniteItem;
-    
+    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_HellDemoniteItem;
+
     public override void SetStaticDefaults() {
         ItemTrader.ChlorophyteExtractinator.AddOption_OneWay(Type, 1, ModContent.ItemType<VeinOreItem>(), 1);
     }
@@ -90,7 +90,7 @@ public class UnderworldDemoniteItem : ModItem {
         Item.autoReuse = true;
         Item.useAnimation = 15;
         Item.useTime = 10;
-        
+
         Item.rare = ItemRarityID.Orange;
     }
 }

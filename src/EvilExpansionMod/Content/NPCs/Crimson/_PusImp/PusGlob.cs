@@ -12,7 +12,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Crimson;
 
 public sealed class PusGlob : ModProjectile {
-    public override string Texture => Assets.Assets.Textures.NPCs.Crimson.PusImp.KEY_PusGlob;
+    public override string Texture => Assets.Textures.NPCs.Crimson.PusImp.KEY_PusGlob;
 
     private Vector2[] _trailPositions;
 
@@ -73,7 +73,7 @@ public sealed class PusGlob : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var trailEffect = Assets.Assets.Effects.Trail.CursedSpiritFire.Value;
+        var trailEffect = Assets.Effects.Trail.CursedSpiritFire;
         Graphics.BeginPipeline(0.5f)
             .DrawTrail(
                 _trailPositions,
@@ -84,11 +84,11 @@ public sealed class PusGlob : ModProjectile {
                 ("mat", Graphics.WorldTransformMatrix),
                 ("stepY", 0.25f),
                 ("scale", 0.25f),
-                ("texture1", Assets.Assets.Textures.Sample.Pebbles.Value),
-                ("texture2", Assets.Assets.Textures.Sample.Noise2.Value)
+                ("texture1", Assets.Textures.Sample.Pebbles),
+                ("texture2", Assets.Textures.Sample.Noise2)
             )
             .DrawSprite(
-                Assets.Assets.Textures.Misc.Circle.Value,
+                Assets.Textures.Misc.Circle,
                 Projectile.Center - Main.screenPosition,
                 color: new Color(98, 90, 40),
                 origin: 16f * Vector2.One,
@@ -102,7 +102,7 @@ public sealed class PusGlob : ModProjectile {
 }
 
 public sealed class PusCreepProjectile : ModProjectile, ITileMask {
-    public override string Texture => Assets.Assets.Textures.NPCs.Crimson.PusImp.KEY_PusGlob;
+    public override string Texture => Assets.Textures.NPCs.Crimson.PusImp.KEY_PusGlob;
 
     private const int lifetime = 165;
 
@@ -151,7 +151,7 @@ public sealed class PusCreepProjectile : ModProjectile, ITileMask {
     }
 
     public void DrawTileMask(SpriteBatch spriteBatch) {
-        var tex = Assets.Assets.Textures.NPCs.Crimson.PusImp.PusCreepSplat.Value;
+        var tex = Assets.Textures.NPCs.Crimson.PusImp.PusCreepSplat;
         var color = Lighting.GetColor(Projectile.Center.ToTileCoordinates()) * ((255 - Projectile.alpha) / 255f);
         var scale = new Vector2(1f + Scale * 0.6f, 1f);
 

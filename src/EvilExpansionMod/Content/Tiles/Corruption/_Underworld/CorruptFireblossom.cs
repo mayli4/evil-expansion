@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent.Creative;
-using Terraria.GameContent.Metadata;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -21,7 +20,7 @@ public enum PlantStage : byte {
 }
 
 public class CorruptFireblossom : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_CorruptFireblossom;
+    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_CorruptFireblossom;
     private const int FrameWidth = 18;
 
     public override void SetStaticDefaults() {
@@ -192,7 +191,7 @@ public class CorruptFireblossom : ModTile {
 }
 
 public sealed class CorruptFireblossomSeeds : ModItem {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_CorruptFireblossomSeeds;
+    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_CorruptFireblossomSeeds;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 25;
     }

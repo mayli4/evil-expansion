@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Crimson;
 
 public class MarrowLazerProjectile : ModProjectile {
-    public override string Texture => Assets.Assets.Textures.NPCs.Crimson.MarrowEye.KEY_MarrowEyeNPC;
+    public override string Texture => Assets.Textures.NPCs.Crimson.MarrowEye.KEY_MarrowEyeNPC;
     public static readonly int DisapearFrames = 8;
 
     public override void SetDefaults() {
@@ -58,7 +58,7 @@ public class MarrowLazerProjectile : ModProjectile {
     public override bool PreDraw(ref Color lightColor) {
         var scale = MathF.Sin(MathF.PI * Projectile.timeLeft / (DisapearFrames * 2f));
         var rotation = Projectile.velocity.ToRotation();
-        var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;
+        var glowTexture = Assets.Textures.Sample.Glow1;
 
         var mainColor = new Color(253, 60, 179);
         var secondaryColor = new Color(63, 28, 72);
@@ -89,9 +89,9 @@ public class MarrowLazerProjectile : ModProjectile {
         );
         Main.spriteBatch.EndBegin(snapshot);
 
-        var texture0 = Assets.Assets.Textures.Sample.Pebbles.Value;
-        var texture1 = Assets.Assets.Textures.Sample.PlasmaNoise.Value;
-        var effect = Assets.Assets.Effects.Pixel.MarrowLaser.Value;
+        var texture0 = Assets.Textures.Sample.Pebbles;
+        var texture1 = Assets.Textures.Sample.PlasmaNoise;
+        var effect = Assets.Effects.Pixel.MarrowLaser;
 
         Graphics.BeginPipeline(0.5f)
             .EffectParams(

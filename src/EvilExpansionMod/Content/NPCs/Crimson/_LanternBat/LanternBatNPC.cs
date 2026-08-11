@@ -5,7 +5,6 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
-using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
@@ -20,14 +19,13 @@ public class LanternBatNPC : ModNPC {
         Dashing,
         PostDashCooldown
     }
-    
-    public override string Texture => Assets.Assets.Textures.NPCs.Crimson.LanternBat.KEY_LanternBatNPC;
-    public string LanternTexturePath => Assets.Assets.Textures.NPCs.Crimson.LanternBat.KEY_LanternBat_Lantern;
+
+    public override string Texture => Assets.Textures.NPCs.Crimson.LanternBat.KEY_LanternBatNPC;
+    public string LanternTexturePath => Assets.Textures.NPCs.Crimson.LanternBat.KEY_LanternBat_Lantern;
 
     public State CurrentState {
         get => (State)NPC.ai[0];
-        set
-        {
+        set {
             NPC.ai[0] = (float)value;
             StateTimer = 0;
             NPC.netUpdate = true;
@@ -40,7 +38,7 @@ public class LanternBatNPC : ModNPC {
     private const int anim_speed = 6;
     private Vector2 _storedDashVelocity;
     private ref float _lanternLightIntensity => ref NPC.localAI[1];
-    
+
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 4;
     }
@@ -66,21 +64,21 @@ public class LanternBatNPC : ModNPC {
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.buffImmune[BuffID.Bleeding] = true;
         NPC.lavaImmune = true;
-        
+
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<LanternBatBannerItem>();
     }
-    
+
     public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.1f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
     }
-    
+
     public override void OnSpawn(IEntitySource source) {
         _lanternLightIntensity = 0f;
     }
-    
+
     public override void HitEffect(NPC.HitInfo hit) {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) return;
 
@@ -103,11 +101,11 @@ public class LanternBatNPC : ModNPC {
 
     public override void AI() {
         NPC.TargetClosest();
-        if (Target.dead || !Target.active) {
+        if(Target.dead || !Target.active) {
             return;
         }
 
-        switch (CurrentState) {
+        switch(CurrentState) {
             case State.IdleFlight:
                 Vector2 idealIdlePosition = Target.Center + new Vector2(NPC.direction * 200, -100);
                 NPC.velocity = Vector2.Lerp(NPC.velocity, NPC.DirectionTo(idealIdlePosition) * 4, 0.05f);
@@ -123,7 +121,7 @@ public class LanternBatNPC : ModNPC {
                 _lanternLightIntensity = Math.Min(_lanternLightIntensity, 2.5f);
                 _lanternLightIntensity = Math.Max(0.2f, _lanternLightIntensity);
 
-                if (NPC.Distance(Target.Center) < dashRange && StateTimer > Main.rand.Next(minIdleTime, maxIdleTime)) {
+                if(NPC.Distance(Target.Center) < dashRange && StateTimer > Main.rand.Next(minIdleTime, maxIdleTime)) {
                     Vector2 dashTarget = Target.Center + Target.velocity * 0.5f;
                     _storedDashVelocity = NPC.DirectionTo(dashTarget) * 16;
 
@@ -131,12 +129,12 @@ public class LanternBatNPC : ModNPC {
                 }
                 break;
             case State.Dashing:
-                NPC.velocity = _storedDashVelocity; 
+                NPC.velocity = _storedDashVelocity;
                 NPC.noTileCollide = true;
                 NPC.noGravity = true;
 
                 _lanternLightIntensity = 1.5f;
-                
+
                 if(StateTimer % 10 == 0) {
                     Projectile.NewProjectile(
                         NPC.GetSource_FromAI(),
@@ -150,8 +148,7 @@ public class LanternBatNPC : ModNPC {
                 }
 
                 StateTimer++;
-                if (StateTimer >= 45)
-                {
+                if(StateTimer >= 45) {
                     CurrentState = State.PostDashCooldown;
                     NPC.noTileCollide = true;
                     NPC.noGravity = true;
@@ -161,12 +158,12 @@ public class LanternBatNPC : ModNPC {
 
             case State.PostDashCooldown:
                 NPC.velocity = Vector2.Lerp(NPC.velocity, NPC.DirectionTo(Target.Center) * 4, 0.03f);
-                
+
                 StateTimer++;
                 _lanternLightIntensity = Math.Max(0f, 1.5f * (1f - StateTimer / (float)(60 * 2)));
                 _lanternLightIntensity = Math.Max(0.2f, _lanternLightIntensity);
-                
-                if (StateTimer >= 60 * 2) {
+
+                if(StateTimer >= 60 * 2) {
                     CurrentState = State.IdleFlight;
                 }
                 break;
@@ -174,43 +171,43 @@ public class LanternBatNPC : ModNPC {
 
         NPC.spriteDirection = NPC.direction = (NPC.velocity.X > 0) ? 1 : -1;
 
-        if (NPC.velocity.Length() < 0.1f && CurrentState != State.Dashing) {
+        if(NPC.velocity.Length() < 0.1f && CurrentState != State.Dashing) {
             NPC.velocity = Main.rand.NextVector2Circular(0.5f, 0.5f);
         }
     }
 
     public override void FindFrame(int frameHeight) {
         NPC.frameCounter++;
-        if (NPC.frameCounter >= anim_speed * 4) {
+        if(NPC.frameCounter >= anim_speed * 4) {
             NPC.frameCounter = 0;
         }
         NPC.frame.Y = (int)(NPC.frameCounter / anim_speed) * frameHeight;
     }
-    
+
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         Vector2 lanternOffsetVector = new Vector2(0, 40);
-        
-        if (NPC.spriteDirection == -1) {
+
+        if(NPC.spriteDirection == -1) {
             lanternOffsetVector.X *= -1;
         }
 
         Vector2 lanternDrawPosition = NPC.Center + lanternOffsetVector;
 
         Lighting.AddLight(lanternDrawPosition, Color.Orange.ToVector3() * _lanternLightIntensity);
-        
+
         float lanternRotation = NPC.velocity.X * 0.05f + MathF.Sin(Main.GameUpdateCount * 0.1f) * 0.1f;
 
-        Texture2D lanternTex = Assets.Assets.Textures.NPCs.Crimson.LanternBat.LanternBat_Lantern.Value;
-        Texture2D lanternInside = Assets.Assets.Textures.NPCs.Crimson.LanternBat.LanternBat_LanternFlame.Value;
+        Texture2D lanternTex = Assets.Textures.NPCs.Crimson.LanternBat.LanternBat_Lantern;
+        Texture2D lanternInside = Assets.Textures.NPCs.Crimson.LanternBat.LanternBat_LanternFlame;
         Vector2 lanternOrigin = new Vector2(lanternTex.Width / 2, 0);
-        
+
         SpriteEffects lanternEffects = SpriteEffects.None;
-        if (NPC.spriteDirection == -1) {
+        if(NPC.spriteDirection == -1) {
             lanternEffects = SpriteEffects.FlipHorizontally;
         }
-        
+
         Color lightEffectColor = Color.Orange * _lanternLightIntensity;
-        
+
         Main.EntitySpriteDraw(
             lanternInside,
             lanternDrawPosition - screenPos,
@@ -221,7 +218,7 @@ public class LanternBatNPC : ModNPC {
             NPC.scale,
             lanternEffects
         );
-        
+
         Main.EntitySpriteDraw(
             lanternTex,
             lanternDrawPosition - screenPos,

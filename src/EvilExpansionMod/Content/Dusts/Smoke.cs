@@ -16,16 +16,17 @@ public sealed class Smoke : ModDust {
         public float InitialScale;
     }
 
-    public override string Texture => Assets.Assets.Textures.Dusts.KEY_Gas;
+    public override string Texture => Assets.Textures.Dusts.KEY_Gas;
 
     public override void OnSpawn(Dust dust) {
         dust.frame = new Rectangle(0, 32 * Main.rand.Next(3), 32, 32);
         dust.rotation = Main.rand.NextFloat(MathHelper.TwoPi);
-        
-        if (dust.customData is Data data) {
+
+        if(dust.customData is Data data) {
             dust.color = data.ColorStart;
             dust.alpha = (int)(255 - (data.InitialOpacity * 255));
-        } else {
+        }
+        else {
             dust.color = Color.Black;
             dust.alpha = 255;
         }

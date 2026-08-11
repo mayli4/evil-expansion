@@ -6,13 +6,13 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Tiles.Crimson;
 
 public class CrimsonAsh : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Crimson.KEY_CrimsonAshTile;
+    public override string Texture => Assets.Textures.Tiles.Crimson.KEY_CrimsonAshTile;
 
     public override void SetStaticDefaults() {
         Main.tileMergeDirt[Type] = true;
         Main.tileBlockLight[Type] = true;
         Main.tileSolid[Type] = true;
-        
+
         Main.tileMerge[Type][TileID.Ash] = true;
         Main.tileMerge[TileID.Ash][Type] = true;
         Main.tileMerge[Type][TileID.ObsidianBrick] = true;
@@ -62,7 +62,7 @@ public class CrimsonAsh : ModTile {
 }
 
 public class CrimsonAshItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Tiles.Crimson.KEY_CrimsonAshItem;
+    public override string Texture => Assets.Textures.Tiles.Crimson.KEY_CrimsonAshItem;
 
     public override void SetDefaults() {
         Item.DefaultToPlaceableTile(ModContent.TileType<CrimsonAsh>());

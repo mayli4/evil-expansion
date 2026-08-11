@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
 internal class MaceCrack : ModProjectile, ITileMask {
-    public override string Texture => Assets.Assets.KEY_icon;
+    public override string Texture => Helper.PlaceholderTextureKey;
 
     private Color _lightColor;
 
@@ -30,9 +30,9 @@ internal class MaceCrack : ModProjectile, ITileMask {
     public void DrawTileMask(SpriteBatch spriteBatch) {
         var color = _lightColor;
         color *= Projectile.timeLeft > 100 ? 1f : Projectile.timeLeft / 100f;
-        var glow = Assets.Assets.Textures.Misc.Glow2.Value;
-        var tex = Assets.Assets.Textures.Misc.Crack.Value;
-        var tex2 = Assets.Assets.Textures.Misc.CrackBright.Value;
+        var glow = Assets.Textures.Misc.Glow2;
+        var tex = Assets.Textures.Misc.Crack;
+        var tex2 = Assets.Textures.Misc.CrackBright;
 
         var glowColor = CursedSpiritNPC.GhostColor1;
         glowColor *= Projectile.timeLeft > 100 ? 1f : Projectile.timeLeft / 100f;

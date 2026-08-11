@@ -6,15 +6,15 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Crimson;
 
 public sealed class PusSlugCritter : ModNPC {
-    public override string Texture => Assets.Assets.Textures.NPCs.Crimson.KEY_PusSlugNPC;
-    
+    public override string Texture => Assets.Textures.NPCs.Crimson.KEY_PusSlugNPC;
+
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 3;
         Main.npcCatchable[Type] = true;
         NPCID.Sets.CountsAsCritter[Type] = true;
         NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
     }
-    
+
     public override void SetDefaults() {
         NPC.width = 1;
         NPC.height = 4;
@@ -32,13 +32,13 @@ public sealed class PusSlugCritter : ModNPC {
 
         NPC.lavaImmune = true;
     }
-    
+
     public override void FindFrame(int frameHeight) {
         NPC.frameCounter++;
-        if (NPC.frameCounter >= 8) {
+        if(NPC.frameCounter >= 8) {
             NPC.frameCounter = 0;
             NPC.frame.Y += frameHeight;
-            if (NPC.frame.Y >= Main.npcFrameCount[NPC.type] * frameHeight) {
+            if(NPC.frame.Y >= Main.npcFrameCount[NPC.type] * frameHeight) {
                 NPC.frame.Y = 0;
             }
         }
@@ -50,8 +50,8 @@ public sealed class PusSlugCritter : ModNPC {
 }
 
 public class PusSlugItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.NPCs.Crimson.KEY_PusSlugItem;
-    
+    public override string Texture => Assets.Textures.NPCs.Crimson.KEY_PusSlugItem;
+
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;
     }

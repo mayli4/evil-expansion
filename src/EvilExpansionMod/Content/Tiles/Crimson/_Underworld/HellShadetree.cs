@@ -38,7 +38,7 @@ public class HellShadeModTree : ModTree {
     }
 
     public override Asset<Texture2D> GetTexture() {
-        return Assets.Assets.Textures.Tiles.Corruption.CorruptHellTree;
+        return Assets.Textures.Tiles.Corruption.ASSET_CorruptHellTree;
     }
 
     public override int SaplingGrowthType(ref int style) {
@@ -50,11 +50,11 @@ public class HellShadeModTree : ModTree {
     }
 
     public override Asset<Texture2D> GetBranchTextures() {
-        return Assets.Assets.Textures.Tiles.Corruption.CorruptHellTree;
+        return Assets.Textures.Tiles.Corruption.ASSET_CorruptHellTree;
     }
 
     public override Asset<Texture2D> GetTopTextures() {
-        return Assets.Assets.Textures.Tiles.Corruption.CorruptHellTree;
+        return Assets.Textures.Tiles.Corruption.ASSET_CorruptHellTree;
     }
 
     public override int DropWood() {
@@ -63,7 +63,7 @@ public class HellShadeModTree : ModTree {
 }
 
 public class HellShadetree : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Crimson.KEY_HellShadetreeTrunk;
+    public override string Texture => Assets.Textures.Tiles.Crimson.KEY_HellShadetreeTrunk;
 
     public static GrowTreeSettings GrowSettings = new GrowTreeSettings
     {
@@ -508,20 +508,18 @@ public class HellShadetree : ModTile {
     }*/
 
     public Texture2D GetTreeTopTexture(int tileType, int treeTextureStyle, byte tileColor) {
-        var texture2D = Assets.Assets.Textures.Tiles.Crimson.HellShadetreeTops.Value;
-        return texture2D;
+        return Assets.Textures.Tiles.Crimson.HellShadetreeTops;
     }
 
     public Texture2D GetTreeBranchTexture(int tileType, int treeTextureStyle, byte tileColor) {
-        var texture2D = Assets.Assets.Textures.Tiles.Crimson.HellShadetreeBranches.Value;
-        return texture2D;
+        return Assets.Textures.Tiles.Crimson.HellShadetreeBranches;
     }
 
     public class TreeTopRenderTargetHolder : ARenderTargetHolder {
         public TreeFoliageVariantKey Key;
 
         public override void Prepare() {
-            var asset = Assets.Assets.Textures.Tiles.Crimson.HellShadetreeTops;
+            var asset = Assets.Textures.Tiles.Crimson.ASSET_HellShadetreeTops;
             asset.Wait?.Invoke();
             PrepareTextureIfNecessary(asset.Value);
         }
@@ -535,7 +533,7 @@ public class HellShadetree : ModTile {
         public TreeFoliageVariantKey Key;
 
         public override void Prepare() {
-            var asset = Assets.Assets.Textures.Tiles.Crimson.HellShadetreeBranches;
+            var asset = Assets.Textures.Tiles.Crimson.ASSET_HellShadetreeBranches;
             asset.Wait?.Invoke();
             PrepareTextureIfNecessary(asset.Value);
         }
@@ -737,7 +735,7 @@ public class HellShadetree : ModTile {
             }
             Item.NewItem(GetItemSource_FromTreeShake(x, y), x * 16, y * 16, 16, 16, type, num2);
         }
-        else if (genRand.NextBool(1)) {
+        else if(genRand.NextBool(1)) {
             int secondaryItemStack = ((!genRand.NextBool(2)) ? ModContent.ItemType<CowHeart>() : ModContent.ItemType<CarolinaReaper>());
             Item.NewItem(GetItemSource_FromTreeShake(x, y), x * 16, y * 16, 16, 16, secondaryItemStack);
         }

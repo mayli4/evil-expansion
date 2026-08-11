@@ -56,7 +56,7 @@ public sealed class CursehoundNPC : ModNPC {
     private const int mace_duration = (int)(2.5f * 60);
     private const int MaceRetractDuration = 1 * 60;
 
-    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.Cursehound.KEY_CursehoundNPC;
+    public override string Texture => Assets.Textures.NPCs.Corruption.Cursehound.KEY_CursehoundNPC;
 
     public Player Target => Main.player[NPC.target];
 
@@ -257,7 +257,7 @@ public sealed class CursehoundNPC : ModNPC {
         ai.Timer++;
 
         if(ai.Timer == 1) {
-            SoundEngine.PlaySound(Assets.Assets.Sounds.Cursehound.MaceSwing, NPC.Center);
+            SoundEngine.PlaySound(Assets.Sounds.Cursehound.MaceSwing, NPC.Center);
         }
 
         if(ai.Timer >= mace_spin_duration) {
@@ -271,7 +271,7 @@ public sealed class CursehoundNPC : ModNPC {
 
         if(ai.Timer == 1) {
             Vector2 launchOrigin = NPC.Center + new Vector2(NPC.direction * 50, -40);
-            SoundEngine.PlaySound(Assets.Assets.Sounds.Cursehound.MaceThrow, NPC.Center);
+            SoundEngine.PlaySound(Assets.Sounds.Cursehound.MaceThrow, NPC.Center);
 
             float gravity = 0.4f;
 
@@ -430,7 +430,7 @@ public sealed class CursehoundNPC : ModNPC {
         );
 
         spriteBatch.Draw(
-            Assets.Assets.Textures.NPCs.Corruption.Cursehound.CursehoundNPC_Glow.Value,
+            Assets.Textures.NPCs.Corruption.Cursehound.CursehoundNPC_Glow,
             drawPosition,
             frame,
             Color.White,
@@ -481,7 +481,7 @@ public sealed class CursehoundNPC : ModNPC {
                 if(NPC.frameCounter >= 6) {
                     NPC.frameCounter = 0;
                     //ueah i hate this but im lazy
-                    SoundEngine.PlaySound(Assets.Assets.Sounds.Cursehound.CursehoundStep1 with { Pitch = 0.0f, PitchVariance = 0.4f }, NPC.Center);
+                    SoundEngine.PlaySound(Assets.Sounds.Cursehound.CursehoundStep1 with { Pitch = 0.0f, PitchVariance = 0.4f }, NPC.Center);
                 }
                 NPC.frame.Y = (23 + (int)NPC.frameCounter) * frameHeight;
                 break;

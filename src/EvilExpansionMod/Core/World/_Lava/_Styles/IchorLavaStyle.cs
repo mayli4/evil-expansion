@@ -1,5 +1,3 @@
-using EvilExpansionMod.Content.Biomes;
-using EvilExpansionMod.Core.World;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -10,11 +8,11 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Core.World;
 
 public class IchorLavafall : ModWaterfallStyle {
-    public override string Texture => Assets.Assets.Textures.Lavas.KEY_IchorLavafall;
+    public override string Texture => Assets.Textures.Lavas.KEY_IchorLavafall;
 }
 
 public class IchorLavaStyle : ModLavaStyle {
-    public override string LavaTexturePath => Assets.Assets.Textures.Lavas.KEY_IchorLava;
+    public override string LavaTexturePath => Assets.Textures.Lavas.KEY_IchorLava;
 
     public override string BlockTexturePath => LavaTexturePath + "_Block";
 

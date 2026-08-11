@@ -10,8 +10,8 @@ namespace EvilExpansionMod.Content.NPCs.Crimson;
 //todo rewrite their ai, very simple but make them move very erratically
 
 public class StinkflyItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.NPCs.Crimson.Stinkgrub.KEY_BigFlyItem;
-    
+    public override string Texture => Assets.Textures.NPCs.Crimson.Stinkgrub.KEY_BigFlyItem;
+
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;
     }
@@ -34,14 +34,14 @@ public class StinkflyItem : ModItem {
 }
 
 public class StinkflyNPC : ModNPC {
-    public override string Texture => Assets.Assets.Textures.NPCs.Crimson.Stinkgrub.KEY_BigFly;
+    public override string Texture => Assets.Textures.NPCs.Crimson.Stinkgrub.KEY_BigFly;
 
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 2;
         Main.npcCatchable[Type] = true;
         NPCID.Sets.CountsAsCritter[Type] = true;
         NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
-    } 
+    }
 
     public override void SetDefaults() {
         NPC.width = 20;
@@ -52,14 +52,14 @@ public class StinkflyNPC : ModNPC {
         NPC.value = 0f;
         NPC.knockBackResist = 0.4f;
         NPC.catchItem = ModContent.ItemType<StinkflyItem>();
-        
+
         NPC.noGravity = true;
         NPC.noTileCollide = false;
         NPC.lavaImmune = true;
         NPC.aiStyle = NPCAIStyleID.Butterfly;
-        
+
         NPC.DeathSound = SoundID.NPCDeath1;
-        
+
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
     }
 
@@ -69,18 +69,18 @@ public class StinkflyNPC : ModNPC {
         float detectionRadius = 20 * 15;
         float detectionRadiusSq = detectionRadius * detectionRadius;
 
-        for (int i = 0; i < Main.maxNPCs; i++) {
+        for(int i = 0; i < Main.maxNPCs; i++) {
             NPC grub = Main.npc[i];
-            if (grub.active && grub.type == ModContent.NPCType<StinkgrubNPC>()) {
+            if(grub.active && grub.type == ModContent.NPCType<StinkgrubNPC>()) {
                 float distSq = NPC.DistanceSQ(grub.Center);
-                if (distSq < closestDistSq && distSq < detectionRadiusSq) {
+                if(distSq < closestDistSq && distSq < detectionRadiusSq) {
                     closestDistSq = distSq;
                     closestGrub = grub;
                 }
             }
         }
 
-        if (closestGrub != null) {
+        if(closestGrub != null) {
             float hoverHeight = -30f;
             float sideOffset = 20f;
 
@@ -101,21 +101,21 @@ public class StinkflyNPC : ModNPC {
             var vectorToDesired = desiredPosition - NPC.Center;
             float distanceToDesired = vectorToDesired.Length();
 
-            if (distanceToDesired > 10f) {
+            if(distanceToDesired > 10f) {
                 NPC.velocity = Vector2.Lerp(NPC.velocity, vectorToDesired.SafeNormalize(Vector2.Zero) * maxInfluenceSpeed, steerStrength);
             }
             else {
-                NPC.velocity *= 10.98f; 
+                NPC.velocity *= 10.98f;
             }
         }
     }
-    
+
     public override void FindFrame(int frameHeight) {
         NPC.frameCounter++;
-        if (NPC.frameCounter >= 6) {
+        if(NPC.frameCounter >= 6) {
             NPC.frameCounter = 0;
             NPC.frame.Y += frameHeight;
-            if (NPC.frame.Y >= Main.npcFrameCount[NPC.type] * frameHeight) {
+            if(NPC.frame.Y >= Main.npcFrameCount[NPC.type] * frameHeight) {
                 NPC.frame.Y = 0;
             }
         }
@@ -127,5 +127,5 @@ public class StinkflyNPC : ModNPC {
 }
 
 public class SmallStinkflyNpc : StinkflyNPC {
-    public override string Texture => Assets.Assets.Textures.NPCs.Crimson.Stinkgrub.KEY_SmallFly;
+    public override string Texture => Assets.Textures.NPCs.Crimson.Stinkgrub.KEY_SmallFly;
 }

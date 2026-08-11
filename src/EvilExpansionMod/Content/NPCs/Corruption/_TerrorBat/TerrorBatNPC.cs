@@ -9,12 +9,8 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
-using Terraria.GameContent.Drawing;
-using Terraria.Graphics.Renderers;
 using Terraria.ID;
-using Terraria.Localization;
 using Terraria.ModLoader;
-using Terraria.ModLoader.Utilities;
 
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
@@ -22,7 +18,7 @@ namespace EvilExpansionMod.Content.NPCs.Corruption;
 
 [SpawnPack(4)]
 public class TerrorBatNPC : ModNPC {
-    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.TerrorBat.KEY_TerrorBatNPC;
+    public override string Texture => Assets.Textures.NPCs.Corruption.TerrorBat.KEY_TerrorBatNPC;
 
     public enum State {
         IdleOnCeiling,
@@ -101,7 +97,7 @@ public class TerrorBatNPC : ModNPC {
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.5f : 0;
     }
-    
+
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
     public override void OnSpawn(IEntitySource source) {

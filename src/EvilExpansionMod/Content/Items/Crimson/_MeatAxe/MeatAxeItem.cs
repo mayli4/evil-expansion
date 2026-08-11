@@ -4,8 +4,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Items.Crimson;
+
 public class MeatAxeItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Crimson.MeatAxe.KEY_MeatAxeItem;
+    public override string Texture => Assets.Textures.Items.Crimson.MeatAxe.KEY_MeatAxeItem;
 
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 3;
@@ -39,7 +40,7 @@ public class MeatAxeItem : ModItem {
     public override bool CanUseItem(Player player) {
         return player.ownedProjectileCounts[Item.shoot] == 0;
     }
-    
+
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient(ModContent.ItemType<CrimtaneHellstoneBarItem>(), 20)

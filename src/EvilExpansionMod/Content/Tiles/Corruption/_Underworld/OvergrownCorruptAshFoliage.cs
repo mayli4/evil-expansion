@@ -1,8 +1,6 @@
 using Microsoft.Xna.Framework;
 using System.Collections.Generic;
 using Terraria;
-using Terraria.DataStructures;
-using Terraria.Enums;
 using Terraria.GameContent.Metadata;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -11,7 +9,7 @@ using Terraria.ObjectData;
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
 public class OvergrownCorruptAshFoliage : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_OvergrownCorruptAshFoliage;
+    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_OvergrownCorruptAshFoliage;
 
     public override void SetStaticDefaults() {
         Main.tileCut[Type] = true;
@@ -38,14 +36,14 @@ public class OvergrownCorruptAshFoliage : ModTile {
         if(Main.player[Player.FindClosest(new Vector2(i, j).ToWorldCoordinates(0, 0), 16, 16)].HeldItem.type == ItemID.Sickle)
             yield return new Item(ItemID.Hay, Main.rand.Next(1, 3));
     }
-    
+
     public override bool TileFrame(int i, int j, ref bool resetFrame, ref bool noBreak) {
         var tileBelow = Framing.GetTileSafely(i, j + 1);
         int type = -1;
-        if (tileBelow.HasTile && !tileBelow.BottomSlope) {
+        if(tileBelow.HasTile && !tileBelow.BottomSlope) {
             type = tileBelow.TileType;
         }
-        if (type == ModContent.TileType<OvergrownCorruptAsh>() || type == Type) {
+        if(type == ModContent.TileType<OvergrownCorruptAsh>() || type == Type) {
             return true;
         }
         WorldGen.KillTile(i, j);

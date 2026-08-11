@@ -24,7 +24,7 @@ enum CultistState {
 }
 
 public class ThoughtfulCultistNPC : ModNPC {
-    public override string Texture => Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.KEY_CultistBrain;
+    public override string Texture => Assets.Textures.NPCs.Crimson.ThoughtfulCultist.KEY_CultistBrain;
     Player Target => Main.player[NPC.target];
     CultistState State => Unsafe.BitCast<float, CultistState>(NPC.ai[0]);
 
@@ -131,7 +131,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                 break;
             case CultistState.EyeAttack:
                 NPC.velocity *= 0.99f;
-                if(Target == null) { 
+                if(Target == null) {
                 }
                 else if(_timer > 60 && (int)_timer % 30 == 0) {
                     var position = Target.Center + _portalRotation.ToRotationVector2() * Main.rand.NextFloat(300, 400);
@@ -185,11 +185,11 @@ public class ThoughtfulCultistNPC : ModNPC {
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var brainTexture = TextureAssets.Npc[Type].Value;
-        var robeTextureBack = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistRobeBack.Value;
-        var robeTextureFront = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistRobeFront.Value;
-        var pendantTexture = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistPendant.Value;
-        var pendantGlowmaskTexture = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistPendantGlowmask.Value;
-        var chainTexture = Assets.Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistChain.Value;
+        var robeTextureBack = Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistRobeBack;
+        var robeTextureFront = Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistRobeFront;
+        var pendantTexture = Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistPendant;
+        var pendantGlowmaskTexture = Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistPendantGlowmask;
+        var chainTexture = Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistChain;
 
         if(NPC.IsABestiaryIconDummy)
             return true;

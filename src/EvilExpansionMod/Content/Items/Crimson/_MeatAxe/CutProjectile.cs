@@ -9,6 +9,7 @@ using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Items.Crimson._MeatAxe;
+
 public class CutProjectile : ModProjectile {
     public override string Texture => Helper.PlaceholderTextureKey;
 
@@ -77,9 +78,9 @@ public class CutProjectile : ModProjectile {
             );
         }
 
-        var effect = Assets.Assets.Effects.Trail.AxeCut.Value;
+        var effect = Assets.Effects.Trail.AxeCut;
         var positions = CollectionsMarshal.AsSpan(TrailPositions);
-        var texture = Assets.Assets.Textures.Items.Crimson.MeatAxe.CutTexture.Value;
+        var texture = Assets.Textures.Items.Crimson.MeatAxe.CutTexture;
         pipeline
             .DrawTrail(
                 positions,

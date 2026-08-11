@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Crimson;
 
 public class CrimsonDrillItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Crimson.KEY_CrimsonDrillItem;
+    public override string Texture => Assets.Textures.Items.Crimson.KEY_CrimsonDrillItem;
 
     public override void SetStaticDefaults() {
         ItemID.Sets.IsDrill[Type] = true;
@@ -18,7 +18,7 @@ public class CrimsonDrillItem : ModItem {
         Item.DamageType = DamageClass.MeleeNoSpeed;
         Item.width = 20;
         Item.height = 12;
-        
+
         Item.useTime = 4;
         Item.useAnimation = 15;
         Item.useStyle = ItemUseStyleID.Shoot;
@@ -37,13 +37,13 @@ public class CrimsonDrillItem : ModItem {
     }
 
     public override void AddRecipes() {
-        
+
     }
 }
 
 public class CrimsonDrillProjectile : ModProjectile {
-    public override string Texture => Assets.Assets.Textures.Items.Crimson.KEY_CrimsonDrill;
-    
+    public override string Texture => Assets.Textures.Items.Crimson.KEY_CrimsonDrill;
+
     public override void SetStaticDefaults() {
         // Prevents jitter when stepping up and down blocks and half blocks
         ProjectileID.Sets.HeldProjDoesNotUsePlayerGfxOffY[Type] = true;
@@ -71,19 +71,19 @@ public class CrimsonDrillProjectile : ModProjectile {
         // Animation code could go here if the projectile was animated. 
 
         // Plays a sound every 20 ticks. In aiStyle 20, soundDelay is set to 30 ticks.
-        if (Projectile.soundDelay <= 0) {
+        if(Projectile.soundDelay <= 0) {
             SoundEngine.PlaySound(SoundID.Item22, Projectile.Center);
             Projectile.soundDelay = 20;
         }
 
         Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter);
-        if (Main.myPlayer == Projectile.owner) {
+        if(Main.myPlayer == Projectile.owner) {
             // This code must only be ran on the client of the projectile owner
-            if (player.channel) {
+            if(player.channel) {
                 float holdoutDistance = player.HeldItem.shootSpeed * Projectile.scale;
                 // Calculate a normalized vector from player to mouse and multiply by holdoutDistance to determine resulting holdoutOffset
                 Vector2 holdoutOffset = holdoutDistance * Vector2.Normalize(Main.MouseWorld - playerCenter);
-                if (holdoutOffset.X != Projectile.velocity.X || holdoutOffset.Y != Projectile.velocity.Y) {
+                if(holdoutOffset.X != Projectile.velocity.X || holdoutOffset.Y != Projectile.velocity.Y) {
                     // This will sync the projectile, most importantly, the velocity.
                     Projectile.netUpdate = true;
                 }
@@ -96,10 +96,10 @@ public class CrimsonDrillProjectile : ModProjectile {
             }
         }
 
-        if (Projectile.velocity.X > 0f) {
+        if(Projectile.velocity.X > 0f) {
             player.ChangeDir(1);
         }
-        else if (Projectile.velocity.X < 0f) {
+        else if(Projectile.velocity.X < 0f) {
             player.ChangeDir(-1);
         }
 
@@ -115,7 +115,7 @@ public class CrimsonDrillProjectile : ModProjectile {
         Projectile.velocity.X *= 1f + Main.rand.Next(-3, 4) * 0.01f;
 
         // Spawning dust
-        if (Main.rand.NextBool(10)) {
+        if(Main.rand.NextBool(10)) {
             Dust dust = Dust.NewDustDirect(Projectile.position + Projectile.velocity * Main.rand.Next(6, 10) * 0.15f, Projectile.width, Projectile.height, DustID.Crimson, 0f, 0f, 80, Color.White, 1f);
             dust.position.X -= 4f;
             dust.noGravity = true;

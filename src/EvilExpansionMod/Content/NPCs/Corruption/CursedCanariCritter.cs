@@ -9,11 +9,11 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
 public sealed class CursedCanariCritter : ModNPC {
-    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.KEY_CursedCanariCritter;
+    public override string Texture => Assets.Textures.NPCs.Corruption.KEY_CursedCanariCritter;
 
     int State { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; }
     Player Target => Main.player[NPC.target];
-    
+
     bool ValidTarget => Target != null && Target.active;
 
     public override void SetStaticDefaults() {
@@ -27,7 +27,7 @@ public sealed class CursedCanariCritter : ModNPC {
 
     public override void SetDefaults() {
         NPC.width = 12;
-        NPC.height = 10; 
+        NPC.height = 10;
         NPC.damage = 0;
         NPC.aiStyle = NPCAIStyleID.Bird;
         NPC.defense = 0;
@@ -58,9 +58,10 @@ public sealed class CursedCanariCritter : ModNPC {
                 NPC.noGravity = false;
                 NPC.noTileCollide = false;
                 NPC.velocity.X = 0f;
-                if (NPC.collideY) {
+                if(NPC.collideY) {
                     NPC.velocity.Y = 0f;
-                } else {
+                }
+                else {
                     NPC.velocity.Y += NPC.gravity;
                 }
 
@@ -76,7 +77,8 @@ public sealed class CursedCanariCritter : ModNPC {
                     NPC.ai[1] = Main.rand.NextFloat(60, 180);
                     State = Main.rand.Next(2);
                     NPC.netUpdate = true;
-                } else {
+                }
+                else {
                     NPC.ai[1] -= 1f;
                 }
                 break;
@@ -89,7 +91,7 @@ public sealed class CursedCanariCritter : ModNPC {
                 var i1 = (int)(NPC.Center.X / 16f);
                 var jOffset1 = (int)(NPC.Center.Y / 16f);
                 for(var j = 0; !hasLavaBelow && j < 8; j++) {
-                    if(j + jOffset1 < Main.maxTilesY &&  Main.tile[i1, j + jOffset1].LiquidAmount >= 1) hasLavaBelow = true;
+                    if(j + jOffset1 < Main.maxTilesY && Main.tile[i1, j + jOffset1].LiquidAmount >= 1) hasLavaBelow = true;
                 }
 
                 if(!targetInRange && !hasLavaBelow) {
@@ -147,7 +149,7 @@ public sealed class CursedCanariCritter : ModNPC {
 }
 
 public sealed class CursedCanariItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.KEY_CursedCanariItem;
+    public override string Texture => Assets.Textures.NPCs.Corruption.KEY_CursedCanariItem;
 
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;

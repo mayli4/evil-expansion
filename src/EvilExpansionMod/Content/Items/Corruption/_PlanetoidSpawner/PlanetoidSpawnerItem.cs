@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Corruption;
 
 public class PlanetoidSpawnerItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.Planetoids.KEY_PlanetoidSpawnerItem;
+    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.KEY_PlanetoidSpawnerItem;
 
     public override void SetDefaults() {
         Item.width = 30;
@@ -18,7 +18,7 @@ public class PlanetoidSpawnerItem : ModItem {
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.useTime = 2;
         Item.useAnimation = 3;
-        
+
         Item.DamageType = DamageClass.Magic;
         Item.channel = true;
         Item.noMelee = true;
@@ -36,7 +36,7 @@ public class PlanetoidSpawnerItem : ModItem {
     }
 
     public override bool CanUseItem(Player player) {
-        return player.ownedProjectileCounts[ModContent.ProjectileType<PlanetoidProjectile>()] < 1 
+        return player.ownedProjectileCounts[ModContent.ProjectileType<PlanetoidProjectile>()] < 1
                && player.ownedProjectileCounts[ModContent.ProjectileType<PlanetoidLauncherHeldProjectile>()] < 1;
     }
 
@@ -51,7 +51,7 @@ public class PlanetoidSpawnerItem : ModItem {
             knockback,
             player.whoAmI
         );
-        
+
         Projectile.NewProjectile(
             source,
             player.Center,
@@ -68,20 +68,20 @@ public class PlanetoidSpawnerItem : ModItem {
     public override bool ConsumeItem(Player player) => false;
 
     public override void Update(ref float gravity, ref float maxFallSpeed) {
-        if (Main.netMode == NetmodeID.MultiplayerClient) {
+        if(Main.netMode == NetmodeID.MultiplayerClient) {
             return;
         }
 
-        for (int i = 0; i < Main.maxProjectiles; i++) {
+        for(int i = 0; i < Main.maxProjectiles; i++) {
             Projectile proj = Main.projectile[i];
-            if (proj.active && proj.friendly && proj.Hitbox.Intersects(Item.Hitbox)) {
+            if(proj.active && proj.friendly && proj.Hitbox.Intersects(Item.Hitbox)) {
                 bool shouldConvert = false;
 
-                if (proj.type == ProjectileID.PurificationPowder || proj.type == ProjectileID.HolyWater || proj.type == ProjectileID.PureSpray) {
+                if(proj.type == ProjectileID.PurificationPowder || proj.type == ProjectileID.HolyWater || proj.type == ProjectileID.PureSpray) {
                     shouldConvert = true;
                 }
 
-                if (shouldConvert) {
+                if(shouldConvert) {
                     SoundEngine.PlaySound(SoundID.Item4, Item.Center);
 
                     Item.NewItem(
@@ -91,9 +91,9 @@ public class PlanetoidSpawnerItem : ModItem {
                         Item.stack
                     );
 
-                    Item.stack = 0; 
+                    Item.stack = 0;
                     Item.active = false;
-                    break; 
+                    break;
                 }
             }
         }
@@ -101,7 +101,7 @@ public class PlanetoidSpawnerItem : ModItem {
 }
 
 public class PlanetoidLauncherHeldProjectile : ModProjectile {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.Planetoids.KEY_PlanetoidSpawner;
+    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.KEY_PlanetoidSpawner;
 
     public override void SetStaticDefaults() {
         ProjectileID.Sets.DontAttachHideToAlpha[Type] = true;
@@ -125,11 +125,11 @@ public class PlanetoidLauncherHeldProjectile : ModProjectile {
     public override void AI() {
         var player = Main.player[Projectile.owner];
 
-        if (!player.channel || player.dead || !player.active || player.HeldItem.type != ModContent.ItemType<PlanetoidSpawnerItem>()) {
+        if(!player.channel || player.dead || !player.active || player.HeldItem.type != ModContent.ItemType<PlanetoidSpawnerItem>()) {
             Projectile.Kill();
             return;
         }
-        
+
         Projectile.velocity = (Main.MouseWorld - player.MountedCenter).SafeNormalize(Vector2.UnitY);
 
         player.heldProj = Projectile.whoAmI;
@@ -149,15 +149,14 @@ public class PlanetoidLauncherHeldProjectile : ModProjectile {
 
     public override bool PreDraw(ref Color lightColor) {
         var player = Main.player[Projectile.owner];
-        
+
         Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
         Vector2 origin = new Vector2(10, texture.Height / 2f);
         SpriteEffects effect = SpriteEffects.None;
-        if (player.direction * player.gravDir < 0)
-        {
+        if(player.direction * player.gravDir < 0) {
             effect = SpriteEffects.FlipVertically;
         }
-        
+
         Vector2 direction = Projectile.velocity.SafeNormalize(Vector2.Zero);
         Vector2 position = player.MountedCenter + direction * 10f + Vector2.UnitY * player.gfxOffY;
         Main.EntitySpriteDraw(texture, position - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, origin, Projectile.scale, effect, 0);

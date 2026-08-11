@@ -2,7 +2,6 @@ using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Items.Crimson;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
-using ReLogic.Content;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -14,7 +13,7 @@ namespace EvilExpansionMod.Content.Items.Corruption;
 
 // ReSharper disable CompareOfFloatsByEqualityOperator
 public class SpamonAStickItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.SpamonAStick.KEY_SpamonAStickItem;
+    public override string Texture => Assets.Textures.Items.Corruption.SpamonAStick.KEY_SpamonAStickItem;
 
     public override void SetDefaults() {
         Item.DamageType = DamageClass.MeleeNoSpeed;
@@ -27,13 +26,13 @@ public class SpamonAStickItem : ModItem {
         Item.useStyle = ItemUseStyleID.Swing;
 
         Item.shoot = ModContent.ProjectileType<SpamOnAStickProjectile>();
-        
-        Item.damage = 30; 
+
+        Item.damage = 30;
         Item.knockBack = 6f;
         Item.crit = 4;
         Item.value = Item.sellPrice(gold: 1);
     }
-    
+
     public override bool CanShoot(Player player) {
         return player.ownedProjectileCounts[Item.shoot] < 1;
     }
@@ -41,7 +40,7 @@ public class SpamonAStickItem : ModItem {
     public override bool Shoot(Player player, EntitySource_ItemUse_WithAmmo source, Vector2 position, Vector2 velocity, int type, int damage, float knockback) {
         return true;
     }
-    
+
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient(ModContent.ItemType<HellDemoniteBarItem>(), 12)
@@ -52,16 +51,16 @@ public class SpamonAStickItem : ModItem {
 }
 
 public class SpamOnAStickProjectile : ModProjectile {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.SpamonAStick.KEY_SpamonAStickItem; 
-    
-    protected Asset<Texture2D> ChainAsset => Assets.Assets.Textures.Items.Corruption.SpamonAStick.SpamonAStick_Chain;
-	protected Asset<Texture2D> BlockAsset => Assets.Assets.Textures.Items.Corruption.SpamonAStick.SpamonAStick_Block;
+    public override string Texture => Assets.Textures.Items.Corruption.SpamonAStick.KEY_SpamonAStickItem;
 
-	public int MaxLength = 650;
+    protected Texture2D ChainTexture => Assets.Textures.Items.Corruption.SpamonAStick.SpamonAStick_Chain;
+    protected Texture2D BlockTexture => Assets.Textures.Items.Corruption.SpamonAStick.SpamonAStick_Block;
 
-	public ref float Timer => ref Projectile.ai[0];
-	public ref float State => ref Projectile.ai[1];
-	public ref float Length => ref Projectile.ai[2];
+    public int MaxLength = 650;
+
+    public ref float Timer => ref Projectile.ai[0];
+    public ref float State => ref Projectile.ai[1];
+    public ref float Length => ref Projectile.ai[2];
 
     private ref float _visualTimer => ref Projectile.localAI[0];
     private ref float _hasBounced => ref Projectile.localAI[1];
@@ -72,90 +71,89 @@ public class SpamOnAStickProjectile : ModProjectile {
     public float ExtendDrag = 0.99f;
     public float RetractSpeed = 25f;
     public float GroundSplatDuration = 30f;
-    
-	public virtual void OnImpact(bool wasTile) { 
+
+    public virtual void OnImpact(bool wasTile) {
         _visualTimer = GroundSplatDuration;
-        if (wasTile) {
+        if(wasTile) {
             SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
             Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(5f, 0.6f));
-            
-            for (int i = 0; i < 7; i++) {
+
+            for(int i = 0; i < 7; i++) {
                 Dust.NewDustPerfect(Projectile.Center, DustID.CorruptGibs, Main.rand.NextVector2Circular(5f, 5f), Scale: Main.rand.NextFloat(1f, 2f));
                 Dust.NewDustPerfect(Projectile.Center, DustID.Corruption, Main.rand.NextVector2Circular(5f, 5f), Scale: Main.rand.NextFloat(1f, 2f));
             }
         }
     }
 
-	public override void SetDefaults() {
-		Projectile.friendly = true;
-		Projectile.width = 30;
-		Projectile.height = 30;
-		Projectile.tileCollide = true;
-		Projectile.timeLeft = 180;
-		Projectile.penetrate = -1;
+    public override void SetDefaults() {
+        Projectile.friendly = true;
+        Projectile.width = 30;
+        Projectile.height = 30;
+        Projectile.tileCollide = true;
+        Projectile.timeLeft = 180;
+        Projectile.penetrate = -1;
         Projectile.DamageType = DamageClass.MeleeNoSpeed;
-	}
-
-	public override void OnSpawn(IEntitySource source) {
-        SoundEngine.PlaySound(SoundID.Item1, Projectile.Center);
-        _hasBounced = 0f; 
     }
 
-	public override void AI() {
-		Owner.itemAnimation = Owner.itemAnimationMax;
+    public override void OnSpawn(IEntitySource source) {
+        SoundEngine.PlaySound(SoundID.Item1, Projectile.Center);
+        _hasBounced = 0f;
+    }
+
+    public override void AI() {
+        Owner.itemAnimation = Owner.itemAnimationMax;
         Owner.heldProj = Projectile.whoAmI;
 
-        if (_visualTimer > 0) {
+        if(_visualTimer > 0) {
             _visualTimer--;
         }
 
-		if (Owner.channel) {
-			Projectile.timeLeft = 180;
-		}
-		else if (State != 4 && State != 5) {
-			Projectile.velocity *= 0.5f;
-			Timer = 0;
-			State = 4;
+        if(Owner.channel) {
+            Projectile.timeLeft = 180;
+        }
+        else if(State != 4 && State != 5) {
+            Projectile.velocity *= 0.5f;
+            Timer = 0;
+            State = 4;
             Projectile.netUpdate = true;
-		}
-            
-        Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, (Projectile.Center - Owner.Center).ToRotation() - MathHelper.PiOver2);
-		Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Quarter, (Projectile.Center - Owner.Center).ToRotation() - MathHelper.PiOver2 - 0.1f * Owner.direction);
-		Owner.direction = Projectile.Center.X > Owner.Center.X ? 1 : -1;
+        }
 
-		if (State == 0)
-		{
-			Projectile.velocity.X *= ExtendDrag;
-			Projectile.velocity.Y += ExtendGravity; 
-            
-            if (Projectile.velocity.Length() > RetractSpeed * 1.5f) {
+        Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, (Projectile.Center - Owner.Center).ToRotation() - MathHelper.PiOver2);
+        Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Quarter, (Projectile.Center - Owner.Center).ToRotation() - MathHelper.PiOver2 - 0.1f * Owner.direction);
+        Owner.direction = Projectile.Center.X > Owner.Center.X ? 1 : -1;
+
+        if(State == 0) {
+            Projectile.velocity.X *= ExtendDrag;
+            Projectile.velocity.Y += ExtendGravity;
+
+            if(Projectile.velocity.Length() > RetractSpeed * 1.5f) {
                 Projectile.velocity = Vector2.Normalize(Projectile.velocity) * RetractSpeed * 1.5f;
             }
 
-			if (Vector2.Distance(Owner.Center, Projectile.Center) >= MaxLength) {
-				Projectile.velocity = Vector2.Zero;
-				Length = MaxLength;
-				State = 4;
-                Projectile.netUpdate = true;
-			}
-		}
-		else if (State == 5) {
-            Projectile.velocity = Vector2.Zero;
-            
-            if (!Owner.channel) {
-                Timer = 0;
-                State = 4;
-                Projectile.netUpdate = true;
-            }
-            
-            if (Vector2.Distance(Owner.Center, Projectile.Center) >= MaxLength) {
+            if(Vector2.Distance(Owner.Center, Projectile.Center) >= MaxLength) {
                 Projectile.velocity = Vector2.Zero;
                 Length = MaxLength;
                 State = 4;
                 Projectile.netUpdate = true;
             }
-		}
-		else if (State == 4) {
+        }
+        else if(State == 5) {
+            Projectile.velocity = Vector2.Zero;
+
+            if(!Owner.channel) {
+                Timer = 0;
+                State = 4;
+                Projectile.netUpdate = true;
+            }
+
+            if(Vector2.Distance(Owner.Center, Projectile.Center) >= MaxLength) {
+                Projectile.velocity = Vector2.Zero;
+                Length = MaxLength;
+                State = 4;
+                Projectile.netUpdate = true;
+            }
+        }
+        else if(State == 4) {
             Timer++;
 
             float retractProgress = Timer / 60f;
@@ -164,81 +162,81 @@ public class SpamOnAStickProjectile : ModProjectile {
             Projectile.velocity = Projectile.DirectionTo(Owner.Center) * currentRetractionSpeed;
             Projectile.tileCollide = false;
 
-			if (Vector2.Distance(Owner.Center, Projectile.Center) < 20f) {
-				Projectile.Kill();
-			}
-		}
+            if(Vector2.Distance(Owner.Center, Projectile.Center) < 20f) {
+                Projectile.Kill();
+            }
+        }
 
         Projectile.rotation += Projectile.velocity.X / 100;
     }
 
-	public override bool OnTileCollide(Vector2 oldVelocity) {
+    public override bool OnTileCollide(Vector2 oldVelocity) {
         Projectile.rotation = 0;
-        
-		if (State == 0) {
-			OnImpact(true);
+
+        if(State == 0) {
+            OnImpact(true);
 
             bool hitHorizontalSurface = oldVelocity.Y != Projectile.velocity.Y;
             bool hitVerticalSurface = oldVelocity.X != Projectile.velocity.X;
 
-            if (hitHorizontalSurface && oldVelocity.Y > 0f) {
-                if (_hasBounced == 0f) {
+            if(hitHorizontalSurface && oldVelocity.Y > 0f) {
+                if(_hasBounced == 0f) {
                     float bounceFactor = 0.5f;
                     Projectile.velocity.Y = -oldVelocity.Y * bounceFactor;
                     _hasBounced = 1f;
                     Projectile.netUpdate = true;
                 }
                 else {
-                    Projectile.velocity = Vector2.Zero; 
+                    Projectile.velocity = Vector2.Zero;
 
                     Length = Vector2.Distance(Owner.Center, Projectile.Center);
                     State = 5;
                     Projectile.netUpdate = true;
                 }
             }
-            else if (hitHorizontalSurface && oldVelocity.Y < 0f) {
+            else if(hitHorizontalSurface && oldVelocity.Y < 0f) {
                 Projectile.velocity = Vector2.Zero;
                 State = 4;
                 Projectile.netUpdate = true;
             }
-            else if (hitVerticalSurface) {
+            else if(hitVerticalSurface) {
                 Projectile.velocity = Vector2.Zero;
                 State = 4;
                 Projectile.netUpdate = true;
             }
 
             return false;
-		}
-        if (State == 5) {
+        }
+        if(State == 5) {
             Projectile.velocity = Vector2.Zero;
         }
 
-		return false;
-	}
+        return false;
+    }
 
-	public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
-		Rectangle collisionHitbox = Projectile.Hitbox;
+    public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
+        Rectangle collisionHitbox = Projectile.Hitbox;
 
-		return collisionHitbox.Intersects(targetHitbox);
-	}
+        return collisionHitbox.Intersects(targetHitbox);
+    }
 
-	public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
-		OnImpact(false);
-	}
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+        OnImpact(false);
+    }
 
     //from examplemod
-	public override bool PreDraw(ref Color lightColor) {
+    public override bool PreDraw(ref Color lightColor) {
         float squishProgress = _visualTimer / GroundSplatDuration;
         float easedSquish = MathF.Sin(squishProgress * MathF.PI);
-        
+
         const float MaxSquishAmount = 0.2f;
         Vector2 squishScale = new Vector2(1f + easedSquish * MaxSquishAmount, 1f - easedSquish * MaxSquishAmount);
         Vector2 finalDrawScale = squishScale * Projectile.scale;
 
         Vector2 ballPos = Projectile.Center;
-        
-        if (easedSquish > 0.01f) {
-            float visualHeightShrinkAmount = BlockAsset.Height() * Projectile.scale * (1f - squishScale.Y) / 2f;
+
+        if(easedSquish > 0.01f) {
+            float visualHeightShrinkAmount = BlockTexture.Height * Projectile.scale * (1f - squishScale.Y) / 2f;
             ballPos.Y += visualHeightShrinkAmount;
         }
 
@@ -246,10 +244,10 @@ public class SpamOnAStickProjectile : ModProjectile {
         playerArmPosition.Y -= Main.player[Projectile.owner].gfxOffY;
 
         Rectangle? chainSourceRectangle = null;
-        Vector2 chainOrigin = chainSourceRectangle.HasValue ? (chainSourceRectangle.Value.Size() / 2f) : (ChainAsset.Value.Size() / 2f);
-        
-        float chainSegmentDrawLength = chainSourceRectangle.HasValue ? chainSourceRectangle.Value.Height : ChainAsset.Value.Height;
-        if (chainSegmentDrawLength == 0) {
+        Vector2 chainOrigin = chainSourceRectangle.HasValue ? (chainSourceRectangle.Value.Size() / 2f) : (ChainTexture.Size() / 2f);
+
+        float chainSegmentDrawLength = chainSourceRectangle.HasValue ? chainSourceRectangle.Value.Height : ChainTexture.Height;
+        if(chainSegmentDrawLength == 0) {
             chainSegmentDrawLength = 10;
         }
         float chainRotation = (Projectile.Center - playerArmPosition).ToRotation() + MathHelper.PiOver2;
@@ -259,27 +257,27 @@ public class SpamOnAStickProjectile : ModProjectile {
         Vector2 unitVectorTowardsFlail = (Projectile.Center - playerArmPosition).SafeNormalize(Vector2.UnitY);
 
 
-        while (chainLengthRemainingToDraw > 0f) {
+        while(chainLengthRemainingToDraw > 0f) {
             Color chainDrawColor = Lighting.GetColor((int)currentChainDrawPosition.X / 16, (int)(currentChainDrawPosition.Y / 16f));
 
-            Main.spriteBatch.Draw(ChainAsset.Value, currentChainDrawPosition - Main.screenPosition, chainSourceRectangle, chainDrawColor, chainRotation, chainOrigin, 1f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(ChainTexture, currentChainDrawPosition - Main.screenPosition, chainSourceRectangle, chainDrawColor, chainRotation, chainOrigin, 1f, SpriteEffects.None, 0f);
 
             currentChainDrawPosition += unitVectorTowardsFlail * chainSegmentDrawLength;
             chainLengthRemainingToDraw -= chainSegmentDrawLength;
         }
 
-		Main.EntitySpriteDraw(
-            BlockAsset.Value, 
-            ballPos - Main.screenPosition, 
+        Main.EntitySpriteDraw(
+            BlockTexture,
+            ballPos - Main.screenPosition,
             null,
             lightColor,
             Projectile.rotation,
-            BlockAsset.Size() / 2f,
+            BlockTexture.Size() / 2f,
             finalDrawScale,
             SpriteEffects.None
         );
 
-		return false;
-	}
+        return false;
+    }
 }
 // ReSharper restore CompareOfFloatsByEqualityOperator

@@ -13,7 +13,7 @@ namespace EvilExpansionMod.Content.Tiles.Corruption;
 
 public class LargeCorruptionRubble : ModTile {
 
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.Jungle.KEY_LargeCorruptionRubble;
+    public override string Texture => Assets.Textures.Tiles.Corruption.Jungle.KEY_LargeCorruptionRubble;
 
     public override void SetStaticDefaults() {
         Main.tileSolid[Type] = false;

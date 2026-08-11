@@ -13,7 +13,7 @@ namespace EvilExpansionMod.Content.NPCs.Corruption;
 public sealed class EffigyNPC : ModNPC {
     byte _spawnedSprits;
 
-    public override string Texture => Assets.Assets.Textures.NPCs.Corruption.Effigy.KEY_EffigyNPC;
+    public override string Texture => Assets.Textures.NPCs.Corruption.Effigy.KEY_EffigyNPC;
 
     private bool _dead;
     private int _deadTimer;
@@ -58,7 +58,7 @@ public sealed class EffigyNPC : ModNPC {
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.1f : 0f;
     }
-    
+
     public override void Load() {
         for(int j = 1; j <= 5; j++)
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/EffigyGore" + j);
@@ -101,21 +101,21 @@ public sealed class EffigyNPC : ModNPC {
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var texture = TextureAssets.Npc[Type].Value;
-        var glowTex = Assets.Assets.Textures.NPCs.Corruption.Effigy.EffigyNPC_Glow.Value;
+        var glowTex = Assets.Textures.NPCs.Corruption.Effigy.EffigyNPC_Glow;
 
         var offset = new Vector2(0, -77); //cause frame very big! yes
 
-        var shader = Assets.Assets.Effects.Pixel.EffigyDecay.Value;
+        var shader = Assets.Effects.Pixel.EffigyDecay;
 
         float progValue = 1.5f;
 
         shader.Parameters["prog"].SetValue(progValue);
         shader.Parameters["edgeColor"].SetValue(Color.Black.ToVector3());
         shader.Parameters["ashColor"].SetValue(_glowColor.ToVector3());
-        shader.Parameters["noisetex"].SetValue(Assets.Assets.Textures.Sample.DissolveNoise.Value);
+        shader.Parameters["noisetex"].SetValue(Assets.Textures.Sample.DissolveNoise);
         shader.Parameters["sampleColor"].SetValue(drawColor.ToVector4());
 
-        var noiseTexture = Assets.Assets.Textures.Sample.DissolveNoise.Value;
+        var noiseTexture = Assets.Textures.Sample.DissolveNoise;
         float noiseAspect = (float)noiseTexture.Width / noiseTexture.Height;
         float frameAspect = (float)NPC.frame.Width / NPC.frame.Height;
 

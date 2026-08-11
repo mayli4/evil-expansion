@@ -27,7 +27,6 @@ float4 frag(float2 uv : TEXCOORD0) : COLOR0 {
     centeredUv.y /= verticalStretchFactor;
     float2 flameLocalBaseAnchor = float2(0, -0.4); 
     
-    
     float2 localUv = centeredUv - float2(0, 0.2);
     float2 scaledUv = (localUv - flameLocalBaseAnchor) / max(flameSize, 0.001f) + flameLocalBaseAnchor;
     

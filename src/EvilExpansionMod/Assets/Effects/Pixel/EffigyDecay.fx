@@ -1,4 +1,4 @@
-﻿sampler uImage0 : register(s0);
+sampler uImage0 : register(s0);
 
 texture noisetex;
 sampler2D fireNoise = sampler_state {

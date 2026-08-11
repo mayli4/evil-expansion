@@ -86,7 +86,7 @@ public class TerrorBatSpit : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var shader = Assets.Assets.Effects.Trail.CursedSpiritFire.Value;
+        var shader = Assets.Effects.Trail.CursedSpiritFire;
         Graphics.BeginPipeline(0.5f)
             .DrawTrail(
                 positionCache.Positions,
@@ -97,12 +97,12 @@ public class TerrorBatSpit : ModProjectile {
                 ("mat", Graphics.WorldTransformMatrix),
                 ("stepY", 0.25f),
                 ("scale", 0.25f),
-                ("texture1", Assets.Assets.Textures.Sample.Pebbles.Value),
-                ("texture2", Assets.Assets.Textures.Sample.Noise2.Value)
+                ("texture1", Assets.Textures.Sample.Pebbles),
+                ("texture2", Assets.Textures.Sample.Noise2)
             )
             .Flush();
 
-        var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;
+        var glowTexture = Assets.Textures.Sample.Glow1;
 
         var fade = (MathF.Sin(0.1f * Main.GameUpdateCount + 23.2f * Projectile.whoAmI) + MathF.Cos(0.06f * Main.GameUpdateCount) + 2f) / 4f;
         var glowColor = new Color(72, 96, 36, 255) * (0.3f + 0.3f * fade);

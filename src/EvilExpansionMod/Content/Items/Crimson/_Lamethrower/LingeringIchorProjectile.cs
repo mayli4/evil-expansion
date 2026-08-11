@@ -8,6 +8,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Items.Crimson;
+
 public class LingeringIchorProjectile : ModProjectile, ITileMask {
     public override string Texture => Helper.PlaceholderTextureKey;
     readonly static int DisappearFrames = 40;
@@ -33,7 +34,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
 
     public void DrawTileMask(SpriteBatch spriteBatch) {
         var alpha = MathF.Min(Projectile.timeLeft / (float)DisappearFrames, 1f);
-        var texture = Assets.Assets.Textures.Items.Corruption.Lamethrower.IchorSplat.Value;
+        var texture = Assets.Textures.Items.Corruption.Lamethrower.IchorSplat;
         spriteBatch.Draw(
             texture,
             Projectile.Center - Main.screenPosition,
@@ -51,7 +52,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
         var alpha = MathF.Min(Projectile.timeLeft / (float)DisappearFrames, 1f);
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
-        var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;
+        var glowTexture = Assets.Textures.Sample.Glow1;
         Main.spriteBatch.Draw(
             glowTexture,
             Projectile.Center - Main.screenPosition,

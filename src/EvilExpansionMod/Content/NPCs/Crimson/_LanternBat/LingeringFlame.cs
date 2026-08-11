@@ -93,10 +93,10 @@ public class LingeringFlameProjectile : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var flameShader = Assets.Assets.Effects.Pixel.LingeringFlame.Value;
-        var noiseTexture1 = Assets.Assets.Textures.Sample.Pebbles.Value;
-        var circleTexture = Assets.Assets.Textures.Misc.Circle.Value;
-        var glowTexture = Assets.Assets.Textures.Sample.Glow1.Value;
+        var flameShader = Assets.Effects.Pixel.LingeringFlame;
+        var noiseTexture1 = Assets.Textures.Sample.Pebbles;
+        var circleTexture = Assets.Textures.Misc.Circle;
+        var glowTexture = Assets.Textures.Sample.Glow1;
 
 
         float flameScaleFactor = 1f;

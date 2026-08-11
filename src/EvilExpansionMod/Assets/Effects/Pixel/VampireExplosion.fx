@@ -1,4 +1,4 @@
-﻿float progress;
+float progress;
 texture sample_texture;
 sampler2D sampler_texture = sampler_state
 {

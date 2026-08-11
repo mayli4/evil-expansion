@@ -7,8 +7,8 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Food;
 
 public class CarolinaReaper : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Foods.KEY_CarolinaReaper;
-    
+    public override string Texture => Assets.Textures.Items.Foods.KEY_CarolinaReaper;
+
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;
 
@@ -18,7 +18,7 @@ public class CarolinaReaper : ModItem {
         ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.Ambrosia;
         Recipes.AddToGroup(RecipeGroupID.Fruit, Type);
     }
-    
+
     public override void SetDefaults() {
         Item.width = 26;
         Item.height = 32;

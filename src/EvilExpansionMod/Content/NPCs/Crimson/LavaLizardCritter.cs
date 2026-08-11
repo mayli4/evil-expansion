@@ -8,12 +8,12 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Crimson;
 
 public class LavaLizardItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.NPCs.Crimson.KEY_LavaLizardItem;
-    
+    public override string Texture => Assets.Textures.NPCs.Crimson.KEY_LavaLizardItem;
+
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;
     }
-    
+
     public override void SetDefaults() {
         Item.width = 16;
         Item.height = 16;
@@ -33,7 +33,7 @@ public class LavaLizardItem : ModItem {
 }
 
 public sealed class LavaLizardCritter : ModNPC {
-    public override string Texture => Assets.Assets.Textures.NPCs.Crimson.KEY_LavaLizardNPC;
+    public override string Texture => Assets.Textures.NPCs.Crimson.KEY_LavaLizardNPC;
 
     public enum State {
         Walk,
@@ -42,11 +42,10 @@ public sealed class LavaLizardCritter : ModNPC {
         Underground,
         Resurfacing
     }
-    
+
     public State CurrentState {
         get => (State)NPC.ai[0];
-        set
-        {
+        set {
             NPC.ai[0] = (float)value;
             NPC.ai[1] = 0;
             NPC.netUpdate = true;
@@ -73,21 +72,21 @@ public sealed class LavaLizardCritter : ModNPC {
         NPC.value = 0f;
         NPC.knockBackResist = 0.4f;
         NPC.catchItem = ModContent.ItemType<LavaLizardItem>();
-        
+
         NPC.noGravity = false;
         NPC.noTileCollide = false;
         NPC.lavaImmune = true;
         NPC.aiStyle = -1;
-        
+
         NPC.DeathSound = SoundID.NPCDeath1;
-        
+
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
     }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-        if (spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>()) {
-            if (spawnInfo.SpawnTileType == TileID.Ash || spawnInfo.SpawnTileType == TileID.Ebonstone || spawnInfo.SpawnTileType == TileID.Crimstone) {
-                if (spawnInfo.Water) return 0f;
+        if(spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>()) {
+            if(spawnInfo.SpawnTileType == TileID.Ash || spawnInfo.SpawnTileType == TileID.Ebonstone || spawnInfo.SpawnTileType == TileID.Crimstone) {
+                if(spawnInfo.Water) return 0f;
                 return 0.3f;
             }
         }
@@ -103,7 +102,7 @@ public sealed class LavaLizardCritter : ModNPC {
         NPC.TargetClosest(false);
         Player player = Main.player[NPC.target];
 
-        switch (CurrentState) {
+        switch(CurrentState) {
             case State.Walk:
                 NPC.noGravity = false;
                 NPC.noTileCollide = false;
@@ -111,9 +110,9 @@ public sealed class LavaLizardCritter : ModNPC {
                 NPC.hide = false;
 
                 NPC.velocity.Y += 0.2f;
-                if (NPC.velocity.Y > 10f) NPC.velocity.Y = 10f;
+                if(NPC.velocity.Y > 10f) NPC.velocity.Y = 10f;
 
-                if (!NPC.collideY) {
+                if(!NPC.collideY) {
                     NPC.velocity.X *= 0.9f;
                 }
                 else {
@@ -124,21 +123,21 @@ public sealed class LavaLizardCritter : ModNPC {
                     int checkGroundY = (int)((NPC.position.Y + NPC.height + 3) / 16f);
                     var groundTile = Framing.GetTileSafely(checkGroundX, checkGroundY);
 
-                    if (!groundTile.HasTile || !Main.tileSolid[groundTile.TileType]) {
+                    if(!groundTile.HasTile || !Main.tileSolid[groundTile.TileType]) {
                         WalkDirection *= -1;
                         NPC.velocity.X = 0;
                         NPC.netUpdate = true;
                     }
-                    
-                    if (StateTimer >= Main.rand.Next(60 * 2, 60 * 5) && NPC.collideY) {
+
+                    if(StateTimer >= Main.rand.Next(60 * 2, 60 * 5) && NPC.collideY) {
                         CurrentState = State.Idle;
                         BurrowResurfaceTimer = Main.rand.Next(60 * 1, 60 * 8);
                         NPC.netUpdate = true;
                     }
                 }
                 NPC.spriteDirection = (int)WalkDirection;
-                
-                if (NPC.collideY && Main.rand.NextBool(60)) {
+
+                if(NPC.collideY && Main.rand.NextBool(60)) {
                     CurrentState = State.Burrowing;
                     BurrowResurfaceTimer = 0;
                 }
@@ -152,17 +151,17 @@ public sealed class LavaLizardCritter : ModNPC {
                 NPC.hide = false;
 
                 NPC.velocity.Y += 0.2f;
-                if (NPC.velocity.Y > 10f) NPC.velocity.Y = 10f;
-                if (NPC.collideY) NPC.velocity.Y = 0f;
+                if(NPC.velocity.Y > 10f) NPC.velocity.Y = 10f;
+                if(NPC.collideY) NPC.velocity.Y = 0f;
 
                 BurrowResurfaceTimer--;
-                if (BurrowResurfaceTimer <= 0) {
+                if(BurrowResurfaceTimer <= 0) {
                     CurrentState = State.Walk;
                     WalkDirection = Main.rand.NextBool() ? 1 : -1;
                     NPC.netUpdate = true;
                 }
 
-                if (NPC.collideY && Main.rand.NextBool(100)) {
+                if(NPC.collideY && Main.rand.NextBool(100)) {
                     CurrentState = State.Burrowing;
                     BurrowResurfaceTimer = 0;
                 }
@@ -175,7 +174,7 @@ public sealed class LavaLizardCritter : ModNPC {
                 NPC.dontTakeDamage = true;
                 NPC.hide = false;
 
-                if (StateTimer >= 7 * 8) {
+                if(StateTimer >= 7 * 8) {
                     CurrentState = State.Underground;
                     BurrowResurfaceTimer = Main.rand.Next(60 * 2, 60 * 4);
                     NPC.netUpdate = true;
@@ -189,15 +188,14 @@ public sealed class LavaLizardCritter : ModNPC {
                 NPC.hide = true;
 
                 BurrowResurfaceTimer--;
-                if (BurrowResurfaceTimer <= 0) {
+                if(BurrowResurfaceTimer <= 0) {
                     Vector2 resurfaceSpot = FindSafeResurfaceSpot(player.Center, 16 * 15);
-                    if (resurfaceSpot != Vector2.Zero) {
+                    if(resurfaceSpot != Vector2.Zero) {
                         NPC.Center = resurfaceSpot;
                         CurrentState = State.Resurfacing;
                         NPC.netUpdate = true;
                     }
-                    else
-                    {
+                    else {
                         NPC.active = false;
                         return;
                     }
@@ -211,7 +209,7 @@ public sealed class LavaLizardCritter : ModNPC {
                 NPC.dontTakeDamage = true;
                 NPC.hide = false;
 
-                if (StateTimer >= 3 * 8) {
+                if(StateTimer >= 3 * 8) {
                     CurrentState = State.Walk;
                     NPC.noTileCollide = false;
                     NPC.dontTakeDamage = false;
@@ -220,9 +218,9 @@ public sealed class LavaLizardCritter : ModNPC {
         }
         StateTimer++;
     }
-    
+
     public override bool? CanBeCaughtBy(Item shellItem, Player player) {
-        if (CurrentState == State.Underground) {
+        if(CurrentState == State.Underground) {
             return false;
         }
         return base.CanBeCaughtBy(shellItem, player);
@@ -232,29 +230,29 @@ public sealed class LavaLizardCritter : ModNPC {
         int attempts = 50;
         float minPlayerDistance = 16 * 5;
 
-        for (int i = 0; i < attempts; i++) {
+        for(int i = 0; i < attempts; i++) {
             var randomSpot = playerPosition + Main.rand.NextVector2Circular(searchRadius, searchRadius);
 
-            if (Vector2.DistanceSquared(randomSpot, playerPosition) < minPlayerDistance * minPlayerDistance) {
+            if(Vector2.DistanceSquared(randomSpot, playerPosition) < minPlayerDistance * minPlayerDistance) {
                 continue;
             }
 
             var tileX = (randomSpot / 16f).ToPoint();
 
-            for (int ySearch = 0; ySearch < 5; ySearch++) {
+            for(int ySearch = 0; ySearch < 5; ySearch++) {
                 int groundTileX = tileX.X;
                 int groundTileY = tileX.Y + ySearch;
 
                 var groundCandidateTile = Framing.GetTileSafely(groundTileX, groundTileY);
 
-                if (groundCandidateTile.HasTile && Main.tileSolid[groundCandidateTile.TileType] && !Main.tileSolidTop[groundCandidateTile.TileType]) {
+                if(groundCandidateTile.HasTile && Main.tileSolid[groundCandidateTile.TileType] && !Main.tileSolidTop[groundCandidateTile.TileType]) {
                     Vector2 npcSpawnBottomCenter = new Vector2(groundTileX * 16f + 8f, groundTileY * 16f);
                     Vector2 npcSpawnTopLeft = npcSpawnBottomCenter - new Vector2(NPC.width / 2f, NPC.height);
 
-                    if (!Collision.SolidCollision(npcSpawnTopLeft, NPC.width, NPC.height)) {
+                    if(!Collision.SolidCollision(npcSpawnTopLeft, NPC.width, NPC.height)) {
                         return npcSpawnTopLeft;
                     }
-                    break; 
+                    break;
                 }
             }
         }
@@ -264,7 +262,7 @@ public sealed class LavaLizardCritter : ModNPC {
     public override void FindFrame(int frameHeight) {
         NPC.frameCounter++;
 
-        switch (CurrentState) {
+        switch(CurrentState) {
             case State.Walk:
                 NPC.frame.Y = (int)(NPC.frameCounter / 8) % 5 * frameHeight;
                 break;
@@ -275,15 +273,15 @@ public sealed class LavaLizardCritter : ModNPC {
 
             case State.Burrowing:
                 int burrowFrameIndex = (int)(StateTimer / 8);
-                if (burrowFrameIndex >= 7) {
+                if(burrowFrameIndex >= 7) {
                     burrowFrameIndex = 7 - 1;
                 }
-                NPC.frame.Y = (5 + burrowFrameIndex) * frameHeight; 
+                NPC.frame.Y = (5 + burrowFrameIndex) * frameHeight;
                 break;
 
             case State.Resurfacing:
                 int resurfaceFrameIndex = (int)(StateTimer / 8);
-                if (resurfaceFrameIndex >= 3) {
+                if(resurfaceFrameIndex >= 3) {
                     resurfaceFrameIndex = 3 - 1;
                 }
                 NPC.frame.Y = (12 + resurfaceFrameIndex) * frameHeight;

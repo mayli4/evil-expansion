@@ -12,7 +12,7 @@ public class HellbringerHead : ModItem {
     public readonly static float ShadowOrbSpawnChance = 0.24f;
     public readonly static int CorruptlingDamage = 20;
 
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.HellbringerArmor.KEY_HellbringerHead;
+    public override string Texture => Assets.Textures.Items.Corruption.HellbringerArmor.KEY_HellbringerHead;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 
@@ -55,7 +55,7 @@ public class HellbringerHead : ModItem {
 
 [AutoloadEquip(EquipType.Body)]
 public class HellbringerBody : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.HellbringerArmor.KEY_HellbringerBody;
+    public override string Texture => Assets.Textures.Items.Corruption.HellbringerArmor.KEY_HellbringerBody;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 
@@ -93,7 +93,8 @@ public class HellbringerBody : ModItem {
 
 [AutoloadEquip(EquipType.Legs)]
 public class HellbringerLegs : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Corruption.HellbringerArmor.KEY_HellbringerLegs;
+    public override string Texture => Assets.Textures.Items.Corruption.HellbringerArmor.KEY_HellbringerLegs;
+
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 

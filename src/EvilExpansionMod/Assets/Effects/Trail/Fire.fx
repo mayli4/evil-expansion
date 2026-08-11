@@ -1,4 +1,4 @@
-﻿matrix transformationMatrix;
+matrix transformationMatrix;
 float time;
 float amp = 0.1;
 float smooth = 0.2;

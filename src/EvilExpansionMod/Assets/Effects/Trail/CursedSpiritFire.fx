@@ -1,4 +1,4 @@
-﻿matrix mat;
+matrix mat;
 float time;
 float stepY;
 float scale = 1;

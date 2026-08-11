@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Tiles.Crimson;
 
 public class VeinOre : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Crimson.KEY_VeinOre;
+    public override string Texture => Assets.Textures.Tiles.Crimson.KEY_VeinOre;
 
     public override void SetStaticDefaults() {
         Main.tileOreFinderPriority[Type] = 450;
@@ -32,7 +32,7 @@ public class VeinOre : ModTile {
 
         MineResist = 2f;
         MinPick = 110;
-        
+
         AddMapEntry(new Color(140, 83, 14), CreateMapEntryName());
 
         TileLoader.RegisterConversion(TileID.Hellstone, BiomeConversionID.Crimson, (i, j, type, _) =>
@@ -72,7 +72,7 @@ public class VeinOre : ModTile {
 }
 
 public class VeinOreItem : ModItem {
-    public override string Texture => Assets.Assets.Textures.Tiles.Crimson.KEY_VeinOreItem;
+    public override string Texture => Assets.Textures.Tiles.Crimson.KEY_VeinOreItem;
 
     public override void SetStaticDefaults() {
         ItemTrader.ChlorophyteExtractinator.AddOption_OneWay(Type, 1, ModContent.ItemType<UnderworldDemoniteItem>(), 1);
@@ -89,7 +89,7 @@ public class VeinOreItem : ModItem {
         Item.autoReuse = true;
         Item.useAnimation = 15;
         Item.useTime = 10;
-        
+
         Item.rare = ItemRarityID.Orange;
     }
 }

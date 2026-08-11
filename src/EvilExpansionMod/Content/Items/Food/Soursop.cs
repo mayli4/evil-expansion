@@ -7,8 +7,8 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Food;
 
 public class Soursop : ModItem {
-    public override string Texture => Assets.Assets.Textures.Items.Foods.KEY_Soursop;
-    
+    public override string Texture => Assets.Textures.Items.Foods.KEY_Soursop;
+
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;
 
@@ -18,7 +18,7 @@ public class Soursop : ModItem {
         ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.Ambrosia;
         Recipes.AddToGroup(RecipeGroupID.Fruit, Type);
     }
-    
+
     public override void SetDefaults() {
         Item.width = 26;
         Item.height = 32;

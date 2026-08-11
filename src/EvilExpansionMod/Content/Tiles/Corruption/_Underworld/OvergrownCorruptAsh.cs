@@ -1,14 +1,13 @@
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
-using Terraria.GameContent.Metadata;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
 public class OvergrownCorruptAsh : ModTile {
-    public override string Texture => Assets.Assets.Textures.Tiles.Corruption.KEY_OvergrownCorruptAshTile;
+    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_OvergrownCorruptAshTile;
 
     public override void SetStaticDefaults() {
         Main.tileSolid[Type] = true;
@@ -78,7 +77,7 @@ public class OvergrownCorruptAsh : ModTile {
     protected virtual void GrowTiles(int i, int j) {
         var tile = Framing.GetTileSafely(i, j);
         var tileAbove = Framing.GetTileSafely(i, j - 1);
-        
+
         //try place foliage
         if(WorldGen.genRand.NextBool(10) && !tileAbove.HasTile && tileAbove.LiquidAmount < 80) {
             if(!tile.BottomSlope && !tile.TopSlope && !tile.IsHalfBlock && !tile.TopSlope) {
@@ -91,7 +90,7 @@ public class OvergrownCorruptAsh : ModTile {
                     NetMessage.SendTileSquare(-1, i, j - 1, 3, TileChangeType.None);
             }
         }
-        
+
         // if(tile.BottomSlope || tile.TopSlope || tile.IsHalfBlock) {
         //     return;
         // }

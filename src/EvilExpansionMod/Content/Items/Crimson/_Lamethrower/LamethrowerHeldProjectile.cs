@@ -12,8 +12,8 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Items.Crimson;
 
-using Effects = Assets.Assets.Effects;
-using Textures = Assets.Assets.Textures;
+using Effects = Assets.Effects;
+using Textures = Assets.Textures;
 
 public class LamethrowerHeldProjectile : ModProjectile {
     readonly static int FullFlameFrames = 60;
@@ -150,7 +150,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
 
-        var glowTexture = Textures.Sample.Glow1.Value;
+        var glowTexture = Textures.Sample.Glow1;
         var glowPosition = _trailOrigin + _rotationVector * 2f;
         Main.spriteBatch.Draw(
             glowTexture,
@@ -177,9 +177,9 @@ public class LamethrowerHeldProjectile : ModProjectile {
         );
         Main.spriteBatch.EndBegin(snapshot);
 
-        var flameShader = Effects.Trail.LingeringFlame.Value;
-        var noiseTexture1 = Textures.Sample.Pebbles.Value;
-        var circleTexture = Textures.Misc.Circle.Value;
+        var flameShader = Effects.Trail.LingeringFlame;
+        var noiseTexture1 = Textures.Sample.Pebbles;
+        var circleTexture = Textures.Misc.Circle;
 
         Graphics.BeginPipeline(0.5f)
             .SetTexture(0, circleTexture)

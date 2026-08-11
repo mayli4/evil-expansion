@@ -1,4 +1,4 @@
-﻿sampler uImage0 : register(s0);
+sampler uImage0 : register(s0);
 float4 color;
 
 float4 frag(float2 uv : TEXCOORD0) : COLOR0 {

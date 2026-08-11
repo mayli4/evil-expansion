@@ -1,4 +1,4 @@
-﻿matrix transformationMatrix;
+matrix transformationMatrix;
 float4 color = float4(1, 1, 1, 1);
 bool blackAsAlpha = false;
 int spriteRotation = 0;

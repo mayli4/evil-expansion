@@ -166,7 +166,7 @@ internal sealed class TileMasking : ModSystem {
             return;
         }
 
-        Effect effect = Assets.Assets.Effects.Pixel.TileMask.Value;
+        Effect effect = Assets.Effects.Pixel.TileMask;
 
         if(effect is null) {
             return;

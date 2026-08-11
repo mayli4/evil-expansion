@@ -1,4 +1,4 @@
-﻿float4 outlineColor = float4(0.0, 0.0, 0.0, 1.0);
+float4 outlineColor = float4(0.0, 0.0, 0.0, 1.0);
 float outlineWidth = 0.1;
 float outlineSmooth = 0.0;
 bool blackAsAlpha = false;

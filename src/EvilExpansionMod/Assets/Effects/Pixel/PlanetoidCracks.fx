@@ -14,8 +14,6 @@ float2 texSize;
 
 float4 PixelShaderFunction(float2 uv : TEXCOORD0) : COLOR0{
     float2 pixelatedFragCoord = floor(uv.xy / 2) * 2;
-    uv = pixelatedFragCoord / sourceFrame.zw;
-
     float2 st = (uv - float2(sourceFrame.xy / texSize)) * float2(texSize.x / sourceFrame.z, texSize.y / sourceFrame.w);
 
     float4 color = tex2D(samplerTex, uv) * drawColor;

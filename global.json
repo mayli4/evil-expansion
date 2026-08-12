@@ -3,7 +3,7 @@
     "Tomat.Terraria.ModLoader.Sdk": "1.0.9"
   },
   "sdk": {
-    "version": "8.0.0",
-    "rollForward": "latestFeature"
+    "version": "8.0.100",
+    "rollForward": "latestMinor"
   }
 }

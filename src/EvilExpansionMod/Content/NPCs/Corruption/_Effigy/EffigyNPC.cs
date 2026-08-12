@@ -13,7 +13,7 @@ namespace EvilExpansionMod.Content.NPCs.Corruption;
 public sealed class EffigyNPC : ModNPC {
     byte _spawnedSprits;
 
-    public override string Texture => Assets.Textures.NPCs.Corruption.Effigy.KEY_EffigyNPC;
+    public override string Texture => Assets.Textures.NPCs.Corruption.Effigy.EffigyNPC.KEY;
 
     private bool _dead;
     private int _deadTimer;
@@ -101,21 +101,21 @@ public sealed class EffigyNPC : ModNPC {
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var texture = TextureAssets.Npc[Type].Value;
-        var glowTex = Assets.Textures.NPCs.Corruption.Effigy.EffigyNPC_Glow;
+        var glowTex = Assets.Textures.NPCs.Corruption.Effigy.EffigyNPC_Glow.Asset.Value;
 
         var offset = new Vector2(0, -77); //cause frame very big! yes
 
-        var shader = Assets.Effects.Pixel.EffigyDecay;
+        var shader = Assets.Effects.Pixel.EffigyDecay.Asset.Value;
 
         float progValue = 1.5f;
 
         shader.Parameters["prog"].SetValue(progValue);
         shader.Parameters["edgeColor"].SetValue(Color.Black.ToVector3());
         shader.Parameters["ashColor"].SetValue(_glowColor.ToVector3());
-        shader.Parameters["noisetex"].SetValue(Assets.Textures.Sample.DissolveNoise);
+        shader.Parameters["noisetex"].SetValue(Assets.Textures.Sample.DissolveNoise.Asset.Value);
         shader.Parameters["sampleColor"].SetValue(drawColor.ToVector4());
 
-        var noiseTexture = Assets.Textures.Sample.DissolveNoise;
+        var noiseTexture = Assets.Textures.Sample.DissolveNoise.Asset.Value;
         float noiseAspect = (float)noiseTexture.Width / noiseTexture.Height;
         float frameAspect = (float)NPC.frame.Width / NPC.frame.Height;
 

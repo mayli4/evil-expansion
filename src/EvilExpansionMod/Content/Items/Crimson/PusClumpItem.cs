@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Crimson;
 
 public class PusClumpItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.KEY_PusClump;
+    public override string Texture => Assets.Textures.Items.Crimson.PusClump.KEY;
 
     public override void SetDefaults() {
         (Item.width, Item.height) = (20, 20);

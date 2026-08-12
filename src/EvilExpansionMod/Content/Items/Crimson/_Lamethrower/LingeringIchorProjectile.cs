@@ -34,7 +34,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
 
     public void DrawTileMask(SpriteBatch spriteBatch) {
         var alpha = MathF.Min(Projectile.timeLeft / (float)DisappearFrames, 1f);
-        var texture = Assets.Textures.Items.Corruption.Lamethrower.IchorSplat;
+        var texture = Assets.Textures.Items.Corruption.Lamethrower.IchorSplat.Asset.Value;
         spriteBatch.Draw(
             texture,
             Projectile.Center - Main.screenPosition,
@@ -52,7 +52,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
         var alpha = MathF.Min(Projectile.timeLeft / (float)DisappearFrames, 1f);
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
-        var glowTexture = Assets.Textures.Sample.Glow1;
+        var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;
         Main.spriteBatch.Draw(
             glowTexture,
             Projectile.Center - Main.screenPosition,

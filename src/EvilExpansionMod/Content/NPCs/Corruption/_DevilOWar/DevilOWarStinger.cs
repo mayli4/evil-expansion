@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
 public sealed class DevilOWarStingerProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.NPCs.Corruption.DevilOWar.KEY_DevilOWarTentacle;
+    public override string Texture => Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarTentacle.KEY;
 
     public Player TargetPlayer => Main.player[(int)Projectile.ai[0]];
     public NPC ParentNPC => Main.npc[(int)Projectile.ai[1]];

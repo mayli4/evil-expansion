@@ -14,7 +14,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Crimson;
 
 public class SlippedWhipCageProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Crimson.SlippedWhip.KEY_SlippedWhipRibcageMain;
+    public override string Texture => Assets.Textures.Items.Crimson.SlippedWhip.SlippedWhipRibcageMain.KEY;
 
     public readonly static int MaxTimeLeft = 240;
     public readonly static int LockFrames = 15;
@@ -116,7 +116,7 @@ public class SlippedWhipCageProjectile : ModProjectile {
         var flashColor = Color.Red * flashAlpha * (int)visualProgress;
 
         var mainTexture = TextureAssets.Projectile[Type].Value;
-        var partTexture = Assets.Textures.Items.Crimson.SlippedWhip.SlippedWhipRibcagePart;
+        var partTexture = Assets.Textures.Items.Crimson.SlippedWhip.SlippedWhipRibcagePart.Asset.Value;
         var scale = Vector2.One * (1f + 4f * (1f - visualProgress) + flashAlpha * 0.3f);
         Graphics.BeginPipeline(1f)
             .DrawSprite(

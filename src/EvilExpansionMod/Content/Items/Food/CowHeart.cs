@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Food;
 
 public class CowHeart : ModItem {
-    public override string Texture => Assets.Textures.Items.Foods.KEY_CowHeart;
+    public override string Texture => Assets.Textures.Items.Foods.CowHeart.KEY;
 
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;

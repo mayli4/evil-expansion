@@ -29,7 +29,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
 
     Vector2[] _trailPositions;
 
-    public override string Texture => Textures.Items.Corruption.Lamethrower.KEY_LamethrowerItem;
+    public override string Texture => Textures.Items.Corruption.Lamethrower.LamethrowerItem.KEY;
     public override void SetDefaults() {
         Projectile.width = 0;
         Projectile.height = 0;
@@ -150,7 +150,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
 
-        var glowTexture = Textures.Sample.Glow1;
+        var glowTexture = Textures.Sample.Glow1.Asset.Value;
         var glowPosition = _trailOrigin + _rotationVector * 2f;
         Main.spriteBatch.Draw(
             glowTexture,
@@ -177,9 +177,9 @@ public class LamethrowerHeldProjectile : ModProjectile {
         );
         Main.spriteBatch.EndBegin(snapshot);
 
-        var flameShader = Effects.Trail.LingeringFlame;
-        var noiseTexture1 = Textures.Sample.Pebbles;
-        var circleTexture = Textures.Misc.Circle;
+        var flameShader = Effects.Trail.LingeringFlame.Asset.Value;
+        var noiseTexture1 = Textures.Sample.Pebbles.Asset.Value;
+        var circleTexture = Textures.Misc.Circle.Asset.Value;
 
         Graphics.BeginPipeline(0.5f)
             .SetTexture(0, circleTexture)

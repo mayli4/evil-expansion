@@ -33,7 +33,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
     Vector2 RotationVector => (Projectile.rotation - MathF.PI / 4f).ToRotationVector2() * new Vector2(Owner.direction, 1f);
     Vector2[] _trailPositions;
 
-    public override string Texture => Assets.Textures.Items.Corruption.HeadPounder.KEY_HeadPounderItem;
+    public override string Texture => Assets.Textures.Items.Corruption.HeadPounder.HeadPounderItem.KEY;
     public override void SetDefaults() {
         Projectile.width = 0;
         Projectile.height = 0;
@@ -97,7 +97,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                     var hitPosition = hitCenter - Vector2.One * hitSize / 2f;
                     if(Collision.SolidTiles(hitPosition, hitSize, hitSize)) {
                         SoundEngine.PlaySound(
-                            Assets.Sounds.Cursehound.MaceSlam with
+                            Assets.Sounds.Cursehound.MaceSlam.Asset with
                             {
                                 Pitch = Main.rand.NextFloatDirection() * 0.1f,
                             },

@@ -100,7 +100,7 @@ public class UnderworldCorruptLavaDropletSource : ModTile {
 }
 
 public class UnderworldCorruptLavaDroplet : ModGore {
-    public override string Texture => Assets.Textures.Lavas.KEY_UnderworldCorruptLavaDroplet;
+    public override string Texture => Assets.Textures.Lavas.UnderworldCorruptLavaDroplet.KEY;
 
     public override void OnSpawn(Gore gore, IEntitySource source) {
         gore.numFrames = 15;

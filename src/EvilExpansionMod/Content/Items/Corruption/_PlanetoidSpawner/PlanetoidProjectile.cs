@@ -13,13 +13,13 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Corruption;
 
 public class PlanetoidProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.KEY_SmallPlanetoid;
+    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.SmallPlanetoid.KEY;
 
     private static readonly string[] _texturePaths = {
-        Assets.Textures.Items.Corruption.Planetoids.KEY_SmallPlanetoid,
-        Assets.Textures.Items.Corruption.Planetoids.KEY_MediumPlanetoid,
-        Assets.Textures.Items.Corruption.Planetoids.KEY_BigPlanetoid,
-        Assets.Textures.Items.Corruption.Planetoids.KEY_HugePlanetoid
+        Assets.Textures.Items.Corruption.Planetoids.SmallPlanetoid.KEY,
+        Assets.Textures.Items.Corruption.Planetoids.MediumPlanetoid.KEY,
+        Assets.Textures.Items.Corruption.Planetoids.BigPlanetoid.KEY,
+        Assets.Textures.Items.Corruption.Planetoids.HugePlanetoid.KEY
     };
 
     private static readonly float[] _growthThresholds = {
@@ -362,13 +362,13 @@ public class PlanetoidProjectile : ModProjectile {
         float crackProgress = _preExplosionDelayTimer / 20f;
         if(State == 2f && crackProgress > 0f) {
             float easedCrackProgress = MathF.Pow(crackProgress, 2f);
-            var crackShader = Assets.Effects.Pixel.PlanetoidCracks;
+            var crackShader = Assets.Effects.Pixel.PlanetoidCracks.Asset.Value;
 
             Graphics.BeginPipeline(1.0f)
                 .EffectParams(
                     crackShader,
-                    ("sampleTexture2", Assets.Textures.Sample.CrackMap),
-                    ("sampleTexture3", Assets.Textures.Items.Corruption.Planetoids.HugePlanetoidCrackMappng),
+                    ("sampleTexture2", Assets.Textures.Sample.CrackMap.Asset.Value),
+                    ("sampleTexture3", Assets.Textures.Items.Corruption.Planetoids.HugePlanetoidCrackMappng.Asset.Value),
                     ("uTime", easedCrackProgress),
                     ("drawColor", Projectile.GetAlpha(lightColor).ToVector4()),
                     ("sourceFrame", new Vector4(0, 0, currentTexture.Width, currentTexture.Height)),

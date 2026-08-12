@@ -46,7 +46,7 @@ public abstract class ModLavaStyle : ModTexturedType {
         BlockTexture = null;
     }
 
-    public override void Register() {
+    protected override void Register() {
         LavaStyleLoader.RegisterStyle(this);
         ModTypeLookup<ModLavaStyle>.Register(this);
     }

@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
 public class Sleep : ModDust {
-    public override string Texture => Assets.Textures.NPCs.Corruption.TerrorBat.KEY_TerrorBatSleepDust;
+    public override string Texture => Assets.Textures.NPCs.Corruption.TerrorBat.TerrorBatSleepDust.KEY;
 
     public override bool Update(Dust dust) {
 
@@ -30,7 +30,7 @@ public class Sleep : ModDust {
     }
 
     public override bool PreDraw(Dust dust) {
-        var tex = Assets.Textures.NPCs.Corruption.TerrorBat.TerrorBatSleepDust;
+        var tex = Assets.Textures.NPCs.Corruption.TerrorBat.TerrorBatSleepDust.Asset.Value;
         Vector2 drawOrigin = new Vector2(tex.Width * 0.5f, tex.Height * 0.5f);
 
         Main.EntitySpriteDraw(tex, dust.position - Main.screenPosition, dust.frame, Color.White, dust.rotation, drawOrigin, dust.scale, SpriteEffects.None);

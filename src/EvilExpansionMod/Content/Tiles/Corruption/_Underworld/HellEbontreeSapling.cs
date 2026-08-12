@@ -12,7 +12,7 @@ using Terraria.ObjectData;
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
 public class HellEbontreeSapling : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_CorruptHellTreeSapling;
+    public override string Texture => Assets.Textures.Tiles.Corruption.CorruptHellTreeSapling.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileFrameImportant[Type] = true;

@@ -25,7 +25,7 @@ public class MeatAxeHeldProjectile : ModProjectile {
     ref float TargetRotation => ref Projectile.ai[0];
     int CutProjectile { get => (int)Projectile.ai[1]; set => Projectile.ai[1] = value; }
 
-    public override string Texture => Assets.Textures.Items.Crimson.MeatAxe.KEY_MeatAxeItem;
+    public override string Texture => Assets.Textures.Items.Crimson.MeatAxe.MeatAxeItem.KEY;
     public override void SetDefaults() {
         Projectile.width = 0;
         Projectile.height = 0;
@@ -109,7 +109,7 @@ public class MeatAxeHeldProjectile : ModProjectile {
         }
 
         if(Progress == 0f) {
-            var swing2 = Assets.Sounds.Item.MeatAxeSwing with { Pitch = 0.0f, PitchVariance = 0.3f };
+            var swing2 = Assets.Sounds.Item.MeatAxeSwing.Asset with { Pitch = 0.0f, PitchVariance = 0.3f };
             SoundEngine.PlaySound(swing2, Projectile.Center);
         }
 

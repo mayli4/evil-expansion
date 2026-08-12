@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
 public sealed class CursedCanariCritter : ModNPC {
-    public override string Texture => Assets.Textures.NPCs.Corruption.KEY_CursedCanariCritter;
+    public override string Texture => Assets.Textures.NPCs.Corruption.CursedCanariCritter.KEY;
 
     int State { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; }
     Player Target => Main.player[NPC.target];
@@ -149,7 +149,7 @@ public sealed class CursedCanariCritter : ModNPC {
 }
 
 public sealed class CursedCanariItem : ModItem {
-    public override string Texture => Assets.Textures.NPCs.Corruption.KEY_CursedCanariItem;
+    public override string Texture => Assets.Textures.NPCs.Corruption.CursedCanariItem.KEY;
 
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;

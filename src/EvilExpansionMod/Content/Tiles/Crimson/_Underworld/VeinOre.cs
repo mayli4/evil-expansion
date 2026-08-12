@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Tiles.Crimson;
 
 public class VeinOre : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Crimson.KEY_VeinOre;
+    public override string Texture => Assets.Textures.Tiles.Crimson.VeinOre.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileOreFinderPriority[Type] = 450;
@@ -72,7 +72,7 @@ public class VeinOre : ModTile {
 }
 
 public class VeinOreItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Crimson.KEY_VeinOreItem;
+    public override string Texture => Assets.Textures.Tiles.Crimson.VeinOreItem.KEY;
 
     public override void SetStaticDefaults() {
         ItemTrader.ChlorophyteExtractinator.AddOption_OneWay(Type, 1, ModContent.ItemType<UnderworldDemoniteItem>(), 1);

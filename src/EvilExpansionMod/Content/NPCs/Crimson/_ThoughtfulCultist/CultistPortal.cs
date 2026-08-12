@@ -18,7 +18,7 @@ enum PortalType {
 }
 
 public class CultistPortal : ModProjectile {
-    public override string Texture => Assets.Textures.NPCs.Crimson.ThoughtfulCultist.KEY_PortalSpear;
+    public override string Texture => Assets.Textures.NPCs.Crimson.ThoughtfulCultist.PortalSpear.KEY;
 
     PortalType PortalType => (PortalType)Projectile.ai[0];
     bool _spawnedEye;
@@ -120,11 +120,11 @@ public class CultistPortal : ModProjectile {
 
     public override bool PreDraw(ref Color lightColor) {
         var spearTexture = TextureAssets.Projectile[Type].Value;
-        var sampleTexture0 = Assets.Textures.Sample.PerlinNoise;
-        var sampleTexture1 = Assets.Textures.Sample.Noise2;
-        var glowTexture = Assets.Textures.Sample.Glow1;
+        var sampleTexture0 = Assets.Textures.Sample.PerlinNoise.Asset.Value;
+        var sampleTexture1 = Assets.Textures.Sample.Noise2.Asset.Value;
+        var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;
 
-        var effect = Assets.Effects.Pixel.CultistPortal;
+        var effect = Assets.Effects.Pixel.CultistPortal.Asset.Value;
         var destination = new Rectangle(
             (int)(Projectile.Center.X - Main.screenPosition.X),
             (int)(Projectile.Center.Y - Main.screenPosition.Y),
@@ -145,7 +145,7 @@ public class CultistPortal : ModProjectile {
             PortalType.Spear => new Color(34, 11, 23),
             PortalType.Blood => new Color(90, 21, 30),
         };
-        var circleTexture = Assets.Textures.Misc.Circle;
+        var circleTexture = Assets.Textures.Misc.Circle.Asset.Value;
         Graphics.BeginPipeline(0.5f)
             .DrawSprite(
                 circleTexture,

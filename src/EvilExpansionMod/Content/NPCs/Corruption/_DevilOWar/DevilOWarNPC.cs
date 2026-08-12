@@ -22,7 +22,7 @@ public sealed class DevilOWarNPC : ModNPC {
         AttackCooldown,
     }
 
-    public override string Texture => Assets.Textures.NPCs.Corruption.DevilOWar.KEY_DevilOWarHead;
+    public override string Texture => Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarHead.KEY;
 
     public State CurrentState {
         get => (State)NPC.ai[0];
@@ -315,8 +315,8 @@ public sealed class DevilOWarNPC : ModNPC {
             new Vector2(-0.2f, 0.4f)
         };
 
-        var tentacleTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarTentacle;
-        var defaultTrailEffect = Assets.Effects.Trail.Default;
+        var tentacleTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarTentacle.Asset.Value;
+        var defaultTrailEffect = Assets.Effects.Trail.Default.Asset.Value;
 
         for(int i = 0; i < 4; i++) {
             var positions = _tentacleTrailPositions[i];
@@ -363,10 +363,10 @@ public sealed class DevilOWarNPC : ModNPC {
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
-        var headTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarHead;
-        var insidesTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarInsides;
-        var headSpikesTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarHeadSpikes;
-        var headUnderTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarHead_Under;
+        var headTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarHead.Asset.Value;
+        var insidesTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarInsides.Asset.Value;
+        var headSpikesTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarHeadSpikes.Asset.Value;
+        var headUnderTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarHead_Under.Asset.Value;
 
         var glowColor = Color.Lerp(drawColor, new Color(114, 109, 27, 200), Pulsation);
 
@@ -388,7 +388,7 @@ public sealed class DevilOWarNPC : ModNPC {
 
         if(NPC.IsABestiaryIconDummy) {
             Main.spriteBatch.Draw(
-                Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarBestiary,
+                Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarBestiary.Asset.Value,
                 NPC.Center - new Vector2(0, 10),
                 null,
                 Color.White,
@@ -408,7 +408,7 @@ public sealed class DevilOWarNPC : ModNPC {
         PopulateTrails(pipeline, bodyWorldPositionForTrails, drawColor);
         pipeline.Flush();
 
-        var fluidEffect = Assets.Effects.Pixel.DevilOWarFluid;
+        var fluidEffect = Assets.Effects.Pixel.DevilOWarFluid.Asset.Value;
 
         int clampedLifeDrained = Math.Clamp(TotalLifeDrained, 0, MAX_DRAIN_FOR_LEVEL);
         float mappedLevel = MathHelper.Lerp(0.07f, 0.5f, (float)clampedLifeDrained / MAX_DRAIN_FOR_LEVEL);
@@ -421,8 +421,8 @@ public sealed class DevilOWarNPC : ModNPC {
                 ("level", mappedLevel),
                 ("smooth", 0.95f),
                 ("liquidColor", CursedSpiritNPC.GhostColor1.ToVector4()),
-                ("noisetex", Assets.Textures.Sample.BubblyNoise),
-                ("noisetex2", Assets.Textures.Sample.SpottyNoise),
+                ("noisetex", Assets.Textures.Sample.BubblyNoise.Asset.Value),
+                ("noisetex2", Assets.Textures.Sample.SpottyNoise.Asset.Value),
                 ("uNoiseStrength", 3.0f),
                 ("uNoise1ScrollSpeedX", 0.09f),
                 ("uDarkenStrength", 0.3f),

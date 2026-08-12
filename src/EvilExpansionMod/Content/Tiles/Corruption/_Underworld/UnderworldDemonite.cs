@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
 public class UnderworldDemonite : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_HellDemonite;
+    public override string Texture => Assets.Textures.Tiles.Corruption.HellDemonite.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileOreFinderPriority[Type] = 450;
@@ -73,7 +73,7 @@ public class UnderworldDemonite : ModTile {
 }
 
 public class UnderworldDemoniteItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_HellDemoniteItem;
+    public override string Texture => Assets.Textures.Tiles.Corruption.HellDemoniteItem.KEY;
 
     public override void SetStaticDefaults() {
         ItemTrader.ChlorophyteExtractinator.AddOption_OneWay(Type, 1, ModContent.ItemType<VeinOreItem>(), 1);

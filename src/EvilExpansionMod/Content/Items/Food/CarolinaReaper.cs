@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Food;
 
 public class CarolinaReaper : ModItem {
-    public override string Texture => Assets.Textures.Items.Foods.KEY_CarolinaReaper;
+    public override string Texture => Assets.Textures.Items.Foods.CarolinaReaper.KEY;
 
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;

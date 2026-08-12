@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Corruption;
 
 public class PlanetoidSpawnerItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.KEY_PlanetoidSpawnerItem;
+    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.PlanetoidSpawnerItem.KEY;
 
     public override void SetDefaults() {
         Item.width = 30;
@@ -101,7 +101,7 @@ public class PlanetoidSpawnerItem : ModItem {
 }
 
 public class PlanetoidLauncherHeldProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.KEY_PlanetoidSpawner;
+    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.PlanetoidSpawner.KEY;
 
     public override void SetStaticDefaults() {
         ProjectileID.Sets.DontAttachHideToAlpha[Type] = true;

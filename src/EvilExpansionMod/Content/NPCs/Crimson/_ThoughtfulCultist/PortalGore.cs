@@ -56,6 +56,7 @@ public class PortalGore : ModProjectile {
             AssetRequestMode.ImmediateLoad
         ).Value;
 
+        var outlineColor = Color.Red.MultiplyRGB(lightColor);
         Graphics.BeginPipeline(1.0f)
             .DrawSprite(
                 texture,
@@ -66,8 +67,8 @@ public class PortalGore : ModProjectile {
                 texture.Size() / 2f,
                 new Vector2(1f)
                 )
-            .ApplyOutline(Color.Red * 0.9f)
-            .ApplyOutline(Color.Red * 0.6f)
+            .ApplyOutline(outlineColor * 0.9f)
+            .ApplyOutline(outlineColor * 0.6f)
             .Flush();
 
         return false;

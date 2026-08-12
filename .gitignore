@@ -3,6 +3,7 @@
 .vscode/
 .idea/
 .catalyst/
+.tml-build/
 
 # Build outputs and adjacent.
 bin/

@@ -11,7 +11,7 @@ using Terraria.ObjectData;
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
 public sealed class CorruptFoliage : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_CorruptAshFoliage;
+    public override string Texture => Assets.Textures.Tiles.Corruption.CorruptAshFoliage.KEY;
 
     public const int StyleRange = 6;
 

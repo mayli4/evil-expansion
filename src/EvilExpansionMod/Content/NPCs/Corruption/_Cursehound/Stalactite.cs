@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
 public sealed class StalactiteProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.NPCs.Corruption.Cursehound.KEY_Stalactites;
+    public override string Texture => Assets.Textures.NPCs.Corruption.Cursehound.Stalactites.KEY;
 
     private Rectangle _frame;
 

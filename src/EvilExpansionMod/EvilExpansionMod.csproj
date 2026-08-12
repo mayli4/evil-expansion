@@ -1,18 +1,19 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-    
-    <Import Project="..\..\..\tModLoader.targets" />
-    
+﻿<Project Sdk="Tomat.Terraria.ModLoader.Sdk">
+
     <PropertyGroup>
-        <AssemblyName>EvilExpansionMod</AssemblyName>
-        <TargetFramework>net8.0</TargetFramework>
-        <PlatformTarget>AnyCPU</PlatformTarget>
-        <LangVersion>latest</LangVersion>
-        <EmitCompilerGeneratedFiles>true</EmitCompilerGeneratedFiles>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
+
+        <TmlBuildUseDefaultModImpl>true</TmlBuildUseDefaultModImpl>
     </PropertyGroup>
     
     <PropertyGroup>
         <ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>None</ResolveAssemblyWarnOrErrorOnTargetArchitectureMismatch>
     </PropertyGroup>
+
+    <ItemGroup>
+        <Publicize Include="FNA;ReLogic;Terraria" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false"/>
+    </ItemGroup>
     
     <ItemGroup>
         <AdditionalFiles Remove="Assets\Effects\.compile\**" />
@@ -21,34 +22,9 @@
         <None Remove="Assets\Effects\.compile\**" />
     </ItemGroup>
 
-    <ItemGroup>
-        <PackageReference Include="Krafs.Publicizer" Version="2.3.0" PrivateAssets="all" ExcludeAssets="runtime" />
-    </ItemGroup>
-
-    <ItemGroup Label="Publicized assemblies">
-        <!-- It's reasonable to publicize tModLoader.  Don't include
-             compiler-generated members since it breaks events and some other
-             stuff. -->
-        <Publicize Include="tModLoader" IncludeCompilerGeneratedMembers="false" />
-        <Publicize Include="FNA" IncludeCompilerGeneratedMembers="false" />
-    </ItemGroup>
-
-	<!-- NOTE: BeforeTargets="CoreCompile" makes it run before the assets generator-->
-    <Target Name="CompileEffects" BeforeTargets="CoreCompile">
-      <ItemGroup>
-    	<EffectFiles Include="Assets/Effects/**/*.fx" />
-        <CompiledEffects Include="Assets/Effects/.compiled/**/*.fxc" />
-        <ExpectedCompiled Include="@(EffectFiles->'Assets/Effects/.compiled/%(RecursiveDir)%(Filename).fxc')" />
-        <OrphanedEffects Include="@(CompiledEffects)" Exclude="@(ExpectedCompiled)" />
-      </ItemGroup>
-      <MakeDir Directories="Assets/Effects/.compiled/%(EffectFiles.RecursiveDir)" Condition="'@(EffectFiles)' != ''" />
-      <Exec Command="&quot;$(ProjectDir)Tools/fxc.exe&quot; /T fx_2_0 &quot;$(ProjectDir)%(EffectFiles.Identity)&quot; /I &quot;$(ProjectDir)Assets/Effects&quot; /Fo &quot;$(ProjectDir)Assets/Effects/.compiled/%(EffectFiles.RecursiveDir)%(EffectFiles.Filename).fxc&quot; /O3 /Op" Condition="'@(EffectFiles)' != ''" />
-      <Delete Files="@(OrphanedEffects)" Condition="'@(OrphanedEffects)' != ''" />
-    </Target>
-
-    <ItemGroup>
-      <ProjectReference Include="..\EvilExpansionMod.Generation\EvilExpansionMod.Generation.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
-    </ItemGroup>
+<!--    <ItemGroup>-->
+<!--      <ProjectReference Include="..\EvilExpansionMod.Generation\EvilExpansionMod.Generation.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />-->
+<!--    </ItemGroup>-->
 
     <ItemGroup>
         <AdditionalFiles Include="Assets/**/*.png" />

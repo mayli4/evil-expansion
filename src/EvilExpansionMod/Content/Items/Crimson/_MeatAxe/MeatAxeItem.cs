@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Crimson;
 
 public class MeatAxeItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.MeatAxe.KEY_MeatAxeItem;
+    public override string Texture => Assets.Textures.Items.Crimson.MeatAxe.MeatAxeItem.KEY;
 
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 3;

@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Corruption;
 
 public class DevilOWarHeartPickup : ModItem {
-    public override string Texture => Assets.Textures.NPCs.Corruption.DevilOWar.KEY_DevilOWarHeartPickup;
+    public override string Texture => Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarHeartPickup.KEY;
 
     public override void SetDefaults() {
         (Item.width, Item.height) = (22, 22);
@@ -42,7 +42,7 @@ public class DevilOWarHeartPickup : ModItem {
     public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI) {
         var tex = TextureAssets.Item[Type].Value;
 
-        var glowTexture = Assets.Textures.Sample.Glow1;
+        var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;
         var blinker = (MathF.Sin(0.1f * Main.GameUpdateCount + 23.2f * whoAmI) +
                        MathF.Cos(0.06f * Main.GameUpdateCount) + 2f) / 4f;
         var bigGlowColor = CursedSpiritNPC.GhostColor2 * (0.25f + 0.25f * blinker);

@@ -11,7 +11,7 @@ using Terraria.ObjectData;
 namespace EvilExpansionMod.Content.Tiles.Crimson;
 
 public class CrimsonFoliage : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Crimson.KEY_CrimsonAshFoliageSmall;
+    public override string Texture => Assets.Textures.Tiles.Crimson.CrimsonAshFoliageSmall.KEY;
 
     public const int StyleRange = 6;
 

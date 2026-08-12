@@ -38,7 +38,7 @@ public class HellEbonModTree : ModTree {
     }
 
     public override Asset<Texture2D> GetTexture() {
-        return Assets.Textures.Tiles.Corruption.ASSET_CorruptHellTree;
+        return Assets.Textures.Tiles.Corruption.CorruptHellTree.Asset;
     }
 
     public override int SaplingGrowthType(ref int style) {
@@ -50,11 +50,11 @@ public class HellEbonModTree : ModTree {
     }
 
     public override Asset<Texture2D> GetBranchTextures() {
-        return Assets.Textures.Tiles.Corruption.ASSET_CorruptHellTree;
+        return Assets.Textures.Tiles.Corruption.CorruptHellTree.Asset;
     }
 
     public override Asset<Texture2D> GetTopTextures() {
-        return Assets.Textures.Tiles.Corruption.ASSET_CorruptHellTree;
+        return Assets.Textures.Tiles.Corruption.CorruptHellTree.Asset;
     }
 
     public override int DropWood() {
@@ -63,7 +63,7 @@ public class HellEbonModTree : ModTree {
 }
 
 public class HellEbontree : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_CorruptHellTree;
+    public override string Texture => Assets.Textures.Tiles.Corruption.CorruptHellTree.KEY;
 
     public static GrowTreeSettings GrowSettings = new GrowTreeSettings
     {
@@ -508,12 +508,12 @@ public class HellEbontree : ModTile {
     }*/
 
     public Texture2D GetTreeTopTexture(int tileType, int treeTextureStyle, byte tileColor) {
-        var texture2D = Assets.Textures.Tiles.Corruption.CorruptHellTreeTops;
+        var texture2D = Assets.Textures.Tiles.Corruption.CorruptHellTreeTops.Asset.Value;
         return texture2D;
     }
 
     public Texture2D GetTreeBranchTexture(int tileType, int treeTextureStyle, byte tileColor) {
-        var texture2D = Assets.Textures.Tiles.Corruption.CorruptHellTreeBranches;
+        var texture2D = Assets.Textures.Tiles.Corruption.CorruptHellTreeBranches.Asset.Value;
         return texture2D;
     }
 
@@ -521,7 +521,7 @@ public class HellEbontree : ModTile {
         public TreeFoliageVariantKey Key;
 
         public override void Prepare() {
-            var asset = Assets.Textures.Tiles.Corruption.ASSET_CorruptHellTreeTops;
+            var asset = Assets.Textures.Tiles.Corruption.CorruptHellTreeTops.Asset;
             asset.Wait?.Invoke();
             PrepareTextureIfNecessary(asset.Value);
         }
@@ -535,7 +535,7 @@ public class HellEbontree : ModTile {
         public TreeFoliageVariantKey Key;
 
         public override void Prepare() {
-            var asset = Assets.Textures.Tiles.Corruption.ASSET_CorruptHellTreeBranches;
+            var asset = Assets.Textures.Tiles.Corruption.CorruptHellTreeBranches.Asset;
             asset.Wait?.Invoke();
             PrepareTextureIfNecessary(asset.Value);
         }

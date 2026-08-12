@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
 public class OvergrownCorruptAsh : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_OvergrownCorruptAshTile;
+    public override string Texture => Assets.Textures.Tiles.Corruption.OvergrownCorruptAshTile.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileSolid[Type] = true;

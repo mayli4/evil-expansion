@@ -10,7 +10,7 @@ public sealed class UnderworldCrimsonBiome : ModBiome, IHasCustomLavaBiome {
     public override float GetWeight(Player player) => 0.75f;
 
     public override string Name => "UnderworldCrimson";
-    public override string BestiaryIcon => Assets.Textures.Misc.KEY_UnderworldCrimsonIcon;
+    public override string BestiaryIcon => Assets.Textures.Misc.UnderworldCrimsonIcon.KEY;
 
     public override int Music => MusicID.UndergroundCrimson;
 

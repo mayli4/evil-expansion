@@ -30,9 +30,9 @@ internal class MaceCrack : ModProjectile, ITileMask {
     public void DrawTileMask(SpriteBatch spriteBatch) {
         var color = _lightColor;
         color *= Projectile.timeLeft > 100 ? 1f : Projectile.timeLeft / 100f;
-        var glow = Assets.Textures.Misc.Glow2;
-        var tex = Assets.Textures.Misc.Crack;
-        var tex2 = Assets.Textures.Misc.CrackBright;
+        var glow = Assets.Textures.Misc.Glow2.Asset.Value;
+        var tex = Assets.Textures.Misc.Crack.Asset.Value;
+        var tex2 = Assets.Textures.Misc.CrackBright.Asset.Value;
 
         var glowColor = CursedSpiritNPC.GhostColor1;
         glowColor *= Projectile.timeLeft > 100 ? 1f : Projectile.timeLeft / 100f;

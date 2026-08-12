@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Corruption._HellbringerArmor;
 
 public class ShadowOrbProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Corruption.HellbringerArmor.KEY_ShadowOrb;
+    public override string Texture => Assets.Textures.Items.Corruption.HellbringerArmor.ShadowOrb.KEY;
 
     readonly static int MaxTimeLeft = 360;
     ref float FlashAlpha => ref Projectile.ai[0];

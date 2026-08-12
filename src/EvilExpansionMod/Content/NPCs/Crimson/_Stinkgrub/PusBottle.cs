@@ -12,7 +12,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Crimson;
 
 public class PusBottleNPC : ModNPC {
-    public override string Texture => Assets.Textures.NPCs.Crimson.Stinkgrub.KEY_PusBottle;
+    public override string Texture => Assets.Textures.NPCs.Crimson.Stinkgrub.PusBottle.KEY;
 
     public int ParentNPCID => (int)NPC.ai[0];
     public ref float IsDetached => ref NPC.ai[1];
@@ -174,8 +174,8 @@ public class PusBottleNPC : ModNPC {
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
-        var texture = Assets.Textures.NPCs.Crimson.Stinkgrub.PusBottle;
-        var textureInside = Assets.Textures.NPCs.Crimson.Stinkgrub.PusBottle_Inside;
+        var texture = Assets.Textures.NPCs.Crimson.Stinkgrub.PusBottle.Asset.Value;
+        var textureInside = Assets.Textures.NPCs.Crimson.Stinkgrub.PusBottle_Inside.Asset.Value;
 
         var origin = new Vector2(texture.Width / 2, 94);
 
@@ -190,7 +190,7 @@ public class PusBottleNPC : ModNPC {
 
         Vector2 finalScale = Vector2.One * NPC.scale;
 
-        var fluidEffect = Assets.Effects.Pixel.DevilOWarFluid;
+        var fluidEffect = Assets.Effects.Pixel.DevilOWarFluid.Asset.Value;
 
         if(!NPC.IsABestiaryIconDummy) {
             Graphics.BeginPipeline(0.5f)
@@ -199,8 +199,8 @@ public class PusBottleNPC : ModNPC {
                     ("level", 0.3f),
                     ("smooth", 1.0f),
                     ("liquidColor", new Color(98, 90, 40).ToVector4()),
-                    ("noisetex", Assets.Textures.Sample.BubblyNoise),
-                    ("noisetex2", Assets.Textures.Sample.SpottyNoise),
+                    ("noisetex", Assets.Textures.Sample.BubblyNoise.Asset.Value),
+                    ("noisetex2", Assets.Textures.Sample.SpottyNoise.Asset.Value),
                     ("uNoiseStrength", 1.0f),
                     ("uNoise1ScrollSpeedX", 0.09f),
                     ("uDarkenStrength", 0.3f),

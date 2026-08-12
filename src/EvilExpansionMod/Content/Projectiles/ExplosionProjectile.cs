@@ -110,11 +110,11 @@ public class ExplosionProjectile : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var glowTexture = Assets.Textures.Sample.Glow1;
-        var starTexture = Assets.Textures.Sample.Star3;
-        var noiseTexture1 = Assets.Textures.Sample.Noise1;
-        var noiseTexture2 = Assets.Textures.Sample.Noise2;
-        var explosionEffect = Assets.Effects.Pixel.Explosion;
+        var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;
+        var starTexture = Assets.Textures.Sample.Star3.Asset.Value;
+        var noiseTexture1 = Assets.Textures.Sample.Noise1.Asset.Value;
+        var noiseTexture2 = Assets.Textures.Sample.Noise2.Asset.Value;
+        var explosionEffect = Assets.Effects.Pixel.Explosion.Asset.Value;
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
         var progress = 1f - (float)Projectile.timeLeft / _maxTimeLeft;

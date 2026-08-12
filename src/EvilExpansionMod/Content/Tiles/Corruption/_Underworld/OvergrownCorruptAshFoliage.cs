@@ -9,7 +9,7 @@ using Terraria.ObjectData;
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
 public class OvergrownCorruptAshFoliage : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_OvergrownCorruptAshFoliage;
+    public override string Texture => Assets.Textures.Tiles.Corruption.OvergrownCorruptAshFoliage.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileCut[Type] = true;

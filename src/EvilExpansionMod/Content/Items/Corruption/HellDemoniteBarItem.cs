@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Crimson;
 
 public class HellDemoniteBarItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Corruption.KEY_HellDemoniteBar;
+    public override string Texture => Assets.Textures.Items.Corruption.HellDemoniteBar.KEY;
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 25;
         ItemID.Sets.SortingPriorityMaterials[Item.type] = 59;

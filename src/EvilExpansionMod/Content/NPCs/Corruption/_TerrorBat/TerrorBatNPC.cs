@@ -18,7 +18,7 @@ namespace EvilExpansionMod.Content.NPCs.Corruption;
 
 [SpawnPack(4)]
 public class TerrorBatNPC : ModNPC {
-    public override string Texture => Assets.Textures.NPCs.Corruption.TerrorBat.KEY_TerrorBatNPC;
+    public override string Texture => Assets.Textures.NPCs.Corruption.TerrorBat.TerrorBatNPC.KEY;
 
     public enum State {
         IdleOnCeiling,

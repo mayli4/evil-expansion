@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Tiles.Banners;
 
 internal sealed class DevilOWarBannerTile : ModBannerTile {
-    public override string Texture => Assets.Textures.Tiles.Banners.KEY_DevilOWarBannerTile;
+    public override string Texture => Assets.Textures.Tiles.Banners.DevilOWarBannerTile.KEY;
 
     public override void NearbyEffects(int i, int j, bool closer) {
         Main.SceneMetrics.hasBanner = true;
@@ -15,7 +15,7 @@ internal sealed class DevilOWarBannerTile : ModBannerTile {
 }
 
 internal sealed class TerrorbatBannerTile : ModBannerTile {
-    public override string Texture => Assets.Textures.Tiles.Banners.KEY_TerrorbatBannerTile;
+    public override string Texture => Assets.Textures.Tiles.Banners.TerrorbatBannerTile.KEY;
 
     public override void NearbyEffects(int i, int j, bool closer) {
         Main.SceneMetrics.hasBanner = true;
@@ -24,7 +24,7 @@ internal sealed class TerrorbatBannerTile : ModBannerTile {
 }
 
 internal sealed class CursehoundBannerTile : ModBannerTile {
-    public override string Texture => Assets.Textures.Tiles.Banners.KEY_CursehoundBannerTile;
+    public override string Texture => Assets.Textures.Tiles.Banners.CursehoundBannerTile.KEY;
 
     public override void NearbyEffects(int i, int j, bool closer) {
         Main.SceneMetrics.hasBanner = true;
@@ -33,7 +33,7 @@ internal sealed class CursehoundBannerTile : ModBannerTile {
 }
 
 internal sealed class CursedSpiritBannerTile : ModBannerTile {
-    public override string Texture => Assets.Textures.Tiles.Banners.KEY_CursedSpiritBannerTile;
+    public override string Texture => Assets.Textures.Tiles.Banners.CursedSpiritBannerTile.KEY;
 
     public override void NearbyEffects(int i, int j, bool closer) {
         Main.SceneMetrics.hasBanner = true;
@@ -42,7 +42,7 @@ internal sealed class CursedSpiritBannerTile : ModBannerTile {
 }
 
 internal sealed class EffigyBannerTile : ModBannerTile {
-    public override string Texture => Assets.Textures.Tiles.Banners.KEY_EffigyBannerTile;
+    public override string Texture => Assets.Textures.Tiles.Banners.EffigyBannerTile.KEY;
 
     public override void NearbyEffects(int i, int j, bool closer) {
         Main.SceneMetrics.hasBanner = true;
@@ -51,7 +51,7 @@ internal sealed class EffigyBannerTile : ModBannerTile {
 }
 
 public class DevilOWarBannerItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Banners.KEY_DevilOWarBannerItem;
+    public override string Texture => Assets.Textures.Tiles.Banners.DevilOWarBannerItem.KEY;
 
     public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
 
@@ -72,7 +72,7 @@ public class DevilOWarBannerItem : ModItem {
 }
 
 public class TerrorbatBannerItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Banners.KEY_TerrorbatBannerItem;
+    public override string Texture => Assets.Textures.Tiles.Banners.TerrorbatBannerItem.KEY;
 
     public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
 
@@ -93,7 +93,7 @@ public class TerrorbatBannerItem : ModItem {
 }
 
 public class CursehoundBannerItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Banners.KEY_CursehoundBannerItem;
+    public override string Texture => Assets.Textures.Tiles.Banners.CursehoundBannerItem.KEY;
 
     public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
 
@@ -114,7 +114,7 @@ public class CursehoundBannerItem : ModItem {
 }
 
 public class CursedSpiritBannerItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Banners.KEY_CursedSpiritBannerItem;
+    public override string Texture => Assets.Textures.Tiles.Banners.CursedSpiritBannerItem.KEY;
 
     public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
 
@@ -135,7 +135,7 @@ public class CursedSpiritBannerItem : ModItem {
 }
 
 public class EffigyBannerItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Banners.KEY_EffigyBannerItem;
+    public override string Texture => Assets.Textures.Tiles.Banners.EffigyBannerItem.KEY;
 
     public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
 

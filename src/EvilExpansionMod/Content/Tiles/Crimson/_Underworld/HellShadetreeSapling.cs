@@ -12,7 +12,7 @@ using Terraria.ObjectData;
 namespace EvilExpansionMod.Content.Tiles.Crimson;
 
 public class HellShadetreeSapling : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Crimson.KEY_HellShadetreeSapling;
+    public override string Texture => Assets.Textures.Tiles.Crimson.HellShadetreeSapling.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileFrameImportant[Type] = true;

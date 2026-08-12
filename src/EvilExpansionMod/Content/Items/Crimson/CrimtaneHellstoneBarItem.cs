@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Crimson;
 
 public class CrimtaneHellstoneBarItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.KEY_CrimtaneHellstoneBar;
+    public override string Texture => Assets.Textures.Items.Crimson.CrimtaneHellstoneBar.KEY;
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 25;
         ItemID.Sets.SortingPriorityMaterials[Item.type] = 59;

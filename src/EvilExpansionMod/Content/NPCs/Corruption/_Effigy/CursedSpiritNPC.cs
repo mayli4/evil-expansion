@@ -101,7 +101,7 @@ public sealed class CursedSpiritNPC : ModNPC {
         Timer = 0;
     }
 
-    public override string Texture => Assets.Textures.NPCs.Corruption.Effigy.KEY_CursedSpiritMasks;
+    public override string Texture => Assets.Textures.NPCs.Corruption.Effigy.CursedSpiritMasks.KEY;
 
     public readonly static Color GhostColor1 = new(214, 237, 5);
     public readonly static Color GhostColor2 = new(181, 200, 4);
@@ -496,7 +496,7 @@ public sealed class CursedSpiritNPC : ModNPC {
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
-        var glowTexture = Assets.Textures.Sample.Glow1;
+        var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;
         var blinker = (MathF.Sin(0.1f * Main.GameUpdateCount + 23.2f * NPC.whoAmI) + MathF.Cos(0.06f * Main.GameUpdateCount) + 2f) / 4f;
         var bigGlowColor = GhostColor2 * (0.3f + 0.3f * blinker);
         var smallGlowColor = GhostColor1;
@@ -536,7 +536,7 @@ public sealed class CursedSpiritNPC : ModNPC {
         spriteBatch.EndBegin(initialSnapshot);
 
         if(!NPC.IsABestiaryIconDummy) {
-            var trailEffect = Assets.Effects.Trail.CursedSpiritFire;
+            var trailEffect = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
             Graphics.BeginPipeline(0.5f)
                 .DrawTrail(
                     _trailPositions,
@@ -547,11 +547,11 @@ public sealed class CursedSpiritNPC : ModNPC {
                     ("mat", Graphics.WorldTransformMatrix),
                     ("stepY", 0.25f),
                     ("scale", 0.8f),
-                    ("texture1", Assets.Textures.Sample.Pebbles),
-                    ("texture2", Assets.Textures.Sample.Noise2)
+                    ("texture1", Assets.Textures.Sample.Pebbles.Asset.Value),
+                    ("texture2", Assets.Textures.Sample.Noise2.Asset.Value)
                 )
                 .DrawSprite(
-                    Assets.Textures.Misc.Circle,
+                    Assets.Textures.Misc.Circle.Asset.Value,
                     NPC.Center - Main.screenPosition,
                     color: smallGlowColor,
                     origin: 16f * Vector2.One,

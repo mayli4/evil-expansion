@@ -9,10 +9,10 @@ namespace EvilExpansionMod.Core;
 internal sealed class TileTextureReplacements : ILoadable {
     public void Load(Mod mod) {
         Main.instance.LoadTiles(TileID.CorruptJungleGrass);
-        TextureAssets.Tile[TileID.CorruptJungleGrass] = Assets.Textures.Tiles.Corruption.Jungle.ASSET_CorruptJungleGrass;
+        TextureAssets.Tile[TileID.CorruptJungleGrass] = Assets.Textures.Tiles.Corruption.Jungle.CorruptJungleGrass.Asset;
 
         Main.instance.LoadTiles(TileID.CrimsonJungleGrass);
-        TextureAssets.Tile[TileID.CrimsonJungleGrass] = Assets.Textures.Tiles.Crimson.Jungle.ASSET_CrimsonJungleGrass;
+        TextureAssets.Tile[TileID.CrimsonJungleGrass] = Assets.Textures.Tiles.Crimson.Jungle.CrimsonJungleGrass.Asset;
     }
 
     public void Unload() {

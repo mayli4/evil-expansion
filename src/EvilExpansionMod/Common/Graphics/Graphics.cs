@@ -243,7 +243,7 @@ public class Graphics : ModSystem {
             );
             _spriteVertexBuffer.SetData([0f, 1f, 2f, 3f]);
 
-            _spriteEffect = Assets.Effects.Trail.Quad;
+            _spriteEffect = Assets.Effects.Trail.Quad.Asset.Value;
             _spriteMatrix = _spriteEffect.Parameters["uMatrix"].values;
             _spriteColor = _spriteEffect.Parameters["uColor"].values;
             _spriteSource = _spriteEffect.Parameters["uSource"].values;
@@ -365,7 +365,7 @@ public class Graphics : ModSystem {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public readonly Pipeline ApplyOutline(Color color, float threshold = 0.001f) {
             ApplyEffect(
-                Assets.Effects.Pixel.Outline,
+                Assets.Effects.Pixel.Outline.Asset.Value,
                 ("uColor", color.ToVector4()),
                 ("uSize", Main.ScreenSize.ToVector2()),
                 ("uThreshold", threshold)
@@ -406,7 +406,7 @@ public class Graphics : ModSystem {
             Color color,
             int spriteRotation = 0
         ) {
-            var effect = Assets.Effects.Trail.Default;
+            var effect = Assets.Effects.Trail.Default.Asset.Value;
             ReadOnlySpan<(string, ParameterValue)> parameters = [
                 ("sampleTexture", texture),
                 ("color", color.ToVector4()),
@@ -424,7 +424,7 @@ public class Graphics : ModSystem {
             Func<float, Color> color,
             int spriteRotation = 0
         ) {
-            var effect = Assets.Effects.Trail.Default;
+            var effect = Assets.Effects.Trail.Default.Asset.Value;
             ReadOnlySpan<(string, ParameterValue)> parameters = [
                 ("sampleTexture", texture),
                 ("color", Color.White.ToVector4()),
@@ -633,7 +633,7 @@ public class Graphics : ModSystem {
         }
 
         public readonly Pipeline ApplyTint(Color color) {
-            ApplyEffect(Assets.Effects.Pixel.Tint, ("color", color.ToVector4()));
+            ApplyEffect(Assets.Effects.Pixel.Tint.Asset.Value, ("color", color.ToVector4()));
             return this;
         }
 

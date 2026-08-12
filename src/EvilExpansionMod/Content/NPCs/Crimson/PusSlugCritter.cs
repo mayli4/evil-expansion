@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Crimson;
 
 public sealed class PusSlugCritter : ModNPC {
-    public override string Texture => Assets.Textures.NPCs.Crimson.KEY_PusSlugNPC;
+    public override string Texture => Assets.Textures.NPCs.Crimson.PusSlugNPC.KEY;
 
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 3;
@@ -50,7 +50,7 @@ public sealed class PusSlugCritter : ModNPC {
 }
 
 public class PusSlugItem : ModItem {
-    public override string Texture => Assets.Textures.NPCs.Crimson.KEY_PusSlugItem;
+    public override string Texture => Assets.Textures.NPCs.Crimson.PusSlugItem.KEY;
 
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;

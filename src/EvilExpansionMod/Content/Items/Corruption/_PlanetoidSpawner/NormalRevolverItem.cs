@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Corruption;
 
 public class NormalRevolverItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.KEY_NormalRevolver;
+    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.NormalRevolver.KEY;
 
     public override void SetDefaults() {
         Item.CloneDefaults(ItemID.ZephyrFish);
@@ -29,7 +29,7 @@ public class NormalRevolverItem : ModItem {
 }
 
 public class NormalPlanetoidBuff : ModBuff {
-    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.KEY_NormalPlanetoidBuff;
+    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.NormalPlanetoidBuff.KEY;
 
     public override void SetStaticDefaults() {
         Main.buffNoTimeDisplay[Type] = true;
@@ -44,7 +44,7 @@ public class NormalPlanetoidBuff : ModBuff {
 
 
 public class NormalPlanetoidProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.KEY_NormalPlanetoid;
+    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.NormalPlanetoid.KEY;
 
     private ref float _currentFaceFrame => ref Projectile.localAI[0];
     private ref float _faceFrameTimer => ref Projectile.localAI[1];
@@ -197,9 +197,9 @@ public class NormalPlanetoidProjectile : ModProjectile {
     }
 
     public override void PostDraw(Color lightColor) {
-        Texture2D planetoidTexture = Assets.Textures.Items.Corruption.Planetoids.NormalPlanetoid;
-        Texture2D planetoidGrassTexture = Assets.Textures.Items.Corruption.Planetoids.NormalPlanetoid_Grass;
-        Texture2D faceTexture = Assets.Textures.Items.Corruption.Planetoids.NormalPlanetoid_Faces;
+        Texture2D planetoidTexture = Assets.Textures.Items.Corruption.Planetoids.NormalPlanetoid.Asset.Value;
+        Texture2D planetoidGrassTexture = Assets.Textures.Items.Corruption.Planetoids.NormalPlanetoid_Grass.Asset.Value;
+        Texture2D faceTexture = Assets.Textures.Items.Corruption.Planetoids.NormalPlanetoid_Faces.Asset.Value;
 
         int faceFrameWidth = 16;
         int faceFrameHeight = 18;
@@ -211,7 +211,7 @@ public class NormalPlanetoidProjectile : ModProjectile {
 
         if(Projectile.isAPreviewDummy) {
             Main.EntitySpriteDraw(
-                Assets.Textures.Items.Corruption.Planetoids.NormalPlanetoid_Preview,
+                Assets.Textures.Items.Corruption.Planetoids.NormalPlanetoid_Preview.Asset.Value,
                 Projectile.Center - Main.screenPosition,
                 null,
                 lightColor,

@@ -20,8 +20,8 @@ public class LanternBatNPC : ModNPC {
         PostDashCooldown
     }
 
-    public override string Texture => Assets.Textures.NPCs.Crimson.LanternBat.KEY_LanternBatNPC;
-    public string LanternTexturePath => Assets.Textures.NPCs.Crimson.LanternBat.KEY_LanternBat_Lantern;
+    public override string Texture => Assets.Textures.NPCs.Crimson.LanternBat.LanternBatNPC.KEY;
+    public string LanternTexturePath => Assets.Textures.NPCs.Crimson.LanternBat.LanternBat_Lantern.KEY;
 
     public State CurrentState {
         get => (State)NPC.ai[0];
@@ -197,8 +197,8 @@ public class LanternBatNPC : ModNPC {
 
         float lanternRotation = NPC.velocity.X * 0.05f + MathF.Sin(Main.GameUpdateCount * 0.1f) * 0.1f;
 
-        Texture2D lanternTex = Assets.Textures.NPCs.Crimson.LanternBat.LanternBat_Lantern;
-        Texture2D lanternInside = Assets.Textures.NPCs.Crimson.LanternBat.LanternBat_LanternFlame;
+        Texture2D lanternTex = Assets.Textures.NPCs.Crimson.LanternBat.LanternBat_Lantern.Asset.Value;
+        Texture2D lanternInside = Assets.Textures.NPCs.Crimson.LanternBat.LanternBat_LanternFlame.Asset.Value;
         Vector2 lanternOrigin = new Vector2(lanternTex.Width / 2, 0);
 
         SpriteEffects lanternEffects = SpriteEffects.None;

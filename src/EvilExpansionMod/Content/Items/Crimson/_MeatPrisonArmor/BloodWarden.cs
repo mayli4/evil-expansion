@@ -12,7 +12,7 @@ namespace EvilExpansionMod.Content.Items.Crimson;
 
 
 public sealed class BloodWarden : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Crimson.MeatPrisonArmor.KEY_BloodWarden;
+    public override string Texture => Assets.Textures.Items.Crimson.MeatPrisonArmor.BloodWarden.KEY;
 
     public enum State {
         Idle,
@@ -243,7 +243,7 @@ public sealed class BloodWarden : ModProjectile {
         var effects = Projectile.spriteDirection == -1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
         var texture = ModContent.Request<Texture2D>(Texture).Value;
-        var chainTexture = Assets.Textures.Items.Crimson.MeatPrisonArmor.BloodWardenCord;
+        var chainTexture = Assets.Textures.Items.Crimson.MeatPrisonArmor.BloodWardenCord.Asset.Value;
         var shader = GameShaders.Armor.GetShaderFromItemId(Main.LocalPlayer.dye[1].type);
 
         var origin = new Vector2(texture.Width / 2f, texture.Height / Main.projFrames[Projectile.type] / 2f);

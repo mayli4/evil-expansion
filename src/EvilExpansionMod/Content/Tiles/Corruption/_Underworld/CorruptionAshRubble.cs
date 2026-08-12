@@ -7,7 +7,7 @@ using Terraria.ObjectData;
 namespace EvilExpansionMod.Content.Tiles.Corruption;
 
 public class CorruptionAshRubble : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Corruption.KEY_CorruptionAshRubble;
+    public override string Texture => Assets.Textures.Tiles.Corruption.CorruptionAshRubble.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileFrameImportant[Type] = true;

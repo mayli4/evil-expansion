@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.NPCs.Crimson;
 
 public class TendonProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.NPCs.Crimson.MarrowEye.KEY_Tendon;
+    public override string Texture => Assets.Textures.NPCs.Crimson.MarrowEye.Tendon.KEY;
     public const int DisapearFrames = 120;
 
     float _alpha;

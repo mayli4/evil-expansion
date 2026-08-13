@@ -6,12 +6,7 @@ int spriteRotation = 0;
 texture sampleTexture;
 sampler2D samplerTexture = sampler_state
 {
-    texture = <sampleTexture>;
-    magfilter = LINEAR;
-    minfilter = LINEAR;
-    mipfilter = LINEAR;
-    AddressU = wrap;
-    AddressV = wrap;
+    Texture = <sampleTexture>;
 };
 
 struct VSInput

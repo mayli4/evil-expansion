@@ -236,6 +236,7 @@ public class ThoughtfulCultistNPC : ModNPC {
         }
 
         Graphics.BeginPipeline()
+            .SetSamplerState(0, SamplerState.PointWrap)
             .DrawBasicTrail(robeTrailPositions, static _ => 88, robeTextureBack, drawColor, 1)
             .DrawBasicTrail(chainPoints, static _ => 6, chainTexture, drawColor)
             .DrawBasicTrail(robeTrailPositions, static _ => 88, robeTextureFront, drawColor, 1)

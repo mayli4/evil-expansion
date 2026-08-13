@@ -43,7 +43,7 @@ public class SpamonAStickItem : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient(ModContent.ItemType<HellDemoniteBarItem>(), 12)
+            .AddIngredient(ModContent.ItemType<PolypBarItem>(), 12)
             .AddIngredient(ItemID.RottenChunk, 8)
             .AddTile(TileID.Anvils)
             .Register();

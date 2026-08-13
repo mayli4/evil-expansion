@@ -7,8 +7,8 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Crimson;
 
-public class VeinOre : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Crimson.VeinOre.KEY;
+public class CartilageOreTile : ModTile {
+    public override string Texture => Assets.Textures.Tiles.Crimson.CartilageOreTile.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileOreFinderPriority[Type] = 450;
@@ -48,7 +48,7 @@ public class VeinOre : ModTile {
                 WorldGen.ConvertTile(i, j, TileID.Hellstone);
                 return;
             case BiomeConversionID.Crimson:
-                WorldGen.ConvertTile(i, j, ModContent.TileType<VeinOre>());
+                WorldGen.ConvertTile(i, j, ModContent.TileType<CartilageOreTile>());
                 return;
 
         }
@@ -71,15 +71,15 @@ public class VeinOre : ModTile {
     }
 }
 
-public class VeinOreItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Crimson.VeinOreItem.KEY;
+public class CartilageOreItem : ModItem {
+    public override string Texture => Assets.Textures.Tiles.Crimson.CartilageOreItem.KEY;
 
     public override void SetStaticDefaults() {
-        ItemTrader.ChlorophyteExtractinator.AddOption_OneWay(Type, 1, ModContent.ItemType<UnderworldDemoniteItem>(), 1);
+        ItemTrader.ChlorophyteExtractinator.AddOption_OneWay(Type, 1, ModContent.ItemType<PolypOreItem>(), 1);
     }
 
     public override void SetDefaults() {
-        Item.DefaultToPlaceableTile(ModContent.TileType<VeinOre>());
+        Item.DefaultToPlaceableTile(ModContent.TileType<CartilageOreTile>());
         Item.width = 17;
         Item.height = 19;
         Item.value = Item.sellPrice(0, 0, 3);

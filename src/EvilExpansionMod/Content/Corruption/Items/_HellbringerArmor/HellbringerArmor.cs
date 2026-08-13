@@ -1,5 +1,4 @@
-﻿using EvilExpansionMod.Content.Corruption;
-using Terraria;
+﻿using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -25,7 +24,7 @@ public class HellbringerHead : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = 30000;
+        Item.value = Item.buyPrice(silver: 90);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 6;
     }
@@ -46,7 +45,7 @@ public class HellbringerHead : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<UnderworldDemoniteItem>(7)
+            .AddIngredient<PolypOreItem>(7)
             .AddIngredient<ImputedFlameItem>(2)
             .AddTile(TileID.Anvils)
             .Register();
@@ -68,14 +67,14 @@ public class HellbringerBody : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = 30000;
+        Item.value = Item.buyPrice(silver: 90);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 14;
     }
 
     public override void UpdateEquip(Player player) {
         player.GetDamage(DamageClass.Summon) += 0.10f;
-        player.moveSpeed += 0.10f;
+        player.moveSpeed += 0.20f;
     }
 
     public override bool IsArmorSet(Item head, Item body, Item legs) {
@@ -84,7 +83,7 @@ public class HellbringerBody : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<UnderworldDemoniteItem>(15)
+            .AddIngredient<PolypOreItem>(15)
             .AddIngredient<ImputedFlameItem>(5)
             .AddTile(TileID.Anvils)
             .Register();
@@ -106,7 +105,7 @@ public class HellbringerLegs : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = 30000;
+        Item.value = Item.buyPrice(silver: 60);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 8;
     }
@@ -121,7 +120,7 @@ public class HellbringerLegs : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<UnderworldDemoniteItem>(2)
+            .AddIngredient<PolypOreItem>(2)
             .AddIngredient<ImputedFlameItem>(2)
             .AddTile(TileID.Anvils)
             .Register();

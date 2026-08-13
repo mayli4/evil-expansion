@@ -16,7 +16,7 @@ public class MeatPrisonHead : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = 30000;
+        Item.value = Item.buyPrice(silver: 90);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 6;
 
@@ -25,14 +25,14 @@ public class MeatPrisonHead : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<CrimtaneHellstoneBarItem>(7)
+            .AddIngredient<CartilageBarItem>(7)
             .AddIngredient<BoneSlicesItem>(2)
             .AddTile(TileID.Anvils)
             .Register();
     }
 
     public override void UpdateEquip(Player player) {
-        player.GetDamage(DamageClass.Summon) += 0.08f;
+        player.GetDamage(DamageClass.Summon) += 0.03f;
         player.maxMinions += 1;
     }
 
@@ -56,7 +56,7 @@ public class MeatPrisonBody : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = 30000;
+        Item.value = Item.buyPrice(silver: 90);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 14;
 
@@ -75,7 +75,7 @@ public class MeatPrisonBody : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<CrimtaneHellstoneBarItem>(15)
+            .AddIngredient<CartilageBarItem>(15)
             .AddIngredient<BoneSlicesItem>(5)
             .AddTile(TileID.Anvils)
             .Register();
@@ -92,7 +92,7 @@ public class MeatPrisonLegs : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = Item.buyPrice(gold: 1);
+        Item.value = Item.buyPrice(silver: 60);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 8;
 
@@ -109,7 +109,7 @@ public class MeatPrisonLegs : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<CrimtaneHellstoneBarItem>(5)
+            .AddIngredient<CartilageBarItem>(2)
             .AddIngredient<BoneSlicesItem>(2)
             .AddTile(TileID.Anvils)
             .Register();

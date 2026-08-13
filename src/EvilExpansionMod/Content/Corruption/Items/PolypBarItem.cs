@@ -1,10 +1,10 @@
 ﻿using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Content.Crimson;
+namespace EvilExpansionMod.Content.Corruption;
 
-public class CrimtaneHellstoneBarItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.CrimtaneHellstoneBar.KEY;
+public class PolypBarItem : ModItem {
+    public override string Texture => Assets.Textures.Items.Corruption.PolypBarItem.KEY;
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 25;
         ItemID.Sets.SortingPriorityMaterials[Item.type] = 59;
@@ -23,8 +23,8 @@ public class CrimtaneHellstoneBarItem : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<VeinOreItem>(3)
-            .AddIngredient<PusClumpItem>()
+            .AddIngredient<PolypOreItem>(3)
+            .AddIngredient<RawShadowScalesItem>()
             .AddTile(TileID.Furnaces)
             .Register();
     }

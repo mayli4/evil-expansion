@@ -37,7 +37,7 @@ public class SlippedWhipItem : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient(ModContent.ItemType<CrimtaneHellstoneBarItem>(), 18)
+            .AddIngredient(ModContent.ItemType<CartilageBarItem>(), 18)
             .AddIngredient(ModContent.ItemType<BoneSlicesItem>(), 8)
             .AddTile(TileID.Anvils)
             .Register();

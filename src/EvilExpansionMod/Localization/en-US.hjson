@@ -11,11 +11,6 @@ Mods: {
 				Tooltip: ""
 			}
 
-			UnderworldDemoniteItem: {
-				DisplayName: Underworld Demonite
-				Tooltip: ""
-			}
-
 			DevilOWarHeartPickup: {
 				DisplayName: Heart
 				Tooltip: ""
@@ -72,12 +67,12 @@ Mods: {
 				Tooltip:
 					'''
 					Increases summon damage by 10%
-					Increases movement speed by 10%
+					Increases movement speed by 20%
 					'''
 			}
 
 			HellbringerHead: {
-				DisplayName: Hellbringer Helmet
+				DisplayName: Hellbringer Mask
 				Tooltip:
 					'''
 					Increases summon damage by 5%
@@ -91,8 +86,18 @@ Mods: {
 				Tooltip: Increases movement speed by 10%
 			}
 
+			MeatPrisonHead: {
+				DisplayName: Meat Prison Grill
+				Tooltip:
+					'''
+					Increases summon damage by 3%
+					Increases your max number of minions by 1
+					'''
+				SetBonus: Summons a blood warden to fight for you
+			}
+
 			MeatPrisonBody: {
-				DisplayName: Meat Prison Breastplate
+				DisplayName: Meat Prison Mantle
 				Tooltip:
 					'''
 					Increases summon damage by 10%
@@ -101,39 +106,14 @@ Mods: {
 					'''
 			}
 
-			MeatPrisonHead: {
-				DisplayName: Meat Prison Helmet
-				Tooltip:
-					'''
-					Increases summon damage by 8%
-					Increases your max number of minions by 1
-					'''
-				SetBonus: Summons a blood warden to fight for you
-			}
-
 			MeatPrisonLegs: {
-				DisplayName: Meat Prison Leggings
+				DisplayName: Meat Prison Pants
 				Tooltip: Increases movement speed by 10%
 			}
 
 			StinkflyItem: {
 				DisplayName: Stinkfly
 				Tooltip: Used in perfume for some reason...
-			}
-
-			CrimtaneHellstoneBarItem: {
-				DisplayName: Crimtane Hellstone
-				Tooltip: ""
-			}
-
-			VeinOreItem: {
-				DisplayName: Vein Ore
-				Tooltip: ""
-			}
-
-			HellDemoniteBarItem: {
-				DisplayName: Hell Demonite Bar
-				Tooltip: ""
 			}
 
 			ThoughtfulPendantItem: {
@@ -308,6 +288,26 @@ Mods: {
 				DisplayName: Cursed Canari
 				Tooltip: ""
 			}
+
+			PolypBarItem: {
+				DisplayName: Polyp Bar
+				Tooltip: ""
+			}
+
+			PolypOreItem: {
+				DisplayName: Polyp Ore
+				Tooltip: ""
+			}
+
+			CartilageBarItem: {
+				DisplayName: Cartilage Bar
+				Tooltip: ""
+			}
+
+			CartilageOreItem: {
+				DisplayName: Cartilage Ore
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -421,6 +421,8 @@ Mods: {
 			CorruptFireblossom.MapEntry: Corrupt Fireblossom
 			VeinOre.MapEntry: Vein Ore
 			HellShadetree.MapEntry: Hell Shadetree
+			PolypOreTile.MapEntry: Polyp Ore Tile
+			CartilageOreTile.MapEntry: Cartilage Ore Tile
 		}
 
 		Bestiary: {

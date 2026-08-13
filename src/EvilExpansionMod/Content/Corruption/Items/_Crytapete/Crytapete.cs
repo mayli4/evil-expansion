@@ -1,4 +1,3 @@
-using EvilExpansionMod.Content.Crimson;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -63,7 +62,7 @@ public class CrytapeteItem : ModItem {
 
     public override void AddRecipes()
         => CreateRecipe()
-            .AddIngredient(ModContent.ItemType<HellDemoniteBarItem>(), 12)
+            .AddIngredient(ModContent.ItemType<PolypBarItem>(), 12)
             .AddIngredient(ModContent.ItemType<RawShadowScalesItem>(), 8)
             .AddIngredient(ModContent.ItemType<ImputedFlameItem>(), 4)
             .Register();

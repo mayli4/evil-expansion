@@ -1,5 +1,4 @@
-﻿using EvilExpansionMod.Content.Crimson;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
@@ -50,6 +49,6 @@ public class HeadPounderItem : ModItem {
 
     public override void AddRecipes()
         => CreateRecipe()
-            .AddIngredient(ModContent.ItemType<HellDemoniteBarItem>(), 18)
+            .AddIngredient(ModContent.ItemType<PolypBarItem>(), 18)
             .Register();
 }

@@ -43,7 +43,7 @@ public class MeatAxeItem : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient(ModContent.ItemType<CrimtaneHellstoneBarItem>(), 20)
+            .AddIngredient(ModContent.ItemType<CartilageBarItem>(), 20)
             .AddTile(TileID.Anvils)
             .Register();
     }

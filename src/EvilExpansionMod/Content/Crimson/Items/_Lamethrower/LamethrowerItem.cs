@@ -45,7 +45,7 @@ public class LamethrowerItem : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient(ModContent.ItemType<CrimtaneHellstoneBarItem>(), 18)
+            .AddIngredient(ModContent.ItemType<CartilageBarItem>(), 18)
             .AddIngredient(ModContent.ItemType<PusClumpItem>(), 12)
             .AddTile(TileID.Anvils)
             .Register();

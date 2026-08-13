@@ -1,11 +1,10 @@
-﻿using EvilExpansionMod.Content.Corruption;
-using Terraria.ID;
+﻿using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Crimson;
 
-public class HellDemoniteBarItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Corruption.HellDemoniteBar.KEY;
+public class CartilageBarItem : ModItem {
+    public override string Texture => Assets.Textures.Items.Crimson.CartilageBarItem.KEY;
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 25;
         ItemID.Sets.SortingPriorityMaterials[Item.type] = 59;
@@ -24,8 +23,8 @@ public class HellDemoniteBarItem : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<UnderworldDemoniteItem>(3)
-            .AddIngredient<RawShadowScalesItem>()
+            .AddIngredient<CartilageOreItem>(3)
+            .AddIngredient<PusClumpItem>()
             .AddTile(TileID.Furnaces)
             .Register();
     }

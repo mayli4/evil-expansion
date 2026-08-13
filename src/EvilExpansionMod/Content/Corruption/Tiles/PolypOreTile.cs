@@ -7,8 +7,8 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Corruption;
 
-public class UnderworldDemonite : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Corruption.HellDemonite.KEY;
+public class PolypOreTile : ModTile {
+    public override string Texture => Assets.Textures.Tiles.Corruption.PolypOre.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileOreFinderPriority[Type] = 450;
@@ -55,7 +55,7 @@ public class UnderworldDemonite : ModTile {
                 WorldGen.ConvertTile(i, j, TileID.Hellstone);
                 return;
             case BiomeConversionID.Corruption:
-                WorldGen.ConvertTile(i, j, ModContent.TileType<UnderworldDemonite>());
+                WorldGen.ConvertTile(i, j, ModContent.TileType<PolypOreTile>());
                 return;
 
         }
@@ -72,18 +72,18 @@ public class UnderworldDemonite : ModTile {
     }
 }
 
-public class UnderworldDemoniteItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Corruption.HellDemoniteItem.KEY;
+public class PolypOreItem : ModItem {
+    public override string Texture => Assets.Textures.Tiles.Corruption.PolypOreItem.KEY;
 
     public override void SetStaticDefaults() {
-        ItemTrader.ChlorophyteExtractinator.AddOption_OneWay(Type, 1, ModContent.ItemType<VeinOreItem>(), 1);
+        ItemTrader.ChlorophyteExtractinator.AddOption_OneWay(Type, 1, ModContent.ItemType<CartilageOreItem>(), 1);
     }
 
     public override void SetDefaults() {
-        Item.DefaultToPlaceableTile(ModContent.TileType<UnderworldDemonite>());
+        Item.DefaultToPlaceableTile(ModContent.TileType<PolypOreTile>());
         Item.width = 16;
         Item.height = 16;
-        Item.value = Item.sellPrice(0, 0, 3);
+        Item.value = Item.sellPrice(silver: 3);
 
         Item.useStyle = ItemUseStyleID.Swing;
         Item.useTurn = true;

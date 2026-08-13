@@ -42,7 +42,9 @@ public sealed class EffigyNPC : ModNPC {
         NPC.knockBackResist = 0f;
         NPC.damage = 0;
         NPC.friendly = false;
-
+        NPC.hide = true;
+        NPC.behindTiles = true;
+        
         NPC.HitSound = SoundID.NPCHit23;
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
@@ -53,6 +55,10 @@ public sealed class EffigyNPC : ModNPC {
 
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<EffigyBannerItem>();
+    }
+
+    public override void DrawBehind(int index) {
+        Main.instance.DrawCacheNPCsMoonMoon.Add(index);
     }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {

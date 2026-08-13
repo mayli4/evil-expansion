@@ -12,9 +12,9 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Crimson;
 
-enum PortalType {
+internal enum PortalType {
     Spear,
-    Blood
+    Blood,
 }
 
 public class CultistPortal : ModProjectile {
@@ -101,7 +101,8 @@ public class CultistPortal : ModProjectile {
 
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
         var t = Projectile.timeLeft / Projectile.ai[1];
-        if(PortalType != PortalType.Spear || t < 0.8f || t > 0.9f) return false;
+        
+        if (PortalType != PortalType.Spear || t > 0.3f || t < 0.1f) return false;
 
         float _ = 0;
         return Collision.CheckAABBvLineCollision(
@@ -183,10 +184,18 @@ public class CultistPortal : ModProjectile {
             case PortalType.Blood:
                 break;
             case PortalType.Spear:
-                // dont ask
-                var spearX = t < 0.2f ? 0f :
-                    (t < 0.3f ? (t - 0.2f) / 0.1f :
-                    (t < 0.8f ? 1 : t < 0.9f ? (0.1f - (t - 0.8f)) / 0.1f : 0f));
+                
+                float spearX = 0f;
+
+                if (t is < 0.4f and >= 0.3f) {
+                    spearX = (0.4f - t) / 0.1f; 
+                } 
+                else if (t is < 0.3f and >= 0.1f) {
+                    spearX = 1f; 
+                } 
+                else if (t < 0.1f) {
+                    spearX = t / 0.1f; 
+                }
 
                 Main.spriteBatch.Draw(
                     spearTexture,

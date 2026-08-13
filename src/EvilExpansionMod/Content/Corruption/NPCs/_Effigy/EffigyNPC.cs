@@ -58,7 +58,7 @@ public sealed class EffigyNPC : ModNPC {
     }
 
     public override void DrawBehind(int index) {
-        Main.instance.DrawCacheNPCsMoonMoon.Add(index);
+        Main.instance.DrawCacheNPCsBehindNonSolidTiles.Add(index);
     }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {

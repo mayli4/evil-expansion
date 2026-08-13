@@ -233,3 +233,6 @@ dotnet_naming_style.begins_with_i.capitalization = pascal_case
 # Switch exhaustiveness
 dotnet_diagnostic.CS8524.severity = none   # No enum switch warning
 dotnet_diagnostic.CS8509.severity = error  # Exhaustive enum switch
+
+# IDE0130: Namespace does not match folder structure
+dotnet_diagnostic.IDE0130.severity = none

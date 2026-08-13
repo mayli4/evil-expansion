@@ -1,5 +1,4 @@
 using EvilExpansionMod.Content.Biomes;
-using EvilExpansionMod.Content.Crimson;
 using EvilExpansionMod.Content.Tiles.Banners;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -21,7 +20,7 @@ public class LanternBatNPC : ModNPC {
     }
 
     public override string Texture => Assets.Textures.NPCs.Crimson.LanternBat.LanternBatNPC.KEY;
-    public string LanternTexturePath => Assets.Textures.NPCs.Crimson.LanternBat.LanternBat_Lantern.KEY;
+    public static string LanternTexturePath => Assets.Textures.NPCs.Crimson.LanternBat.LanternBat_Lantern.KEY;
 
     public State CurrentState {
         get => (State)NPC.ai[0];
@@ -37,7 +36,7 @@ public class LanternBatNPC : ModNPC {
 
     private const int anim_speed = 6;
     private Vector2 _storedDashVelocity;
-    private ref float _lanternLightIntensity => ref NPC.localAI[1];
+    private ref float LanternLightIntensity => ref NPC.localAI[1];
 
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 4;
@@ -76,7 +75,7 @@ public class LanternBatNPC : ModNPC {
     }
 
     public override void OnSpawn(IEntitySource source) {
-        _lanternLightIntensity = 0f;
+        LanternLightIntensity = 0f;
     }
 
     public override void HitEffect(NPC.HitInfo hit) {
@@ -117,9 +116,9 @@ public class LanternBatNPC : ModNPC {
 
                 float dashThresholdProgress = Math.Min(1f, (StateTimer - minIdleTime) / (maxIdleTime - minIdleTime));
 
-                _lanternLightIntensity = MathF.Pow(dashThresholdProgress, 3f) * 2.5f;
-                _lanternLightIntensity = Math.Min(_lanternLightIntensity, 2.5f);
-                _lanternLightIntensity = Math.Max(0.2f, _lanternLightIntensity);
+                LanternLightIntensity = MathF.Pow(dashThresholdProgress, 3f) * 2.5f;
+                LanternLightIntensity = Math.Min(LanternLightIntensity, 2.5f);
+                LanternLightIntensity = Math.Max(0.2f, LanternLightIntensity);
 
                 if(NPC.Distance(Target.Center) < dashRange && StateTimer > Main.rand.Next(minIdleTime, maxIdleTime)) {
                     Vector2 dashTarget = Target.Center + Target.velocity * 0.5f;
@@ -133,7 +132,7 @@ public class LanternBatNPC : ModNPC {
                 NPC.noTileCollide = true;
                 NPC.noGravity = true;
 
-                _lanternLightIntensity = 1.5f;
+                LanternLightIntensity = 1.5f;
 
                 if(StateTimer % 10 == 0) {
                     Projectile.NewProjectile(
@@ -160,8 +159,8 @@ public class LanternBatNPC : ModNPC {
                 NPC.velocity = Vector2.Lerp(NPC.velocity, NPC.DirectionTo(Target.Center) * 4, 0.03f);
 
                 StateTimer++;
-                _lanternLightIntensity = Math.Max(0f, 1.5f * (1f - StateTimer / (float)(60 * 2)));
-                _lanternLightIntensity = Math.Max(0.2f, _lanternLightIntensity);
+                LanternLightIntensity = Math.Max(0f, 1.5f * (1f - StateTimer / (float)(60 * 2)));
+                LanternLightIntensity = Math.Max(0.2f, LanternLightIntensity);
 
                 if(StateTimer >= 60 * 2) {
                     CurrentState = State.IdleFlight;
@@ -193,7 +192,7 @@ public class LanternBatNPC : ModNPC {
 
         Vector2 lanternDrawPosition = NPC.Center + lanternOffsetVector;
 
-        Lighting.AddLight(lanternDrawPosition, Color.Orange.ToVector3() * _lanternLightIntensity);
+        Lighting.AddLight(lanternDrawPosition, Color.Orange.ToVector3() * LanternLightIntensity);
 
         float lanternRotation = NPC.velocity.X * 0.05f + MathF.Sin(Main.GameUpdateCount * 0.1f) * 0.1f;
 
@@ -206,7 +205,7 @@ public class LanternBatNPC : ModNPC {
             lanternEffects = SpriteEffects.FlipHorizontally;
         }
 
-        Color lightEffectColor = Color.Orange * _lanternLightIntensity;
+        Color lightEffectColor = Color.Orange * LanternLightIntensity;
 
         Main.EntitySpriteDraw(
             lanternInside,

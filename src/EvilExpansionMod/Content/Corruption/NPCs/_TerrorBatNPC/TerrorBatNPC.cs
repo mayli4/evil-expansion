@@ -1,7 +1,5 @@
-using EvilExpansionMod.Common;
 using EvilExpansionMod.Common.Bestiary;
 using EvilExpansionMod.Common.Graphics;
-using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
@@ -17,9 +15,6 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Corruption;
 
-//todo: better natural spawning, better vfx
-
-[SpawnPack(4)]
 public class TerrorBatNPC : ModNPC {
     public override string Texture => Assets.Textures.NPCs.Corruption.TerrorBat.TerrorBatNPC.KEY;
 
@@ -104,34 +99,62 @@ public class TerrorBatNPC : ModNPC {
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
     public override void OnSpawn(IEntitySource source) {
-        int startX = (int)(NPC.Center.X / 16f);
-        int startY = (int)(NPC.Center.Y / 16f);
-        int searchRange = 30;
 
-        for(int j = 0; j < searchRange; j++) {
-            int checkY = startY - j;
+        var startX = (int)(NPC.Center.X / 16f);
+        var startY = (int)(NPC.Center.Y / 16f);
 
-            if(checkY < 10) {
-                break;
+        for(var j = 0; j < 40; j++) {
+            var checkTopY = startY - j;
+            var checkBottomY = startY + j;
+
+            if(IsValidSpawnCoords(startX, checkTopY)) {
+                AcceptSpawnCoords(this, startX, checkTopY);
+                return;
             }
-
-            var ceilingTile = Main.tile[startX, checkY];
-            if(ceilingTile.HasTile
-                && Main.tileSolid[ceilingTile.TileType]
-                && !TileID.Sets.Platforms[ceilingTile.TileType]) {
-                var newPosition = new Vector2(startX * 16f, (checkY + 2) * 16f);
-
-                NPC.position = newPosition;
-                CurrentState = State.IdleOnCeiling;
-                NPC.velocity = Vector2.Zero;
-                NPC.rotation = 0f;
-
+            else if(checkBottomY < Main.maxTilesY && IsValidSpawnCoords(startX, checkBottomY)) {
+                AcceptSpawnCoords(this, startX, checkBottomY);
                 return;
             }
         }
 
         //if the loop completes and doesnt find a valid ceiling, just despawn so its not floating awkwardly
         NPC.active = false;
+
+        static bool IsValidSpawnCoords(int i, int j) {
+            var ceilingTile = Main.tile[i, j];
+            if(!ceilingTile.HasTile ||
+                !Main.tileSolid[ceilingTile.TileType] ||
+                TileID.Sets.Platforms[ceilingTile.TileType]) return false;
+
+            for(var k = 1; k < 3; k++) {
+                var underTile = Main.tile[i, j + k];
+                if(underTile.HasTile || underTile.LiquidAmount > 0) return false;
+            }
+
+            return true;
+        }
+
+        void AcceptSpawnCoords(TerrorBatNPC bat, int i, int j) {
+            var spawnPosition = new Vector2(i * 16f - 8f, (j + 2) * 16f);
+            if(Main.tile[i, j].BlockType != BlockType.Solid) spawnPosition.Y -= 8f;
+
+            NPC.position = spawnPosition;
+            CurrentState = State.IdleOnCeiling;
+            NPC.velocity = Vector2.Zero;
+            NPC.rotation = 0f;
+
+            _sleepDustSpawnTimer = Main.rand.Next(90, 150);
+
+            if(source is not EntitySource_Parent) {
+                var otherNpcCount = Main.rand.Next(1, 4);
+                for(var k = 0; k < otherNpcCount; k++) {
+                    NPC.NewNPCDirect(
+                        new EntitySource_Parent(NPC),
+                        spawnPosition + Vector2.UnitX * (1 + k) * Main.rand.Next(32, 48),
+                        NPC.type);
+                }
+            }
+        }
     }
 
     public override void Load() {
@@ -182,7 +205,7 @@ public class TerrorBatNPC : ModNPC {
                     _currentSleepDustIndex++;
 
                     if(_currentSleepDustIndex < 3) {
-                        _sleepDustSpawnTimer = Main.rand.Next(8, 12);
+                        _sleepDustSpawnTimer = Main.rand.Next(15, 30);
                     }
                     else {
                         _sleepDustSpawnTimer = Main.rand.Next(90, 150);
@@ -319,16 +342,20 @@ public class TerrorBatNPC : ModNPC {
         NPC.direction = NPC.spriteDirection = (targetPlayer.Center.X < NPC.Center.X) ? -1 : 1;
 
         if(StateTimer == (spit_duration / 2)) {
-            var projectileVelocity = Vector2.Normalize(targetPlayer.Center - NPC.Center) * 8f;
+            var shootDirection = Vector2.Normalize(targetPlayer.Center - NPC.Center);
+
             Projectile.NewProjectile(
                 NPC.GetSource_FromAI(),
                 NPC.Center,
-                projectileVelocity,
+                shootDirection * 8f,
                 ModContent.ProjectileType<TerrorBatSpit>(),
                 NPC.damage / 2,
                 0.5f,
                 Main.myPlayer
             );
+
+            NPC.velocity += shootDirection * -4;
+
             SoundEngine.PlaySound(SoundID.NPCDeath13, NPC.Center);
         }
 
@@ -427,7 +454,7 @@ public class TerrorBatSpit : ModProjectile {
     public static readonly int MaxTimeLeft = 300;
 
     float Scale => 1f - MathF.Pow((float)(MaxTimeLeft - Projectile.timeLeft) / MaxTimeLeft, 2);
-    
+
     public readonly static Color GhostColor1 = new(214, 237, 5);
     public readonly static Color GhostColor2 = new(181, 200, 4);
 
@@ -492,7 +519,7 @@ public class TerrorBatSpit : ModProjectile {
         }
         return false;
     }
-    
+
     public override bool PreDraw(ref Color lightColor) {
         var shader = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
         Graphics.BeginPipeline(0.5f)

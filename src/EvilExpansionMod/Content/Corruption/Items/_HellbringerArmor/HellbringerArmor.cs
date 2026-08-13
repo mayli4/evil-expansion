@@ -45,7 +45,7 @@ public class HellbringerHead : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<PolypOreItem>(7)
+            .AddIngredient<PolypBarItem>(7)
             .AddIngredient<ImputedFlameItem>(2)
             .AddTile(TileID.Anvils)
             .Register();
@@ -83,7 +83,7 @@ public class HellbringerBody : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<PolypOreItem>(15)
+            .AddIngredient<PolypBarItem>(15)
             .AddIngredient<ImputedFlameItem>(5)
             .AddTile(TileID.Anvils)
             .Register();
@@ -120,7 +120,7 @@ public class HellbringerLegs : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<PolypOreItem>(2)
+            .AddIngredient<PolypBarItem>(2)
             .AddIngredient<ImputedFlameItem>(2)
             .AddTile(TileID.Anvils)
             .Register();

@@ -18,11 +18,9 @@
     </ItemGroup>
 
     <ItemGroup>
-        <AdditionalFiles Include="Assets/**/*.png" />
-        <AdditionalFiles Include="Assets/**/*.fxc" />
-        <AdditionalFiles Include="Assets/**/*.wav" />
-        <AdditionalFiles Include="Assets/**/*.ogg" />
-        <AdditionalFiles Include="Assets/**/*.mp3" />
+        <Reference Include="Daybreak">
+            <HintPath>lib\Daybreak.dll</HintPath>
+        </Reference>
     </ItemGroup>
 
 </Project>

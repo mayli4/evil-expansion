@@ -4,7 +4,7 @@ using System;
 using Terraria.ModLoader;
 using CorruptAsh = EvilExpansionMod.Content.Tiles.Corruption.CorruptAsh;
 
-namespace EvilExpansionMod.Core.World;
+namespace EvilExpansionMod.Common.World;
 
 public sealed class EvilTileCountSystem : ModSystem {
     internal static int[] CorruptTypes;

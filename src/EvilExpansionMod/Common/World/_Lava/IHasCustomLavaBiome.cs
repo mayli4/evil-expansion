@@ -1,6 +1,6 @@
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Core.World;
+namespace EvilExpansionMod.Common.World;
 
 /// <summary>
 ///     Declares a <see cref="ModBiome"/> to have a custom lava style./>

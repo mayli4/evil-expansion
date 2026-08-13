@@ -18,7 +18,7 @@ using Terraria.ModLoader;
 using Terraria.ModLoader.Core;
 using Terraria.ModLoader.UI;
 
-namespace EvilExpansionMod.Core.World;
+namespace EvilExpansionMod.Common.World;
 
 //todo: getcornercolors 
 

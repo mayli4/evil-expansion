@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Core.World;
+namespace EvilExpansionMod.Common.World;
 
 internal sealed class HellBiomeExclusionSystem : GlobalNPC {
     public override void EditSpawnPool(IDictionary<int, float> pool, NPCSpawnInfo spawnInfo) {

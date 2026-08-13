@@ -5,7 +5,7 @@ using Terraria.Graphics;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Core.World;
+namespace EvilExpansionMod.Common.World;
 
 public class UnderworldCorruptLavafall : ModWaterfallStyle {
     public override string Texture => Assets.Textures.Lavas.UnderworldCorruptLavafall.KEY;

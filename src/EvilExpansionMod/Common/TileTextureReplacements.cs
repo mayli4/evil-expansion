@@ -4,7 +4,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Core;
+namespace EvilExpansionMod.Common;
 
 internal sealed class TileTextureReplacements : ILoadable {
     public void Load(Mod mod) {

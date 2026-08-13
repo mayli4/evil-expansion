@@ -17,7 +17,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ModLoader.Core;
 
-namespace EvilExpansionMod.Core.World;
+namespace EvilExpansionMod.Common.World;
 
 public enum LiquidTileType {
     Block,

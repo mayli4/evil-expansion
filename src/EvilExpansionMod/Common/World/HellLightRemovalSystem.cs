@@ -7,7 +7,7 @@ using Terraria.GameContent.Creative;
 using Terraria.Graphics.Light;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Core.World;
+namespace EvilExpansionMod.Common.World;
 
 internal sealed class HellLightRemovalSystem : ModSystem {
     public override void Load() {

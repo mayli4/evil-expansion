@@ -1,4 +1,4 @@
-using EvilExpansionMod.Core.World;
+using EvilExpansionMod.Common.World;
 using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;

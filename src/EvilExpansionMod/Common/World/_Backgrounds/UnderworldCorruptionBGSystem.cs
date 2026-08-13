@@ -1,5 +1,4 @@
 using EvilExpansionMod.Content.Biomes;
-using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;
@@ -10,11 +9,11 @@ using Terraria.GameContent;
 using Terraria.Graphics.Effects;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Core.World;
+namespace EvilExpansionMod.Common.World;
 
 //this is still pretty bad, and most of it is adapted vanilla code, but its workable
 
-public class UnderworldCrimsonBGSystem : ModSystem {
+public class UnderworldCorruptionBGSystem : ModSystem {
     public Asset<Texture2D>[] BackgroundTextures = new Asset<Texture2D>[4];
 
     private static float _fadeOpacity;
@@ -26,28 +25,28 @@ public class UnderworldCrimsonBGSystem : ModSystem {
 
         for(int i = 0; i < BackgroundTextures.Length; i++) {
             BackgroundTextures[i] = ModContent.Request<Texture2D>(
-                "EvilExpansionMod/Assets/Textures/Backgrounds/UnderworldCrimson/UnderworldCrimsonBackground_" + i
+                "EvilExpansionMod/Assets/Textures/Backgrounds/UnderworldCorruption/UnderworldCorruptionBackground_" + i
             );
         }
     }
 
     public override void Load() {
-        IL_Main.DrawBG += UnderworldCrimsonBackground_DrawBG;
-        IL_Main.DrawCapture += UnderworldCrimsonBackground_DrawCapture;
+        IL_Main.DrawBG += UnderworldCorruptionBackground_DrawBG;
+        IL_Main.DrawCapture += UnderworldCorruptionBackground_DrawCapture;
     }
 
     public override void Unload() {
         if(!Main.dedServ) {
-            IL_Main.DrawBG -= UnderworldCrimsonBackground_DrawBG;
-            IL_Main.DrawCapture -= UnderworldCrimsonBackground_DrawCapture;
+            IL_Main.DrawBG -= UnderworldCorruptionBackground_DrawBG;
+            IL_Main.DrawCapture -= UnderworldCorruptionBackground_DrawCapture;
         }
         _fadeOpacity = 0f;
     }
 
     public override void PostUpdateEverything() {
-        var inBiome = Main.LocalPlayer.InModBiome<UnderworldCrimsonBiome>();
+        var inBiome = Main.LocalPlayer.InModBiome<UnderworldCorruptionBiome>();
 
-        if (inBiome) {
+        if(inBiome) {
             _fadeOpacity = Math.Min(_fadeOpacity + fade_speed, 1f);
         }
         else {
@@ -55,7 +54,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
         }
     }
 
-    private void UnderworldCrimsonBackground_DrawBG(ILContext il) {
+    private void UnderworldCorruptionBackground_DrawBG(ILContext il) {
         ILCursor c = new ILCursor(il);
         c.GotoNext(
             MoveType.After,
@@ -65,11 +64,11 @@ public class UnderworldCrimsonBGSystem : ModSystem {
         );
         c.EmitDelegate(() =>
         {
-            DrawCrimsonUnderworldBackground(false);
+            DrawCorruptionUnderworldBackground(false);
         });
     }
 
-    private void UnderworldCrimsonBackground_DrawCapture(ILContext il) {
+    private void UnderworldCorruptionBackground_DrawCapture(ILContext il) {
         ILCursor c = new ILCursor(il);
         c.GotoNext(
             MoveType.After,
@@ -79,12 +78,12 @@ public class UnderworldCrimsonBGSystem : ModSystem {
         );
         c.EmitDelegate(() =>
         {
-            DrawCrimsonUnderworldBackground(true);
+            DrawCorruptionUnderworldBackground(true);
         });
     }
 
-    protected void DrawCrimsonUnderworldBackground(bool flat) {
-        if (_fadeOpacity <= 0f)
+    protected void DrawCorruptionUnderworldBackground(bool flat) {
+        if(_fadeOpacity <= 0f)
             return;
 
         if(!(Main.screenPosition.Y + Main.screenHeight < (Main.maxTilesY - 220) * 16f)) {
@@ -96,7 +95,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
 
             SkyManager.Instance.ResetDepthTracker();
 
-            DrawCrimsonUnderworldLayer(flat, screenOffset, pushUp, 0);
+            DrawCorruptionUnderworldLayer(flat, screenOffset, pushUp, 0);
 
             for(int layerTextureIndex = 4; layerTextureIndex >= 0; layerTextureIndex--) {
                 int customTextureIndex;
@@ -115,7 +114,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                     default:
                         continue;
                 }
-                DrawCrimsonUnderworldLayer(flat, screenOffset, pushUp, customTextureIndex);
+                DrawCorruptionUnderworldLayer(flat, screenOffset, pushUp, customTextureIndex);
             }
 
             if(!Main.mapFullscreen) {
@@ -124,7 +123,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
         }
     }
 
-    private void DrawCrimsonUnderworldLayer(bool flat, Vector2 screenOffset, float pushUp, int textureArrayIndex, bool isGradient = false) {
+    private void DrawCorruptionUnderworldLayer(bool flat, Vector2 screenOffset, float pushUp, int textureArrayIndex, bool isGradient = false) {
         if(textureArrayIndex < 0 || textureArrayIndex >= BackgroundTextures.Length) {
             return;
         }
@@ -166,10 +165,6 @@ public class UnderworldCrimsonBGSystem : ModSystem {
         Vector2 vector = new(1f / num7);
         float num8 = 0.5f;
         Vector2 zero = Vector2.Zero;
-        
-        float defaultScaleForLayer2 = 0.5f;
-        float newScaleFactorForLayer2 = 0.8f;
-        float heightChange = value.Height * (newScaleFactorForLayer2 - defaultScaleForLayer2);
 
         switch(textureArrayIndex) {
             case 0:
@@ -180,15 +175,14 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                 zero.Y -= 10f;
                 break;
             case 2:
-                zero.Y -= 20;
-                zero.Y -= heightChange * 0.5f;
-                num8 = newScaleFactorForLayer2;
+                //zero.Y -= 20;
                 break;
             case 3:
-                zero.Y += 150f;
+                zero.Y += 200f;
                 break;
         }
 
+        num8 *= 1.2f;
         if(flat) {
             num8 *= 1.5f;
         }
@@ -230,8 +224,6 @@ public class UnderworldCrimsonBGSystem : ModSystem {
 
         for(int i = startTileX - 2; i <= startTileX + 4 + numTilesToDraw; i++) {
             Color drawColor = Color.White * _fadeOpacity;
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(new SpriteBatchSnapshot() with { BlendState = BlendState.NonPremultiplied });
             Main.spriteBatch.Draw(
                 value,
                 drawPos,
@@ -243,21 +235,19 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                 SpriteEffects.None,
                 0f
             );
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin();
 
             if(isGradient || textureArrayIndex == 1) {
                 int bottomY = (int)(drawPos.Y + value2.Height * num8);
-                // Main.spriteBatch.Draw(
-                //     TextureAssets.BlackTile.Value,
-                //     new Rectangle(
-                //         (int)drawPos.X,
-                //         bottomY,
-                //         (int)(textureRenderWidth),
-                //         Math.Max(0, Main.screenHeight - bottomY)
-                //     ),
-                //     new Color(226, 255, 41)
-                // );
+                Main.spriteBatch.Draw(
+                    TextureAssets.BlackTile.Value,
+                    new Rectangle(
+                        (int)drawPos.X,
+                        bottomY,
+                        (int)(textureRenderWidth),
+                        Math.Max(0, Main.screenHeight - bottomY)
+                    ),
+                    new Color(226, 255, 41)
+                );
             }
             drawPos.X += textureRenderWidth;
         }

@@ -427,6 +427,9 @@ public class TerrorBatSpit : ModProjectile {
     public static readonly int MaxTimeLeft = 300;
 
     float Scale => 1f - MathF.Pow((float)(MaxTimeLeft - Projectile.timeLeft) / MaxTimeLeft, 2);
+    
+    public readonly static Color GhostColor1 = new(214, 237, 5);
+    public readonly static Color GhostColor2 = new(181, 200, 4);
 
     public override void SetStaticDefaults() {
         ProjectileID.Sets.TrailCacheLength[Type] = 20;
@@ -489,22 +492,23 @@ public class TerrorBatSpit : ModProjectile {
         }
         return false;
     }
-
+    
     public override bool PreDraw(ref Color lightColor) {
         var shader = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
         Graphics.BeginPipeline(0.5f)
             .DrawTrail(
                 positionCache.Positions,
                 _ => TRAIL_SIZE * Scale,
-                static _ => new Color(72, 96, 36, 255),
+                static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f),
                 shader,
-                ("time", 0.025f * Main.GameUpdateCount),
+                ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 3.432f),
                 ("mat", Graphics.WorldTransformMatrix),
                 ("stepY", 0.25f),
-                ("scale", 0.25f),
+                ("scale", 0.8f),
                 ("texture1", Assets.Textures.Sample.Pebbles.Asset.Value),
                 ("texture2", Assets.Textures.Sample.Noise2.Asset.Value)
             )
+            .ApplyOutline(GhostColor1)
             .Flush();
 
         var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;

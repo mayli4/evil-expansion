@@ -1,4 +1,5 @@
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Corruption;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;

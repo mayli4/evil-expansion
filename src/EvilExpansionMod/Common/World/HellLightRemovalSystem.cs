@@ -1,5 +1,5 @@
 using EvilExpansionMod.Content.Biomes;
-using EvilExpansionMod.Content.Tiles.Corruption;
+using EvilExpansionMod.Content.Corruption;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;

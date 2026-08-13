@@ -1,8 +1,7 @@
-using EvilExpansionMod.Content.Tiles.Corruption;
-using EvilExpansionMod.Content.Tiles.Crimson;
+using EvilExpansionMod.Content.Corruption;
+using EvilExpansionMod.Content.Crimson;
 using System;
 using Terraria.ModLoader;
-using CorruptAsh = EvilExpansionMod.Content.Tiles.Corruption.CorruptAsh;
 
 namespace EvilExpansionMod.Common.World;
 

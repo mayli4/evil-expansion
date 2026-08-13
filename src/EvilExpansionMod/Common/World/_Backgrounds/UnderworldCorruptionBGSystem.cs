@@ -1,4 +1,5 @@
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Corruption;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using MonoMod.Cil;

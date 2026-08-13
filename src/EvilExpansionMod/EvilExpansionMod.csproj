@@ -12,19 +12,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <Publicize Include="FNA;ReLogic;Terraria" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false"/>
+        <Publicize Include="FNA;ReLogic;Terraria" IncludeCompilerGeneratedMembers="false" IncludeVirtualMembers="false" />
     </ItemGroup>
-    
-    <ItemGroup>
-        <AdditionalFiles Remove="Assets\Effects\.compile\**" />
-        <Compile Remove="Assets\Effects\.compile\**" />
-        <EmbeddedResource Remove="Assets\Effects\.compile\**" />
-        <None Remove="Assets\Effects\.compile\**" />
-    </ItemGroup>
-
-<!--    <ItemGroup>-->
-<!--      <ProjectReference Include="..\EvilExpansionMod.Generation\EvilExpansionMod.Generation.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />-->
-<!--    </ItemGroup>-->
 
     <ItemGroup>
         <AdditionalFiles Include="Assets/**/*.png" />
@@ -33,4 +22,5 @@
         <AdditionalFiles Include="Assets/**/*.ogg" />
         <AdditionalFiles Include="Assets/**/*.mp3" />
     </ItemGroup>
+
 </Project>

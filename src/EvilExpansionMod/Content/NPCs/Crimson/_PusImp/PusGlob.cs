@@ -74,11 +74,15 @@ public sealed class PusGlob : ModProjectile {
 
     public override bool PreDraw(ref Color lightColor) {
         var trailEffect = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
+
+        var color = new Color(98, 90, 40).MultiplyRGB(lightColor);
+        var outlineColor = new Color(161, 131, 78).MultiplyRGB(lightColor);
+
         Graphics.BeginPipeline(0.5f)
             .DrawTrail(
                 _trailPositions,
                 static _ => 14f,
-                static _ => new Color(98, 90, 40),
+                _ => color,
                 trailEffect,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
                 ("mat", Graphics.WorldTransformMatrix),
@@ -90,11 +94,11 @@ public sealed class PusGlob : ModProjectile {
             .DrawSprite(
                 Assets.Textures.Misc.Circle.Asset.Value,
                 Projectile.Center - Main.screenPosition,
-                color: new Color(98, 90, 40),
+                color: color,
                 origin: 16f * Vector2.One,
                 scale: Vector2.One * 0.3f
             )
-            .ApplyOutline(new Color(161, 131, 78))
+            .ApplyOutline(outlineColor)
             .Flush();
 
         return false;

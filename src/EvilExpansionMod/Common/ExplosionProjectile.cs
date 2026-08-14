@@ -120,44 +120,39 @@ public class ExplosionProjectile : ModProjectile {
         var progress = 1f - (float)Projectile.timeLeft / _maxTimeLeft;
 
         var explosionProgress = 1f - MathF.Pow(progress - 1f, 2);
-        Graphics.BeginPipeline(0.5f)
-            .EffectParams(
+
+        Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+            .SetTexture(1, noiseTexture2)
+            .SetEffectParams(
                 explosionEffect,
                 ("time", explosionProgress + Projectile.whoAmI * 438.8239f),
                 ("progress", explosionProgress),
                 ("startColor", _startColor.ToVector4()),
                 ("endColor", Color.Black.ToVector4())
             )
-            .SetTexture(1, noiseTexture2)
-            .DrawSprite(
-                noiseTexture1,
-                new Rectangle(
-                    (int)(Projectile.position.X - Main.screenPosition.X),
-                    (int)(Projectile.position.Y - Main.screenPosition.Y),
-                    Projectile.width,
-                    Projectile.height
-                ),
-                effect: explosionEffect
-            )
+            .DrawTexture(new()
+            {
+                Texture = noiseTexture1,
+                Position = Projectile.position,
+                Size = Projectile.Size,
+                Effect = explosionEffect,
+            })
             .ApplyOutline(Color.Lerp(Color.DarkRed, Color.Transparent, explosionProgress))
-            .EffectParams(
+            .SetEffectParams(
                 explosionEffect,
                 ("time", explosionProgress + Projectile.whoAmI * 638.8239f),
                 ("progress", MathF.Pow(1f - explosionProgress, 4)),
                 ("startColor", Color.Transparent.ToVector4()),
                 ("endColor", _endColor.ToVector4())
             )
-            .DrawSprite(
-                noiseTexture1,
-                new Rectangle(
-                    (int)(Projectile.position.X - Main.screenPosition.X),
-                    (int)(Projectile.position.Y - Main.screenPosition.Y),
-                    Projectile.width,
-                    Projectile.height
-                ),
-                effect: explosionEffect
-            )
-            .Flush();
+            .DrawTexture(new()
+            {
+                Texture = noiseTexture1,
+                Position = Projectile.position,
+                Size = Projectile.Size,
+                Effect = explosionEffect,
+            })
+            .End();
 
         var flashScale = MathF.Pow(progress - 1f, 4);
         var flashAlpha = 1f - MathF.Pow(-progress * 3f, 2);

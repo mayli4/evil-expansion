@@ -101,8 +101,8 @@ public class CultistPortal : ModProjectile {
 
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
         var t = Projectile.timeLeft / Projectile.ai[1];
-        
-        if (PortalType != PortalType.Spear || t > 0.3f || t < 0.1f) return false;
+
+        if(PortalType != PortalType.Spear || t > 0.3f || t < 0.1f) return false;
 
         float _ = 0;
         return Collision.CheckAABBvLineCollision(
@@ -146,22 +146,24 @@ public class CultistPortal : ModProjectile {
             PortalType.Spear => new Color(34, 11, 23),
             PortalType.Blood => new Color(90, 21, 30),
         };
+
         var circleTexture = Assets.Textures.Misc.Circle.Asset.Value;
-        Graphics.BeginPipeline(0.5f)
-            .DrawSprite(
-                circleTexture,
-                Projectile.Center - Main.screenPosition + Projectile.velocity * 20f,
-                color: middleColor,
-                rotation: rotation,
-                origin: circleTexture.Size() / 2f + Vector2.UnitY * 4f,
-                scale: scale * new Vector2(0.7f, 2.2f)
-            )
+        Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+            .DrawTexture(new()
+            {
+                Texture = circleTexture,
+                Position = Projectile.Center + Projectile.velocity * 20f,
+                Color = middleColor,
+                Rotation = rotation,
+                Origin = circleTexture.Size() / 2f + Vector2.UnitY * 4f,
+                Scale = scale * new Vector2(0.7f, 2.2f),
+            })
             .ApplyOutline(color2)
             .ApplyOutline(middleColor)
-            .Flush();
+            .End();
 
-        Graphics.BeginPipeline(0.5f)
-            .EffectParams(
+        Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+            .SetEffectParams(
                 effect,
                 ("tex1", sampleTexture1),
                 ("size", scale),
@@ -169,32 +171,34 @@ public class CultistPortal : ModProjectile {
                 ("color1", color1.ToVector4()),
                 ("color2", color2.ToVector4())
             )
-            .DrawSprite(
-                sampleTexture0,
-                destination,
-                rotation: rotation,
-                origin: new(Projectile.width, Projectile.height * 4 - 7),
-                effect: effect
-            )
+            .DrawTexture(new()
+            {
+                Texture = sampleTexture0,
+                Position = Projectile.Center + Projectile.velocity * 20f,
+                Size = Projectile.Size,
+                Rotation = rotation,
+                Origin = new Vector2(22f, 80f),
+                Effect = effect,
+            })
             .ApplyOutline(color2)
             .ApplyOutline(middleColor)
-            .Flush();
+            .End();
 
         switch(PortalType) {
             case PortalType.Blood:
                 break;
             case PortalType.Spear:
-                
+
                 float spearX = 0f;
 
-                if (t is < 0.4f and >= 0.3f) {
-                    spearX = (0.4f - t) / 0.1f; 
-                } 
-                else if (t is < 0.3f and >= 0.1f) {
-                    spearX = 1f; 
-                } 
-                else if (t < 0.1f) {
-                    spearX = t / 0.1f; 
+                if(t is < 0.4f and >= 0.3f) {
+                    spearX = (0.4f - t) / 0.1f;
+                }
+                else if(t is < 0.3f and >= 0.1f) {
+                    spearX = 1f;
+                }
+                else if(t < 0.1f) {
+                    spearX = t / 0.1f;
                 }
 
                 Main.spriteBatch.Draw(

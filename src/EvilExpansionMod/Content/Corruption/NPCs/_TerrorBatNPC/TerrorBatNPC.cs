@@ -521,13 +521,10 @@ public class TerrorBatSpit : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var shader = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
-        Graphics.BeginPipeline(0.5f)
-            .DrawTrail(
-                positionCache.Positions,
-                _ => TRAIL_SIZE * Scale,
-                static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f),
-                shader,
+        var cursedFireEffect = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
+        Renderer.BeginPipeline(0.5f)
+            .SetEffectParams(
+                cursedFireEffect,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 3.432f),
                 ("mat", Graphics.WorldTransformMatrix),
                 ("stepY", 0.25f),
@@ -535,8 +532,14 @@ public class TerrorBatSpit : ModProjectile {
                 ("texture1", Assets.Textures.Sample.Pebbles.Asset.Value),
                 ("texture2", Assets.Textures.Sample.Noise2.Asset.Value)
             )
+            .DrawTrail(
+                positionCache.Positions,
+                _ => TRAIL_SIZE * Scale,
+                static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f),
+                cursedFireEffect
+            )
             .ApplyOutline(GhostColor1)
-            .Flush();
+            .End();
 
         var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;
 

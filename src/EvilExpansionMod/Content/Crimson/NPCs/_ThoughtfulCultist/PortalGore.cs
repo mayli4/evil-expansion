@@ -1,4 +1,5 @@
 ﻿using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
@@ -57,19 +58,18 @@ public class PortalGore : ModProjectile {
         ).Value;
 
         var outlineColor = Color.Red.MultiplyRGB(lightColor);
-        Graphics.BeginPipeline(1.0f)
-            .DrawSprite(
-                texture,
-                Projectile.Center - Main.screenPosition,
-                lightColor,
-                null,
-                Projectile.rotation,
-                texture.Size() / 2f,
-                new Vector2(1f)
-                )
+        Renderer.BeginPipeline(1f)
+            .DrawTexture(new()
+            {
+                Texture = texture,
+                Position = Projectile.Center - Main.screenPosition,
+                Color = lightColor,
+                Rotation = Projectile.rotation,
+                Origin = texture.Size() / 2f,
+            })
             .ApplyOutline(outlineColor * 0.9f)
             .ApplyOutline(outlineColor * 0.6f)
-            .Flush();
+            .End();
 
         return false;
     }

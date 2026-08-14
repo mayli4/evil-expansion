@@ -117,32 +117,33 @@ public class SlippedWhipCageProjectile : ModProjectile {
 
         var mainTexture = TextureAssets.Projectile[Type].Value;
         var partTexture = Assets.Textures.Items.Crimson.SlippedWhip.SlippedWhipRibcagePart.Asset.Value;
+
         var scale = Vector2.One * (1f + 4f * (1f - visualProgress) + flashAlpha * 0.3f);
-        Graphics.BeginPipeline(1f)
-            .DrawSprite(
-                mainTexture,
-                Projectile.Center - Main.screenPosition,
-                lightColor * visualProgress,
-                null,
-                Projectile.rotation,
-                new Vector2(17 - 30 * (1f - visualProgress), 29),
-                scale,
-                SpriteEffects.None
-            )
-            .DrawSprite(
-                partTexture,
-                Projectile.Center - Main.screenPosition,
-                lightColor * visualProgress,
-                null,
-                Projectile.rotation,
-                new Vector2(28 + 30 * (1f - visualProgress), 19),
-                scale,
-                SpriteEffects.None
-            )
+        Renderer.BeginPipeline(1f)
+            .DrawTexture(new()
+            {
+                Texture = mainTexture,
+                Position = Projectile.Center - Main.screenPosition,
+                Color = lightColor * visualProgress,
+                Rotation = Projectile.rotation,
+                Origin = new Vector2(17 - 30 * (1f - visualProgress), 29),
+                Scale = scale,
+                SpriteEffects = SpriteEffects.None,
+            })
+            .DrawTexture(new()
+            {
+                Texture = partTexture,
+                Position = Projectile.Center - Main.screenPosition,
+                Color = lightColor * visualProgress,
+                Rotation = Projectile.rotation,
+                Origin = new Vector2(28 + 30 * (1f - visualProgress), 19),
+                Scale = scale,
+                SpriteEffects = SpriteEffects.None,
+            })
             .ApplyTint(Color.Purple * flashAlpha * 0.2f)
             .ApplyOutline(flashColor)
             .ApplyOutline(flashColor)
-            .Flush();
+            .End();
 
         return false;
     }

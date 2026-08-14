@@ -1,7 +1,5 @@
 ﻿using EvilExpansionMod.Common.Bestiary;
 using EvilExpansionMod.Common.Graphics;
-using EvilExpansionMod.Content.Biomes;
-using EvilExpansionMod.Content.Corruption;
 using EvilExpansionMod.Content.Projectiles;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
@@ -537,28 +535,30 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         if(!NPC.IsABestiaryIconDummy) {
             var trailEffect = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
-            Graphics.BeginPipeline(0.5f)
-                .DrawTrail(
-                    _trailPositions,
-                    static _ => 40,
-                    static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f),
+            Renderer.BeginPipeline(0.5f)
+                .SetEffectParams(
                     trailEffect,
                     ("time", 0.025f * Main.GameUpdateCount + NPC.whoAmI * 3.432f),
                     ("mat", Graphics.WorldTransformMatrix),
                     ("stepY", 0.25f),
                     ("scale", 0.8f),
                     ("texture1", Assets.Textures.Sample.Pebbles.Asset.Value),
-                    ("texture2", Assets.Textures.Sample.Noise2.Asset.Value)
-                )
-                .DrawSprite(
-                    Assets.Textures.Misc.Circle.Asset.Value,
-                    NPC.Center - Main.screenPosition,
-                    color: smallGlowColor,
-                    origin: 16f * Vector2.One,
-                    scale: Vector2.One * 0.8f
-                )
+                    ("texture2", Assets.Textures.Sample.Noise2.Asset.Value))
+                .DrawTrail(
+                    _trailPositions,
+                    static _ => 40,
+                    static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f),
+                    trailEffect)
+                .DrawTexture(new()
+                {
+                    Texture = Assets.Textures.Misc.Circle.Asset.Value,
+                    Position = NPC.Center - Main.screenPosition,
+                    Color = smallGlowColor,
+                    Origin = 16f * Vector2.One,
+                    Scale = Vector2.One * 0.8f,
+                })
                 .ApplyOutline(GhostColor1)
-                .Flush();
+                .End();
         }
 
         var maskShake = 0f;

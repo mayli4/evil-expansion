@@ -2,7 +2,6 @@
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Dusts;
-using EvilExpansionMod.Content.Corruption;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -264,26 +263,27 @@ public class HeadPounderHeldProjectile : ModProjectile {
         Vector2 origin = new(offset - 5f, texture.Height - offset);
 
         var trailColor = new Color(96, 91, 206) * _outlineAlpha * 0.4f;
-        Graphics.BeginPipeline(0.5f)
-            .DrawBasicTrail(
+
+        Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+            .DrawTrail(
                 _trailPositions.Select(p => p + Projectile.position).ToArray(),
                 static t => (1.25f - t) * 20f,
-                TextureAssets.MagicPixel.Value,
-                trailColor
+                _ => trailColor
             )
-            .SetSamplerState(0, SamplerState.PointClamp)
-            .DrawSprite(
-                 texture,
-                 Projectile.position - Main.screenPosition,
-                 lightColor,
-                 rotation: rotation,
-                 origin: Owner.direction == -1 ? new Vector2(texture.Width - origin.X, origin.Y) : origin,
-                 scale: Vector2.One * Projectile.scale,
-                 spriteEffects: Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
-            )
+            .SetSamplerState(SamplerState.PointClamp)
+            .DrawTexture(new()
+            {
+                Texture = texture,
+                Position = Projectile.position,
+                Color = lightColor,
+                Rotation = rotation,
+                Origin = Owner.direction == -1 ? new Vector2(texture.Width - origin.X, origin.Y) : origin,
+                Scale = Vector2.One * Projectile.scale,
+                SpriteEffects = Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
+            })
             .ApplyOutline(trailColor)
             .ApplyOutline(new Color(230, 255, 5) * _outlineAlpha)
-            .Flush();
+            .End();
 
         var tintFlashFrames = 15;
         var tintColor = Color.Transparent;
@@ -292,18 +292,19 @@ public class HeadPounderHeldProjectile : ModProjectile {
                 * MathF.Max(1f - MathF.Pow(2f * MathF.Max(_charge - MaxCharge + tintFlashFrames / 2, 0) / tintFlashFrames - 1f, 2), 0f);
         }
 
-        Graphics.BeginPipeline()
-            .DrawSprite(
-                texture,
-                Projectile.position - Main.screenPosition,
-                lightColor,
-                rotation: (Projectile.rotation + MathF.PI / 4f) * Owner.direction,
-                origin: Owner.direction == -1 ? new Vector2(texture.Width - origin.X, origin.Y) : origin,
-                scale: Vector2.One * Projectile.scale,
-                spriteEffects: Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
-            )
+        Renderer.BeginPipeline(1f, Graphics.WorldTransformMatrix)
+            .DrawTexture(new()
+            {
+                Texture = texture,
+                Position = Projectile.position,
+                Color = lightColor,
+                Rotation = (Projectile.rotation + MathF.PI / 4f) * Owner.direction,
+                Origin = Owner.direction == -1 ? new Vector2(texture.Width - origin.X, origin.Y) : origin,
+                Scale = Vector2.One * Projectile.scale,
+                SpriteEffects = Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
+            })
             .ApplyTint(tintColor)
-            .Flush();
+            .End();
 
         return false;
     }

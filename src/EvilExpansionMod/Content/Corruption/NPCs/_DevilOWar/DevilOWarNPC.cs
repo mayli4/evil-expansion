@@ -1,6 +1,5 @@
 using EvilExpansionMod.Common.Bestiary;
 using EvilExpansionMod.Common.Graphics;
-using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Content.Tiles.Banners;
 using Microsoft.Xna.Framework;
@@ -303,7 +302,7 @@ public sealed class DevilOWarNPC : ModNPC {
         }
     }
 
-    private void PopulateTrails(Graphics.Pipeline pipeline, Vector2 bodyWorldPosition, Color drawColor) {
+    private void PopulateTrails(RenderPipeline pipeline, Vector2 bodyWorldPosition, Color drawColor) {
         float Equation(float x) {
             return 0.2f * MathF.Sin(x) + 0.8f * MathF.Cos(x + MathHelper.PiOver4);
         }
@@ -341,7 +340,8 @@ public sealed class DevilOWarNPC : ModNPC {
                                * 20f;
             }
 
-            pipeline.DrawBasicTrail(positions, _ => 10, tentacleTexture, drawColor);
+            pipeline.SetTexture(tentacleTexture);
+            pipeline.DrawTrail(positions, static _ => 10, _ => drawColor);
         }
 
         if(_stingerProjectileId != -1) {
@@ -357,7 +357,8 @@ public sealed class DevilOWarNPC : ModNPC {
 
                 var stingerColor = Color.Lerp(drawColor, Color.Yellow, 0.5f + MathF.Sin(Main.GameUpdateCount * 0.1f) * 0.2f);
 
-                pipeline.DrawBasicTrail(_stingerTrailPositions, _ => 10, tentacleTexture, stingerColor);
+                pipeline.SetTexture(tentacleTexture);
+                pipeline.DrawTrail(_stingerTrailPositions, static _ => 10, _ => stingerColor);
             }
         }
     }
@@ -400,13 +401,14 @@ public sealed class DevilOWarNPC : ModNPC {
             );
             return false;
         }
-        var pipeline = Graphics.BeginPipeline();
+
+        var pipeline = Renderer.BeginPipeline(1f, Graphics.WorldTransformMatrix);
 
         var offsetForTrails = flipped ? new Vector2(-5, 30) : new Vector2(5, 30);
         Vector2 bodyWorldPositionForTrails = NPC.Center + offsetForTrails;
 
         PopulateTrails(pipeline, bodyWorldPositionForTrails, drawColor);
-        pipeline.Flush();
+        pipeline.End();
 
         var fluidEffect = Assets.Effects.Pixel.DevilOWarFluid.Asset.Value;
 
@@ -415,8 +417,8 @@ public sealed class DevilOWarNPC : ModNPC {
 
         Main.spriteBatch.Draw(insidesTexture, NPC.Center + new Vector2(0, 19) - screenPos, null, drawColor, NPC.rotation, insidesTexture.Size() / 2, 1f, effects, 0f);
 
-        Graphics.BeginPipeline(0.5f)
-            .EffectParams(
+        Renderer.BeginPipeline(0.5f)
+            .SetEffectParams(
                 fluidEffect,
                 ("level", mappedLevel),
                 ("smooth", 0.95f),
@@ -428,19 +430,20 @@ public sealed class DevilOWarNPC : ModNPC {
                 ("uDarkenStrength", 0.3f),
                 ("uNoise2ScrollVector", new Vector2(0.1f, 0.1f)),
                 ("uNoise2Scale", 1.0f),
-                ("uTime", Main.GameUpdateCount * 0.05f))
-            .DrawSprite(
-                headUnderTexture,
-                NPC.Center - new Vector2(0, 4) - screenPos,
-                Color.White,
-                null,
-                NPC.rotation,
-                origin,
-                new Vector2(finalDrawScale.X - 0.05f, finalDrawScale.Y - 0.05f),
-                effects,
-                effect: fluidEffect
+                ("uTime", Main.GameUpdateCount * 0.05f)
             )
-            .Flush();
+            .DrawTexture(new()
+            {
+                Texture = headUnderTexture,
+                Position = NPC.Center - new Vector2(0, 4) - screenPos,
+                Color = Color.White,
+                Rotation = NPC.rotation,
+                Origin = origin,
+                Scale = new Vector2(finalDrawScale.X - 0.05f, finalDrawScale.Y - 0.05f),
+                SpriteEffects = effects,
+                Effect = fluidEffect,
+            })
+            .End();
 
         Lighting.AddLight(NPC.position, CursedSpiritNPC.GhostColor1.ToVector3() * 0.4f);
 

@@ -181,12 +181,9 @@ public class LamethrowerHeldProjectile : ModProjectile {
         var noiseTexture1 = Textures.Sample.Pebbles.Asset.Value;
         var circleTexture = Textures.Misc.Circle.Asset.Value;
 
-        Graphics.BeginPipeline(0.5f)
+        Renderer.BeginPipeline(0.5f)
             .SetTexture(0, circleTexture)
-            .DrawTrail(
-                _trailPositions.Select(p => p + _trailOrigin).ToArray(),
-                static _ => FlameWidth,
-                t => Color.Lerp(flameColor, outlineColor, t),
+            .SetEffectParams(
                 flameShader,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI + 10),
                 ("size", new Vector2(1, 1)),
@@ -196,10 +193,15 @@ public class LamethrowerHeldProjectile : ModProjectile {
                 ("noiseScale", 0.5f),
                 ("flameSize", FlameScale),
                 ("tex1", noiseTexture1),
-                ("uTransformMatrix", Graphics.WorldTransformMatrix)
+                ("uTransformMatrix", Graphics.WorldTransformMatrix))
+            .DrawTrail(
+                _trailPositions.Select(p => p + _trailOrigin).ToArray(),
+                static _ => FlameWidth,
+                t => Color.Lerp(flameColor, outlineColor, t),
+                flameShader
             )
             .ApplyOutline(flameColor)
-            .Flush();
+            .End();
 
         var texture = TextureAssets.Projectile[Type].Value;
         var origin = new Vector2(-8, 18);

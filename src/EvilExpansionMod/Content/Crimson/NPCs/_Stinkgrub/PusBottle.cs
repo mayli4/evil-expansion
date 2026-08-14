@@ -1,5 +1,6 @@
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Dusts;
+using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -193,8 +194,8 @@ public class PusBottleNPC : ModNPC {
         var fluidEffect = Assets.Effects.Pixel.DevilOWarFluid.Asset.Value;
 
         if(!NPC.IsABestiaryIconDummy) {
-            Graphics.BeginPipeline(0.5f)
-                .EffectParams(
+            Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+                .SetEffectParams(
                     fluidEffect,
                     ("level", 0.3f),
                     ("smooth", 1.0f),
@@ -207,19 +208,19 @@ public class PusBottleNPC : ModNPC {
                     ("uNoise2ScrollVector", new Vector2(0.1f, 0.1f)),
                     ("uNoise2Scale", 1.0f),
                     ("uTime", Main.GameUpdateCount * 0.05f))
-                .DrawSprite(
-                    textureInside,
-                    NPC.Center - screenPos + shakeOffset,
-                    drawColor,
-                    null,
-                    finalRotation,
-                    origin,
-                    finalScale,
-                    NPC.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
-                    effect: fluidEffect
-                )
+                .DrawTexture(new()
+                {
+                    Texture = textureInside,
+                    Position = NPC.Center + shakeOffset,
+                    Color = drawColor,
+                    Rotation = finalRotation,
+                    Origin = origin,
+                    Scale = finalScale,
+                    SpriteEffects = NPC.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
+                    Effect = fluidEffect,
+                })
                 .ApplyOutline(new Color(132, 122, 61))
-                .Flush();
+                .End();
         }
 
         spriteBatch.Draw(

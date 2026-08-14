@@ -1,4 +1,5 @@
 ﻿using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -135,21 +136,21 @@ public class ShadowOrbProjectile : ModProjectile {
                 * masterAlpha;
         }
 
-        Graphics.BeginPipeline()
-            .DrawSprite(
-                texture,
-                position - Main.screenPosition,
-                lightColor * masterAlpha,
-                null,
-                Projectile.rotation,
-                texture.Size() / 2f,
-                new Vector2(1f + stretchMax - stretch, 1f - stretchMax + stretch) * scale,
-                Projectile.velocity.X > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
-            )
+        Renderer.BeginPipeline()
+            .DrawTexture(new()
+            {
+                Texture = texture,
+                Position = position - Main.screenPosition,
+                Color = lightColor * masterAlpha,
+                Rotation = Projectile.rotation,
+                Origin = texture.Size() / 2f,
+                Scale = new Vector2(1f + stretchMax - stretch, 1f - stretchMax + stretch) * scale,
+                SpriteEffects = Projectile.velocity.X > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
+            })
             .ApplyOutline(outlineColorBlink)
             .ApplyOutline(outlineColorBlink)
             .ApplyTint(outlineColor * masterAlpha * FlashAlpha)
-            .Flush();
+            .End();
 
         return false;
     }

@@ -74,11 +74,8 @@ public class SpiritFireball : ModProjectile {
         Main.spriteBatch.EndBegin(snapshot);
 
         var trailEffect = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
-        Graphics.BeginPipeline(0.5f)
-            .DrawTrail(
-                _trailPositions,
-                static _ => 18f,
-                static t => Color.Lerp(CursedSpiritNPC.GhostColor1, CursedSpiritNPC.GhostColor2, t + 0.7f),
+        Renderer.BeginPipeline(0.5f)
+            .SetEffectParams(
                 trailEffect,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
                 ("mat", Graphics.WorldTransformMatrix),
@@ -87,15 +84,22 @@ public class SpiritFireball : ModProjectile {
                 ("texture1", Assets.Textures.Sample.Pebbles.Asset.Value),
                 ("texture2", Assets.Textures.Sample.Noise3.Asset.Value)
             )
-            .DrawSprite(
-                Assets.Textures.Misc.Circle.Asset.Value,
-                Projectile.Center - Main.screenPosition,
-                color: smallGlowColor,
-                origin: 16f * Vector2.One,
-                scale: Vector2.One * 0.3f
+            .DrawTrail(
+                _trailPositions,
+                static _ => 18f,
+                static t => Color.Lerp(CursedSpiritNPC.GhostColor1, CursedSpiritNPC.GhostColor2, t + 0.7f),
+                trailEffect
             )
+            .DrawTexture(new()
+            {
+                Texture = Assets.Textures.Misc.Circle.Asset.Value,
+                Position = Projectile.Center - Main.screenPosition,
+                Color = smallGlowColor,
+                Origin = 16f * Vector2.One,
+                Scale = Vector2.One * 0.3f,
+            })
             .ApplyOutline(CursedSpiritNPC.GhostColor1)
-            .Flush();
+            .End();
 
         return false;
     }

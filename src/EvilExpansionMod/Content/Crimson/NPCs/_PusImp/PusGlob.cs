@@ -1,5 +1,6 @@
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Dusts;
+using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -78,11 +79,8 @@ public sealed class PusGlob : ModProjectile {
         var color = new Color(98, 90, 40).MultiplyRGB(lightColor);
         var outlineColor = new Color(161, 131, 78).MultiplyRGB(lightColor);
 
-        Graphics.BeginPipeline(0.5f)
-            .DrawTrail(
-                _trailPositions,
-                static _ => 14f,
-                _ => color,
+        Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+            .SetEffectParams(
                 trailEffect,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
                 ("mat", Graphics.WorldTransformMatrix),
@@ -91,15 +89,22 @@ public sealed class PusGlob : ModProjectile {
                 ("texture1", Assets.Textures.Sample.Pebbles.Asset.Value),
                 ("texture2", Assets.Textures.Sample.Noise2.Asset.Value)
             )
-            .DrawSprite(
-                Assets.Textures.Misc.Circle.Asset.Value,
-                Projectile.Center - Main.screenPosition,
-                color: color,
-                origin: 16f * Vector2.One,
-                scale: Vector2.One * 0.3f
+            .DrawTrail(
+                _trailPositions,
+                static _ => 14f,
+                _ => color,
+                trailEffect
             )
+            .DrawTexture(new()
+            {
+                Texture = Assets.Textures.Misc.Circle.Asset.Value,
+                Position = Projectile.Center,
+                Color = color,
+                Origin = 16f * Vector2.One,
+                Scale = Vector2.One * 0.3f,
+            })
             .ApplyOutline(outlineColor)
-            .Flush();
+            .End();
 
         return false;
     }

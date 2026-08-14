@@ -7,9 +7,9 @@ texture texture1;
 sampler2D sampler1 = sampler_state
 {
     texture = <texture1>;
-    magfilter = LINEAR;
-    minfilter = LINEAR;
-    mipfilter = LINEAR;
+    magfilter = POINT;
+    minfilter = POINT;
+    mipfilter = POINT;
     AddressU = wrap;
     AddressV = wrap;
 };
@@ -18,9 +18,9 @@ texture texture2;
 sampler2D sampler2 = sampler_state
 {
     texture = <texture2>;
-    magfilter = LINEAR;
-    minfilter = LINEAR;
-    mipfilter = LINEAR;
+    magfilter = POINT;
+    minfilter = POINT;
+    mipfilter = POINT;
     AddressU = wrap;
     AddressV = wrap;
 };

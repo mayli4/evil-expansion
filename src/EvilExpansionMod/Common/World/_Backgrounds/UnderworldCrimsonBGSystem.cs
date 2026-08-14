@@ -1,3 +1,4 @@
+using Daybreak.Common.Rendering;
 using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
@@ -211,7 +212,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
         vec = vec.Floor();
         int numTilesToDraw = (int)Math.Ceiling(Main.screenWidth / textureRenderWidth);
         int tileStep = (int)(num8 * ((value2.Width - 1) / vector.X));
-
+ 
         // initial drawing position
         Vector2 drawPos =
             (new Vector2(((startTileX - 2) * tileStep), Main.UnderworldLayer * 16f) + vec - screenOffset)

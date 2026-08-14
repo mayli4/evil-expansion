@@ -26,6 +26,12 @@ public class PolypOreTile : ModTile {
 
         MineResist = 2f;
         MinPick = 110;
+        
+        Main.tileMerge[Type][TileID.Hellstone] = true;
+        Main.tileMerge[TileID.Hellstone][Type] = true;
+        
+        Main.tileMerge[Type][TileID.Ash] = true;
+        Main.tileMerge[TileID.Ash][Type] = true;
 
         Main.tileMerge[Type][ModContent.TileType<CorruptAsh>()] = true;
         Main.tileMerge[ModContent.TileType<CorruptAsh>()][Type] = true;

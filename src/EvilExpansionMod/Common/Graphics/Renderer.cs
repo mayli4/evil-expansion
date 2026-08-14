@@ -1,4 +1,5 @@
-﻿using EvilExpansionMod.Utilities;
+﻿using Daybreak.Common.Rendering;
+using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -109,7 +110,7 @@ internal class Renderer : ModSystem {
 
         SpriteBatchSnapshot? spriteBatchSnapshot = null;
         if(Main.spriteBatch.beginCalled) {
-            Main.spriteBatch.End(out var snapshot);
+            SpritebatchExtensions.End(Main.spriteBatch, out var snapshot);
             spriteBatchSnapshot = snapshot;
         }
 
@@ -169,7 +170,9 @@ internal class Renderer : ModSystem {
             }
         }
 
-        _drawTarget?.RenderTargetUsage = cachedTargetUsage!.Value;
+        if(_drawTarget != null) {
+            _drawTarget.RenderTargetUsage = cachedTargetUsage!.Value;
+        }
 
         if(spriteBatchSnapshot is SpriteBatchSnapshot snap) {
             Main.spriteBatch.Begin(snap);

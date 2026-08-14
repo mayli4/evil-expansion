@@ -80,7 +80,6 @@ public class CutProjectile : ModProjectile {
         }
 
         var axeCutEffect = Assets.Effects.Trail.AxeCut.Asset.Value;
-        var outlineEffect = Assets.Effects.Pixel.Outline.Asset.Value;
 
         var positions = CollectionsMarshal.AsSpan(TrailPositions);
         var texture = Assets.Textures.Items.Crimson.MeatAxe.CutTexture.Asset.Value;
@@ -99,7 +98,7 @@ public class CutProjectile : ModProjectile {
                 static _ => Color.Red,
                 axeCutEffect
             )
-            .ApplyEffect(outlineEffect, ("uColor", Color.Lerp(Color.DarkRed, Color.Black, 0.5f)))
+            .ApplyOutline(Color.Lerp(Color.DarkRed, Color.Black, 0.5f))
             .End();
 
         return false;

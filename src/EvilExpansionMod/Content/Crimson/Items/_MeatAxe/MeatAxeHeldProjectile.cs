@@ -254,17 +254,16 @@ public class BloodSpraySystem : ModSystem {
     }
 
     public override void PostDrawTiles() {
-        var pipeline = Renderer.BeginPipeline(0.5f);
+        using var pipeline = Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix);
         for(var i = 0; i < _particles.Count; i++) {
             var p = _particles[i];
             var positions = CollectionsMarshal.AsSpan(_trailPositions)[p.TrailPositionsIndex..(p.TrailPositionsIndex + TrailPositionCount)];
+
             pipeline.DrawTrail(
                 positions,
                 t => Math.Clamp(p.Scale * 0.35f * p.Velocity.LengthSquared() * MathF.Sin(MathHelper.PiOver2 * (1f + t)), 2f, 12f),
                 _ => p.Color
             );
         }
-
-        pipeline.End();
     }
 }

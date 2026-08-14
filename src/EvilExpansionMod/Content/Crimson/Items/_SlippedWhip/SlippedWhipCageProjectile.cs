@@ -118,9 +118,6 @@ public class SlippedWhipCageProjectile : ModProjectile {
         var mainTexture = TextureAssets.Projectile[Type].Value;
         var partTexture = Assets.Textures.Items.Crimson.SlippedWhip.SlippedWhipRibcagePart.Asset.Value;
 
-        var tintEffect = Assets.Effects.Pixel.Tint.Asset.Value;
-        var outlineEffect = Assets.Effects.Pixel.Outline.Asset.Value;
-
         var scale = Vector2.One * (1f + 4f * (1f - visualProgress) + flashAlpha * 0.3f);
         Renderer.BeginPipeline(1f)
             .DrawTexture(new()
@@ -143,9 +140,9 @@ public class SlippedWhipCageProjectile : ModProjectile {
                 Scale = scale,
                 SpriteEffects = SpriteEffects.None,
             })
-            .ApplyEffect(tintEffect, ("uColor", Color.Purple * flashAlpha * 0.2f))
-            .ApplyEffect(outlineEffect, ("uColor", flashColor))
-            .ApplyEffect(outlineEffect, ("uColor", flashColor))
+            .ApplyTint(Color.Purple * flashAlpha * 0.2f)
+            .ApplyOutline(flashColor)
+            .ApplyOutline(flashColor)
             .End();
 
         return false;

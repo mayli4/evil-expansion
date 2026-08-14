@@ -74,8 +74,6 @@ public class SpiritFireball : ModProjectile {
         Main.spriteBatch.EndBegin(snapshot);
 
         var trailEffect = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
-        var outlineEffect = Assets.Effects.Pixel.Outline.Asset.Value;
-
         Renderer.BeginPipeline(0.5f)
             .SetEffectParams(
                 trailEffect,
@@ -100,7 +98,7 @@ public class SpiritFireball : ModProjectile {
                 Origin = 16f * Vector2.One,
                 Scale = Vector2.One * 0.3f,
             })
-            .ApplyEffect(outlineEffect, ("uColor", CursedSpiritNPC.GhostColor1))
+            .ApplyOutline(CursedSpiritNPC.GhostColor1)
             .End();
 
         return false;

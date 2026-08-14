@@ -522,8 +522,6 @@ public class TerrorBatSpit : ModProjectile {
 
     public override bool PreDraw(ref Color lightColor) {
         var cursedFireEffect = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
-        var outlineEffect = Assets.Effects.Pixel.Outline.Asset.Value;
-
         Renderer.BeginPipeline(0.5f)
             .SetEffectParams(
                 cursedFireEffect,
@@ -540,7 +538,7 @@ public class TerrorBatSpit : ModProjectile {
                 static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f),
                 cursedFireEffect
             )
-            .ApplyEffect(outlineEffect, ("uColor", GhostColor1))
+            .ApplyOutline(GhostColor1)
             .End();
 
         var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;

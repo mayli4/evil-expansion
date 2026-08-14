@@ -37,15 +37,14 @@ internal class Renderer : ModSystem {
     DynamicIndexBuffer _trailIndexBuffer = null!;
     readonly ushort[] _trailIndices = new ushort[TrailIndexCount];
 
-    Matrix _activeMatrix;
-    float _activeScale;
-
     Viewport ActiveViewport => new(
         0,
         0,
-        (int)(Main.screenWidth * _activeScale / Main.GameViewMatrix.Zoom.X),
-        (int)(Main.screenHeight * _activeScale / Main.GameViewMatrix.Zoom.Y));
+        (int)(Main.screenWidth * _scale / Main.GameViewMatrix.Zoom.X),
+        (int)(Main.screenHeight * _scale / Main.GameViewMatrix.Zoom.Y));
 
+    Matrix _matrix = Matrix.Identity;
+    float _scale = 1f;
 
     public override void Load() {
         Main.QueueMainThreadAction(() =>
@@ -154,9 +153,6 @@ internal class Renderer : ModSystem {
                     break;
                 case CommandTag.Clear:
                     ExecuteClear(dataIndex);
-                    break;
-                case CommandTag.SetMatrix:
-                    ExecuteSetMatrix(dataIndex);
                     break;
                 case CommandTag.SetTexture:
                     ExecuteSetTexture(dataIndex);
@@ -293,15 +289,6 @@ internal class Renderer : ModSystem {
         _commands.Indices.Add(index);
     }
 
-    public void AddSetMatrix(Matrix matrix) {
-        _commands.Tags.Add(CommandTag.SetMatrix);
-
-        var dataIndex = _commands.Matrices.Count;
-        _commands.Matrices.Add(matrix);
-
-        _commands.Indices.Add(dataIndex);
-    }
-
     public void AddSetTexture(int index, Texture2D texture) {
         _commands.Tags.Add(CommandTag.SetTexture);
 
@@ -371,8 +358,8 @@ internal class Renderer : ModSystem {
 
         var beginData = _commands.BeginData[dataIndex];
 
-        _activeScale = beginData.Scale;
-        if(beginData.MatrixIndex > -1) _activeMatrix = _commands.Matrices[beginData.MatrixIndex];
+        _scale = beginData.Scale;
+        if(beginData.MatrixIndex > -1) _matrix = _commands.Matrices[beginData.MatrixIndex];
 
         Device.Viewport = ActiveViewport;
     }
@@ -387,10 +374,9 @@ internal class Renderer : ModSystem {
 
         var targetRatio = Vector2.One;
         if(_drawTarget is not null) {
-            targetRatio = _activeScale * _drawTarget.Size() / oldTarget.Size() / Main.GameViewMatrix.Zoom;
+            targetRatio = Vector2.One * _scale * _drawTarget.Size() / oldTarget.Size() / Main.GameViewMatrix.Zoom;
         }
 
-        var oldBlendState = Device.BlendState;
         Device.BlendState = BlendState.AlphaBlend;
 
         DrawQuad(
@@ -400,16 +386,13 @@ internal class Renderer : ModSystem {
             Color.White,
             Matrix.Identity,
             null);
-
-        Device.BlendState = oldBlendState;
     }
-
 
     void ExecuteDrawTexture(int dataIndex) {
         var data = _commands.DrawTextureData[dataIndex];
         var positions = CollectionsMarshal.AsSpan(_commands.Positions)[data.PositionDataIndex..(data.PositionDataIndex + 4)];
 
-        DrawQuad(data.Texture, positions, data.Source, data.Color, _activeMatrix, data.Effect);
+        DrawQuad(data.Texture, positions, data.Source, data.Color, _matrix, data.Effect);
     }
 
     void ExecuteDrawTrail(int dataIndex) {
@@ -460,7 +443,7 @@ internal class Renderer : ModSystem {
         _trailIndexBuffer.SetData(_trailIndices);
         Device.Indices = _trailIndexBuffer;
 
-        TrailEffect.Parameters["uMatrix"].SetValue(_activeMatrix);
+        TrailEffect.Parameters["uMatrix"].SetValue(_matrix);
         TrailEffect.Parameters["uSpriteRotation"].SetValue(data.SpriteRotation);
         TrailEffect.CurrentTechnique.Passes[0].Apply();
 
@@ -515,10 +498,6 @@ internal class Renderer : ModSystem {
     void ExecuteClear(int dataIndex) {
         var color = _commands.Colors[dataIndex];
         Device.Clear(color);
-    }
-
-    void ExecuteSetMatrix(int dataIndex) {
-        _activeMatrix = _commands.Matrices[dataIndex];
     }
 
     void ExecuteSetTexture(int dataIndex) {
@@ -706,7 +685,6 @@ internal class Renderer : ModSystem {
         Clear,
 
         SetTexture,
-        SetMatrix,
         SetSamplerState,
         SetBlendState,
         SetEffectParams,

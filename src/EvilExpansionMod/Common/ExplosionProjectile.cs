@@ -115,7 +115,6 @@ public class ExplosionProjectile : ModProjectile {
         var noiseTexture1 = Assets.Textures.Sample.Noise1.Asset.Value;
         var noiseTexture2 = Assets.Textures.Sample.Noise2.Asset.Value;
         var explosionEffect = Assets.Effects.Pixel.Explosion.Asset.Value;
-        var outlineEffect = Assets.Effects.Pixel.Outline.Asset.Value;
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
         var progress = 1f - (float)Projectile.timeLeft / _maxTimeLeft;
@@ -138,7 +137,7 @@ public class ExplosionProjectile : ModProjectile {
                 Size = Projectile.Size,
                 Effect = explosionEffect,
             })
-            .ApplyEffect(outlineEffect, ("uColor", Color.Lerp(Color.DarkRed, Color.Transparent, explosionProgress)))
+            .ApplyOutline(Color.Lerp(Color.DarkRed, Color.Transparent, explosionProgress))
             .SetEffectParams(
                 explosionEffect,
                 ("time", explosionProgress + Projectile.whoAmI * 638.8239f),

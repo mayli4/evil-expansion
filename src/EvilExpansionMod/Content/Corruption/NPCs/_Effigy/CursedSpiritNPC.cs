@@ -535,7 +535,6 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         if(!NPC.IsABestiaryIconDummy) {
             var trailEffect = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
-            var outlineEffect = Assets.Effects.Pixel.Outline.Asset.Value;
             Renderer.BeginPipeline(0.5f)
                 .SetEffectParams(
                     trailEffect,
@@ -558,7 +557,7 @@ public sealed class CursedSpiritNPC : ModNPC {
                     Origin = 16f * Vector2.One,
                     Scale = Vector2.One * 0.8f,
                 })
-                .ApplyEffect(outlineEffect, ("uColor", GhostColor1))
+                .ApplyOutline(GhostColor1)
                 .End();
         }
 

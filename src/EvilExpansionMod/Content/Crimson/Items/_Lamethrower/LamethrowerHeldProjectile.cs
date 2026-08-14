@@ -180,7 +180,6 @@ public class LamethrowerHeldProjectile : ModProjectile {
         var flameShader = Effects.Trail.LingeringFlame.Asset.Value;
         var noiseTexture1 = Textures.Sample.Pebbles.Asset.Value;
         var circleTexture = Textures.Misc.Circle.Asset.Value;
-        var outlineEffect = Assets.Effects.Pixel.Outline.Asset.Value;
 
         Renderer.BeginPipeline(0.5f)
             .SetTexture(0, circleTexture)
@@ -201,7 +200,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
                 t => Color.Lerp(flameColor, outlineColor, t),
                 flameShader
             )
-            .ApplyEffect(outlineEffect, ("uColor", flameColor))
+            .ApplyOutline(flameColor)
             .End();
 
         var texture = TextureAssets.Projectile[Type].Value;

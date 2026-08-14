@@ -87,11 +87,6 @@ internal readonly struct RenderPipeline(Renderer graphics, int depth) : IDisposa
         return this;
     }
 
-    public readonly RenderPipeline SetMatrix(Matrix matrix) {
-        graphics.AddSetMatrix(matrix);
-        return this;
-    }
-
     public readonly RenderPipeline SetTexture(Texture2D texture) {
         graphics.AddSetTexture(0, texture);
         return this;

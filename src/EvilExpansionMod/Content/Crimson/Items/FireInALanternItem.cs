@@ -229,7 +229,6 @@ public class FireInALanternFlame : ModProjectile {
             })
             .End();
 
-        var outlineEffect = Assets.Effects.Pixel.Outline.Asset.Value;
         Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
             .SetEffectParams(
                 flameShader,
@@ -252,7 +251,7 @@ public class FireInALanternFlame : ModProjectile {
                 Rotation = Projectile.rotation,
                 Effect = flameShader
             })
-            .ApplyEffect(outlineEffect, ("uColor", new Color(255, 150, 0)))
+            .ApplyOutline(new Color(255, 150, 0))
             .End();
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });

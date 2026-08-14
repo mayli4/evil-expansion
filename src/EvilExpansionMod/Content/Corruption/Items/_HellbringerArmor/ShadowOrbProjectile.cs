@@ -135,21 +135,24 @@ public class ShadowOrbProjectile : ModProjectile {
                 * masterAlpha;
         }
 
-        Graphics.BeginPipeline()
-            .DrawSprite(
-                texture,
-                position - Main.screenPosition,
-                lightColor * masterAlpha,
-                null,
-                Projectile.rotation,
-                texture.Size() / 2f,
-                new Vector2(1f + stretchMax - stretch, 1f - stretchMax + stretch) * scale,
-                Projectile.velocity.X > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
-            )
-            .ApplyOutline(outlineColorBlink)
-            .ApplyOutline(outlineColorBlink)
-            .ApplyTint(outlineColor * masterAlpha * FlashAlpha)
-            .Flush();
+        var outlineEffect = Assets.Effects.Pixel.Outline.Asset.Value;
+        var tintEffect = Assets.Effects.Pixel.Tint.Asset.Value;
+
+        Renderer.BeginPipeline()
+            .DrawTexture(new()
+            {
+                Texture = texture,
+                Position = position - Main.screenPosition,
+                Color = lightColor * masterAlpha,
+                Rotation = Projectile.rotation,
+                Origin = texture.Size() / 2f,
+                Scale = new Vector2(1f + stretchMax - stretch, 1f - stretchMax + stretch) * scale,
+                SpriteEffects = Projectile.velocity.X > 0 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
+            })
+            .ApplyEffect(outlineEffect, ("uColor", outlineColorBlink))
+            .ApplyEffect(outlineEffect, ("uColor", outlineColorBlink))
+            .ApplyEffect(tintEffect, ("uColor", outlineColor * masterAlpha * FlashAlpha))
+            .End();
 
         return false;
     }

@@ -60,7 +60,9 @@ public class CutProjectile : ModProjectile {
 
     public override bool PreDraw(ref Color lightColor) {
         var progress = 1f - (float)Projectile.timeLeft / MaxTimeLeft;
-        var pipeline = Graphics.BeginPipeline(0.5f);
+
+        var pipeline = Renderer.BeginPipeline(0.5f);
+        pipeline.SetTexture(TextureAssets.MagicPixel.Value);
 
         var buf = new Vector2[2];
         for(var i = 1; i < TrailPositions.Count - 2; i++) {
@@ -70,30 +72,35 @@ public class CutProjectile : ModProjectile {
                 * MathF.Sin(progress * MathHelper.Pi)
                 * ((MathF.Sin(4f * MathHelper.Pi * i / TrailPositions.Count) + 1f) / 2f);
 
-            pipeline.DrawBasicTrail(
+            pipeline.DrawTrail(
                 buf,
                 t => MathF.Max((1f - t) * 3f, 2.1f),
-                TextureAssets.MagicPixel.Value,
-                Color.DarkRed
+                static _ => Color.DarkRed
             );
         }
 
-        var effect = Assets.Effects.Trail.AxeCut.Asset.Value;
+        var axeCutEffect = Assets.Effects.Trail.AxeCut.Asset.Value;
+        var outlineEffect = Assets.Effects.Pixel.Outline.Asset.Value;
+
         var positions = CollectionsMarshal.AsSpan(TrailPositions);
         var texture = Assets.Textures.Items.Crimson.MeatAxe.CutTexture.Asset.Value;
+
         pipeline
+            .SetEffectParams(
+                axeCutEffect,
+                ("uImage0Texture", texture),
+                ("uImage0Size", texture.Size()),
+                ("uTransformMatrix", Graphics.WorldTransformMatrix)
+            )
             .DrawTrail(
                 positions,
                 t => MathF.Sin(t * MathHelper.Pi) * 30f * (1f + 0.2f * MathF.Sin(t * MathHelper.Pi * 6f))
                     * MathF.Pow(MathF.Sin(MathHelper.PiOver2 * (1f - progress)), 2),
                 static _ => Color.Red,
-                effect,
-                ("uImage0Texture", texture),
-                ("uImage0Size", texture.Size()),
-                ("uTransformMatrix", Graphics.WorldTransformMatrix)
+                axeCutEffect
             )
-            .ApplyOutline(Color.Lerp(Color.DarkRed, Color.Black, 0.5f))
-            .Flush();
+            .ApplyEffect(outlineEffect, ("uColor", Color.Lerp(Color.DarkRed, Color.Black, 0.5f)))
+            .End();
 
         return false;
     }

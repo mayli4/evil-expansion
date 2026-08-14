@@ -206,65 +206,54 @@ public class InflatableDevilOWarProjectile : ModProjectile {
         var tentacleTexture = Assets.Textures.Items.Corruption.InflatableDevilOWar.InflatableDevilOWarTentacle.Asset.Value;
 
         bool flipped = Projectile.spriteDirection != -1;
-        var effects = flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+        var spriteEffects = flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
 
         var origin = headTexture.Size() / 2f;
         origin.X = flipped ? headTexture.Width - origin.X : origin.X;
 
+        using var pipeline = Renderer.BeginPipeline(1.0f, Graphics.WorldTransformMatrix);
         if(_tentacleTrailPositions != null) {
-            var tentaclePipeline = Graphics.BeginPipeline(1.0f);
-            tentaclePipeline.SetSamplerState(0, SamplerState.PointClamp);
 
-            foreach(Vector2[] positions in _tentacleTrailPositions) {
-                tentaclePipeline.DrawBasicTrail(
-                    positions,
-                    static _ => 10,
-                    tentacleTexture,
-                    lightColor
-                );
+            pipeline.SetSamplerState(0, SamplerState.PointClamp);
+            pipeline.SetTexture(tentacleTexture);
+
+            foreach(var positions in _tentacleTrailPositions) {
+                pipeline.DrawTrail(positions, 10, lightColor);
             }
 
-            tentaclePipeline.Flush();
-
             if(_stringTrailPositions != null) {
-                Graphics.BeginPipeline(0.5f)
-                    .SetSamplerState(0, SamplerState.PointClamp)
-                    .DrawBasicTrail(
+                pipeline
+                    .SetSamplerState(SamplerState.PointClamp)
+                    .SetTexture(TextureAssets.MagicPixel.Value)
+                    .DrawTrail(
                         _stringTrailPositions,
                         static _ => 2f,
-                        TextureAssets.MagicPixel.Value,
-                        Color.White
-                    )
-                    .Flush();
+                        static _ => Color.White
+                    );
             }
         }
 
         var insidesOffset = new Vector2(0, 24 * Projectile.scale).RotatedBy(Projectile.rotation);
+        pipeline.DrawTexture(new()
+        {
+            Texture = insidesTexture,
+            Position = Projectile.Center + insidesOffset,
+            Color = lightColor,
+            Rotation = Projectile.rotation,
+            Origin = insidesTexture.Size() / 2f,
+            SpriteEffects = spriteEffects,
+        });
 
-        Main.spriteBatch.Draw(
-            insidesTexture,
-            Projectile.Center + insidesOffset - Main.screenPosition,
-            null,
-            lightColor,
-            Projectile.rotation,
-            insidesTexture.Size() / 2f,
-            1.0f,
-            effects,
-            0f
-        );
-
-        Vector2 headOffset = new Vector2(0, -4 * Projectile.scale).RotatedBy(Projectile.rotation);
-        Main.spriteBatch.Draw(
-            headTexture,
-            Projectile.Center + headOffset - Main.screenPosition,
-            null,
-            lightColor * 0.8f,
-            Projectile.rotation,
-            origin,
-            1.0f,
-            effects,
-            0f
-        );
+        var headOffset = new Vector2(0, -4 * Projectile.scale).RotatedBy(Projectile.rotation);
+        pipeline.DrawTexture(new()
+        {
+            Texture = headTexture,
+            Position = Projectile.Center + headOffset,
+            Color = lightColor * 0.8f,
+            Rotation = Projectile.rotation,
+            Origin = origin,
+            SpriteEffects = spriteEffects,
+        });
 
         return false;
     }

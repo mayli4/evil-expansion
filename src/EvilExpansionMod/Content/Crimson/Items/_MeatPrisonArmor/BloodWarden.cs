@@ -264,9 +264,11 @@ public sealed class BloodWarden : ModProjectile {
         GenerateWavyChainPoints(chainPoints, chainStart, chainEnd, 20, 5, 0.5f, 0.2f);
 
 
-        Graphics.BeginPipeline()
-            .DrawBasicTrail(chainPoints.ToArray(), static _ => 6, chainTexture, lightColor)
-            .Flush();
+        var color = lightColor;
+        Renderer.BeginPipeline()
+            .SetTexture(chainTexture)
+            .DrawTrail(chainPoints.ToArray(), static _ => 6, _ => color)
+            .End();
 
         Main.spriteBatch.Draw(
             texture,

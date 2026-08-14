@@ -1,6 +1,5 @@
 ﻿using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Biomes;
-using EvilExpansionMod.Content.Crimson;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
@@ -235,30 +234,35 @@ public class ThoughtfulCultistNPC : ModNPC {
                 break;
         }
 
-        Graphics.BeginPipeline()
+        Renderer.BeginPipeline(1f, Graphics.WorldTransformMatrix)
             .SetSamplerState(0, SamplerState.PointWrap)
-            .DrawBasicTrail(robeTrailPositions, static _ => 88, robeTextureBack, drawColor, 1)
-            .DrawBasicTrail(chainPoints, static _ => 6, chainTexture, drawColor)
-            .DrawBasicTrail(robeTrailPositions, static _ => 88, robeTextureFront, drawColor, 1)
-            .Flush();
+            .SetTexture(robeTextureBack)
+            .DrawTrail(robeTrailPositions, static _ => 88, _ => drawColor, spriteRotation: 1)
+            .SetTexture(chainTexture)
+            .DrawTrail(chainPoints, static _ => 6, _ => drawColor)
+            .SetTexture(robeTextureFront)
+            .DrawTrail(robeTrailPositions, static _ => 88, _ => drawColor, spriteRotation: 1)
+            .End();
 
-        Graphics.BeginPipeline()
-            .DrawSprite(
-                pendantTexture,
-                chainPoints[chainPoints.Length / 2] - screenPos,
-                color: drawColor,
-                rotation: 0f,
-                origin: pendantTexture.Size() / 2f
-            )
-            .DrawSprite(
-                pendantGlowmaskTexture,
-                chainPoints[chainPoints.Length / 2] - screenPos,
-                color: pendantOutlineColor,
-                rotation: 0f,
-                origin: pendantTexture.Size() / 2f
-            )
+        Renderer.BeginPipeline()
+            .DrawTexture(new()
+            {
+                Texture = pendantTexture,
+                Position = chainPoints[chainPoints.Length / 2] - screenPos,
+                Color = drawColor,
+                Rotation = 0f,
+                Origin = pendantTexture.Size() / 2f,
+            })
+            .DrawTexture(new()
+            {
+                Texture = pendantGlowmaskTexture,
+                Position = chainPoints[chainPoints.Length / 2] - screenPos,
+                Color = pendantOutlineColor,
+                Rotation = 0f,
+                Origin = pendantTexture.Size() / 2f,
+            })
             .ApplyOutline(pendantOutlineColor)
-            .Flush();
+            .End();
 
         spriteBatch.Draw(brainTexture, NPC.Center - screenPos, null, drawColor, 0f, new Vector2(53, 55), 1f, SpriteEffects.None, 0f);
         return false;

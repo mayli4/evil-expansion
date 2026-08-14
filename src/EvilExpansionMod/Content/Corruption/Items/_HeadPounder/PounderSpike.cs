@@ -69,20 +69,21 @@ public class PounderSpike : ModProjectile {
         var texture = TextureAssets.Projectile[Type].Value;
 
         var cellWidth = 40;
-        var source = new Rectangle(SpikeIndex * cellWidth, 0, cellWidth, texture.Height);
+        var source = new Vector4(SpikeIndex * cellWidth, 0, cellWidth, texture.Height);
 
-        Graphics.BeginPipeline(Scale)
-            .DrawSprite(
-                texture,
-                Projectile.Center - Main.screenPosition,
-                lightColor * MathF.Min(Projectile.timeLeft / 10f, 1f),
-                source,
-                Projectile.rotation,
-                new Vector2(cellWidth / 2f, 90),
-                Vector2.One * Scale,
-                SpriteEffects.None
-            )
-            .Flush();
+        Renderer.BeginPipeline(scale: Scale)
+            .DrawTexture(new()
+            {
+                Texture = texture,
+                Position = Projectile.Center - Main.screenPosition,
+                Color = lightColor * MathF.Min(Projectile.timeLeft / 10f, 1f),
+                Source = source,
+                Rotation = Projectile.rotation,
+                Origin = new Vector2(cellWidth / 2f, 90),
+                Scale = Vector2.One * Scale,
+                SpriteEffects = SpriteEffects.None,
+            })
+            .End();
 
         return false;
     }

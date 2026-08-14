@@ -93,8 +93,8 @@ public class MarrowLazerProjectile : ModProjectile {
         var texture1 = Assets.Textures.Sample.PlasmaNoise.Asset.Value;
         var effect = Assets.Effects.Pixel.MarrowLaser.Asset.Value;
 
-        Graphics.BeginPipeline(0.5f)
-            .EffectParams(
+        Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+            .SetEffectParams(
                 effect,
                 ("uLength", Projectile.scale),
                 ("uColor1", secondaryColor.ToVector4()),
@@ -102,20 +102,20 @@ public class MarrowLazerProjectile : ModProjectile {
                 ("uTime", Main.GameUpdateCount * 0.2f)
             )
             .SetTexture(1, texture1)
-            .DrawSprite(
-                texture0,
-                Projectile.position - Main.screenPosition,
-                Color.White,
-                null,
-                rotation,
-                new Vector2(0, texture0.Height / 2f),
-                new Vector2(Projectile.scale / texture0.Width, scale * 5f / texture0.Height),
-                SpriteEffects.None,
-                effect: effect
-            )
+            .DrawTexture(new()
+            {
+                Texture = texture0,
+                Position = Projectile.position,
+                Color = Color.White,
+                Rotation = rotation,
+                Origin = new Vector2(0, texture0.Height / 2f),
+                Scale = new Vector2(Projectile.scale / texture0.Width, scale * 5f / texture0.Height),
+                SpriteEffects = SpriteEffects.None,
+                Effect = effect,
+            })
             .ApplyOutline(mainColor)
             .ApplyOutline(secondaryColor)
-            .Flush();
+            .End();
 
 
         return false;

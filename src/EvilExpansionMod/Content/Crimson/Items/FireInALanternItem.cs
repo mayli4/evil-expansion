@@ -205,8 +205,8 @@ public class FireInALanternFlame : ModProjectile {
         currentFlameSize *= alphaFactor;
         currentFlameSize = Math.Max(currentFlameSize, 0.0f);
 
-        Graphics.BeginPipeline(0.5f)
-            .EffectParams(
+        Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+            .SetEffectParams(
                 flameShader,
                 ("time", 0.01f * Main.GameUpdateCount + Projectile.whoAmI + 10),
                 ("size", new Vector2(1, 1)),
@@ -218,22 +218,20 @@ public class FireInALanternFlame : ModProjectile {
                 ("tex1", noiseTexture1)
             )
             .SetBlendState(BlendState.Additive)
-            .DrawSprite(
-                circleTexture,
-                new Rectangle(
-                    (int)(Projectile.position.X - Main.screenPosition.X - 10),
-                    (int)(Projectile.position.Y - Main.screenPosition.Y - 20),
-                    70,
-                    70
-                ),
-                color: Projectile.GetAlpha(lightColor),
-                rotation: Projectile.rotation,
-                effect: flameShader
-            )
-            .Flush();
+            .DrawTexture(new()
+            {
+                Texture = circleTexture,
+                Position = Projectile.position - new Vector2(10, 20),
+                Size = new(70, 70),
+                Color = Projectile.GetAlpha(lightColor),
+                Rotation = Projectile.rotation,
+                Effect = flameShader
+            })
+            .End();
 
-        Graphics.BeginPipeline(0.5f)
-            .EffectParams(
+        var outlineEffect = Assets.Effects.Pixel.Outline.Asset.Value;
+        Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+            .SetEffectParams(
                 flameShader,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI + 10),
                 ("size", new Vector2(1, 1)),
@@ -245,20 +243,17 @@ public class FireInALanternFlame : ModProjectile {
                 ("tex1", noiseTexture1)
             )
             .SetBlendState(BlendState.Additive)
-            .DrawSprite(
-                circleTexture,
-                new Rectangle(
-                    (int)(Projectile.position.X - Main.screenPosition.X),
-                    (int)(Projectile.position.Y - Main.screenPosition.Y),
-                    50,
-                    50
-                ),
-                color: Projectile.GetAlpha(lightColor),
-                rotation: Projectile.rotation,
-                effect: flameShader
-            )
-            .ApplyOutline(new Color(255, 150, 0))
-            .Flush();
+            .DrawTexture(new()
+            {
+                Texture = circleTexture,
+                Position = Projectile.position,
+                Size = new(50, 50),
+                Color = Projectile.GetAlpha(lightColor),
+                Rotation = Projectile.rotation,
+                Effect = flameShader
+            })
+            .ApplyEffect(outlineEffect, ("uColor", new Color(255, 150, 0)))
+            .End();
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
 

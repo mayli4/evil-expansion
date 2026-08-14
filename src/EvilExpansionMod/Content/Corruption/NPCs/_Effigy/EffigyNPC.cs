@@ -27,12 +27,12 @@ public sealed class EffigyNPC : ModNPC {
     private Color _glowColor = new Color(230, 254, 6);
 
     public override void SetStaticDefaults() {
-        Main.npcFrameCount[Type] = 18;
+        Main.npcFrameCount[Type] = 19;
     }
 
     public override void SetDefaults() {
-        NPC.width = 60;
-        NPC.height = 90;
+        NPC.width = 80;
+        NPC.height = 140;
 
         NPC.lifeMax = 640;
         NPC.value = 250f;
@@ -71,6 +71,17 @@ public sealed class EffigyNPC : ModNPC {
     }
 
     public override void AI() {
+        if(_dead) {
+            _deadTimer++;
+            _animCounter++;
+            Lighting.AddLight(NPC.Center, _glowColor.ToVector3());
+        
+            if(_deadTimer >= DEATH_TIME) {
+                NPC.life = 0;
+                NPC.active = false;
+            }
+        }
+        
         if(_spawnedSprits >= 3) {
             _dead = true;
         }
@@ -101,7 +112,7 @@ public sealed class EffigyNPC : ModNPC {
         }
 
         for(int i = 1; i <= 5; i++) {
-            Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("EffigyGore" + i).Type);
+            //Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("EffigyGore" + i).Type);
         }
     }
 
@@ -109,7 +120,7 @@ public sealed class EffigyNPC : ModNPC {
         var texture = TextureAssets.Npc[Type].Value;
         var glowTex = Assets.Textures.NPCs.Corruption.Effigy.EffigyNPC_Glow.Asset.Value;
 
-        var offset = new Vector2(0, -77); //cause frame very big! yes
+        var offset = new Vector2(0, -31); //cause frame very big! yes
 
         var shader = Assets.Effects.Pixel.EffigyDecay.Asset.Value;
 
@@ -129,7 +140,7 @@ public sealed class EffigyNPC : ModNPC {
         shader.Parameters["frameTexelAspect"].SetValue(frameAspect + 2000);
         shader.Parameters["texSize"].SetValue(new Vector2(NPC.frame.Width, NPC.frame.Height));
 
-        var shaderSnapshot = spriteBatch.CaptureEndBegin(new() { CustomEffect = shader });
+        //var shaderSnapshot = spriteBatch.CaptureEndBegin(new() { CustomEffect = shader });
 
         spriteBatch.Draw(
             texture,
@@ -142,20 +153,35 @@ public sealed class EffigyNPC : ModNPC {
             SpriteEffects.None,
             0
         );
-        spriteBatch.EndBegin(shaderSnapshot);
+        //spriteBatch.EndBegin(shaderSnapshot);
 
         return false;
     }
 
     public override bool CheckDead() {
         if(_dead) return true;
+        
+        _dead = true;
+        _deadTimer = 0;
+        _thornsSpawned = false;
+        
+        NPC.dontTakeDamage = true;
+        NPC.life = 1;
+        
         return false;
     }
 
     public override void FindFrame(int frameHeight) {
-        NPC.frameCounter += 0.15f;
-        if(NPC.frameCounter >= 3)
-            NPC.frameCounter = 0;
+        if(_dead) {
+            NPC.frameCounter += 0.20f;
+            if(NPC.frameCounter >= 17)
+                NPC.frameCounter = 17;
+        }
+        else {
+            NPC.frameCounter += 0.15f;
+            if(NPC.frameCounter >= 4)
+                NPC.frameCounter = 0;
+        }
 
         NPC.frame.Y = (int)NPC.frameCounter * frameHeight;
     }

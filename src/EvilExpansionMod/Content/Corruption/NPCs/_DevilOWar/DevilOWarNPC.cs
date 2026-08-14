@@ -56,7 +56,7 @@ public sealed class DevilOWarNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 36;
         NPC.height = 36;
-        NPC.lifeMax = 520;
+        NPC.lifeMax = 780;
         NPC.value = 250f;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;

@@ -1,6 +1,6 @@
-using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Content.Tiles.Banners;
-using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
@@ -92,6 +92,13 @@ public sealed class EffigyNPC : ModNPC {
         spawnedSprits++;
         
         squashStretch = new Vector2(0.75f, 1.35f);
+
+        for(int i = 0; i < Main.rand.Next(10, 15); i++) {
+            var ember = GlowEmberParticle.NewParticle(NPC.Center + Main.rand.NextVector2Circular(11, 11), Main.rand.NextVector2Circular(11, 11), Main.rand.NextFloat(0.5f, 1f), glowColor with { A = 0 }, Color.White with { A = 0 });
+            ember.Randomness *= 2f;
+            ember.LossPerSecond *= 2f;
+            ParticleEngine.PARTICLES.Add(ember);
+        }
     }
 
     public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone) {

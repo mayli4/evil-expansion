@@ -4,6 +4,7 @@ using EvilExpansionMod.Content.Tiles.Banners;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -41,8 +42,10 @@ public sealed class EffigyNPC : ModNPC {
         NPC.friendly = false;
         NPC.hide = true;
         NPC.behindTiles = true;
-        
-        NPC.HitSound = SoundID.NPCHit23;
+
+        // NPC.HitSound = Assets.Sounds.EffigyHit.Asset
+        //     .WithPitchVariance(0.5f)
+        //     .WithPitchOffset(-0.3f);
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
 
@@ -73,6 +76,17 @@ public sealed class EffigyNPC : ModNPC {
         if(dead) {
             deadTimer++;
             Lighting.AddLight(NPC.Center, glowColor.ToVector3());
+            
+            if ((int)NPC.frameCounter == 6) {
+        
+                SoundEngine.PlaySound(
+                    Assets.Sounds.EffigyBurn.Asset with
+                    {
+                        PitchVariance = 0.3f,
+                    }, 
+                    NPC.Center
+                );
+            }
         
             if(deadTimer >= DEATH_TIME) {
                 NPC.life = 0;
@@ -117,7 +131,7 @@ public sealed class EffigyNPC : ModNPC {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) {
             return;
         }
-
+        
         for(int i = 1; i <= 5; i++) {
             //Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("EffigyGore" + i).Type);
         }
@@ -183,7 +197,7 @@ public sealed class EffigyNPC : ModNPC {
 
     public override void FindFrame(int frameHeight) {
         if(dead) {
-            NPC.frameCounter += 0.20f;
+            NPC.frameCounter += 0.16f;
             if(NPC.frameCounter >= 17)
                 NPC.frameCounter = 17;
         }

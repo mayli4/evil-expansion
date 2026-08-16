@@ -207,7 +207,16 @@ public sealed class EffigyNPC : ModNPC {
             {
                 Position = drawPosition,
                 Source = NPC.frame,
-                Color = glowColor,
+                Color = Color.White * 0.4f,
+                Origin = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height),
+                Scale = NPC.scale * squashStretch,
+            });   
+            
+            spriteBatch.Draw(new DrawParameters(Assets.Textures.NPCs.Corruption.Effigy.EffigyNPC_Bloom.Asset)
+            {
+                Position = drawPosition,
+                Source = NPC.frame,
+                Color = glowColor * 0.5f,
                 Origin = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height),
                 Scale = NPC.scale * squashStretch,
             });   

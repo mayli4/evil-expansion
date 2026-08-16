@@ -70,10 +70,10 @@ public class TerrorBatNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 40;
         NPC.height = 30;
-        NPC.lifeMax = 90;
+        NPC.lifeMax = 140;
         NPC.damage = 30;
         NPC.defense = 10;
-        NPC.value = 100 * 30;
+        NPC.value = 100 * 2;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = true;

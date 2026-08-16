@@ -73,7 +73,7 @@ public sealed class CursedSpiritNPC : ModNPC {
     const float ExploderExplosionTime = 120f;
     const float SplitterSplitTime = 90f;
     const float SplitterMaxDepth = 1;
-    const int MaxLife = 50;
+    const int MaxLife = 110;
 
     SpiritType SpiritType {
         get => Unsafe.BitCast<float, SpiritType>(NPC.ai[0]);
@@ -108,7 +108,7 @@ public sealed class CursedSpiritNPC : ModNPC {
         NPC.width = 38;
         NPC.height = 38;
         NPC.lifeMax = MaxLife;
-        NPC.value = 250f;
+        NPC.value = 150;
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
         NPC.noGravity = true;

@@ -59,7 +59,7 @@ public sealed class DevilOWarNPC : ModNPC {
         NPC.width = 36;
         NPC.height = 36;
         NPC.lifeMax = 780;
-        NPC.value = 250f;
+        NPC.value = 255;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = true;

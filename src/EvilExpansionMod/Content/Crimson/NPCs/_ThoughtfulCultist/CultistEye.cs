@@ -26,7 +26,7 @@ public class CultistEye : ModNPC {
         NPC.friendly = false;
         NPC.damage = 20;
 
-        NPC.HitSound = SoundID.NPCHit23;
+        NPC.HitSound = SoundID.NPCHit1;
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
 

@@ -51,7 +51,10 @@ public sealed class DevilOWarNPC : ModNPC {
 
     public int TotalLifeDrained { get; set; }
     public const int MAX_DRAIN_FOR_LEVEL = 160;
-
+    public override void SetStaticDefaults() {
+        base.SetStaticDefaults();
+        NPCID.Sets.NeedsExpertScaling[Type] = true;
+    }
     public override void SetDefaults() {
         NPC.width = 36;
         NPC.height = 36;

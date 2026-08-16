@@ -40,12 +40,12 @@ public class ThoughtfulCultistNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 38;
         NPC.height = 38;
-        NPC.lifeMax = 500;
+        NPC.lifeMax = 700;
         NPC.value = 250f;
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
-        NPC.knockBackResist = 0.001f;
+        NPC.knockBackResist = 0f;
         NPC.friendly = false;
         NPC.damage = 20;
 
@@ -87,8 +87,8 @@ public class ThoughtfulCultistNPC : ModNPC {
         switch(State) {
             case CultistState.FlyToTarget:
                 if(distanceToTarget > 400) {
-                    NPC.velocity += directionToTarget * 0.03f;
-                    NPC.velocity *= 0.98f;
+                    NPC.velocity += directionToTarget * 0.15f;
+                    NPC.velocity *= 0.97f;
                 }
                 else if(Main.netMode != NetmodeID.MultiplayerClient && _timer > 120) {
                     if(Main.rand.NextBool()) {

@@ -30,8 +30,10 @@ public sealed class EffigyNPC : ModNPC {
 
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 21;
+        base.SetStaticDefaults();
+        NPCID.Sets.NeedsExpertScaling[Type] = true;
     }
-
+ 
     public override void SetDefaults() {
         NPC.width = 80;
         NPC.height = 140;

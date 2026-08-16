@@ -46,7 +46,7 @@ public sealed class StinkgrubNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 32;
         NPC.height = 20;
-        NPC.lifeMax = 600;
+        NPC.lifeMax = 780;
         NPC.value = 100f;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;

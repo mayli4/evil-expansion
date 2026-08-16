@@ -24,14 +24,17 @@ public class PusBottleNPC : ModNPC {
     private const int detached_lifetime = 60 * 10;
 
     private float _maxSquishTime = 30f;
-
+    public override void SetStaticDefaults() {
+        base.SetStaticDefaults();
+        NPCID.Sets.NeedsExpertScaling[Type] = true;
+    }
     public override void SetDefaults() {
         NPC.width = 80;
         NPC.height = 80;
         NPC.aiStyle = -1;
         NPC.friendly = false;
         NPC.damage = 0;
-        NPC.lifeMax = 400;
+        NPC.lifeMax = 320;
         NPC.knockBackResist = 0f;
         NPC.value = 0f;
 

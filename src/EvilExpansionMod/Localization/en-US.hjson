@@ -130,9 +130,9 @@ Mods: {
 				DisplayName: Planetoid Spawner
 				Tooltip:
 					'''
-					Summons planetoids, whos damage scales with size
-					Planetoids explode after holding long enough
-					Definitely do NOT use purification powder on it...
+					Creates a planetoid, which damage scales with size
+					Planetoids that grow too large explode violently
+					“Definitely DON’T use purification powder on these…”
 					'''
 			}
 
@@ -266,7 +266,7 @@ Mods: {
 			}
 
 			FireInALanternItem: {
-				DisplayName: Fire In A Lantern
+				DisplayName: Fire in a Lantern
 				Tooltip:
 					'''
 					Allows the user to double jump

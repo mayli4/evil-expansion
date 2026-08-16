@@ -24,7 +24,7 @@ public class HellbringerHead : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = Item.buyPrice(silver: 90);
+        Item.value = Item.sellPrice(silver: 90);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 6;
     }
@@ -45,8 +45,8 @@ public class HellbringerHead : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<PolypBarItem>(7)
-            .AddIngredient<ImputedFlameItem>(2)
+            .AddIngredient<PolypBarItem>(10)
+            .AddIngredient<ImputedFlameItem>(3)
             .AddTile(TileID.Anvils)
             .Register();
     }
@@ -67,7 +67,7 @@ public class HellbringerBody : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = Item.buyPrice(silver: 90);
+        Item.value = Item.sellPrice(gold: 1);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 14;
     }
@@ -83,8 +83,8 @@ public class HellbringerBody : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<PolypBarItem>(15)
-            .AddIngredient<ImputedFlameItem>(5)
+            .AddIngredient<PolypBarItem>(24)
+            .AddIngredient<ImputedFlameItem>(14)
             .AddTile(TileID.Anvils)
             .Register();
     }
@@ -105,7 +105,7 @@ public class HellbringerLegs : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = Item.buyPrice(silver: 60);
+        Item.value = Item.sellPrice(silver: 60);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 8;
     }
@@ -120,7 +120,7 @@ public class HellbringerLegs : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<PolypBarItem>(2)
+            .AddIngredient<PolypBarItem>(6)
             .AddIngredient<ImputedFlameItem>(2)
             .AddTile(TileID.Anvils)
             .Register();

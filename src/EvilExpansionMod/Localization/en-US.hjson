@@ -59,7 +59,7 @@ Mods: {
 			HeadPounderItem: {
 				DisplayName: Head Pounder
 				Damage: 1-{0} melee damage based on charge time
-				Tooltip: ""
+				Tooltip: "Strike the earth at full power to unleash a wave of corrupt mass"
 			}
 
 			HellbringerBody: {
@@ -138,7 +138,7 @@ Mods: {
 
 			NormalRevolverItem: {
 				DisplayName: Normal Revolver
-				Tooltip: Summons a baby planetoid to follow you around
+				Tooltip: Summons a baby planetoid that follows you around
 			}
 
 			LamethrowerItem: {
@@ -157,12 +157,12 @@ Mods: {
 			}
 
 			SpamonAStickItem: {
-				DisplayName: Spam On A Stick
-				Tooltip: ""
+				DisplayName: Spam on a Stick
+				Tooltip: "'Home grown!'"
 			}
 
 			MeatAxeItem: {
-				DisplayName: Meat Axe
+				DisplayName: Carrion Cleaver
 				Tooltip: ""
 			}
 

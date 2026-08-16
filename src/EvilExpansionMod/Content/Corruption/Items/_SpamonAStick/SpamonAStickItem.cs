@@ -27,8 +27,8 @@ public class SpamonAStickItem : ModItem {
 
         Item.shoot = ModContent.ProjectileType<SpamOnAStickProjectile>();
 
-        Item.damage = 80;
-        Item.knockBack = 6f;
+        Item.damage = 81;
+        Item.knockBack = 8;
         Item.crit = 4;
         Item.value = Item.sellPrice(gold: 1, silver: 2);
         Item.rare = ItemRarityID.LightRed;

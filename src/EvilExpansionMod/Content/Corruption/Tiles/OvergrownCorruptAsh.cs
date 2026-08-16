@@ -12,9 +12,9 @@ public class OvergrownCorruptAsh : ModTile {
     public override void SetStaticDefaults() {
         Main.tileSolid[Type] = true;
         Main.tileBlockLight[Type] = true;
-        Main.tileBlendAll[Type] = true;
-
-        this.Merge(ModContent.TileType<CorruptAsh>(), TileID.Grass);
+        Main.tileBlendAll[Type] = false;
+        Main.tileLighted[Type] = true;
+        
         TileID.Sets.Grass[Type] = true;
         TileID.Sets.CanBeDugByShovel[Type] = true;
         TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<CorruptAsh>();

@@ -25,7 +25,7 @@ public sealed class EffigyNPC : ModNPC {
     private Vector2 squashStretch = Vector2.One;
 
     public override void SetStaticDefaults() {
-        Main.npcFrameCount[Type] = 19;
+        Main.npcFrameCount[Type] = 21;
     }
 
     public override void SetDefaults() {
@@ -43,9 +43,9 @@ public sealed class EffigyNPC : ModNPC {
         NPC.hide = true;
         NPC.behindTiles = true;
 
-        // NPC.HitSound = Assets.Sounds.EffigyHit.Asset
-        //     .WithPitchVariance(0.5f)
-        //     .WithPitchOffset(-0.3f);
+        NPC.HitSound = Assets.Sounds.EffigyHit.Asset
+            .WithPitchVariance(0.5f)
+            .WithPitchOffset(-0.3f);
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
 
@@ -198,8 +198,8 @@ public sealed class EffigyNPC : ModNPC {
     public override void FindFrame(int frameHeight) {
         if(dead) {
             NPC.frameCounter += 0.16f;
-            if(NPC.frameCounter >= 17)
-                NPC.frameCounter = 17;
+            if(NPC.frameCounter >= 20)
+                NPC.frameCounter = 20;
         }
         else {
             NPC.frameCounter += 0.15f;

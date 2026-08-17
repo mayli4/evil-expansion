@@ -26,7 +26,7 @@ public class UnderworldCorruptionBGSystem : ModSystem {
 
         for(int i = 0; i < BackgroundTextures.Length; i++) {
             BackgroundTextures[i] = ModContent.Request<Texture2D>(
-                "EvilExpansionMod/Assets/Textures/Backgrounds/UnderworldCorruption/UnderworldCorruptionBackground_" + i
+                "EvilExpansionMod/Assets/Images/Backgrounds/UnderworldCorruption/UnderworldCorruptionBackground_" + i
             );
         }
     }

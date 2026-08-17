@@ -27,7 +27,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
 
         for(int i = 0; i < BackgroundTextures.Length; i++) {
             BackgroundTextures[i] = ModContent.Request<Texture2D>(
-                "EvilExpansionMod/Assets/Textures/Backgrounds/UnderworldCrimson/UnderworldCrimsonBackground_" + i
+                "EvilExpansionMod/Assets/Images/Backgrounds/UnderworldCrimson/UnderworldCrimsonBackground_" + i
             );
         }
     }

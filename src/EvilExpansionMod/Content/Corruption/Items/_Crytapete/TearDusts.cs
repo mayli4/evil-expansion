@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class SmallCrytapeteTear : ModDust {
-    public override string Texture => Assets.Textures.Items.Corruption.Crytapete.CrytapeteTearSmall.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.Crytapete.CrytapeteTearSmall.KEY;
 
     public override void OnSpawn(Dust dust) {
         dust.frame = new Rectangle(0, 0, 8, 8);
@@ -27,7 +27,7 @@ public class SmallCrytapeteTear : ModDust {
 }
 
 public class TinyCrytapeteTear : ModDust {
-    public override string Texture => Assets.Textures.Items.Corruption.Crytapete.CrytapeteTearTiny.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.Crytapete.CrytapeteTearTiny.KEY;
 
     public override void OnSpawn(Dust dust) {
         dust.frame = new Rectangle(0, 0, 6, 6);

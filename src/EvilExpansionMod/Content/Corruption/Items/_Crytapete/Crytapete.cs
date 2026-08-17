@@ -13,7 +13,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class CrytapeteItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Corruption.Crytapete.CrytapeteItem.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.Crytapete.CrytapeteItem.KEY;
 
     public override void SetStaticDefaults() {
         ItemID.Sets.LockOnIgnoresCollision[Item.type] = true;
@@ -69,7 +69,7 @@ public class CrytapeteItem : ModItem {
 }
 
 public class CrytapeteBuff : ModBuff {
-    public override string Texture => Assets.Textures.Items.Corruption.Crytapete.CrytapeteBuff.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.Crytapete.CrytapeteBuff.KEY;
 
     public override void SetStaticDefaults() {
         Main.buffNoSave[Type] = true;
@@ -125,7 +125,7 @@ public class CrytapeteFlame : ModProjectile {
 }
 
 public class CrytapeteTear : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Corruption.Crytapete.CrytapeteTear.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.Crytapete.CrytapeteTear.KEY;
 
     public static float Gravity = 0.2f;
 
@@ -163,7 +163,7 @@ public class CrytapeteTear : ModProjectile {
 }
 
 public class CrytapeteMinion : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Corruption.Crytapete.CrytapeteMinion.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.Crytapete.CrytapeteMinion.KEY;
 
     public ref float AnimationTimer => ref Projectile.localAI[0];
     public ref float CryingTimer => ref Projectile.localAI[1];

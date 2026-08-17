@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class InflatableDevilOWarItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Corruption.InflatableDevilOWar.InflatableDevilOWarItem.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.InflatableDevilOWar.InflatableDevilOWarItem.KEY;
 
     private int _projectileID = -1;
 
@@ -70,7 +70,7 @@ public class InflatableDevilOWarItem : ModItem {
     }
 }
 public class InflatableDevilOWarProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Corruption.InflatableDevilOWar.InflatableDevilOWarHead.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.InflatableDevilOWar.InflatableDevilOWarHead.KEY;
 
     private Vector2[][] _tentacleTrailPositions;
     private float[] _tentacleWaveDirections;
@@ -202,8 +202,8 @@ public class InflatableDevilOWarProjectile : ModProjectile {
         PopulateTrailsForDrawing(Projectile.Center, lightColor, player);
 
         var headTexture = ModContent.Request<Texture2D>(Texture).Value;
-        var insidesTexture = Assets.Textures.Items.Corruption.InflatableDevilOWar.InflatableDevilOWarBody.Asset.Value;
-        var tentacleTexture = Assets.Textures.Items.Corruption.InflatableDevilOWar.InflatableDevilOWarTentacle.Asset.Value;
+        var insidesTexture = Assets.Images.Corruption.Items.InflatableDevilOWar.InflatableDevilOWarBody.Asset.Value;
+        var tentacleTexture = Assets.Images.Corruption.Items.InflatableDevilOWar.InflatableDevilOWarTentacle.Asset.Value;
 
         bool flipped = Projectile.spriteDirection != -1;
         var spriteEffects = flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;

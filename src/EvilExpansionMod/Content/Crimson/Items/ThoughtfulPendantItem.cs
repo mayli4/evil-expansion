@@ -23,7 +23,7 @@ internal sealed class FriendlyCulstistPortal : CultistPortal {
 }
 
 public class ThoughtfulPendantItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.CursedPendant.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.CursedPendant.KEY;
 
     private int _portalCooldown;
     float _portalRotation;

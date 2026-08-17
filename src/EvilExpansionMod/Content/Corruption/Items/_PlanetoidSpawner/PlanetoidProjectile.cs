@@ -13,13 +13,13 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class PlanetoidProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.SmallPlanetoid.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.Planetoids.SmallPlanetoid.KEY;
 
     private static readonly string[] _texturePaths = {
-        Assets.Textures.Items.Corruption.Planetoids.SmallPlanetoid.KEY,
-        Assets.Textures.Items.Corruption.Planetoids.MediumPlanetoid.KEY,
-        Assets.Textures.Items.Corruption.Planetoids.BigPlanetoid.KEY,
-        Assets.Textures.Items.Corruption.Planetoids.HugePlanetoid.KEY
+        Assets.Images.Corruption.Items.Planetoids.SmallPlanetoid.KEY,
+        Assets.Images.Corruption.Items.Planetoids.MediumPlanetoid.KEY,
+        Assets.Images.Corruption.Items.Planetoids.BigPlanetoid.KEY,
+        Assets.Images.Corruption.Items.Planetoids.HugePlanetoid.KEY
     };
 
     private static readonly float[] _growthThresholds = {
@@ -367,8 +367,8 @@ public class PlanetoidProjectile : ModProjectile {
             Renderer.BeginPipeline(1f)
                 .SetEffectParams(
                     crackShader,
-                    ("sampleTexture2", Assets.Textures.Sample.CrackMap.Asset.Value),
-                    ("sampleTexture3", Assets.Textures.Items.Corruption.Planetoids.HugePlanetoidCrackMappng.Asset.Value),
+                    ("sampleTexture2", Assets.Images.Sample.CrackMap.Asset.Value),
+                    ("sampleTexture3", Assets.Images.Corruption.Items.Planetoids.HugePlanetoidCrackMappng.Asset.Value),
                     ("uTime", easedCrackProgress),
                     ("drawColor", Projectile.GetAlpha(lightColor).ToVector4()),
                     ("sourceFrame", new Vector4(0, 0, currentTexture.Width, currentTexture.Height)),

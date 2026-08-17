@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class SlippedWhipProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Crimson.SlippedWhip.SlippedWhipProjectile.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.SlippedWhip.SlippedWhipProjectile.KEY;
 
     public override void SetStaticDefaults() {
         ProjectileID.Sets.IsAWhip[Type] = true;

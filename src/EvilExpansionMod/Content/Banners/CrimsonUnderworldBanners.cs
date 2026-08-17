@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Tiles.Banners;
 
 internal sealed class StinkgrubBannerTile : ModBannerTile {
-    public override string Texture => Assets.Textures.Tiles.Banners.StinkgrubBannerTile.KEY;
+    public override string Texture => Assets.Images.Banners.StinkgrubBannerTile.KEY;
 
     public override void NearbyEffects(int i, int j, bool closer) {
         Main.SceneMetrics.hasBanner = true;
@@ -15,7 +15,7 @@ internal sealed class StinkgrubBannerTile : ModBannerTile {
 }
 
 internal class StinkgrubBannerItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Banners.StinkgrubBannerItem.KEY;
+    public override string Texture => Assets.Images.Banners.StinkgrubBannerItem.KEY;
 
     public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
 
@@ -36,7 +36,7 @@ internal class StinkgrubBannerItem : ModItem {
 }
 
 internal sealed class PusImpBannerTile : ModBannerTile {
-    public override string Texture => Assets.Textures.Tiles.Banners.PusImpBannerTile.KEY;
+    public override string Texture => Assets.Images.Banners.PusImpBannerTile.KEY;
 
     public override void NearbyEffects(int i, int j, bool closer) {
         Main.SceneMetrics.hasBanner = true;
@@ -45,7 +45,7 @@ internal sealed class PusImpBannerTile : ModBannerTile {
 }
 
 internal class PusImpBannerItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Banners.PusImpBannerItem.KEY;
+    public override string Texture => Assets.Images.Banners.PusImpBannerItem.KEY;
 
     public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
 
@@ -66,7 +66,7 @@ internal class PusImpBannerItem : ModItem {
 }
 
 internal sealed class ThoughtfulCultistBannerTile : ModBannerTile {
-    public override string Texture => Assets.Textures.Tiles.Banners.ThoughtfulCultistBannerTile.KEY;
+    public override string Texture => Assets.Images.Banners.ThoughtfulCultistBannerTile.KEY;
 
     public override void NearbyEffects(int i, int j, bool closer) {
         Main.SceneMetrics.hasBanner = true;
@@ -75,7 +75,7 @@ internal sealed class ThoughtfulCultistBannerTile : ModBannerTile {
 }
 
 internal class ThoughtfulCultistBannerItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Banners.ThoughtfulCultistBannerItem.KEY;
+    public override string Texture => Assets.Images.Banners.ThoughtfulCultistBannerItem.KEY;
 
     public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
 
@@ -96,7 +96,7 @@ internal class ThoughtfulCultistBannerItem : ModItem {
 }
 
 internal sealed class MarrowEyeBannerTile : ModBannerTile {
-    public override string Texture => Assets.Textures.Tiles.Banners.MarrowEyeBannerTile.KEY;
+    public override string Texture => Assets.Images.Banners.MarrowEyeBannerTile.KEY;
 
     public override void NearbyEffects(int i, int j, bool closer) {
         Main.SceneMetrics.hasBanner = true;
@@ -105,7 +105,7 @@ internal sealed class MarrowEyeBannerTile : ModBannerTile {
 }
 
 internal class MarrowEyeBannerItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Banners.MarrowEyeBannerItem.KEY;
+    public override string Texture => Assets.Images.Banners.MarrowEyeBannerItem.KEY;
 
     public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
 
@@ -126,7 +126,7 @@ internal class MarrowEyeBannerItem : ModItem {
 }
 
 internal sealed class LanternBatBannerTile : ModBannerTile {
-    public override string Texture => Assets.Textures.Tiles.Banners.LanternBatBannerTile.KEY;
+    public override string Texture => Assets.Images.Banners.LanternBatBannerTile.KEY;
 
     public override void NearbyEffects(int i, int j, bool closer) {
         Main.SceneMetrics.hasBanner = true;
@@ -135,7 +135,7 @@ internal sealed class LanternBatBannerTile : ModBannerTile {
 }
 
 internal class LanternBatBannerItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Banners.LanternBatBannerItem.KEY;
+    public override string Texture => Assets.Images.Banners.LanternBatBannerItem.KEY;
 
     public override void SetStaticDefaults() => Item.ResearchUnlockCount = 1;
 

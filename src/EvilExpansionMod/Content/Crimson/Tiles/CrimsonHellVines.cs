@@ -12,7 +12,7 @@ using Terraria.ObjectData;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class CrimsonHellVines : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Crimson.CrimsonHellVines.KEY;
+    public override string Texture => Assets.Images.Crimson.Tiles.CrimsonHellVines.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileBlockLight[Type] = true;

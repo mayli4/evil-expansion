@@ -8,7 +8,7 @@ namespace EvilExpansionMod.Content.Crimson;
 
 [AutoloadEquip(EquipType.Head)]
 public class MeatPrisonHead : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.MeatPrisonArmor.MeatPrisonHead.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.MeatPrisonArmor.MeatPrisonHead.KEY;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
     }
@@ -48,7 +48,7 @@ public class MeatPrisonHead : ModItem {
 
 [AutoloadEquip(EquipType.Body)]
 public class MeatPrisonBody : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.MeatPrisonArmor.MeatPrisonBody.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.MeatPrisonArmor.MeatPrisonBody.KEY;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
     }
@@ -84,7 +84,7 @@ public class MeatPrisonBody : ModItem {
 
 [AutoloadEquip(EquipType.Legs)]
 public class MeatPrisonLegs : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.MeatPrisonArmor.MeatPrisonLegs.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.MeatPrisonArmor.MeatPrisonLegs.KEY;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
     }
@@ -155,7 +155,7 @@ public sealed class MeatPrisonPlayer : ModPlayer {
 }
 
 public class BloodWardenBuff : ModBuff {
-    public override string Texture => Assets.Textures.Items.Crimson.MeatPrisonArmor.BloodwardenBuff.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.MeatPrisonArmor.BloodwardenBuff.KEY;
 
     public override void SetStaticDefaults() {
         Main.buffNoSave[Type] = true;

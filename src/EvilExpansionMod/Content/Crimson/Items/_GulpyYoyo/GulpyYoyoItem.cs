@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class GulpyYoyoItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.GulpyYoyo.GulpyYoyoItem.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.GulpyYoyo.GulpyYoyoItem.KEY;
     public override void SetStaticDefaults() {
         ItemID.Sets.Yoyo[Item.type] = true;
         ItemID.Sets.GamepadExtraRange[Item.type] = 15;

@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class PortalGore : ModProjectile {
-    public override string Texture => Assets.Textures.NPCs.Crimson.ThoughtfulCultist.PortalGore1.KEY;
+    public override string Texture => Assets.Images.Crimson.NPCs.ThoughtfulCultist.PortalGore1.KEY;
 
     public override void SetDefaults() {
         Projectile.width = 45;

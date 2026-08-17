@@ -13,7 +13,7 @@ namespace EvilExpansionMod.Content.Corruption;
 
 // ReSharper disable CompareOfFloatsByEqualityOperator
 public class SpamonAStickItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Corruption.SpamonAStick.SpamonAStickItem.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.SpamonAStick.SpamonAStickItem.KEY;
 
     public override void SetDefaults() {
         Item.DamageType = DamageClass.MeleeNoSpeed;
@@ -53,10 +53,10 @@ public class SpamonAStickItem : ModItem {
 }
 
 public class SpamOnAStickProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Corruption.SpamonAStick.SpamonAStickItem.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.SpamonAStick.SpamonAStickItem.KEY;
 
-    protected Texture2D ChainTexture => Assets.Textures.Items.Corruption.SpamonAStick.SpamonAStick_Chain.Asset.Value;
-    protected Texture2D BlockTexture => Assets.Textures.Items.Corruption.SpamonAStick.SpamonAStick_Block.Asset.Value;
+    protected Texture2D ChainTexture => Assets.Images.Corruption.Items.SpamonAStick.SpamonAStick_Chain.Asset.Value;
+    protected Texture2D BlockTexture => Assets.Images.Corruption.Items.SpamonAStick.SpamonAStick_Block.Asset.Value;
 
     public int MaxLength = 800;
 

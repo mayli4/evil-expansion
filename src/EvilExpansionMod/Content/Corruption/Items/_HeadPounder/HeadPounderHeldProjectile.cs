@@ -32,7 +32,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
     Vector2 RotationVector => (Projectile.rotation - MathF.PI / 4f).ToRotationVector2() * new Vector2(Owner.direction, 1f);
     Vector2[] _trailPositions;
 
-    public override string Texture => Assets.Textures.Items.Corruption.HeadPounder.HeadPounderItem.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.HeadPounder.HeadPounderItem.KEY;
     public override void SetDefaults() {
         Projectile.width = 0;
         Projectile.height = 0;

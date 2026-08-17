@@ -18,7 +18,7 @@ public sealed class StinkgrubNPC : ModNPC {
         Moving
     }
 
-    public override string Texture => Assets.Textures.NPCs.Crimson.Stinkgrub.StinkgrubNPC.KEY;
+    public override string Texture => Assets.Images.Crimson.NPCs.Stinkgrub.StinkgrubNPC.KEY;
 
     public State CurrentState => Unsafe.BitCast<float, State>(NPC.ai[0]);
 

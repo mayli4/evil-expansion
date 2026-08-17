@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class PounderSpike : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Corruption.HeadPounder.PounderSpike.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.HeadPounder.PounderSpike.KEY;
 
     int SpikeIndex => (int)Projectile.ai[0];
 

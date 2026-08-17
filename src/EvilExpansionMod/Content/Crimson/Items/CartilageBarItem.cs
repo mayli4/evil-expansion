@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class CartilageBarItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.CartilageBarItem.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.CartilageBarItem.KEY;
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 25;
         ItemID.Sets.SortingPriorityMaterials[Item.type] = 59;

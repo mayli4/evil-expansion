@@ -10,7 +10,7 @@ namespace EvilExpansionMod.Content.Crimson;
 //todo rewrite their ai, very simple but make them move very erratically
 
 public class StinkflyItem : ModItem {
-    public override string Texture => Assets.Textures.NPCs.Crimson.Stinkgrub.BigFlyItem.KEY;
+    public override string Texture => Assets.Images.Crimson.NPCs.Stinkgrub.BigFlyItem.KEY;
 
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;
@@ -34,7 +34,7 @@ public class StinkflyItem : ModItem {
 }
 
 public class StinkflyNPC : ModNPC {
-    public override string Texture => Assets.Textures.NPCs.Crimson.Stinkgrub.BigFly.KEY;
+    public override string Texture => Assets.Images.Crimson.NPCs.Stinkgrub.BigFly.KEY;
 
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 2;
@@ -127,5 +127,5 @@ public class StinkflyNPC : ModNPC {
 }
 
 public class SmallStinkflyNpc : StinkflyNPC {
-    public override string Texture => Assets.Textures.NPCs.Crimson.Stinkgrub.SmallFly.KEY;
+    public override string Texture => Assets.Images.Crimson.NPCs.Stinkgrub.SmallFly.KEY;
 }

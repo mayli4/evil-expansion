@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class GulpyYoyoProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Crimson.GulpyYoyo.GulpyYoyoProjectile.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.GulpyYoyo.GulpyYoyoProjectile.KEY;
 
     int Timer { get => (int)Projectile.ai[2]; set => Projectile.ai[2] = value; }
 

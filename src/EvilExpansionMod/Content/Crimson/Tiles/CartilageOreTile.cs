@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class CartilageOreTile : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Crimson.CartilageOreTile.KEY;
+    public override string Texture => Assets.Images.Crimson.Tiles.CartilageOreTile.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileOreFinderPriority[Type] = 450;
@@ -72,7 +72,7 @@ public class CartilageOreTile : ModTile {
 }
 
 public class CartilageOreItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Crimson.CartilageOreItem.KEY;
+    public override string Texture => Assets.Images.Crimson.Tiles.CartilageOreItem.KEY;
 
     public override void SetStaticDefaults() {
         ItemTrader.ChlorophyteExtractinator.AddOption_OneWay(Type, 1, ModContent.ItemType<PolypOreItem>(), 1);

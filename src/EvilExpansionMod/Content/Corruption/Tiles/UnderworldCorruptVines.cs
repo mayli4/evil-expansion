@@ -10,7 +10,7 @@ using Terraria.ObjectData;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class UnderworldCorruptVines : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Corruption.UnderworldCorruptVines.KEY;
+    public override string Texture => Assets.Images.Corruption.Tiles.UnderworldCorruptVines.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileBlockLight[Type] = true;

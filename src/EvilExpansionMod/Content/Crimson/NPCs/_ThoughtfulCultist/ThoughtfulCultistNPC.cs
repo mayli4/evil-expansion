@@ -23,7 +23,7 @@ enum CultistState {
 }
 
 public class ThoughtfulCultistNPC : ModNPC {
-    public override string Texture => Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistBrain.KEY;
+    public override string Texture => Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistBrain.KEY;
     Player Target => Main.player[NPC.target];
     CultistState State => Unsafe.BitCast<float, CultistState>(NPC.ai[0]);
 
@@ -184,11 +184,11 @@ public class ThoughtfulCultistNPC : ModNPC {
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var brainTexture = TextureAssets.Npc[Type].Value;
-        var robeTextureBack = Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistRobeBack.Asset.Value;
-        var robeTextureFront = Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistRobeFront.Asset.Value;
-        var pendantTexture = Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistPendant.Asset.Value;
-        var pendantGlowmaskTexture = Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistPendantGlowmask.Asset.Value;
-        var chainTexture = Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistChain.Asset.Value;
+        var robeTextureBack = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistRobeBack.Asset.Value;
+        var robeTextureFront = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistRobeFront.Asset.Value;
+        var pendantTexture = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPendant.Asset.Value;
+        var pendantGlowmaskTexture = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPendantGlowmask.Asset.Value;
+        var chainTexture = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistChain.Asset.Value;
 
         if(NPC.IsABestiaryIconDummy)
             return true;

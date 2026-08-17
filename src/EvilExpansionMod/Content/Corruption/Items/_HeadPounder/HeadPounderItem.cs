@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class HeadPounderItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Corruption.HeadPounder.HeadPounderItem.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.HeadPounder.HeadPounderItem.KEY;
 
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 3;

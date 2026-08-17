@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class LavaLizardItem : ModItem {
-    public override string Texture => Assets.Textures.NPCs.Crimson.LavaLizardItem.KEY;
+    public override string Texture => Assets.Images.Crimson.NPCs.LavaLizardItem.KEY;
 
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;
@@ -33,7 +33,7 @@ public class LavaLizardItem : ModItem {
 }
 
 public sealed class LavaLizardCritter : ModNPC {
-    public override string Texture => Assets.Textures.NPCs.Crimson.LavaLizardNPC.KEY;
+    public override string Texture => Assets.Images.Crimson.NPCs.LavaLizardNPC.KEY;
 
     public enum State {
         Walk,

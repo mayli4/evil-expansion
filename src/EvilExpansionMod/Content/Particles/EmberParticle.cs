@@ -66,7 +66,7 @@ public sealed class GlowEmberParticle : BaseParticle<GlowEmberParticle> {
     }
 
     public override void Draw(ref ParticleRendererSettings settings, SpriteBatch spritebatch) {
-        var texture = Assets.Textures.Particles.GlowEmberParticle.Asset;
+        var texture = Assets.Images.Particles.GlowEmberParticle.Asset;
         var origin = new Vector2(texture.Width() / 2, texture.Height() / 2 - 2f);
 
         float speed = MathF.Sqrt(Velocity.Length());

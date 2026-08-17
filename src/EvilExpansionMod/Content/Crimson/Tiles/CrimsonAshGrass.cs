@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class CrimsonAshGrass : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Crimson.CrimsonAshGrassTile.KEY;
+    public override string Texture => Assets.Images.Crimson.Tiles.CrimsonAshGrassTile.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileSolid[Type] = true;

@@ -9,7 +9,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class CultistEye : ModNPC {
-    public override string Texture => Assets.Textures.NPCs.Crimson.ThoughtfulCultist.CultistEye.KEY;
+    public override string Texture => Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistEye.KEY;
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 3;
     }

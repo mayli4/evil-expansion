@@ -15,7 +15,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public sealed class EffigyNPC : ModNPC {
-    public override string Texture => Assets.Textures.NPCs.Corruption.Effigy.EffigyNPC.KEY;
+    public override string Texture => Assets.Images.Corruption.NPCs.Effigy.EffigyNPC.KEY;
 
     private bool dead;
     private int deadTimer;
@@ -160,7 +160,7 @@ public sealed class EffigyNPC : ModNPC {
         }
             
         var texture = TextureAssets.Npc[Type].Value;
-        var noiseTexture = Assets.Textures.Sample.DissolveNoise.Asset.Value;
+        var noiseTexture = Assets.Images.Sample.DissolveNoise.Asset.Value;
         var shader = Assets.Shaders.Pixel.EffigyDecay.CreateDecayPass();
 
         float fadeProgress = 0f;
@@ -205,7 +205,7 @@ public sealed class EffigyNPC : ModNPC {
         }
         spriteBatch.Restart(ss with { BlendState = BlendState.Additive });
         {
-            spriteBatch.Draw(new DrawParameters(Assets.Textures.NPCs.Corruption.Effigy.EffigyNPC_Glow.Asset)
+            spriteBatch.Draw(new DrawParameters(Assets.Images.Corruption.NPCs.Effigy.EffigyNPC_Glow.Asset)
             {
                 Position = drawPosition,
                 Source = NPC.frame,
@@ -214,7 +214,7 @@ public sealed class EffigyNPC : ModNPC {
                 Scale = NPC.scale * squashStretch,
             });   
             
-            spriteBatch.Draw(new DrawParameters(Assets.Textures.NPCs.Corruption.Effigy.EffigyNPC_Bloom.Asset)
+            spriteBatch.Draw(new DrawParameters(Assets.Images.Corruption.NPCs.Effigy.EffigyNPC_Bloom.Asset)
             {
                 Position = drawPosition,
                 Source = NPC.frame,

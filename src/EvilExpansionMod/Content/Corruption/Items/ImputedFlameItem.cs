@@ -4,7 +4,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class ImputedFlameItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Corruption.ImputedFlame.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.ImputedFlame.KEY;
 
     public override void SetDefaults() {
         (Item.width, Item.height) = (20, 20);

@@ -20,7 +20,7 @@ public enum PlantStage : byte {
 }
 
 public class CorruptFireblossom : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Corruption.CorruptFireblossom.KEY;
+    public override string Texture => Assets.Images.Corruption.Tiles.CorruptFireblossom.KEY;
     private const int FrameWidth = 18;
 
     public override void SetStaticDefaults() {
@@ -191,7 +191,7 @@ public class CorruptFireblossom : ModTile {
 }
 
 public sealed class CorruptFireblossomSeeds : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Corruption.CorruptFireblossomSeeds.KEY;
+    public override string Texture => Assets.Images.Corruption.Tiles.CorruptFireblossomSeeds.KEY;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 25;
     }

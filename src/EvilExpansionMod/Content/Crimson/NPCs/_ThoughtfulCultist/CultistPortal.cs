@@ -125,7 +125,7 @@ public class CultistPortal : ModProjectile {
         var sampleTexture1 = Assets.Textures.Sample.Noise2.Asset.Value;
         var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;
 
-        var effect = Assets.Effects.Pixel.CultistPortal.Asset.Value;
+        var effect = Assets.Shaders.Pixel.CultistPortal.Asset.Value;
         var destination = new Rectangle(
             (int)(Projectile.Center.X - Main.screenPosition.X),
             (int)(Projectile.Center.Y - Main.screenPosition.Y),

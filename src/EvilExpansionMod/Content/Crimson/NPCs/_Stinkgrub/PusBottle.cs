@@ -194,7 +194,7 @@ public class PusBottleNPC : ModNPC {
 
         Vector2 finalScale = Vector2.One * NPC.scale;
 
-        var fluidEffect = Assets.Effects.Pixel.DevilOWarFluid.Asset.Value;
+        var fluidEffect = Assets.Shaders.Pixel.DevilOWarFluid.Asset.Value;
 
         if(!NPC.IsABestiaryIconDummy) {
             Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)

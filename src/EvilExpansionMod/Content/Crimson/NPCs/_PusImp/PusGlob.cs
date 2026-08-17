@@ -74,7 +74,7 @@ public sealed class PusGlob : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var trailEffect = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
+        var trailEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
 
         var color = new Color(98, 90, 40).MultiplyRGB(lightColor);
         var outlineColor = new Color(161, 131, 78).MultiplyRGB(lightColor);

@@ -59,7 +59,7 @@ Mods: {
 			HeadPounderItem: {
 				DisplayName: Head Pounder
 				Damage: 1-{0} melee damage based on charge time
-				Tooltip: "Strike the earth at full power to unleash a wave of corrupt mass"
+				Tooltip: Strike the earth at full power to unleash a wave of corrupt mass
 			}
 
 			HellbringerBody: {
@@ -306,6 +306,11 @@ Mods: {
 
 			CartilageOreItem: {
 				DisplayName: Cartilage Ore
+				Tooltip: ""
+			}
+
+			SpamOnAStickItem: {
+				DisplayName: Spam On A Stick Item
 				Tooltip: ""
 			}
 		}

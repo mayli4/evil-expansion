@@ -114,7 +114,7 @@ public class ExplosionProjectile : ModProjectile {
         var starTexture = Assets.Textures.Sample.Star3.Asset.Value;
         var noiseTexture1 = Assets.Textures.Sample.Noise1.Asset.Value;
         var noiseTexture2 = Assets.Textures.Sample.Noise2.Asset.Value;
-        var explosionEffect = Assets.Effects.Pixel.Explosion.Asset.Value;
+        var explosionEffect = Assets.Shaders.Pixel.Explosion.Asset.Value;
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
         var progress = 1f - (float)Projectile.timeLeft / _maxTimeLeft;

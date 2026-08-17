@@ -79,7 +79,7 @@ public class CutProjectile : ModProjectile {
             );
         }
 
-        var axeCutEffect = Assets.Effects.Trail.AxeCut.Asset.Value;
+        var axeCutEffect = Assets.Shaders.Trail.AxeCut.Asset.Value;
 
         var positions = CollectionsMarshal.AsSpan(TrailPositions);
         var texture = Assets.Textures.Items.Crimson.MeatAxe.CutTexture.Asset.Value;

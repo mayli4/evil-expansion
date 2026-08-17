@@ -189,7 +189,7 @@ public class FireInALanternFlame : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var flameShader = Assets.Effects.Pixel.LingeringFlame.Asset.Value;
+        var flameShader = Assets.Shaders.Pixel.LingeringFlame.Asset.Value;
         var noiseTexture1 = Assets.Textures.Sample.Pebbles.Asset.Value;
         var circleTexture = Assets.Textures.Misc.Circle.Asset.Value;
         var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;

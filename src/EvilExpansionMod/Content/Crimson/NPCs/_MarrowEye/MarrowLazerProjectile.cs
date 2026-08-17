@@ -91,7 +91,7 @@ public class MarrowLazerProjectile : ModProjectile {
 
         var texture0 = Assets.Textures.Sample.Pebbles.Asset.Value;
         var texture1 = Assets.Textures.Sample.PlasmaNoise.Asset.Value;
-        var effect = Assets.Effects.Pixel.MarrowLaser.Asset.Value;
+        var effect = Assets.Shaders.Pixel.MarrowLaser.Asset.Value;
 
         Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
             .SetEffectParams(

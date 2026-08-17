@@ -521,7 +521,7 @@ public class TerrorBatSpit : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var cursedFireEffect = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
+        var cursedFireEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
         Renderer.BeginPipeline(0.5f)
             .SetEffectParams(
                 cursedFireEffect,

@@ -362,7 +362,7 @@ public class PlanetoidProjectile : ModProjectile {
         float crackProgress = _preExplosionDelayTimer / 20f;
         if(State == 2f && crackProgress > 0f) {
             float easedCrackProgress = MathF.Pow(crackProgress, 2f);
-            var crackShader = Assets.Effects.Pixel.PlanetoidCracks.Asset.Value;
+            var crackShader = Assets.Shaders.Pixel.PlanetoidCracks.Asset.Value;
 
             Renderer.BeginPipeline(1f)
                 .SetEffectParams(

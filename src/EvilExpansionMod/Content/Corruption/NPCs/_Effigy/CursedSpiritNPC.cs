@@ -534,7 +534,7 @@ public sealed class CursedSpiritNPC : ModNPC {
         spriteBatch.EndBegin(initialSnapshot);
 
         if(!NPC.IsABestiaryIconDummy) {
-            var trailEffect = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
+            var trailEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
             Renderer.BeginPipeline(0.5f)
                 .SetEffectParams(
                     trailEffect,

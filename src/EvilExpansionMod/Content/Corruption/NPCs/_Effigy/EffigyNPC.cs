@@ -161,7 +161,7 @@ public sealed class EffigyNPC : ModNPC {
             
         var texture = TextureAssets.Npc[Type].Value;
         var noiseTexture = Assets.Textures.Sample.DissolveNoise.Asset.Value;
-        var shader = Assets.Effects.Pixel.EffigyDecay.CreateDecayPass();
+        var shader = Assets.Shaders.Pixel.EffigyDecay.CreateDecayPass();
 
         float fadeProgress = 0f;
         if (dead && (int)NPC.frameCounter >= 11) {

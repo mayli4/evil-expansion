@@ -318,7 +318,7 @@ public sealed class DevilOWarNPC : ModNPC {
         };
 
         var tentacleTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarTentacle.Asset.Value;
-        var defaultTrailEffect = Assets.Effects.Trail.Default.Asset.Value;
+        var defaultTrailEffect = Assets.Shaders.Trail.Default.Asset.Value;
 
         for(int i = 0; i < 4; i++) {
             var positions = _tentacleTrailPositions[i];
@@ -413,7 +413,7 @@ public sealed class DevilOWarNPC : ModNPC {
         PopulateTrails(pipeline, bodyWorldPositionForTrails, drawColor);
         pipeline.End();
 
-        var fluidEffect = Assets.Effects.Pixel.DevilOWarFluid.Asset.Value;
+        var fluidEffect = Assets.Shaders.Pixel.DevilOWarFluid.Asset.Value;
 
         int clampedLifeDrained = Math.Clamp(TotalLifeDrained, 0, MAX_DRAIN_FOR_LEVEL);
         float mappedLevel = MathHelper.Lerp(0.07f, 0.5f, (float)clampedLifeDrained / MAX_DRAIN_FOR_LEVEL);

@@ -81,20 +81,20 @@ public class LingeringFlameProjectile : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var flameEffect = Assets.Effects.Trail.BatLingeringFlame.Asset.Value;
+        var flameEffect = Assets.Shaders.Trail.BatLingeringFlame.Asset.Value;
 
         var colorA = Color.Yellow;
         var colorB = Color.Red;
 
         Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
             // uImage0
-            .SetTexture(0, Assets.Textures.Sample.Noise4.Asset.Value)
+            .SetTexture(0, Assets.Images.Sample.Noise4.Asset.Value)
             .SetSamplerState(0, SamplerState.PointWrap)
             // uImage1
-            .SetTexture(1, Assets.Textures.Sample.Noise2.Asset.Value)
+            .SetTexture(1, Assets.Images.Sample.Noise2.Asset.Value)
             .SetSamplerState(1, SamplerState.PointWrap)
             // uImage2
-            .SetTexture(2, Assets.Textures.Sample.BubblyNoise.Asset.Value)
+            .SetTexture(2, Assets.Images.Sample.BubblyNoise.Asset.Value)
             .SetSamplerState(2, SamplerState.PointWrap)
             .SetEffectParams(
                 flameEffect,

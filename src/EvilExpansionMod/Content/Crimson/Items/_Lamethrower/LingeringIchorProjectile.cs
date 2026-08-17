@@ -20,8 +20,16 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
         Projectile.penetrate = -1;
-        Projectile.timeLeft = 128;
+        Projectile.timeLeft = 360;
         Projectile.DamageType = DamageClass.Ranged;
+        Projectile.usesIDStaticNPCImmunity = true;
+        Projectile.idStaticNPCHitCooldown = 5;
+    }
+
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+        target.AddBuff(BuffID.Oiled, 1200, false);
+        target.AddBuff(BuffID.Ichor, 900, false);
+        target.AddBuff(BuffID.OnFire3, 120, false);
     }
 
     public override bool ShouldUpdatePosition() => false;

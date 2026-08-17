@@ -36,7 +36,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
         Projectile.tileCollide = false;
         Projectile.friendly = true;
         Projectile.hostile = false;
-        Projectile.DamageType = DamageClass.Melee;
+        Projectile.DamageType = DamageClass.Ranged;
         Projectile.timeLeft = FullFlameFrames * 2;
         Projectile.ownerHitCheck = true;
         Projectile.localNPCHitCooldown = 5;

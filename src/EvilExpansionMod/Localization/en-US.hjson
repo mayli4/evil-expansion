@@ -143,7 +143,11 @@ Mods: {
 
 			LamethrowerItem: {
 				DisplayName: Lamethrower
-				Tooltip: ""
+				Tooltip:
+					'''
+					Coats enemies and surfaces alike with flaming ichor, inflicting a multitude of debuffs
+					Enemies suffer reduced defense and take extra damage when set ablaze
+					'''
 			}
 
 			SlippedWhipItem: {

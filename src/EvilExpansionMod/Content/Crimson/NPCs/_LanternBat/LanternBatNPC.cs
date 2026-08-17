@@ -35,7 +35,7 @@ public class LanternBatNPC : ModNPC {
     public Player Target => Main.player[NPC.target];
 
     private const int anim_speed = 6;
-    private Vector2 _storedDashVelocity;
+    private Vector2 _storedDashDirection;
     private ref float LanternLightIntensity => ref NPC.localAI[1];
 
     public override void SetStaticDefaults() {
@@ -121,30 +121,31 @@ public class LanternBatNPC : ModNPC {
                 LanternLightIntensity = Math.Max(0.2f, LanternLightIntensity);
 
                 if(NPC.Distance(Target.Center) < dashRange && StateTimer > Main.rand.Next(minIdleTime, maxIdleTime)) {
-                    Vector2 dashTarget = Target.Center + Target.velocity * 0.5f;
-                    _storedDashVelocity = NPC.DirectionTo(dashTarget) * 16;
+                    Vector2 dashTarget = Target.Center + Target.velocity * 0.5f - Vector2.UnitY * 80;
+                    _storedDashDirection = NPC.DirectionTo(dashTarget);
 
                     CurrentState = State.Dashing;
-                }
-                break;
-            case State.Dashing:
-                NPC.velocity = _storedDashVelocity;
-                NPC.noTileCollide = true;
-                NPC.noGravity = true;
 
-                LanternLightIntensity = 1.5f;
-
-                if(StateTimer % 10 == 0) {
                     Projectile.NewProjectile(
                         NPC.GetSource_FromAI(),
                         NPC.Center,
                         Vector2.Zero,
                         ModContent.ProjectileType<LingeringFlameProjectile>(),
                         20,
-                        0, Main.myPlayer,
-                        NPC.whoAmI
+                        0,
+                        Main.myPlayer,
+                        NPC.whoAmI,
+                        _storedDashDirection.X > 0 ? 1 : -1
                     );
                 }
+                break;
+            case State.Dashing:
+                NPC.velocity += _storedDashDirection * 0.5f;
+
+                NPC.noTileCollide = true;
+                NPC.noGravity = true;
+
+                LanternLightIntensity = 1.5f;
 
                 StateTimer++;
                 if(StateTimer >= 45) {
@@ -169,6 +170,7 @@ public class LanternBatNPC : ModNPC {
         }
 
         NPC.spriteDirection = NPC.direction = (NPC.velocity.X > 0) ? 1 : -1;
+        NPC.rotation = Math.Clamp(NPC.velocity.X * 0.15f, -0.4f, 0.4f);
 
         if(NPC.velocity.Length() < 0.1f && CurrentState != State.Dashing) {
             NPC.velocity = Main.rand.NextVector2Circular(0.5f, 0.5f);
@@ -184,7 +186,7 @@ public class LanternBatNPC : ModNPC {
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
-        Vector2 lanternOffsetVector = new Vector2(0, 40);
+        Vector2 lanternOffsetVector = new Vector2(-8, 24);
 
         if(NPC.spriteDirection == -1) {
             lanternOffsetVector.X *= -1;

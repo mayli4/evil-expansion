@@ -10,6 +10,13 @@ struct QuadPSInput
     float2 uv : TEXCOORD;
 };
 
+struct TrailVSInput
+{
+    float3 position : POSITION;
+    float4 color : COLOR;
+    float2 uv : TEXCOORD;
+};
+
 struct TrailPSInput 
 {
     float4 position : POSITION;

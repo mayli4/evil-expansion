@@ -5,13 +5,6 @@ sampler2D uImage0 : register(s0);
 matrix uMatrix;
 int uSpriteRotation = 0;
 
-struct VSInput
-{
-    float3 position : POSITION;
-    float4 color : COLOR;
-    float2 uv : TEXCOORD;
-};
-
 const float2 RotationTable[8] = {
     float2(1, 0),
     float2(0, 1),
@@ -26,7 +19,7 @@ const float2 RotationTable[8] = {
     float2(-1, 0)
 };
 
-TrailPSInput VS(VSInput input)
+TrailPSInput VS(TrailVSInput input)
 {
     TrailPSInput output;
     output.position = mul(float4(input.position, 1), uMatrix);

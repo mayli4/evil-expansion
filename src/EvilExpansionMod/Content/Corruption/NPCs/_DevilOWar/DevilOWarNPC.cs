@@ -80,7 +80,7 @@ public sealed class DevilOWarNPC : ModNPC {
 
     public override void Load() {
         for(int j = 1; j <= 5; j++)
-            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/DevilOWarGore" + j);
+            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/DevilOWarGore" + j);
     }
 
     public override void OnSpawn(IEntitySource source) {

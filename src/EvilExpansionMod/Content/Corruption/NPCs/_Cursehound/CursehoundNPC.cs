@@ -94,7 +94,7 @@ public sealed class CursehoundNPC : ModNPC {
 
     public override void Load() {
         for(int j = 1; j <= 8; j++)
-            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/CursehoundGore" + j);
+            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/CursehoundGore" + j);
     }
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {

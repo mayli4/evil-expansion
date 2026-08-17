@@ -73,7 +73,7 @@ public sealed class EffigyNPC : ModNPC {
 
     public override void Load() {
         for(int j = 1; j <= 5; j++)
-            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/EffigyGore" + j);
+            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/EffigyGore" + j);
     }
 
     public override void AI() {

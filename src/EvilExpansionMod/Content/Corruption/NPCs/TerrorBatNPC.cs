@@ -159,7 +159,7 @@ public class TerrorBatNPC : ModNPC {
 
     public override void Load() {
         for(int j = 0; j <= 3; j++)
-            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/TerrorBatGore" + j);
+            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/TerrorBatGore" + j);
     }
 
     public override void HitEffect(NPC.HitInfo hit) {

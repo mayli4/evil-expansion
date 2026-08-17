@@ -1,4 +1,5 @@
 ﻿using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,6 +19,9 @@ public class SpiritFireball : ModProjectile {
     public static readonly int MaxTimeLeft = 130;
 
     float Scale => 1f - MathF.Pow((float)(MaxTimeLeft - Projectile.timeLeft) / MaxTimeLeft, 2);
+    
+    public readonly static Color GhostColor1 = new(214, 237, 5);
+    public readonly static Color GhostColor2 = new(181, 200, 4);
 
     public override void SetDefaults() {
         Projectile.width = 16;
@@ -43,17 +47,45 @@ public class SpiritFireball : ModProjectile {
 
         Projectile.velocity.Y += Gravity;
 
-        if(Main.rand.NextBool(14)) Dust.NewDust(
-            Projectile.position,
-            Projectile.width,
-            Projectile.height,
-            DustID.CursedTorch,
-            newColor: Main.rand.NextFromList(CursedSpiritNPC.GhostColor1, CursedSpiritNPC.GhostColor2)
-        );
+        if(Main.rand.NextBool(10)) { 
+            Dust.NewDust(
+                Projectile.position,
+                Projectile.width,
+                Projectile.height,
+                DustID.CursedTorch,
+                newColor: Main.rand.NextFromList(CursedSpiritNPC.GhostColor1, CursedSpiritNPC.GhostColor2)
+            );
+
+            var dir = Projectile.velocity != Vector2.Zero 
+                ? -Vector2.Normalize(Projectile.velocity) 
+                : -Vector2.UnitY;
+
+            float coneAngle = Main.rand.NextFloat(-0.3f, 0.3f); 
+            float backwardSpeed = Main.rand.NextFloat(0.5f, 2f);
+
+            var spawnPosition = Projectile.Center 
+                                    - (Projectile.velocity * 0.5f) 
+                                    + Main.rand.NextVector2Circular(4f, 4f);
+
+            var flame = DustFlameParticle.RequestNew(
+                spawnPosition, 
+                dir.RotatedBy(coneAngle) * backwardSpeed, 
+                GhostColor1, 
+                GhostColor1, 
+                Main.rand.NextFloat(0.8f, 1.4f), 
+                Main.rand.Next(18, 28)
+            );
+
+            flame.LossPerFrame = 0.12f; 
+            flame.Swirly = false; 
+            flame.ApplyLighting = false;
+
+            ParticleEngine.PARTICLES.Add(flame);
+        }
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;
+        var glowTexture = Assets.Images.Sample.Glow1.Asset.Value;
         var blinker = (MathF.Sin(0.1f * Main.GameUpdateCount + 23.2f * Projectile.whoAmI) +
             MathF.Cos(0.06f * Main.GameUpdateCount) + 2f) / 4f;
         var bigGlowColor = CursedSpiritNPC.GhostColor2 * (0.25f + 0.25f * blinker);
@@ -73,7 +105,7 @@ public class SpiritFireball : ModProjectile {
         );
         Main.spriteBatch.EndBegin(snapshot);
 
-        var trailEffect = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
+        var trailEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
         Renderer.BeginPipeline(0.5f)
             .SetEffectParams(
                 trailEffect,
@@ -81,8 +113,8 @@ public class SpiritFireball : ModProjectile {
                 ("mat", Graphics.WorldTransformMatrix),
                 ("stepY", 0.25f),
                 ("scale", 0.25f),
-                ("texture1", Assets.Textures.Sample.Pebbles.Asset.Value),
-                ("texture2", Assets.Textures.Sample.Noise3.Asset.Value)
+                ("texture1", Assets.Images.Sample.Pebbles.Asset.Value),
+                ("texture2", Assets.Images.Sample.Noise3.Asset.Value)
             )
             .DrawTrail(
                 _trailPositions,
@@ -92,7 +124,7 @@ public class SpiritFireball : ModProjectile {
             )
             .DrawTexture(new()
             {
-                Texture = Assets.Textures.Misc.Circle.Asset.Value,
+                Texture = Assets.Images.Misc.Circle.Asset.Value,
                 Position = Projectile.Center - Main.screenPosition,
                 Color = smallGlowColor,
                 Origin = 16f * Vector2.One,

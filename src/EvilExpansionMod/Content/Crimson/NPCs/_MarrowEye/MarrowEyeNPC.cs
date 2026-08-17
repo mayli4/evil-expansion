@@ -19,7 +19,7 @@ enum State {
 }
 
 public class MarrowEyeNPC : ModNPC {
-    public override string Texture => Assets.Textures.NPCs.Crimson.MarrowEye.MarrowEyeNPC.KEY;
+    public override string Texture => Assets.Images.Crimson.NPCs.MarrowEye.MarrowEyeNPC.KEY;
 
     Player Target => Main.player[NPC.target];
     State State {
@@ -263,8 +263,8 @@ public class MarrowEyeNPC : ModNPC {
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var texture = TextureAssets.Npc[Type].Value;
-        var whitesTexture = Assets.Textures.NPCs.Crimson.MarrowEye.MarrowEyeWhites.Asset.Value;
-        var irisTexture = Assets.Textures.NPCs.Crimson.MarrowEye.MarrowEyeIris.Asset.Value;
+        var whitesTexture = Assets.Images.Crimson.NPCs.MarrowEye.MarrowEyeWhites.Asset.Value;
+        var irisTexture = Assets.Images.Crimson.NPCs.MarrowEye.MarrowEyeIris.Asset.Value;
 
         var position = NPC.Center + new Vector2(-4f, -38f);
         var origin = new Vector2(34, 8);

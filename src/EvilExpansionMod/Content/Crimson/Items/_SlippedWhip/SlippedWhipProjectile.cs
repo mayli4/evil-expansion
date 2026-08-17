@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class SlippedWhipProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Crimson.SlippedWhip.SlippedWhipProjectile.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.SlippedWhip.SlippedWhipProjectile.KEY;
 
     public override void SetStaticDefaults() {
         ProjectileID.Sets.IsAWhip[Type] = true;
@@ -84,7 +84,7 @@ public class SlippedWhipProjectile : ModProjectile {
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
         Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
-        Projectile.damage = (int)(Projectile.damage * 0.7f); // multihit penalty
+        Projectile.damage = (int)(Projectile.damage * 0.9f); // multihit penalty
 
         if(Main.rand.NextFloat() < SlippedWhipItem.CageSpawnChance) {
             var actualTarget = target.whoAmI;

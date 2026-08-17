@@ -13,24 +13,25 @@ namespace EvilExpansionMod.Content.Corruption;
 
 // ReSharper disable CompareOfFloatsByEqualityOperator
 public class SpamonAStickItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Corruption.SpamonAStick.SpamonAStickItem.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.SpamonAStick.SpamonAStickItem.KEY;
 
     public override void SetDefaults() {
         Item.DamageType = DamageClass.MeleeNoSpeed;
         Item.useAnimation = 10;
         Item.useTime = 10;
         Item.channel = true;
-        Item.shootSpeed = 12;
+        Item.shootSpeed = 20;
         Item.noMelee = true;
         Item.noUseGraphic = true;
         Item.useStyle = ItemUseStyleID.Swing;
 
         Item.shoot = ModContent.ProjectileType<SpamOnAStickProjectile>();
 
-        Item.damage = 30;
-        Item.knockBack = 6f;
+        Item.damage = 81;
+        Item.knockBack = 8;
         Item.crit = 4;
-        Item.value = Item.sellPrice(gold: 1);
+        Item.value = Item.sellPrice(gold: 1, silver: 2);
+        Item.rare = ItemRarityID.LightRed;
     }
 
     public override bool CanShoot(Player player) {
@@ -45,18 +46,19 @@ public class SpamonAStickItem : ModItem {
         CreateRecipe()
             .AddIngredient(ModContent.ItemType<PolypBarItem>(), 12)
             .AddIngredient(ItemID.RottenChunk, 8)
-            .AddTile(TileID.Anvils)
+            .AddIngredient(ItemID.Terrarium)
+            .AddTile(TileID.MythrilAnvil)
             .Register();
     }
 }
 
 public class SpamOnAStickProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Corruption.SpamonAStick.SpamonAStickItem.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.SpamonAStick.SpamonAStickItem.KEY;
 
-    protected Texture2D ChainTexture => Assets.Textures.Items.Corruption.SpamonAStick.SpamonAStick_Chain.Asset.Value;
-    protected Texture2D BlockTexture => Assets.Textures.Items.Corruption.SpamonAStick.SpamonAStick_Block.Asset.Value;
+    protected Texture2D ChainTexture => Assets.Images.Corruption.Items.SpamonAStick.SpamonAStick_Chain.Asset.Value;
+    protected Texture2D BlockTexture => Assets.Images.Corruption.Items.SpamonAStick.SpamonAStick_Block.Asset.Value;
 
-    public int MaxLength = 650;
+    public int MaxLength = 800;
 
     public ref float Timer => ref Projectile.ai[0];
     public ref float State => ref Projectile.ai[1];

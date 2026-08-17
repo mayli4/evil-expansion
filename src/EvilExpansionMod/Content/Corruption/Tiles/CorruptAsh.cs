@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class CorruptAsh : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Corruption.CorruptAshTile.KEY;
+    public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshTile.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileMergeDirt[Type] = true;
@@ -62,7 +62,7 @@ public class CorruptAsh : ModTile {
 }
 
 public class CorruptAshItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Corruption.CorruptAshItem.KEY;
+    public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshItem.KEY;
 
     public override void SetDefaults() {
         Item.DefaultToPlaceableTile(ModContent.TileType<CorruptAsh>());

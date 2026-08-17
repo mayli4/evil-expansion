@@ -12,9 +12,6 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Crimson;
 
-using Effects = Assets.Effects;
-using Textures = Assets.Textures;
-
 public class LamethrowerHeldProjectile : ModProjectile {
     readonly static int FullFlameFrames = 60;
 
@@ -29,7 +26,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
 
     Vector2[] _trailPositions;
 
-    public override string Texture => Textures.Items.Corruption.Lamethrower.LamethrowerItem.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.Lamethrower.LamethrowerItem.KEY;
     public override void SetDefaults() {
         Projectile.width = 0;
         Projectile.height = 0;
@@ -39,11 +36,17 @@ public class LamethrowerHeldProjectile : ModProjectile {
         Projectile.tileCollide = false;
         Projectile.friendly = true;
         Projectile.hostile = false;
-        Projectile.DamageType = DamageClass.Melee;
+        Projectile.DamageType = DamageClass.Ranged;
         Projectile.timeLeft = FullFlameFrames * 2;
         Projectile.ownerHitCheck = true;
-        Projectile.localNPCHitCooldown = 10;
+        Projectile.localNPCHitCooldown = 5;
         Projectile.usesLocalNPCImmunity = true;
+    }
+
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+        target.AddBuff(BuffID.Oiled, 1200, false);
+        target.AddBuff(BuffID.Ichor, 900, false);
+        target.AddBuff(BuffID.OnFire3, 120, false);
     }
 
     public override bool ShouldUpdatePosition() => false;
@@ -150,7 +153,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
 
-        var glowTexture = Textures.Sample.Glow1.Asset.Value;
+        var glowTexture = Assets.Images.Sample.Glow1.Asset.Value;
         var glowPosition = _trailOrigin + _rotationVector * 2f;
         Main.spriteBatch.Draw(
             glowTexture,
@@ -177,9 +180,9 @@ public class LamethrowerHeldProjectile : ModProjectile {
         );
         Main.spriteBatch.EndBegin(snapshot);
 
-        var flameShader = Effects.Trail.LingeringFlame.Asset.Value;
-        var noiseTexture1 = Textures.Sample.Pebbles.Asset.Value;
-        var circleTexture = Textures.Misc.Circle.Asset.Value;
+        var flameShader = Assets.Shaders.Trail.LingeringFlame.Asset.Value;
+        var noiseTexture1 = Assets.Images.Sample.Pebbles.Asset.Value;
+        var circleTexture = Assets.Images.Misc.Circle.Asset.Value;
 
         Renderer.BeginPipeline(0.5f)
             .SetTexture(0, circleTexture)

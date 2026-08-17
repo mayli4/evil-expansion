@@ -24,14 +24,14 @@ internal class Renderer : ModSystem {
 
     RenderCommands _commands = new();
 
-    static Effect QuadEffect => Assets.Effects.Core.Quad.Asset.Value;
+    static Effect QuadEffect => Assets.Shaders.Core.Quad.Asset.Value;
     DynamicVertexBuffer _quadVertexBuffer = null!;
 
     const int TrailPositionCapacity = 256;
     const int TrailVertexCount = TrailPositionCapacity * 2;
     const int TrailIndexCount = (TrailPositionCapacity - 1) * 6;
 
-    static Effect TrailEffect => Assets.Effects.Core.Trail.Asset.Value;
+    static Effect TrailEffect => Assets.Shaders.Core.Trail.Asset.Value;
     DynamicVertexBuffer _trailVertexBuffer = null!;
     readonly VertexPositionColorTexture[] _trailVertices = new VertexPositionColorTexture[TrailVertexCount];
 

@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Food;
 
 public class Soursop : ModItem {
-    public override string Texture => Assets.Textures.Items.Foods.Soursop.KEY;
+    public override string Texture => Assets.Images.Foods.Soursop.KEY;
 
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;

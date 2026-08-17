@@ -43,7 +43,7 @@ public class PusImpNPC : ModNPC {
     private int _attackCooldownTimer;
     private int _teleportCooldownTimer;
 
-    public override string Texture => Assets.Textures.NPCs.Crimson.PusImp.PusImpNPC.KEY;
+    public override string Texture => Assets.Images.Crimson.NPCs.PusImp.PusImpNPC.KEY;
 
     public Player Target => Main.player[NPC.target];
 
@@ -212,7 +212,7 @@ public class PusImpNPC : ModNPC {
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
-        var tex = Assets.Textures.NPCs.Crimson.PusImp.PusImpNPC.Asset.Value;
+        var tex = Assets.Images.Crimson.NPCs.PusImp.PusImpNPC.Asset.Value;
 
         if(NPC.IsABestiaryIconDummy) {
             return true;

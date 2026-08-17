@@ -11,7 +11,7 @@ public class HellbringerHead : ModItem {
     public readonly static float ShadowOrbSpawnChance = 0.24f;
     public readonly static int CorruptlingDamage = 20;
 
-    public override string Texture => Assets.Textures.Items.Corruption.HellbringerArmor.HellbringerHead.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.HellbringerArmor.HellbringerHead.KEY;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 
@@ -24,7 +24,7 @@ public class HellbringerHead : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = Item.buyPrice(silver: 90);
+        Item.value = Item.sellPrice(silver: 90);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 6;
     }
@@ -45,8 +45,8 @@ public class HellbringerHead : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<PolypBarItem>(7)
-            .AddIngredient<ImputedFlameItem>(2)
+            .AddIngredient<PolypBarItem>(10)
+            .AddIngredient<ImputedFlameItem>(3)
             .AddTile(TileID.Anvils)
             .Register();
     }
@@ -54,7 +54,7 @@ public class HellbringerHead : ModItem {
 
 [AutoloadEquip(EquipType.Body)]
 public class HellbringerBody : ModItem {
-    public override string Texture => Assets.Textures.Items.Corruption.HellbringerArmor.HellbringerBody.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.HellbringerArmor.HellbringerBody.KEY;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
 
@@ -67,7 +67,7 @@ public class HellbringerBody : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = Item.buyPrice(silver: 90);
+        Item.value = Item.sellPrice(gold: 1);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 14;
     }
@@ -83,8 +83,8 @@ public class HellbringerBody : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<PolypBarItem>(15)
-            .AddIngredient<ImputedFlameItem>(5)
+            .AddIngredient<PolypBarItem>(24)
+            .AddIngredient<ImputedFlameItem>(14)
             .AddTile(TileID.Anvils)
             .Register();
     }
@@ -92,7 +92,7 @@ public class HellbringerBody : ModItem {
 
 [AutoloadEquip(EquipType.Legs)]
 public class HellbringerLegs : ModItem {
-    public override string Texture => Assets.Textures.Items.Corruption.HellbringerArmor.HellbringerLegs.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.HellbringerArmor.HellbringerLegs.KEY;
 
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
@@ -105,7 +105,7 @@ public class HellbringerLegs : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = Item.buyPrice(silver: 60);
+        Item.value = Item.sellPrice(silver: 60);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 8;
     }
@@ -120,7 +120,7 @@ public class HellbringerLegs : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<PolypBarItem>(2)
+            .AddIngredient<PolypBarItem>(6)
             .AddIngredient<ImputedFlameItem>(2)
             .AddTile(TileID.Anvils)
             .Register();

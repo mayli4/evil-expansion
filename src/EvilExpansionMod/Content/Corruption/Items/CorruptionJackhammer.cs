@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class CorruptionJackhammerItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Corruption.CorruptionJackhammerItem.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.CorruptionJackhammerItem.KEY;
 
     public override void SetStaticDefaults() {
         ItemID.Sets.IsDrill[Type] = true;
@@ -42,7 +42,7 @@ public class CorruptionJackhammerItem : ModItem {
 }
 
 public class CorruptionJackhammerProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Corruption.CorruptionJackhammer.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.CorruptionJackhammer.KEY;
 
     public override void SetStaticDefaults() {
         // Prevents jitter when stepping up and down blocks and half blocks

@@ -8,11 +8,11 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Common.World;
 
 public class UnderworldCorruptLavafall : ModWaterfallStyle {
-    public override string Texture => Assets.Textures.Lavas.UnderworldCorruptLavafall.KEY;
+    public override string Texture => Assets.Images.Lavas.UnderworldCorruptLavafall.KEY;
 }
 
 public class UnderworldCorruptLavaStyle : ModLavaStyle {
-    public override string LavaTexturePath => Assets.Textures.Lavas.UnderworldCorruptLava.KEY;
+    public override string LavaTexturePath => Assets.Images.Lavas.UnderworldCorruptLava.KEY;
 
     public override string BlockTexturePath => LavaTexturePath + "_Block";
 

@@ -6,14 +6,14 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class MeatAxeItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.MeatAxe.MeatAxeItem.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.MeatAxe.MeatAxeItem.KEY;
 
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 3;
     }
 
     public override void SetDefaults() {
-        Item.damage = 25;
+        Item.damage = 21;
         Item.crit = 4;
         Item.DamageType = DamageClass.Melee;
         Item.knockBack = 8;
@@ -23,8 +23,8 @@ public class MeatAxeItem : ModItem {
         Item.useTime = Item.useAnimation = 26;
         Item.useStyle = -1;
 
-        Item.value = 17500;
-        Item.rare = ItemRarityID.Green;
+        Item.value = Item.sellPrice(gold: 1, silver: 20);
+        Item.rare = ItemRarityID.LightRed;
 
         Item.noUseGraphic = true;
         Item.noMelee = true;

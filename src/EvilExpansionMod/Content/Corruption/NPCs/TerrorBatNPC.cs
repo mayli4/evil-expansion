@@ -16,7 +16,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class TerrorBatNPC : ModNPC {
-    public override string Texture => Assets.Textures.NPCs.Corruption.TerrorBat.TerrorBatNPC.KEY;
+    public override string Texture => Assets.Images.Corruption.NPCs.TerrorBat.TerrorBatNPC.KEY;
 
     public enum State {
         IdleOnCeiling,
@@ -70,14 +70,14 @@ public class TerrorBatNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 40;
         NPC.height = 30;
-        NPC.lifeMax = 90;
+        NPC.lifeMax = 180;
         NPC.damage = 30;
         NPC.defense = 10;
-        NPC.value = 100 * 30;
+        NPC.value = 100 * 2;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
-        NPC.knockBackResist = 0.05f;
+        NPC.knockBackResist = 0.5f;
         NPC.friendly = false;
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath2;
@@ -159,7 +159,7 @@ public class TerrorBatNPC : ModNPC {
 
     public override void Load() {
         for(int j = 0; j <= 3; j++)
-            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/TerrorBatGore" + j);
+            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/TerrorBatGore" + j);
     }
 
     public override void HitEffect(NPC.HitInfo hit) {
@@ -521,7 +521,7 @@ public class TerrorBatSpit : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var cursedFireEffect = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
+        var cursedFireEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
         Renderer.BeginPipeline(0.5f)
             .SetEffectParams(
                 cursedFireEffect,
@@ -529,8 +529,8 @@ public class TerrorBatSpit : ModProjectile {
                 ("mat", Graphics.WorldTransformMatrix),
                 ("stepY", 0.25f),
                 ("scale", 0.8f),
-                ("texture1", Assets.Textures.Sample.Pebbles.Asset.Value),
-                ("texture2", Assets.Textures.Sample.Noise2.Asset.Value)
+                ("texture1", Assets.Images.Sample.Pebbles.Asset.Value),
+                ("texture2", Assets.Images.Sample.Noise2.Asset.Value)
             )
             .DrawTrail(
                 positionCache.Positions,
@@ -541,7 +541,7 @@ public class TerrorBatSpit : ModProjectile {
             .ApplyOutline(GhostColor1)
             .End();
 
-        var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;
+        var glowTexture = Assets.Images.Sample.Glow1.Asset.Value;
 
         var fade = (MathF.Sin(0.1f * Main.GameUpdateCount + 23.2f * Projectile.whoAmI) + MathF.Cos(0.06f * Main.GameUpdateCount) + 2f) / 4f;
         var glowColor = new Color(72, 96, 36, 255) * (0.3f + 0.3f * fade);
@@ -566,7 +566,7 @@ public class TerrorBatSpit : ModProjectile {
 }
 
 public class Sleep : ModDust {
-    public override string Texture => Assets.Textures.NPCs.Corruption.TerrorBat.TerrorBatSleepDust.KEY;
+    public override string Texture => Assets.Images.Corruption.NPCs.TerrorBat.TerrorBatSleepDust.KEY;
 
     public override bool Update(Dust dust) {
 
@@ -589,7 +589,7 @@ public class Sleep : ModDust {
     }
 
     public override bool PreDraw(Dust dust) {
-        var tex = Assets.Textures.NPCs.Corruption.TerrorBat.TerrorBatSleepDust.Asset.Value;
+        var tex = Assets.Images.Corruption.NPCs.TerrorBat.TerrorBatSleepDust.Asset.Value;
         Vector2 drawOrigin = new Vector2(tex.Width * 0.5f, tex.Height * 0.5f);
 
         Main.EntitySpriteDraw(tex, dust.position - Main.screenPosition, dust.frame, Color.White, dust.rotation, drawOrigin, dust.scale, SpriteEffects.None);

@@ -1,8 +1,11 @@
+using Daybreak.Common.Rendering;
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Content.Tiles.Banners;
+using EvilExpansionMod.Core;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -12,10 +15,11 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public sealed class EffigyNPC : ModNPC {
-    public override string Texture => Assets.Textures.NPCs.Corruption.Effigy.EffigyNPC.KEY;
+    public override string Texture => Assets.Images.Corruption.NPCs.Effigy.EffigyNPC.KEY;
 
     private bool dead;
     private int deadTimer;
+    private int animCounter;
     private byte spawnedSprits;
     
     public const int DEATH_TIME = 5 * 60;
@@ -25,9 +29,11 @@ public sealed class EffigyNPC : ModNPC {
     private Vector2 squashStretch = Vector2.One;
 
     public override void SetStaticDefaults() {
-        Main.npcFrameCount[Type] = 19;
+        Main.npcFrameCount[Type] = 21;
+        base.SetStaticDefaults();
+        NPCID.Sets.NeedsExpertScaling[Type] = true;
     }
-
+ 
     public override void SetDefaults() {
         NPC.width = 80;
         NPC.height = 140;
@@ -40,12 +46,12 @@ public sealed class EffigyNPC : ModNPC {
         NPC.knockBackResist = 0f;
         NPC.damage = 0;
         NPC.friendly = false;
-        NPC.hide = true;
         NPC.behindTiles = true;
 
-        // NPC.HitSound = Assets.Sounds.EffigyHit.Asset
-        //     .WithPitchVariance(0.5f)
-        //     .WithPitchOffset(-0.3f);
+        NPC.HitSound = Assets.Sounds.EffigyHit.Asset with {
+            PitchVariance = 0.4f,
+            Pitch = -0.3f,
+        };
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
 
@@ -58,7 +64,7 @@ public sealed class EffigyNPC : ModNPC {
     }
 
     public override void DrawBehind(int index) {
-        Main.instance.DrawCacheNPCsBehindNonSolidTiles.Add(index);
+        Main.instance.DrawCacheNPCsMoonMoon.Add(index);
     }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
@@ -67,7 +73,7 @@ public sealed class EffigyNPC : ModNPC {
 
     public override void Load() {
         for(int j = 1; j <= 5; j++)
-            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/EffigyGore" + j);
+            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/EffigyGore" + j);
     }
 
     public override void AI() {
@@ -75,6 +81,7 @@ public sealed class EffigyNPC : ModNPC {
         
         if(dead) {
             deadTimer++;
+            animCounter++;
             Lighting.AddLight(NPC.Center, glowColor.ToVector3());
             
             if ((int)NPC.frameCounter == 6) {
@@ -86,6 +93,16 @@ public sealed class EffigyNPC : ModNPC {
                     }, 
                     NPC.Center
                 );
+            }
+            
+            if ((int)NPC.frameCounter == 7) {
+        
+                for(int i = 0; i < Main.rand.Next(10, 15); i++) {
+                    var ember = GlowEmberParticle.NewParticle(NPC.Center + Main.rand.NextVector2Circular(11, 11), Main.rand.NextVector2Circular(11, 11), Main.rand.NextFloat(0.5f, 1f), glowColor with { A = 0 }, Color.White with { A = 0 });
+                    ember.Randomness *= 2f;
+                    ember.LossPerSecond *= 2f;
+                    ParticleEngine.PARTICLES.Add(ember);
+                }
             }
         
             if(deadTimer >= DEATH_TIME) {
@@ -117,13 +134,13 @@ public sealed class EffigyNPC : ModNPC {
 
     public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone) {
         if(Main.rand.NextBool(5)) {
-            SpawnSpirit(projectile);
+            //SpawnSpirit(projectile);
         }
     }
 
     public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone) {
         if(Main.rand.NextBool(5)) {
-            SpawnSpirit(player);
+            //SpawnSpirit(player);
         }
     }
 
@@ -138,48 +155,76 @@ public sealed class EffigyNPC : ModNPC {
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
+        if(NPC.IsABestiaryIconDummy) {
+            return false;
+        }
+            
         var texture = TextureAssets.Npc[Type].Value;
-        var glowTex = Assets.Textures.NPCs.Corruption.Effigy.EffigyNPC_Glow.Asset.Value;
+        var noiseTexture = Assets.Images.Sample.DissolveNoise.Asset.Value;
+        var shader = Assets.Shaders.Pixel.EffigyDecay.CreateDecayPass();
 
-        var offset = new Vector2(0, -30); //cause frame very big! yes
+        float fadeProgress = 0f;
+        if (dead && (int)NPC.frameCounter >= 11) {
+            fadeProgress = MathHelper.Clamp((deadTimer - 65f) / (DEATH_TIME - 65f), 0f, 1f);
+        }
 
-        var shader = Assets.Effects.Pixel.EffigyDecay.Asset.Value;
+        var frameUvStart = new Vector2(0f, (float)NPC.frame.Y / texture.Height);
+        var frameUvSize = new Vector2((float)NPC.frame.Width / texture.Width, (float)NPC.frame.Height / texture.Height);
+        var drawPosition = new Vector2(NPC.Center.X, NPC.position.Y + NPC.height) - screenPos - new Vector2(0, -44);
 
-        float progValue = 1.5f;
+        shader.Parameters.fadeProgress = fadeProgress;
+        shader.Parameters.sampleColor = drawColor.ToVector4();
+        shader.Parameters.frameUVStart = frameUvStart;
+        shader.Parameters.frameUVSize = frameUvSize;
 
-        shader.Parameters["prog"].SetValue(progValue);
-        shader.Parameters["edgeColor"].SetValue(Color.Black.ToVector3());
-        shader.Parameters["ashColor"].SetValue(glowColor.ToVector3());
-        shader.Parameters["noisetex"].SetValue(Assets.Textures.Sample.DissolveNoise.Asset.Value);
-        shader.Parameters["sampleColor"].SetValue(drawColor.ToVector4());
+        shader.Parameters.noiseStretch = Vector2.One;
+        shader.Parameters.noiseOffset = new Vector2(-(float)Main.timeForVisualEffects * 0.006f, -(float)Main.timeForVisualEffects * 0.009f);
+    
+        shader.Parameters.framePixelSize = new Vector2(NPC.frame.Width, NPC.frame.Height);
+        shader.Parameters.dissolvePixelSize = 2f;
 
-        var noiseTexture = Assets.Textures.Sample.DissolveNoise.Asset.Value;
-        float noiseAspect = (float)noiseTexture.Width / noiseTexture.Height;
-        float frameAspect = (float)NPC.frame.Width / NPC.frame.Height;
+        shader.Parameters.noise = new HlslSampler
+        {
+            Texture = noiseTexture,
+            Sampler = SamplerState.LinearWrap,
+        };
 
-        shader.Parameters["noiseTexelAspect"].SetValue(noiseAspect + 200);
-        shader.Parameters["frameTexelAspect"].SetValue(frameAspect + 2000);
-        shader.Parameters["texSize"].SetValue(new Vector2(NPC.frame.Width, NPC.frame.Height));
-
-        //var shaderSnapshot = spriteBatch.CaptureEndBegin(new() { CustomEffect = shader });
-
-        Vector2 drawOrigin = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height);
-        Vector2 drawPosition = new Vector2(NPC.Center.X, NPC.position.Y + NPC.height) - screenPos - offset;
-        Vector2 drawScale = new Vector2(NPC.scale) * squashStretch;
+        spriteBatch.End(out var ss);
+        spriteBatch.Begin(ss with { SortMode = SpriteSortMode.Immediate });
+        {
+            shader.Apply();
+    
+            spriteBatch.Draw(new DrawParameters(texture)
+            {
+                Position = drawPosition,
+                Source = NPC.frame,
+                Color = drawColor,
+                Origin = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height),
+                Scale = NPC.scale * squashStretch,
+            });   
+        }
+        spriteBatch.Restart(ss with { BlendState = BlendState.Additive });
+        {
+            spriteBatch.Draw(new DrawParameters(Assets.Images.Corruption.NPCs.Effigy.EffigyNPC_Glow.Asset)
+            {
+                Position = drawPosition,
+                Source = NPC.frame,
+                Color = Color.White * 0.4f,
+                Origin = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height),
+                Scale = NPC.scale * squashStretch,
+            });   
+            
+            spriteBatch.Draw(new DrawParameters(Assets.Images.Corruption.NPCs.Effigy.EffigyNPC_Bloom.Asset)
+            {
+                Position = drawPosition,
+                Source = NPC.frame,
+                Color = glowColor * 0.5f,
+                Origin = new Vector2(NPC.frame.Width / 2f, NPC.frame.Height),
+                Scale = NPC.scale * squashStretch,
+            });   
+        }
+        spriteBatch.Restart(ss);
         
-        spriteBatch.Draw(
-            texture,
-            drawPosition,
-            NPC.frame,
-            drawColor,
-            0f,
-            drawOrigin,
-            drawScale,
-            SpriteEffects.None,
-            0
-        );
-        //spriteBatch.EndBegin(shaderSnapshot);
-
         return false;
     }
 
@@ -198,8 +243,8 @@ public sealed class EffigyNPC : ModNPC {
     public override void FindFrame(int frameHeight) {
         if(dead) {
             NPC.frameCounter += 0.16f;
-            if(NPC.frameCounter >= 17)
-                NPC.frameCounter = 17;
+            if(NPC.frameCounter >= 20)
+                NPC.frameCounter = 20;
         }
         else {
             NPC.frameCounter += 0.15f;

@@ -13,13 +13,13 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class PlanetoidProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Corruption.Planetoids.SmallPlanetoid.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.Planetoids.SmallPlanetoid.KEY;
 
     private static readonly string[] _texturePaths = {
-        Assets.Textures.Items.Corruption.Planetoids.SmallPlanetoid.KEY,
-        Assets.Textures.Items.Corruption.Planetoids.MediumPlanetoid.KEY,
-        Assets.Textures.Items.Corruption.Planetoids.BigPlanetoid.KEY,
-        Assets.Textures.Items.Corruption.Planetoids.HugePlanetoid.KEY
+        Assets.Images.Corruption.Items.Planetoids.SmallPlanetoid.KEY,
+        Assets.Images.Corruption.Items.Planetoids.MediumPlanetoid.KEY,
+        Assets.Images.Corruption.Items.Planetoids.BigPlanetoid.KEY,
+        Assets.Images.Corruption.Items.Planetoids.HugePlanetoid.KEY
     };
 
     private static readonly float[] _growthThresholds = {
@@ -81,7 +81,7 @@ public class PlanetoidProjectile : ModProjectile {
                 Projectile.netUpdate = true;
                 Projectile.tileCollide = true;
 
-                Projectile.damage *= 10;
+                Projectile.damage *= 3;
 
                 Projectile.timeLeft = 3600;
                 return;
@@ -102,8 +102,8 @@ public class PlanetoidProjectile : ModProjectile {
             Projectile.scale = MathHelper.Clamp(GrowthTimer / growth_time, 0f, 1f);
 
             float powerFactor = Projectile.scale;
-            Projectile.damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(5 * powerFactor);
-            Projectile.knockBack = player.GetTotalKnockback(DamageClass.Magic).ApplyTo(1f * powerFactor);
+            Projectile.damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(50 * powerFactor);
+            Projectile.knockBack = player.GetTotalKnockback(DamageClass.Magic).ApplyTo(10f * powerFactor);
 
             if(GrowthTimer >= growth_time) {
                 _canExplode = true;
@@ -219,7 +219,7 @@ public class PlanetoidProjectile : ModProjectile {
             ExplosionProjectile.New(
                 Projectile.GetSource_Death(),
                 Projectile.Center,
-                (int)Main.player[Projectile.owner].GetTotalDamage(DamageClass.Magic).ApplyTo(90),
+                (int)Main.player[Projectile.owner].GetTotalDamage(DamageClass.Magic).ApplyTo(500),
                 new Color(136, 150, 37),
                 Color.LightGoldenrodYellow,
                 size: 500,
@@ -362,13 +362,13 @@ public class PlanetoidProjectile : ModProjectile {
         float crackProgress = _preExplosionDelayTimer / 20f;
         if(State == 2f && crackProgress > 0f) {
             float easedCrackProgress = MathF.Pow(crackProgress, 2f);
-            var crackShader = Assets.Effects.Pixel.PlanetoidCracks.Asset.Value;
+            var crackShader = Assets.Shaders.Pixel.PlanetoidCracks.Asset.Value;
 
             Renderer.BeginPipeline(1f)
                 .SetEffectParams(
                     crackShader,
-                    ("sampleTexture2", Assets.Textures.Sample.CrackMap.Asset.Value),
-                    ("sampleTexture3", Assets.Textures.Items.Corruption.Planetoids.HugePlanetoidCrackMappng.Asset.Value),
+                    ("sampleTexture2", Assets.Images.Sample.CrackMap.Asset.Value),
+                    ("sampleTexture3", Assets.Images.Corruption.Items.Planetoids.HugePlanetoidCrackMappng.Asset.Value),
                     ("uTime", easedCrackProgress),
                     ("drawColor", Projectile.GetAlpha(lightColor).ToVector4()),
                     ("sourceFrame", new Vector4(0, 0, currentTexture.Width, currentTexture.Height)),

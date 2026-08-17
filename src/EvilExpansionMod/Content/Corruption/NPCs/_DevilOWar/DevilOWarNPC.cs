@@ -21,7 +21,7 @@ public sealed class DevilOWarNPC : ModNPC {
         AttackCooldown,
     }
 
-    public override string Texture => Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarHead.KEY;
+    public override string Texture => Assets.Images.Corruption.NPCs.DevilOWar.DevilOWarHead.KEY;
 
     public State CurrentState {
         get => (State)NPC.ai[0];
@@ -51,12 +51,15 @@ public sealed class DevilOWarNPC : ModNPC {
 
     public int TotalLifeDrained { get; set; }
     public const int MAX_DRAIN_FOR_LEVEL = 160;
-
+    public override void SetStaticDefaults() {
+        base.SetStaticDefaults();
+        NPCID.Sets.NeedsExpertScaling[Type] = true;
+    }
     public override void SetDefaults() {
         NPC.width = 36;
         NPC.height = 36;
         NPC.lifeMax = 780;
-        NPC.value = 250f;
+        NPC.value = 255;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
@@ -77,7 +80,7 @@ public sealed class DevilOWarNPC : ModNPC {
 
     public override void Load() {
         for(int j = 1; j <= 5; j++)
-            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/DevilOWarGore" + j);
+            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/DevilOWarGore" + j);
     }
 
     public override void OnSpawn(IEntitySource source) {
@@ -314,8 +317,8 @@ public sealed class DevilOWarNPC : ModNPC {
             new Vector2(-0.2f, 0.4f)
         };
 
-        var tentacleTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarTentacle.Asset.Value;
-        var defaultTrailEffect = Assets.Effects.Trail.Default.Asset.Value;
+        var tentacleTexture = Assets.Images.Corruption.NPCs.DevilOWar.DevilOWarTentacle.Asset.Value;
+        var defaultTrailEffect = Assets.Shaders.Trail.Default.Asset.Value;
 
         for(int i = 0; i < 4; i++) {
             var positions = _tentacleTrailPositions[i];
@@ -364,10 +367,10 @@ public sealed class DevilOWarNPC : ModNPC {
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
-        var headTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarHead.Asset.Value;
-        var insidesTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarInsides.Asset.Value;
-        var headSpikesTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarHeadSpikes.Asset.Value;
-        var headUnderTexture = Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarHead_Under.Asset.Value;
+        var headTexture = Assets.Images.Corruption.NPCs.DevilOWar.DevilOWarHead.Asset.Value;
+        var insidesTexture = Assets.Images.Corruption.NPCs.DevilOWar.DevilOWarInsides.Asset.Value;
+        var headSpikesTexture = Assets.Images.Corruption.NPCs.DevilOWar.DevilOWarHeadSpikes.Asset.Value;
+        var headUnderTexture = Assets.Images.Corruption.NPCs.DevilOWar.DevilOWarHead_Under.Asset.Value;
 
         var glowColor = Color.Lerp(drawColor, new Color(114, 109, 27, 200), Pulsation);
 
@@ -389,7 +392,7 @@ public sealed class DevilOWarNPC : ModNPC {
 
         if(NPC.IsABestiaryIconDummy) {
             Main.spriteBatch.Draw(
-                Assets.Textures.NPCs.Corruption.DevilOWar.DevilOWarBestiary.Asset.Value,
+                Assets.Images.Corruption.NPCs.DevilOWar.DevilOWarBestiary.Asset.Value,
                 NPC.Center - new Vector2(0, 10),
                 null,
                 Color.White,
@@ -410,7 +413,7 @@ public sealed class DevilOWarNPC : ModNPC {
         PopulateTrails(pipeline, bodyWorldPositionForTrails, drawColor);
         pipeline.End();
 
-        var fluidEffect = Assets.Effects.Pixel.DevilOWarFluid.Asset.Value;
+        var fluidEffect = Assets.Shaders.Pixel.DevilOWarFluid.Asset.Value;
 
         int clampedLifeDrained = Math.Clamp(TotalLifeDrained, 0, MAX_DRAIN_FOR_LEVEL);
         float mappedLevel = MathHelper.Lerp(0.07f, 0.5f, (float)clampedLifeDrained / MAX_DRAIN_FOR_LEVEL);
@@ -423,8 +426,8 @@ public sealed class DevilOWarNPC : ModNPC {
                 ("level", mappedLevel),
                 ("smooth", 0.95f),
                 ("liquidColor", CursedSpiritNPC.GhostColor1.ToVector4()),
-                ("noisetex", Assets.Textures.Sample.BubblyNoise.Asset.Value),
-                ("noisetex2", Assets.Textures.Sample.SpottyNoise.Asset.Value),
+                ("noisetex", Assets.Images.Sample.BubblyNoise.Asset.Value),
+                ("noisetex2", Assets.Images.Sample.SpottyNoise.Asset.Value),
                 ("uNoiseStrength", 3.0f),
                 ("uNoise1ScrollSpeedX", 0.09f),
                 ("uDarkenStrength", 0.3f),

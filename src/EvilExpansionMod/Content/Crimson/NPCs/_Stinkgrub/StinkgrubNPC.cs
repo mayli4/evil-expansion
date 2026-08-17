@@ -18,7 +18,7 @@ public sealed class StinkgrubNPC : ModNPC {
         Moving
     }
 
-    public override string Texture => Assets.Textures.NPCs.Crimson.Stinkgrub.StinkgrubNPC.KEY;
+    public override string Texture => Assets.Images.Crimson.NPCs.Stinkgrub.StinkgrubNPC.KEY;
 
     public State CurrentState => Unsafe.BitCast<float, State>(NPC.ai[0]);
 
@@ -46,7 +46,7 @@ public sealed class StinkgrubNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 32;
         NPC.height = 20;
-        NPC.lifeMax = 600;
+        NPC.lifeMax = 780;
         NPC.value = 100f;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;

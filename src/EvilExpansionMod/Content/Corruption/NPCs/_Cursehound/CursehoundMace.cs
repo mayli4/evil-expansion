@@ -13,7 +13,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public sealed class CursehoundMace : ModProjectile {
-    public override string Texture => Assets.Textures.NPCs.Corruption.Cursehound.CursehoundMace.KEY;
+    public override string Texture => Assets.Images.Corruption.NPCs.Cursehound.CursehoundMace.KEY;
 
     public enum State {
         Launched,
@@ -180,7 +180,7 @@ public sealed class CursehoundMace : ModProjectile {
             var unit = diff / length;
             float rotation = unit.ToRotation() + MathHelper.PiOver2;
 
-            var chainTexture = Assets.Textures.NPCs.Corruption.Cursehound.CursehoundMace_Chain.Asset.Value;
+            var chainTexture = Assets.Images.Corruption.NPCs.Cursehound.CursehoundMace_Chain.Asset.Value;
 
             var chainRect = new Rectangle(0, 0, 10, 12);
             var baseRect = new Rectangle(0, 14, 10, 10);
@@ -195,7 +195,7 @@ public sealed class CursehoundMace : ModProjectile {
         }
 
         Texture2D maceTexture = TextureAssets.Projectile[Type].Value;
-        Texture2D maceGlow = Assets.Textures.NPCs.Corruption.Cursehound.CursehoundMace_Glow.Asset.Value;
+        Texture2D maceGlow = Assets.Images.Corruption.NPCs.Cursehound.CursehoundMace_Glow.Asset.Value;
         Vector2 drawOrigin = maceTexture.Size() / 2f;
         Main.EntitySpriteDraw(maceTexture, Projectile.Center - Main.screenPosition, null, Projectile.GetAlpha(lightColor), Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
         Main.EntitySpriteDraw(maceGlow, Projectile.Center - Main.screenPosition, null, Color.White, Projectile.rotation, drawOrigin, Projectile.scale, SpriteEffects.None, 0);
@@ -216,7 +216,7 @@ public sealed class CursehoundMace : ModProjectile {
 }
 
 internal class MaceDebris : ModProjectile {
-    public override string Texture => Assets.Textures.NPCs.Corruption.Cursehound.Debris.KEY;
+    public override string Texture => Assets.Images.Corruption.NPCs.Cursehound.Debris.KEY;
 
     private Rectangle _frame;
 

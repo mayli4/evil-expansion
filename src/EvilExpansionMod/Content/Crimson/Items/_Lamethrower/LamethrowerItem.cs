@@ -6,14 +6,14 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class LamethrowerItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Corruption.Lamethrower.LamethrowerItem.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.Lamethrower.LamethrowerItem.KEY;
 
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 3;
     }
 
     public override void SetDefaults() {
-        Item.damage = 12;
+        Item.damage = 8;
         Item.crit = 4;
         Item.DamageType = DamageClass.Ranged;
         Item.knockBack = 0.025f;
@@ -24,8 +24,8 @@ public class LamethrowerItem : ModItem {
         Item.useTime = Item.useAnimation = 5;
         Item.useStyle = ItemUseStyleID.Shoot;
 
-        Item.value = 17500;
-        Item.rare = ItemRarityID.Yellow;
+        Item.value = Item.sellPrice(gold: 1, silver: 2);
+        Item.rare = ItemRarityID.Pink;
 
         Item.noUseGraphic = true;
         Item.noMelee = true;

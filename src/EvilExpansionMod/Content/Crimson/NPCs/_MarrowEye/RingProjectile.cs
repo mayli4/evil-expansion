@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class RingProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.NPCs.Crimson.MarrowEye.Ring.KEY;
+    public override string Texture => Assets.Images.Crimson.NPCs.MarrowEye.Ring.KEY;
     public const int DisapearFrames = 120;
 
     public override void SetDefaults() {

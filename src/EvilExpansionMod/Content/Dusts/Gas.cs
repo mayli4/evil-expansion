@@ -5,7 +5,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Dusts;
 
 internal class Gas : ModDust {
-    public override string Texture => Assets.Textures.Dusts.Gas.KEY;
+    public override string Texture => Assets.Images.Dusts.Gas.KEY;
 
     public override void OnSpawn(Dust dust) {
         dust.frame = new Rectangle(0, 32 * Main.rand.Next(3), 32, 32);

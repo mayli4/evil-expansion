@@ -56,7 +56,7 @@ public sealed class CursehoundNPC : ModNPC {
     private const int mace_duration = (int)(2.5f * 60);
     private const int MaceRetractDuration = 1 * 60;
 
-    public override string Texture => Assets.Textures.NPCs.Corruption.Cursehound.CursehoundNPC.KEY;
+    public override string Texture => Assets.Images.Corruption.NPCs.Cursehound.CursehoundNPC.KEY;
 
     public Player Target => Main.player[NPC.target];
 
@@ -94,7 +94,7 @@ public sealed class CursehoundNPC : ModNPC {
 
     public override void Load() {
         for(int j = 1; j <= 8; j++)
-            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Textures/Gores/CursehoundGore" + j);
+            GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/CursehoundGore" + j);
     }
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
@@ -430,7 +430,7 @@ public sealed class CursehoundNPC : ModNPC {
         );
 
         spriteBatch.Draw(
-            Assets.Textures.NPCs.Corruption.Cursehound.CursehoundNPC_Glow.Asset.Value,
+            Assets.Images.Corruption.NPCs.Cursehound.CursehoundNPC_Glow.Asset.Value,
             drawPosition,
             frame,
             Color.White,

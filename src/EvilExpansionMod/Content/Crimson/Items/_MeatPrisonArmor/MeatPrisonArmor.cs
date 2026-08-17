@@ -8,7 +8,7 @@ namespace EvilExpansionMod.Content.Crimson;
 
 [AutoloadEquip(EquipType.Head)]
 public class MeatPrisonHead : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.MeatPrisonArmor.MeatPrisonHead.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.MeatPrisonArmor.MeatPrisonHead.KEY;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
     }
@@ -16,7 +16,7 @@ public class MeatPrisonHead : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = Item.buyPrice(silver: 90);
+        Item.value = Item.sellPrice(silver: 90);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 6;
 
@@ -25,8 +25,8 @@ public class MeatPrisonHead : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<CartilageBarItem>(7)
-            .AddIngredient<BoneSlicesItem>(2)
+            .AddIngredient<CartilageBarItem>(10)
+            .AddIngredient<BoneSlicesItem>(3)
             .AddTile(TileID.Anvils)
             .Register();
     }
@@ -48,7 +48,7 @@ public class MeatPrisonHead : ModItem {
 
 [AutoloadEquip(EquipType.Body)]
 public class MeatPrisonBody : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.MeatPrisonArmor.MeatPrisonBody.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.MeatPrisonArmor.MeatPrisonBody.KEY;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
     }
@@ -56,7 +56,7 @@ public class MeatPrisonBody : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = Item.buyPrice(silver: 90);
+        Item.value = Item.sellPrice(gold: 1);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 14;
 
@@ -75,8 +75,8 @@ public class MeatPrisonBody : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<CartilageBarItem>(15)
-            .AddIngredient<BoneSlicesItem>(5)
+            .AddIngredient<CartilageBarItem>(24)
+            .AddIngredient<BoneSlicesItem>(14)
             .AddTile(TileID.Anvils)
             .Register();
     }
@@ -84,7 +84,7 @@ public class MeatPrisonBody : ModItem {
 
 [AutoloadEquip(EquipType.Legs)]
 public class MeatPrisonLegs : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.MeatPrisonArmor.MeatPrisonLegs.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.MeatPrisonArmor.MeatPrisonLegs.KEY;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
     }
@@ -92,7 +92,7 @@ public class MeatPrisonLegs : ModItem {
     public override void SetDefaults() {
         Item.width = 30;
         Item.height = 20;
-        Item.value = Item.buyPrice(silver: 60);
+        Item.value = Item.sellPrice(silver: 60);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 8;
 
@@ -109,7 +109,7 @@ public class MeatPrisonLegs : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient<CartilageBarItem>(2)
+            .AddIngredient<CartilageBarItem>(6)
             .AddIngredient<BoneSlicesItem>(2)
             .AddTile(TileID.Anvils)
             .Register();
@@ -155,7 +155,7 @@ public sealed class MeatPrisonPlayer : ModPlayer {
 }
 
 public class BloodWardenBuff : ModBuff {
-    public override string Texture => Assets.Textures.Items.Crimson.MeatPrisonArmor.BloodwardenBuff.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.MeatPrisonArmor.BloodwardenBuff.KEY;
 
     public override void SetStaticDefaults() {
         Main.buffNoSave[Type] = true;

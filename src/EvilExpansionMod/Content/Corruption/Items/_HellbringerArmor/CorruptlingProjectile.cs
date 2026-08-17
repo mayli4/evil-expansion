@@ -11,7 +11,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption._HellbringerArmor;
 
 public class CorruptlingProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Corruption.HellbringerArmor.CorruptlingNPC.KEY;
+    public override string Texture => Assets.Images.Corruption.Items.HellbringerArmor.CorruptlingNPC.KEY;
 
     readonly static float AttackRadius = 2000;
     int TypeIndex => (int)Projectile.ai[0];
@@ -26,6 +26,9 @@ public class CorruptlingProjectile : ModProjectile {
         Projectile.timeLeft = 420;
         Projectile.penetrate = 6;
         Projectile.aiStyle = -1;
+
+        Projectile.usesIDStaticNPCImmunity = true;
+        Projectile.idStaticNPCHitCooldown = 8;
 
         Projectile.SetAISlotNPC(1, null);
     }

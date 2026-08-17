@@ -25,7 +25,7 @@ public class MeatAxeHeldProjectile : ModProjectile {
     ref float TargetRotation => ref Projectile.ai[0];
     int CutProjectile { get => (int)Projectile.ai[1]; set => Projectile.ai[1] = value; }
 
-    public override string Texture => Assets.Textures.Items.Crimson.MeatAxe.MeatAxeItem.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.MeatAxe.MeatAxeItem.KEY;
     public override void SetDefaults() {
         Projectile.width = 0;
         Projectile.height = 0;

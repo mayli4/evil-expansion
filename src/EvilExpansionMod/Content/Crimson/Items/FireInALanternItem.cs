@@ -12,11 +12,11 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class FireInALanternItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.FlameInALanternItem.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.FlameInALanternItem.KEY;
 
     public override void SetDefaults() {
         Item.DefaultToAccessory(20, 26);
-        Item.SetShopValues(ItemRarityColor.Green2, Item.buyPrice(silver: 50));
+        Item.SetShopValues(ItemRarityColor.Green2, Item.sellPrice(gold: 1));
     }
 
     public override void UpdateAccessory(Player player, bool hideVisual) {
@@ -189,10 +189,10 @@ public class FireInALanternFlame : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var flameShader = Assets.Effects.Pixel.LingeringFlame.Asset.Value;
-        var noiseTexture1 = Assets.Textures.Sample.Pebbles.Asset.Value;
-        var circleTexture = Assets.Textures.Misc.Circle.Asset.Value;
-        var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;
+        var flameShader = Assets.Shaders.Pixel.LingeringFlame.Asset.Value;
+        var noiseTexture1 = Assets.Images.Sample.Pebbles.Asset.Value;
+        var circleTexture = Assets.Images.Misc.Circle.Asset.Value;
+        var glowTexture = Assets.Images.Sample.Glow1.Asset.Value;
 
         float flameScaleFactor = 1f;
         if(Projectile.timeLeft < lifetime / 2) {

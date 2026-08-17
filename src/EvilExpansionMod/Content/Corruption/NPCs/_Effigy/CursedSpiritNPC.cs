@@ -1,5 +1,6 @@
 ﻿using EvilExpansionMod.Common.Bestiary;
 using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Content.Projectiles;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
@@ -73,7 +74,7 @@ public sealed class CursedSpiritNPC : ModNPC {
     const float ExploderExplosionTime = 120f;
     const float SplitterSplitTime = 90f;
     const float SplitterMaxDepth = 1;
-    const int MaxLife = 50;
+    const int MaxLife = 110;
 
     SpiritType SpiritType {
         get => Unsafe.BitCast<float, SpiritType>(NPC.ai[0]);
@@ -99,7 +100,7 @@ public sealed class CursedSpiritNPC : ModNPC {
         Timer = 0;
     }
 
-    public override string Texture => Assets.Textures.NPCs.Corruption.Effigy.CursedSpiritMasks.KEY;
+    public override string Texture => Assets.Images.Corruption.NPCs.Effigy.CursedSpiritMasks.KEY;
 
     public readonly static Color GhostColor1 = new(214, 237, 5);
     public readonly static Color GhostColor2 = new(181, 200, 4);
@@ -108,7 +109,7 @@ public sealed class CursedSpiritNPC : ModNPC {
         NPC.width = 38;
         NPC.height = 38;
         NPC.lifeMax = MaxLife;
-        NPC.value = 250f;
+        NPC.value = 150;
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
@@ -209,13 +210,50 @@ public sealed class CursedSpiritNPC : ModNPC {
         _trailPositions[0] = NPC.Center + NPC.velocity;
 
         if(!Main.dedServ) {
-            if(Main.rand.NextBool(7)) Dust.NewDust(
-                NPC.position,
-                NPC.width,
-                NPC.height,
-                DustID.Pixie,
-                newColor: Main.rand.NextFromList(GhostColor1, GhostColor2)
-            );
+            if(Main.rand.NextBool(7)) {
+                Dust.NewDust(
+                    NPC.position,
+                    NPC.width,
+                    NPC.height,
+                    DustID.CursedTorch,
+                    newColor: Main.rand.NextFromList(GhostColor1, GhostColor2)
+                );
+                
+                var ember = GlowEmberParticle.NewParticle(
+                    NPC.Center + Main.rand.NextVector2Circular(11, 11), 
+                    Main.rand.NextVector2Circular(11, 11), 
+                    Main.rand.NextFloat(0.5f, 1f), 
+                    GhostColor1 with { A = 0 }, Color.White with { A = 0 }
+                    );
+                
+                ember.Randomness *= 2f;
+                ember.LossPerSecond *= 2f;
+                ParticleEngine.PARTICLES.Add(ember);
+                
+
+                var emitDirection = NPC.velocity.LengthSquared() > 0.1f 
+                    ? -Vector2.Normalize(NPC.velocity) 
+                    : -_lookDirection;
+
+                float coneAngle = Main.rand.NextFloat(-0.3f, 0.3f); 
+                float speed = Main.rand.NextFloat(3f, 7f);
+                var flameVelocity = emitDirection.RotatedBy(coneAngle) * speed;
+
+                var flame = DustFlameParticle.RequestNew(
+                    NPC.Center + Main.rand.NextVector2Circular(6f, 6f), 
+                    flameVelocity, 
+                    GhostColor1, 
+                    GhostColor2, 
+                    Main.rand.NextFloat(0.8f, 1.4f), 
+                    Main.rand.Next(18, 28)
+                );
+
+                flame.LossPerFrame = 0.12f; 
+                flame.Swirly = true; 
+                flame.ApplyLighting = true;
+
+                ParticleEngine.PARTICLES.Add(flame);
+            }
 
             Lighting.AddLight(NPC.Center, GhostColor1.ToVector3() * 0.75f);
         }
@@ -494,7 +532,7 @@ public sealed class CursedSpiritNPC : ModNPC {
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
-        var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;
+        var glowTexture = Assets.Images.Sample.Glow1.Asset.Value;
         var blinker = (MathF.Sin(0.1f * Main.GameUpdateCount + 23.2f * NPC.whoAmI) + MathF.Cos(0.06f * Main.GameUpdateCount) + 2f) / 4f;
         var bigGlowColor = GhostColor2 * (0.3f + 0.3f * blinker);
         var smallGlowColor = GhostColor1;
@@ -534,7 +572,7 @@ public sealed class CursedSpiritNPC : ModNPC {
         spriteBatch.EndBegin(initialSnapshot);
 
         if(!NPC.IsABestiaryIconDummy) {
-            var trailEffect = Assets.Effects.Trail.CursedSpiritFire.Asset.Value;
+            var trailEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
             Renderer.BeginPipeline(0.5f)
                 .SetEffectParams(
                     trailEffect,
@@ -542,8 +580,8 @@ public sealed class CursedSpiritNPC : ModNPC {
                     ("mat", Graphics.WorldTransformMatrix),
                     ("stepY", 0.25f),
                     ("scale", 0.8f),
-                    ("texture1", Assets.Textures.Sample.Pebbles.Asset.Value),
-                    ("texture2", Assets.Textures.Sample.Noise2.Asset.Value))
+                    ("texture1", Assets.Images.Sample.Pebbles.Asset.Value),
+                    ("texture2", Assets.Images.Sample.Noise2.Asset.Value))
                 .DrawTrail(
                     _trailPositions,
                     static _ => 40,
@@ -551,7 +589,7 @@ public sealed class CursedSpiritNPC : ModNPC {
                     trailEffect)
                 .DrawTexture(new()
                 {
-                    Texture = Assets.Textures.Misc.Circle.Asset.Value,
+                    Texture = Assets.Images.Misc.Circle.Asset.Value,
                     Position = NPC.Center - Main.screenPosition,
                     Color = smallGlowColor,
                     Origin = 16f * Vector2.One,

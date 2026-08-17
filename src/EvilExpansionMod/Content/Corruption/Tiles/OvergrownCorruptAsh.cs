@@ -7,14 +7,14 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class OvergrownCorruptAsh : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Corruption.OvergrownCorruptAshTile.KEY;
+    public override string Texture => Assets.Images.Corruption.Tiles.OvergrownCorruptAshTile.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileSolid[Type] = true;
         Main.tileBlockLight[Type] = true;
-        Main.tileBlendAll[Type] = true;
-
-        this.Merge(ModContent.TileType<CorruptAsh>(), TileID.Grass);
+        Main.tileBlendAll[Type] = false;
+        Main.tileLighted[Type] = true;
+        
         TileID.Sets.Grass[Type] = true;
         TileID.Sets.CanBeDugByShovel[Type] = true;
         TileID.Sets.NeedsGrassFramingDirt[Type] = ModContent.TileType<CorruptAsh>();

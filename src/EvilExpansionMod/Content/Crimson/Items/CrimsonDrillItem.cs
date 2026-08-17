@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class CrimsonDrillItem : ModItem {
-    public override string Texture => Assets.Textures.Items.Crimson.CrimsonDrillItem.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.CrimsonDrillItem.KEY;
 
     public override void SetStaticDefaults() {
         ItemID.Sets.IsDrill[Type] = true;
@@ -42,7 +42,7 @@ public class CrimsonDrillItem : ModItem {
 }
 
 public class CrimsonDrillProjectile : ModProjectile {
-    public override string Texture => Assets.Textures.Items.Crimson.CrimsonDrill.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.CrimsonDrill.KEY;
 
     public override void SetStaticDefaults() {
         // Prevents jitter when stepping up and down blocks and half blocks

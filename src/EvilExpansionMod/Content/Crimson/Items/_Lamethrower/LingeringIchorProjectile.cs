@@ -20,8 +20,16 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
         Projectile.penetrate = -1;
-        Projectile.timeLeft = 128;
+        Projectile.timeLeft = 360;
         Projectile.DamageType = DamageClass.Ranged;
+        Projectile.usesIDStaticNPCImmunity = true;
+        Projectile.idStaticNPCHitCooldown = 5;
+    }
+
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+        target.AddBuff(BuffID.Oiled, 1200, false);
+        target.AddBuff(BuffID.Ichor, 900, false);
+        target.AddBuff(BuffID.OnFire3, 120, false);
     }
 
     public override bool ShouldUpdatePosition() => false;
@@ -34,7 +42,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
 
     public void DrawTileMask(SpriteBatch spriteBatch) {
         var alpha = MathF.Min(Projectile.timeLeft / (float)DisappearFrames, 1f);
-        var texture = Assets.Textures.Items.Corruption.Lamethrower.IchorSplat.Asset.Value;
+        var texture = Assets.Images.Crimson.Items.Lamethrower.IchorSplat.Asset.Value;
         spriteBatch.Draw(
             texture,
             Projectile.Center - Main.screenPosition,
@@ -52,7 +60,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
         var alpha = MathF.Min(Projectile.timeLeft / (float)DisappearFrames, 1f);
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
-        var glowTexture = Assets.Textures.Sample.Glow1.Asset.Value;
+        var glowTexture = Assets.Images.Sample.Glow1.Asset.Value;
         Main.spriteBatch.Draw(
             glowTexture,
             Projectile.Center - Main.screenPosition,

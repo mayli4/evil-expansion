@@ -29,7 +29,7 @@ public class CutProjectile : ModProjectile {
         Projectile.DamageType = DamageClass.Melee;
 
         Projectile.usesLocalNPCImmunity = true;
-        Projectile.localNPCHitCooldown = 15;
+        Projectile.localNPCHitCooldown = 10;
     }
 
     public override bool ShouldUpdatePosition() => false;
@@ -79,10 +79,10 @@ public class CutProjectile : ModProjectile {
             );
         }
 
-        var axeCutEffect = Assets.Effects.Trail.AxeCut.Asset.Value;
+        var axeCutEffect = Assets.Shaders.Trail.AxeCut.Asset.Value;
 
         var positions = CollectionsMarshal.AsSpan(TrailPositions);
-        var texture = Assets.Textures.Items.Crimson.MeatAxe.CutTexture.Asset.Value;
+        var texture = Assets.Images.Crimson.Items.MeatAxe.CutTexture.Asset.Value;
 
         pipeline
             .SetEffectParams(

@@ -27,7 +27,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
 
         for(int i = 0; i < BackgroundTextures.Length; i++) {
             BackgroundTextures[i] = ModContent.Request<Texture2D>(
-                "EvilExpansionMod/Assets/Textures/Backgrounds/UnderworldCrimson/UnderworldCrimsonBackground_" + i
+                "EvilExpansionMod/Assets/Images/Backgrounds/UnderworldCrimson/UnderworldCrimsonBackground_" + i
             );
         }
     }
@@ -167,7 +167,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
         Vector2 vector = new(1f / num7);
         float num8 = 0.5f;
         Vector2 zero = Vector2.Zero;
-        
+    
         float defaultScaleForLayer2 = 0.5f;
         float newScaleFactorForLayer2 = 0.8f;
         float heightChange = value.Height * (newScaleFactorForLayer2 - defaultScaleForLayer2);
@@ -190,6 +190,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                 break;
         }
 
+        num8 *= 1.2f;
         if(flat) {
             num8 *= 1.5f;
         }
@@ -204,7 +205,6 @@ public class UnderworldCrimsonBGSystem : ModSystem {
 
         float textureRenderWidth = num8 * value2.Width;
 
-        //x ofset for bg drawing
         int startTileX = (int)(
             (int)(screenOffset.X * vector.X - vec.X + zero.X - (Main.screenWidth >> 1)) / textureRenderWidth
         );
@@ -212,8 +212,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
         vec = vec.Floor();
         int numTilesToDraw = (int)Math.Ceiling(Main.screenWidth / textureRenderWidth);
         int tileStep = (int)(num8 * ((value2.Width - 1) / vector.X));
- 
-        // initial drawing position
+
         Vector2 drawPos =
             (new Vector2(((startTileX - 2) * tileStep), Main.UnderworldLayer * 16f) + vec - screenOffset)
             * vector
@@ -223,7 +222,6 @@ public class UnderworldCrimsonBGSystem : ModSystem {
             + zero;
         drawPos = drawPos.Floor();
 
-        // Ensure the first drawing starts before the screen edge
         while(drawPos.X + textureRenderWidth < 0f) {
             startTileX++;
             drawPos.X += textureRenderWidth;
@@ -231,8 +229,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
 
         for(int i = startTileX - 2; i <= startTileX + 4 + numTilesToDraw; i++) {
             Color drawColor = Color.White * _fadeOpacity;
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin(new SpriteBatchSnapshot() with { BlendState = BlendState.NonPremultiplied });
+        
             Main.spriteBatch.Draw(
                 value,
                 drawPos,
@@ -244,21 +241,19 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                 SpriteEffects.None,
                 0f
             );
-            Main.spriteBatch.End();
-            Main.spriteBatch.Begin();
 
             if(isGradient || textureArrayIndex == 1) {
                 int bottomY = (int)(drawPos.Y + value2.Height * num8);
-                // Main.spriteBatch.Draw(
-                //     TextureAssets.BlackTile.Value,
-                //     new Rectangle(
-                //         (int)drawPos.X,
-                //         bottomY,
-                //         (int)(textureRenderWidth),
-                //         Math.Max(0, Main.screenHeight - bottomY)
-                //     ),
-                //     new Color(226, 255, 41)
-                // );
+                Main.spriteBatch.Draw(
+                    TextureAssets.BlackTile.Value,
+                    new Rectangle(
+                        (int)drawPos.X,
+                        bottomY,
+                        (int)(textureRenderWidth),
+                        Math.Max(0, Main.screenHeight - bottomY)
+                    ),
+                    Color.Black * _fadeOpacity
+                );
             }
             drawPos.X += textureRenderWidth;
         }

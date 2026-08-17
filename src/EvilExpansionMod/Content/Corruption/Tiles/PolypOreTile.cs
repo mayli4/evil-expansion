@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class PolypOreTile : ModTile {
-    public override string Texture => Assets.Textures.Tiles.Corruption.PolypOre.KEY;
+    public override string Texture => Assets.Images.Corruption.Tiles.PolypOre.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileOreFinderPriority[Type] = 450;
@@ -79,7 +79,7 @@ public class PolypOreTile : ModTile {
 }
 
 public class PolypOreItem : ModItem {
-    public override string Texture => Assets.Textures.Tiles.Corruption.PolypOreItem.KEY;
+    public override string Texture => Assets.Images.Corruption.Tiles.PolypOreItem.KEY;
 
     public override void SetStaticDefaults() {
         ItemTrader.ChlorophyteExtractinator.AddOption_OneWay(Type, 1, ModContent.ItemType<CartilageOreItem>(), 1);

@@ -13,7 +13,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class PusBottleNPC : ModNPC {
-    public override string Texture => Assets.Textures.NPCs.Crimson.Stinkgrub.PusBottle.KEY;
+    public override string Texture => Assets.Images.Crimson.NPCs.Stinkgrub.PusBottle.KEY;
 
     public int ParentNPCID => (int)NPC.ai[0];
     public ref float IsDetached => ref NPC.ai[1];
@@ -24,14 +24,17 @@ public class PusBottleNPC : ModNPC {
     private const int detached_lifetime = 60 * 10;
 
     private float _maxSquishTime = 30f;
-
+    public override void SetStaticDefaults() {
+        base.SetStaticDefaults();
+        NPCID.Sets.NeedsExpertScaling[Type] = true;
+    }
     public override void SetDefaults() {
         NPC.width = 80;
         NPC.height = 80;
         NPC.aiStyle = -1;
         NPC.friendly = false;
         NPC.damage = 0;
-        NPC.lifeMax = 400;
+        NPC.lifeMax = 320;
         NPC.knockBackResist = 0f;
         NPC.value = 0f;
 
@@ -175,8 +178,8 @@ public class PusBottleNPC : ModNPC {
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
-        var texture = Assets.Textures.NPCs.Crimson.Stinkgrub.PusBottle.Asset.Value;
-        var textureInside = Assets.Textures.NPCs.Crimson.Stinkgrub.PusBottle_Inside.Asset.Value;
+        var texture = Assets.Images.Crimson.NPCs.Stinkgrub.PusBottle.Asset.Value;
+        var textureInside = Assets.Images.Crimson.NPCs.Stinkgrub.PusBottle_Inside.Asset.Value;
 
         var origin = new Vector2(texture.Width / 2, 94);
 
@@ -191,7 +194,7 @@ public class PusBottleNPC : ModNPC {
 
         Vector2 finalScale = Vector2.One * NPC.scale;
 
-        var fluidEffect = Assets.Effects.Pixel.DevilOWarFluid.Asset.Value;
+        var fluidEffect = Assets.Shaders.Pixel.DevilOWarFluid.Asset.Value;
 
         if(!NPC.IsABestiaryIconDummy) {
             Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
@@ -200,8 +203,8 @@ public class PusBottleNPC : ModNPC {
                     ("level", 0.3f),
                     ("smooth", 1.0f),
                     ("liquidColor", new Color(98, 90, 40).ToVector4()),
-                    ("noisetex", Assets.Textures.Sample.BubblyNoise.Asset.Value),
-                    ("noisetex2", Assets.Textures.Sample.SpottyNoise.Asset.Value),
+                    ("noisetex", Assets.Images.Sample.BubblyNoise.Asset.Value),
+                    ("noisetex2", Assets.Images.Sample.SpottyNoise.Asset.Value),
                     ("uNoiseStrength", 1.0f),
                     ("uNoise1ScrollSpeedX", 0.09f),
                     ("uDarkenStrength", 0.3f),

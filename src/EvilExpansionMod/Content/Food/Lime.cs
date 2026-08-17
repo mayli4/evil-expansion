@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Items.Food;
 
 public class Lime : ModItem {
-    public override string Texture => Assets.Textures.Items.Foods.Lime.KEY;
+    public override string Texture => Assets.Images.Foods.Lime.KEY;
 
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;

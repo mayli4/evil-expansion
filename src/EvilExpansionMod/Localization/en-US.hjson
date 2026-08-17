@@ -58,8 +58,8 @@ Mods: {
 
 			HeadPounderItem: {
 				DisplayName: Head Pounder
-				Damage: 1-{0} melee damage based on charge time
-				Tooltip: Summons corrupt spikes on ground hit
+				Damage: 1-{0} melee damage
+				Tooltip: Striking the earth at full power unleashes bursts of corrupt mass
 			}
 
 			HellbringerBody: {
@@ -118,32 +118,37 @@ Mods: {
 
 			ThoughtfulPendantItem: {
 				DisplayName: Thoughtful Pendant
-				Tooltip: Has a chance to summon portals around the players cursor while attacking
+				Tooltip: Has a chance to conjure Spear Portals around your cursor while attacking
 			}
 
 			ImputedFlameItem: {
 				DisplayName: Imputed Flame
-				Tooltip: ""
+				Tooltip: It burns... extra evilly
 			}
 
 			PlanetoidSpawnerItem: {
 				DisplayName: Planetoid Spawner
+				Damage: 1-{0} magic damage
 				Tooltip:
 					'''
-					Summons planetoids, whos damage scales with size
-					Planetoids explode after holding long enough
-					Definitely do NOT use purification powder on it...
+					Creates a planetoid, which becomes more dangerous as it grows
+					Planetoids that grow too large explode violently
+					“Definitely DON’T use purification powder on these…”
 					'''
 			}
 
 			NormalRevolverItem: {
 				DisplayName: Normal Revolver
-				Tooltip: Summons a baby planetoid to follow you around
+				Tooltip: Summons a baby planetoid that follows you around
 			}
 
 			LamethrowerItem: {
 				DisplayName: Lamethrower
-				Tooltip: ""
+				Tooltip:
+					'''
+					Coats enemies and surfaces alike with flaming ichor, inflicting a multitude of debuffs
+					Enemies suffer reduced defense and take extra damage when set ablaze
+					'''
 			}
 
 			SlippedWhipItem: {
@@ -157,13 +162,13 @@ Mods: {
 			}
 
 			SpamonAStickItem: {
-				DisplayName: Spam On A Stick
-				Tooltip: ""
+				DisplayName: Spam on a Stick
+				Tooltip: "'Home grown!'"
 			}
 
 			MeatAxeItem: {
-				DisplayName: Meat Axe
-				Tooltip: ""
+				DisplayName: Carrion Cleaver
+				Tooltip: The gashes it creates shred enemies rapidly
 			}
 
 			CorruptionJackhammerItem: {
@@ -183,7 +188,7 @@ Mods: {
 
 			BoneSlicesItem: {
 				DisplayName: Bone Slices
-				Tooltip: ""
+				Tooltip: They ooze fluids constantly
 			}
 
 			PusClumpItem: {
@@ -225,8 +230,8 @@ Mods: {
 				DisplayName: Crytapete
 				Tooltip:
 					'''
-					Summons crytapetes who ride atop your head
-					They randomly start crying, making their tears inaccurate
+					Summons crytapetes that ride atop your head
+					They randomly start crying, dousing enemies with bursts of damaging tears
 					'''
 			}
 
@@ -266,11 +271,11 @@ Mods: {
 			}
 
 			FireInALanternItem: {
-				DisplayName: Fire In A Lantern
+				DisplayName: Fire in a Lantern
 				Tooltip:
 					'''
 					Allows the user to double jump
-					Emits flames
+					Emits damaging flames
 					'''
 			}
 
@@ -308,6 +313,11 @@ Mods: {
 				DisplayName: Cartilage Ore
 				Tooltip: ""
 			}
+
+			SpamOnAStickItem: {
+				DisplayName: Spam On A Stick Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -321,7 +331,7 @@ Mods: {
 			CultistEye.DisplayName: Cultist Eye
 			PusImpNPC.DisplayName: Pus Imp
 			StinkgrubNPC.DisplayName: Stinkgrub
-			PusBottleNPC.DisplayName: Bottle
+			PusBottleNPC.DisplayName: Pus Bottle
 			StinkflyNPC.DisplayName: Stinkfly
 			SmallStinkflyNPC.DisplayName: Small Stinkfly
 			SmallStinkflyNpc.DisplayName: Small Stinkfly
@@ -421,8 +431,8 @@ Mods: {
 			CorruptFireblossom.MapEntry: Corrupt Fireblossom
 			VeinOre.MapEntry: Vein Ore
 			HellShadetree.MapEntry: Hell Shadetree
-			PolypOreTile.MapEntry: Polyp Ore Tile
-			CartilageOreTile.MapEntry: Cartilage Ore Tile
+			PolypOreTile.MapEntry: Polyp Ore
+			CartilageOreTile.MapEntry: Cartilage Ore
 		}
 
 		Bestiary: {
@@ -437,7 +447,7 @@ Mods: {
 		Buffs: {
 			BloodWardenBuff: {
 				DisplayName: Blood Warden
-				Description: It will protect you!
+				Description: It breathes aggressively
 			}
 
 			NormalPlanetoidBuff: {
@@ -447,7 +457,7 @@ Mods: {
 
 			CrytapeteBuff: {
 				DisplayName: Crytapete Buff
-				Description: It wont stop crying.
+				Description: It wont stop crying...
 			}
 
 			RibcagedNPCDebuff: {

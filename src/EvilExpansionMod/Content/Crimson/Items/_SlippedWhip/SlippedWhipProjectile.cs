@@ -180,7 +180,7 @@ public class SlippedWhipProjectile : ModProjectile {
         Main.EntitySpriteDraw(
             texture,
             whipPositions[^1] - Main.screenPosition,
-            new Rectangle(34, 0, 28, 12),
+            new Rectangle(34, 0, 40, 24),
             lightColor,
             deltas[^1].ToRotation() + rotationOffset,
             Projectile.spriteDirection < 0 ? origin : new Vector2(28, origin.Y),

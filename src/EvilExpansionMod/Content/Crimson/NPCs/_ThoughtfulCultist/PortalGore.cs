@@ -53,7 +53,7 @@ public class PortalGore : ModProjectile {
 
     public override bool PreDraw(ref Color lightColor) {
         var texture = ModContent.Request<Texture2D>(
-            $"{nameof(EvilExpansionMod)}/Assets/Textures/NPCs/Crimson/ThoughtfulCultist/PortalGore{(int)Projectile.ai[0]}",
+            $"{nameof(EvilExpansionMod)}/Assets/Images/Crimson/NPCs/ThoughtfulCultist/PortalGore{(int)Projectile.ai[0]}",
             AssetRequestMode.ImmediateLoad
         ).Value;
 

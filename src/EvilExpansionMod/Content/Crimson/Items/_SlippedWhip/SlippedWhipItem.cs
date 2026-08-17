@@ -21,7 +21,7 @@ public class SlippedWhipItem : ModItem {
         Item.rare = ItemRarityID.LightRed;
 
         Item.shoot = ModContent.ProjectileType<SlippedWhipProjectile>();
-        Item.shootSpeed = 7;
+        Item.shootSpeed = 6;
 
         Item.useStyle = ItemUseStyleID.Swing;
         Item.useTime = 10;

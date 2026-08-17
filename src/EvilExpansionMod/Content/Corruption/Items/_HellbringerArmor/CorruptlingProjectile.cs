@@ -27,6 +27,9 @@ public class CorruptlingProjectile : ModProjectile {
         Projectile.penetrate = 6;
         Projectile.aiStyle = -1;
 
+        Projectile.usesIDStaticNPCImmunity = true;
+        Projectile.idStaticNPCHitCooldown = 8;
+
         Projectile.SetAISlotNPC(1, null);
     }
 

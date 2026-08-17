@@ -81,7 +81,7 @@ public class PlanetoidProjectile : ModProjectile {
                 Projectile.netUpdate = true;
                 Projectile.tileCollide = true;
 
-                Projectile.damage *= 10;
+                Projectile.damage *= 3;
 
                 Projectile.timeLeft = 3600;
                 return;
@@ -102,8 +102,8 @@ public class PlanetoidProjectile : ModProjectile {
             Projectile.scale = MathHelper.Clamp(GrowthTimer / growth_time, 0f, 1f);
 
             float powerFactor = Projectile.scale;
-            Projectile.damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(5 * powerFactor);
-            Projectile.knockBack = player.GetTotalKnockback(DamageClass.Magic).ApplyTo(1f * powerFactor);
+            Projectile.damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(50 * powerFactor);
+            Projectile.knockBack = player.GetTotalKnockback(DamageClass.Magic).ApplyTo(10f * powerFactor);
 
             if(GrowthTimer >= growth_time) {
                 _canExplode = true;
@@ -219,7 +219,7 @@ public class PlanetoidProjectile : ModProjectile {
             ExplosionProjectile.New(
                 Projectile.GetSource_Death(),
                 Projectile.Center,
-                (int)Main.player[Projectile.owner].GetTotalDamage(DamageClass.Magic).ApplyTo(90),
+                (int)Main.player[Projectile.owner].GetTotalDamage(DamageClass.Magic).ApplyTo(500),
                 new Color(136, 150, 37),
                 Color.LightGoldenrodYellow,
                 size: 500,

@@ -16,7 +16,7 @@ public class FireInALanternItem : ModItem {
 
     public override void SetDefaults() {
         Item.DefaultToAccessory(20, 26);
-        Item.SetShopValues(ItemRarityColor.Green2, Item.buyPrice(silver: 50));
+        Item.SetShopValues(ItemRarityColor.Green2, Item.sellPrice(gold: 1));
     }
 
     public override void UpdateAccessory(Player player, bool hideVisual) {

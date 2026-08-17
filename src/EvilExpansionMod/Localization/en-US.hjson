@@ -58,8 +58,8 @@ Mods: {
 
 			HeadPounderItem: {
 				DisplayName: Head Pounder
-				Damage: 1-{0} melee damage based on charge time
-				Tooltip: Strike the earth at full power to unleash a wave of corrupt mass
+				Damage: 1-{0} melee damage
+				Tooltip: Striking the earth at full power unleashes bursts of corrupt mass
 			}
 
 			HellbringerBody: {
@@ -118,19 +118,20 @@ Mods: {
 
 			ThoughtfulPendantItem: {
 				DisplayName: Thoughtful Pendant
-				Tooltip: Has a chance to summon portals around the players cursor while attacking
+				Tooltip: Has a chance to conjure Spear Portals around your cursor while attacking
 			}
 
 			ImputedFlameItem: {
 				DisplayName: Imputed Flame
-				Tooltip: ""
+				Tooltip: It burns... extra evilly
 			}
 
 			PlanetoidSpawnerItem: {
 				DisplayName: Planetoid Spawner
+				Damage: 1-{0} magic damage
 				Tooltip:
 					'''
-					Creates a planetoid, which damage scales with size
+					Creates a planetoid, which becomes more dangerous as it grows
 					Planetoids that grow too large explode violently
 					“Definitely DON’T use purification powder on these…”
 					'''
@@ -167,7 +168,7 @@ Mods: {
 
 			MeatAxeItem: {
 				DisplayName: Carrion Cleaver
-				Tooltip: ""
+				Tooltip: The gashes it creates shred enemies rapidly
 			}
 
 			CorruptionJackhammerItem: {
@@ -187,7 +188,7 @@ Mods: {
 
 			BoneSlicesItem: {
 				DisplayName: Bone Slices
-				Tooltip: ""
+				Tooltip: They ooze fluids constantly
 			}
 
 			PusClumpItem: {
@@ -229,8 +230,8 @@ Mods: {
 				DisplayName: Crytapete
 				Tooltip:
 					'''
-					Summons crytapetes who ride atop your head
-					They randomly start crying, making their tears inaccurate
+					Summons crytapetes that ride atop your head
+					They randomly start crying, dousing enemies with bursts of damaging tears
 					'''
 			}
 
@@ -274,7 +275,7 @@ Mods: {
 				Tooltip:
 					'''
 					Allows the user to double jump
-					Emits flames
+					Emits damaging flames
 					'''
 			}
 
@@ -330,7 +331,7 @@ Mods: {
 			CultistEye.DisplayName: Cultist Eye
 			PusImpNPC.DisplayName: Pus Imp
 			StinkgrubNPC.DisplayName: Stinkgrub
-			PusBottleNPC.DisplayName: Bottle
+			PusBottleNPC.DisplayName: Pus Bottle
 			StinkflyNPC.DisplayName: Stinkfly
 			SmallStinkflyNPC.DisplayName: Small Stinkfly
 			SmallStinkflyNpc.DisplayName: Small Stinkfly
@@ -430,8 +431,8 @@ Mods: {
 			CorruptFireblossom.MapEntry: Corrupt Fireblossom
 			VeinOre.MapEntry: Vein Ore
 			HellShadetree.MapEntry: Hell Shadetree
-			PolypOreTile.MapEntry: Polyp Ore Tile
-			CartilageOreTile.MapEntry: Cartilage Ore Tile
+			PolypOreTile.MapEntry: Polyp Ore
+			CartilageOreTile.MapEntry: Cartilage Ore
 		}
 
 		Bestiary: {
@@ -446,7 +447,7 @@ Mods: {
 		Buffs: {
 			BloodWardenBuff: {
 				DisplayName: Blood Warden
-				Description: It will protect you!
+				Description: It breathes aggressively
 			}
 
 			NormalPlanetoidBuff: {
@@ -456,7 +457,7 @@ Mods: {
 
 			CrytapeteBuff: {
 				DisplayName: Crytapete Buff
-				Description: It wont stop crying.
+				Description: It wont stop crying...
 			}
 
 			RibcagedNPCDebuff: {

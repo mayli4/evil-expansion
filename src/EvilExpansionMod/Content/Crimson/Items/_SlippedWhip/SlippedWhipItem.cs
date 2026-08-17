@@ -16,16 +16,16 @@ public class SlippedWhipItem : ModItem {
 
     public override void SetDefaults() {
         Item.DamageType = DamageClass.SummonMeleeSpeed;
-        Item.damage = 50;
+        Item.damage = 43;
         Item.knockBack = 2;
-        Item.rare = ItemRarityID.Green;
+        Item.rare = ItemRarityID.LightRed;
 
         Item.shoot = ModContent.ProjectileType<SlippedWhipProjectile>();
-        Item.shootSpeed = 4;
+        Item.shootSpeed = 7;
 
         Item.useStyle = ItemUseStyleID.Swing;
-        Item.useTime = 30;
-        Item.useAnimation = 30;
+        Item.useTime = 10;
+        Item.useAnimation = 20;
         Item.UseSound = SoundID.Item152;
         Item.noMelee = true;
         Item.noUseGraphic = true;
@@ -38,7 +38,8 @@ public class SlippedWhipItem : ModItem {
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient(ModContent.ItemType<CartilageBarItem>(), 18)
-            .AddIngredient(ModContent.ItemType<BoneSlicesItem>(), 8)
+            .AddIngredient(ModContent.ItemType<PusClumpItem>(), 8)
+            .AddIngredient(ModContent.ItemType<BoneSlicesItem>(), 4)
             .AddTile(TileID.Anvils)
             .Register();
     }

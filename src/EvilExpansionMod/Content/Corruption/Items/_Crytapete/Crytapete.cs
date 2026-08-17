@@ -31,7 +31,7 @@ public class CrytapeteItem : ModItem {
         Item.noMelee = true;
         Item.knockBack = 3f;
         Item.value = Item.sellPrice(gold: 1, silver: 50);
-        Item.rare = ItemRarityID.Green;
+        Item.rare = ItemRarityID.LightRed;
         Item.buffType = ModContent.BuffType<CrytapeteBuff>();
         Item.shoot = ModContent.ProjectileType<CrytapeteMinion>();
         Item.shootSpeed = 10f;

@@ -14,7 +14,7 @@ public class CartilageBarItem : ModItem {
         // Item.DefaultToPlaceableTile(ModContent.TileType<>());
         Item.width = 20;
         Item.height = 20;
-        Item.value = 750;
+        Item.value = 30000;
 
         Item.maxStack = Terraria.Item.CommonMaxStack;
 

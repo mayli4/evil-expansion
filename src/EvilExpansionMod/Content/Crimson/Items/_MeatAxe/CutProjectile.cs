@@ -29,7 +29,7 @@ public class CutProjectile : ModProjectile {
         Projectile.DamageType = DamageClass.Melee;
 
         Projectile.usesLocalNPCImmunity = true;
-        Projectile.localNPCHitCooldown = 15;
+        Projectile.localNPCHitCooldown = 10;
     }
 
     public override bool ShouldUpdatePosition() => false;

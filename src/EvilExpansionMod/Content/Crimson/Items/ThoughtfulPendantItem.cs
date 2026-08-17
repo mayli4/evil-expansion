@@ -32,7 +32,7 @@ public class ThoughtfulPendantItem : ModItem {
         Item.width = 24;
         Item.height = 24;
         Item.accessory = true;
-        Item.rare = ItemRarityID.LightRed;
+        Item.rare = ItemRarityID.Pink;
         Item.value = Item.sellPrice(gold: 1);
     }
 

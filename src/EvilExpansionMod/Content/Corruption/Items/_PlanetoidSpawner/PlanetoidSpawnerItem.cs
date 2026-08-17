@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
@@ -24,15 +25,19 @@ public class PlanetoidSpawnerItem : ModItem {
         Item.noMelee = true;
         Item.noUseGraphic = true;
 
-        Item.damage = 20;
+        Item.damage = 500;
         Item.knockBack = 1f;
-        Item.crit = 4;
+        Item.crit = 30;
 
         Item.shoot = ModContent.ProjectileType<PlanetoidProjectile>();
         Item.shootSpeed = 1f;
         Item.value = Item.sellPrice(gold: 5);
         Item.rare = ItemRarityID.Pink;
         Item.autoReuse = false;
+    }
+    public override void ModifyTooltips(List<TooltipLine> tooltips) {
+        tooltips.Find(t => t.Name == "Damage").Text =
+            Mod.GetLocalization($"{LocalizationCategory}.{nameof(PlanetoidSpawnerItem)}.Damage").Format(Item.damage);
     }
 
     public override bool CanUseItem(Player player) {

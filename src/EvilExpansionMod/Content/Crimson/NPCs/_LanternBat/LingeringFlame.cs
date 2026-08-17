@@ -126,7 +126,7 @@ public class LingeringFlameProjectile : ModProjectile {
                 static _ => Color.White,
                 flameEffect)
             .ApplyOutline(colorB)
-            .ApplyBloom(1.5f)
+            .ApplyBloom()
             .End();
 
         return false;

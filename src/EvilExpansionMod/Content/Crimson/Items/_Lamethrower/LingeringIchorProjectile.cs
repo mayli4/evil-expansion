@@ -34,7 +34,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
 
     public void DrawTileMask(SpriteBatch spriteBatch) {
         var alpha = MathF.Min(Projectile.timeLeft / (float)DisappearFrames, 1f);
-        var texture = Assets.Images.Corruption.Items.Lamethrower.IchorSplat.Asset.Value;
+        var texture = Assets.Images.Crimson.Items.Lamethrower.IchorSplat.Asset.Value;
         spriteBatch.Draw(
             texture,
             Projectile.Center - Main.screenPosition,

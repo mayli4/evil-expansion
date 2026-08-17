@@ -6,7 +6,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class LamethrowerItem : ModItem {
-    public override string Texture => Assets.Images.Corruption.Items.Lamethrower.LamethrowerItem.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.Lamethrower.LamethrowerItem.KEY;
 
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 3;

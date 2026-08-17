@@ -26,7 +26,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
 
     Vector2[] _trailPositions;
 
-    public override string Texture => Assets.Images.Corruption.Items.Lamethrower.LamethrowerItem.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.Lamethrower.LamethrowerItem.KEY;
     public override void SetDefaults() {
         Projectile.width = 0;
         Projectile.height = 0;
@@ -39,8 +39,14 @@ public class LamethrowerHeldProjectile : ModProjectile {
         Projectile.DamageType = DamageClass.Melee;
         Projectile.timeLeft = FullFlameFrames * 2;
         Projectile.ownerHitCheck = true;
-        Projectile.localNPCHitCooldown = 10;
+        Projectile.localNPCHitCooldown = 5;
         Projectile.usesLocalNPCImmunity = true;
+    }
+
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+        target.AddBuff(BuffID.Oiled, 1200, false);
+        target.AddBuff(BuffID.Ichor, 900, false);
+        target.AddBuff(BuffID.OnFire3, 120, false);
     }
 
     public override bool ShouldUpdatePosition() => false;

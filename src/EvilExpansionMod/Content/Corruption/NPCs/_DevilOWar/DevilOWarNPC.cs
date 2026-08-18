@@ -66,7 +66,8 @@ public sealed class DevilOWarNPC : ModNPC {
         NPC.knockBackResist = 0.05f;
         NPC.friendly = false;
 
-        NPC.HitSound = SoundID.NPCHit23;
+        NPC.HitSound = SoundID.NPCHit13;
+        NPC.DeathSound = SoundID.NPCDeath64;
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
 

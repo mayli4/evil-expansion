@@ -14,8 +14,8 @@ public class HeadPounderItem : ModItem {
     }
 
     public override void SetDefaults() {
-        Item.damage = 103;
-        Item.crit = 4;
+        Item.damage = 124;
+        Item.crit = 0;
         Item.DamageType = DamageClass.Melee;
         Item.knockBack = 8;
 

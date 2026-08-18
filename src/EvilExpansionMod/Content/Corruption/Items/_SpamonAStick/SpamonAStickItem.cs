@@ -31,7 +31,7 @@ public class SpamonAStickItem : ModItem {
         Item.knockBack = 8;
         Item.crit = 4;
         Item.value = Item.sellPrice(gold: 1, silver: 2);
-        Item.rare = ItemRarityID.LightRed;
+        Item.rare = ItemRarityID.Pink;
     }
 
     public override bool CanShoot(Player player) {
@@ -363,15 +363,18 @@ public class SpamOnAStickProjectile : ModProjectile {
 
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
         if (CurrentAIState == AIState.Spinning)
-            modifiers.SourceDamage *= 1.2f;
+            modifiers.SourceDamage *= 0.6f;
 
         if (CurrentAIState is AIState.LaunchingForward or AIState.Retracting)
-            modifiers.SourceDamage *= 2f;
+            modifiers.SourceDamage *= 1f;
+
+        if(CurrentAIState is AIState.Dropping)
+            modifiers.SourceDamage *= 4f;
 
         modifiers.HitDirectionOverride = (Owner.Center.X < target.Center.X) ? 1 : -1;
 
         if (CurrentAIState == AIState.Spinning)
-            modifiers.Knockback *= 0.25f;
+            modifiers.Knockback *= 0.35f;
         if (CurrentAIState == AIState.Dropping)
             modifiers.Knockback *= 0.5f;
     }

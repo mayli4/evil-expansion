@@ -163,7 +163,11 @@ Mods: {
 
 			SpamonAStickItem: {
 				DisplayName: Spam on a Stick
-				Tooltip: "'Home grown!'"
+				Tooltip: 
+					'''
+					Drop it onto enemies to deal crushing damage
+					"'Home grown!'"
+					'''
 			}
 
 			MeatAxeItem: {
@@ -296,7 +300,7 @@ Mods: {
 
 			PolypBarItem: {
 				DisplayName: Polyp Bar
-				Tooltip: ""
+				Tooltip: It pulses rhythmically
 			}
 
 			PolypOreItem: {
@@ -306,7 +310,7 @@ Mods: {
 
 			CartilageBarItem: {
 				DisplayName: Cartilage Bar
-				Tooltip: ""
+				Tooltip: Boiling blood seeps out of it
 			}
 
 			CartilageOreItem: {

@@ -16,4 +16,12 @@ internal static class RenderPipelineExtensions {
             ("uThreshold", threshold),
             ("uSize", Main.ScreenSize.ToVector2()));
     }
+
+    public static RenderPipeline ApplyBloom(this RenderPipeline @this, float intensity = 1.5f, float threshold = 0.5f) {
+        return @this.ApplyEffect(
+            Assets.Shaders.Pixel.Bloom.Asset.Value,
+            ("uThreshold", threshold),
+            ("uIntensity", intensity),
+            ("uSize", Main.ScreenSize.ToVector2()));
+    }
 }

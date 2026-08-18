@@ -1,4 +1,3 @@
-using EvilExpansionMod.Content.Biomes;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;

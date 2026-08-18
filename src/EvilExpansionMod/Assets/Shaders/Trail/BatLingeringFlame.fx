@@ -22,7 +22,7 @@ float4 FS(TrailPSInput input) : COLOR0 {
 
     float s = s0 * 0.5 + s2 * 0.5;
 
-    float xStep = 0.35 * uv.y + 0.4 * (1 - sin(PI * uv.x)) + 0.5 * uProgress * uProgress + uProgress * uv.x;
+    float xStep = 0.35 * uv.y + 0.4 * (1 - sin(PI * uv.x)) + 0.75 * uProgress * uProgress;
     return lerp(uColorA, lerp(uColorA, uColorB, step(s - 0.125, xStep)), sin(uv.y * PI)) * step(xStep, s);
 }
 

@@ -1,4 +1,5 @@
 using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -62,6 +63,22 @@ public class LingeringFlameProjectile : ModProjectile {
 
             Lighting.AddLight(_trailPositions[i], TorchID.Orange);
         }
+
+        if(Projectile.timeLeft > MAX_LIFETIME - 60 && Projectile.timeLeft % Main.rand.Next(4, 6) == 0) {
+            var position = _trailPositions[_freePositionCount - 1] + Vector2.UnitY * 20f;
+            var direction = Projectile.direction * -Vector2.UnitX;
+
+            var ember = GlowEmberParticle.NewParticle(
+                position + Main.rand.NextVector2Unit() * 20f,
+                direction * Main.rand.NextFloat(4.2f, 7.5f),
+                Main.rand.NextFloat(0.25f, 1.5f),
+                Color.Orange with { A = 0 },
+                Color.White with { A = 0 });
+
+            ember.Randomness *= 2f;
+            ember.LossPerSecond *= 2f;
+            ParticleEngine.PARTICLES.Add(ember);
+        }
     }
 
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
@@ -109,6 +126,7 @@ public class LingeringFlameProjectile : ModProjectile {
                 static _ => Color.White,
                 flameEffect)
             .ApplyOutline(colorB)
+            .ApplyBloom()
             .End();
 
         return false;

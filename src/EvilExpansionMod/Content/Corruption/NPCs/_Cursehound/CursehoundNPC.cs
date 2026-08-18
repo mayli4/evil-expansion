@@ -1,6 +1,4 @@
-﻿using EvilExpansionMod.Content.Biomes;
-using EvilExpansionMod.Content.CameraModifiers;
-using EvilExpansionMod.Content.Corruption;
+﻿using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
@@ -96,6 +94,8 @@ public sealed class CursehoundNPC : ModNPC {
         for(int j = 1; j <= 8; j++)
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/CursehoundGore" + j);
     }
+
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.1f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>(), 1, 1, 2));

@@ -132,7 +132,7 @@ public sealed class CursedSpiritNPC : ModNPC {
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-        return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.2f : 0;
+        return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.25f : 0;
     }
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
@@ -218,38 +218,38 @@ public sealed class CursedSpiritNPC : ModNPC {
                     DustID.CursedTorch,
                     newColor: Main.rand.NextFromList(GhostColor1, GhostColor2)
                 );
-                
+
                 var ember = GlowEmberParticle.NewParticle(
-                    NPC.Center + Main.rand.NextVector2Circular(11, 11), 
-                    Main.rand.NextVector2Circular(11, 11), 
-                    Main.rand.NextFloat(0.5f, 1f), 
+                    NPC.Center + Main.rand.NextVector2Circular(11, 11),
+                    Main.rand.NextVector2Circular(11, 11),
+                    Main.rand.NextFloat(0.5f, 1f),
                     GhostColor1 with { A = 0 }, Color.White with { A = 0 }
                     );
-                
+
                 ember.Randomness *= 2f;
                 ember.LossPerSecond *= 2f;
                 ParticleEngine.PARTICLES.Add(ember);
-                
 
-                var emitDirection = NPC.velocity.LengthSquared() > 0.1f 
-                    ? -Vector2.Normalize(NPC.velocity) 
+
+                var emitDirection = NPC.velocity.LengthSquared() > 0.1f
+                    ? -Vector2.Normalize(NPC.velocity)
                     : -_lookDirection;
 
-                float coneAngle = Main.rand.NextFloat(-0.3f, 0.3f); 
+                float coneAngle = Main.rand.NextFloat(-0.3f, 0.3f);
                 float speed = Main.rand.NextFloat(3f, 7f);
                 var flameVelocity = emitDirection.RotatedBy(coneAngle) * speed;
 
                 var flame = DustFlameParticle.RequestNew(
-                    NPC.Center + Main.rand.NextVector2Circular(6f, 6f), 
-                    flameVelocity, 
-                    GhostColor1, 
-                    GhostColor2, 
-                    Main.rand.NextFloat(0.8f, 1.4f), 
+                    NPC.Center + Main.rand.NextVector2Circular(6f, 6f),
+                    flameVelocity,
+                    GhostColor1,
+                    GhostColor2,
+                    Main.rand.NextFloat(0.8f, 1.4f),
                     Main.rand.Next(18, 28)
                 );
 
-                flame.LossPerFrame = 0.12f; 
-                flame.Swirly = true; 
+                flame.LossPerFrame = 0.12f;
+                flame.Swirly = true;
                 flame.ApplyLighting = true;
 
                 ParticleEngine.PARTICLES.Add(flame);

@@ -204,6 +204,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
                 flameShader
             )
             .ApplyOutline(flameColor)
+            .ApplyBloom(1.75f)
             .End();
 
         var texture = TextureAssets.Projectile[Type].Value;

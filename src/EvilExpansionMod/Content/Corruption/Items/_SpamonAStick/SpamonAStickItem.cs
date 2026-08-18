@@ -1,5 +1,5 @@
 using EvilExpansionMod.Content.CameraModifiers;
-using EvilExpansionMod.Content.Crimson;
+using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -11,7 +11,6 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Corruption;
 
-// ReSharper disable CompareOfFloatsByEqualityOperator
 public class SpamonAStickItem : ModItem {
     public override string Texture => Assets.Images.Corruption.Items.SpamonAStick.SpamonAStickItem.KEY;
 
@@ -24,7 +23,8 @@ public class SpamonAStickItem : ModItem {
         Item.noMelee = true;
         Item.noUseGraphic = true;
         Item.useStyle = ItemUseStyleID.Swing;
-
+        Item.UseSound = SoundID.Item1;
+        
         Item.shoot = ModContent.ProjectileType<SpamOnAStickProjectile>();
 
         Item.damage = 81;
@@ -58,211 +58,384 @@ public class SpamOnAStickProjectile : ModProjectile {
     protected Texture2D ChainTexture => Assets.Images.Corruption.Items.SpamonAStick.SpamonAStick_Chain.Asset.Value;
     protected Texture2D BlockTexture => Assets.Images.Corruption.Items.SpamonAStick.SpamonAStick_Block.Asset.Value;
 
-    public int MaxLength = 800;
+    public enum AIState {
+        Spinning,
+        LaunchingForward,
+        Retracting,
+        ForcedRetracting,
+        StuckToGround,
+        Dropping
+    }
 
-    public ref float Timer => ref Projectile.ai[0];
-    public ref float State => ref Projectile.ai[1];
-    public ref float Length => ref Projectile.ai[2];
+    public AIState CurrentAIState {
+        get => (AIState)Projectile.ai[0];
+        set => Projectile.ai[0] = (float)value;
+    }
 
-    private ref float _visualTimer => ref Projectile.localAI[0];
-    private ref float _hasBounced => ref Projectile.localAI[1];
+    public ref float StateTimer => ref Projectile.ai[1];
+    public ref float SpinningStateTimer => ref Projectile.ai[02];
+
+    private float visualTimer;
+    private bool hasBounced;
 
     public Player Owner => Main.player[Projectile.owner];
 
-    public float ExtendGravity = 0.5f;
-    public float ExtendDrag = 0.99f;
-    public float RetractSpeed = 25f;
     public float GroundSplatDuration = 30f;
+    public float MaxLength = 650f;
 
-    public virtual void OnImpact(bool wasTile) {
-        _visualTimer = GroundSplatDuration;
-        if(wasTile) {
-            SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
-            Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(5f, 0.6f));
-
-            for(int i = 0; i < 7; i++) {
-                Dust.NewDustPerfect(Projectile.Center, DustID.CorruptGibs, Main.rand.NextVector2Circular(5f, 5f), Scale: Main.rand.NextFloat(1f, 2f));
-                Dust.NewDustPerfect(Projectile.Center, DustID.Corruption, Main.rand.NextVector2Circular(5f, 5f), Scale: Main.rand.NextFloat(1f, 2f));
-            }
-        }
+    public override void SetStaticDefaults() {
+        ProjectileID.Sets.TrailCacheLength[Projectile.type] = 6;
+        ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
     }
 
     public override void SetDefaults() {
-        Projectile.friendly = true;
+        Projectile.netImportant = true;
         Projectile.width = 30;
         Projectile.height = 30;
-        Projectile.tileCollide = true;
-        Projectile.timeLeft = 180;
+        Projectile.friendly = true;
         Projectile.penetrate = -1;
         Projectile.DamageType = DamageClass.MeleeNoSpeed;
+        Projectile.tileCollide = true;
+        Projectile.usesLocalNPCImmunity = true;
+        Projectile.localNPCHitCooldown = 10;
     }
 
     public override void OnSpawn(IEntitySource source) {
-        SoundEngine.PlaySound(SoundID.Item1, Projectile.Center);
-        _hasBounced = 0f;
+        hasBounced = false;
+        visualTimer = 0f;
+        ChangeState(AIState.Spinning);
+    }
+
+    public void ChangeState(AIState newState) {
+        CurrentAIState = newState;
+        StateTimer = 0f;
+
+        if (newState is AIState.LaunchingForward or AIState.Dropping) {
+            hasBounced = false;
+        }
+
+        if (newState == AIState.ForcedRetracting) {
+            Projectile.tileCollide = false;
+        }
+
+        Projectile.netUpdate = true;
+    }
+
+    public virtual void OnImpact(bool wasTile) {
+        visualTimer = GroundSplatDuration;
+
+        if (wasTile) {
+            SoundEngine.PlaySound(Assets.Sounds.SpamOnAStickSmash.Asset with { PitchVariance = 0.4f }, Projectile.Center);
+            SoundEngine.PlaySound(SoundID.Dig with { Volume = 0.6f }, Projectile.Center);
+            
+            Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(7f, 0.7f));
+
+            for(int i = 0; i < Main.rand.Next(4, 8); i++) {
+                Dust.NewDustPerfect(Projectile.Center, DustID.CorruptGibs, Main.rand.NextVector2Circular(5, 5));
+            }
+        }
+        else {
+            SoundEngine.PlaySound(Assets.Sounds.SpamOnAStickSmash.Asset with { PitchVariance = 0.4f, Pitch = -0.4f, Volume = 0.2f }, Projectile.Center);
+            SoundEngine.PlaySound(SoundID.NPCHit13 with { Pitch = -0.2f }, Projectile.Center);
+        }
     }
 
     public override void AI() {
-        Owner.itemAnimation = Owner.itemAnimationMax;
-        Owner.heldProj = Projectile.whoAmI;
-
-        if(_visualTimer > 0) {
-            _visualTimer--;
+        if (!Owner.active || Owner.dead || Owner.noItems || Owner.CCed || Vector2.Distance(Projectile.Center, Owner.Center) > 1200f) {
+            Projectile.Kill();
+            return;
         }
 
-        if(Owner.channel) {
-            Projectile.timeLeft = 180;
+        if (Main.myPlayer == Projectile.owner && Main.mapFullscreen) {
+            Projectile.Kill();
+            return;
         }
-        else if(State != 4 && State != 5) {
-            Projectile.velocity *= 0.5f;
-            Timer = 0;
-            State = 4;
-            Projectile.netUpdate = true;
+
+        if (visualTimer > 0) {
+            visualTimer--;
+        }
+
+        Vector2 mountedCenter = Owner.MountedCenter;
+        bool shouldOwnerHitCheck = false;
+
+        switch (CurrentAIState) {
+            case AIState.Spinning:
+                shouldOwnerHitCheck = HandleSpinningState(mountedCenter);
+                break;
+            case AIState.LaunchingForward:
+                HandleLaunchingState(mountedCenter);
+                break;
+            case AIState.StuckToGround:
+                HandleStuckState(mountedCenter);
+                break;
+            case AIState.Dropping:
+                HandleDroppingState(mountedCenter);
+                break;
+            case AIState.Retracting:
+                HandleRetractingState(mountedCenter);
+                break;
+            case AIState.ForcedRetracting:
+                HandleForcedRetractingState(mountedCenter);
+                break;
+        }
+
+        Projectile.direction = Projectile.velocity.X.NonZeroSign();
+        Projectile.ownerHitCheck = shouldOwnerHitCheck;
+
+        if (CurrentAIState != AIState.StuckToGround) {
+            Vector2 vectorTowardsPlayer = Projectile.DirectionTo(mountedCenter).SafeNormalize(Vector2.Zero);
+            Projectile.rotation = vectorTowardsPlayer.ToRotation() + MathHelper.PiOver2;
+            if (CurrentAIState == AIState.Dropping) {
+                Projectile.rotation += Projectile.velocity.ToRotation() * Projectile.direction * 0.1f;
+            }
         }
 
         Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, (Projectile.Center - Owner.Center).ToRotation() - MathHelper.PiOver2);
         Owner.SetCompositeArmBack(true, Player.CompositeArmStretchAmount.Quarter, (Projectile.Center - Owner.Center).ToRotation() - MathHelper.PiOver2 - 0.1f * Owner.direction);
-        Owner.direction = Projectile.Center.X > Owner.Center.X ? 1 : -1;
 
-        if(State == 0) {
-            Projectile.velocity.X *= ExtendDrag;
-            Projectile.velocity.Y += ExtendGravity;
+        Projectile.timeLeft = 2;
+        Owner.heldProj = Projectile.whoAmI;
+        Owner.SetDummyItemTime(2);
+    }
 
-            if(Projectile.velocity.Length() > RetractSpeed * 1.5f) {
-                Projectile.velocity = Vector2.Normalize(Projectile.velocity) * RetractSpeed * 1.5f;
-            }
+    private bool HandleSpinningState(Vector2 mountedCenter) {
+        if (Projectile.owner == Main.myPlayer) {
+            Vector2 unitVectorTowardsMouse = mountedCenter.DirectionTo(Main.MouseWorld).SafeNormalize(Vector2.UnitX * Owner.direction);
+            Owner.ChangeDir((unitVectorTowardsMouse.X > 0f) ? 1 : -1);
 
-            if(Vector2.Distance(Owner.Center, Projectile.Center) >= MaxLength) {
-                Projectile.velocity = Vector2.Zero;
-                Length = MaxLength;
-                State = 4;
-                Projectile.netUpdate = true;
-            }
-        }
-        else if(State == 5) {
-            Projectile.velocity = Vector2.Zero;
-
-            if(!Owner.channel) {
-                Timer = 0;
-                State = 4;
-                Projectile.netUpdate = true;
-            }
-
-            if(Vector2.Distance(Owner.Center, Projectile.Center) >= MaxLength) {
-                Projectile.velocity = Vector2.Zero;
-                Length = MaxLength;
-                State = 4;
-                Projectile.netUpdate = true;
-            }
-        }
-        else if(State == 4) {
-            Timer++;
-
-            float retractProgress = Timer / 60f;
-            float currentRetractionSpeed = MathHelper.Lerp(10f, RetractSpeed, MathF.Pow(retractProgress, 0.5f));
-
-            Projectile.velocity = Projectile.DirectionTo(Owner.Center) * currentRetractionSpeed;
-            Projectile.tileCollide = false;
-
-            if(Vector2.Distance(Owner.Center, Projectile.Center) < 20f) {
-                Projectile.Kill();
+            if (!Owner.channel) {
+                float launchSpeed = 18f * Owner.GetAttackSpeed(DamageClass.Melee);
+                Projectile.velocity = unitVectorTowardsMouse * launchSpeed + Owner.velocity;
+                Projectile.Center = mountedCenter;
+                Projectile.ResetLocalNPCHitImmunity();
+                
+                ChangeState(AIState.LaunchingForward);
+                return true;
             }
         }
 
-        Projectile.rotation += Projectile.velocity.X / 100;
+        SpinningStateTimer += 1f;
+        Vector2 offsetFromPlayer = new Vector2(Owner.direction).RotatedBy((float)Math.PI * 10f * (SpinningStateTimer / 60f) * Owner.direction);
+        offsetFromPlayer.Y *= 0.8f;
+        if (offsetFromPlayer.Y * Owner.gravDir > 0f) {
+            offsetFromPlayer.Y *= 0.5f;
+        }
+
+        Projectile.Center = mountedCenter + offsetFromPlayer * 30f;
+        Projectile.velocity = Vector2.Zero;
+        return true;
+    }
+
+    private void HandleLaunchingState(Vector2 mountedCenter) {
+        int launchTimeLimit = 15;
+        bool shouldSwitchToRetracting = StateTimer++ >= launchTimeLimit || Projectile.Distance(mountedCenter) >= MaxLength;
+
+        if (shouldSwitchToRetracting) {
+            if (Owner.controlUseItem) {
+                Projectile.velocity *= 0.2f;
+                ChangeState(AIState.Dropping);
+            } else {
+                ChangeState(AIState.Retracting);
+            }
+        }
+
+        Owner.ChangeDir((Owner.Center.X < Projectile.Center.X) ? 1 : -1);
+    }
+
+    private void HandleStuckState(Vector2 mountedCenter) {
+        Projectile.velocity = Vector2.Zero;
+        Projectile.rotation = 0f;
+
+        if (Vector2.Distance(mountedCenter, Projectile.Center) >= MaxLength) {
+            ChangeState(AIState.ForcedRetracting);
+        }
+        else if (!Owner.controlUseItem) {
+            ChangeState(AIState.Retracting);
+        }
+    }
+
+    private void HandleDroppingState(Vector2 mountedCenter) {
+        if (!Owner.controlUseItem || Projectile.Distance(mountedCenter) > MaxLength + 160f) {
+            ChangeState(AIState.ForcedRetracting);
+        } else {
+            Projectile.velocity.Y += 0.8f;
+            Projectile.velocity.X *= 0.95f;
+            Owner.ChangeDir((Owner.Center.X < Projectile.Center.X) ? 1 : -1);
+        }
+    }
+
+    private void HandleRetractingState(Vector2 mountedCenter) {
+        float meleeSpeed = Owner.GetAttackSpeed(DamageClass.Melee);
+        float retractAcceleration = 3f * meleeSpeed;
+        float maxRetractSpeed = 25f * meleeSpeed;
+
+        if (Projectile.Distance(mountedCenter) <= maxRetractSpeed) {
+            Projectile.Kill();
+            return;
+        }
+
+        if (Owner.controlUseItem) {
+            Projectile.velocity *= 0.2f;
+            ChangeState(AIState.Dropping);
+        } else {
+            Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(mountedCenter).SafeNormalize(Vector2.Zero);
+            Projectile.velocity *= 0.98f;
+            Projectile.velocity = Projectile.velocity.MoveTowards(unitVectorTowardsPlayer * maxRetractSpeed, retractAcceleration);
+            Owner.ChangeDir((Owner.Center.X < Projectile.Center.X) ? 1 : -1);
+        }
+    }
+
+    private void HandleForcedRetractingState(Vector2 mountedCenter) {
+        float forcedRetractAcceleration = 6f;
+        float maxForcedRetractSpeed = 30f;
+
+        if (Projectile.Distance(mountedCenter) <= maxForcedRetractSpeed) {
+            Projectile.Kill();
+            return;
+        }
+
+        Vector2 unitVectorTowardsPlayer = Projectile.DirectionTo(mountedCenter).SafeNormalize(Vector2.Zero);
+        Projectile.velocity *= 0.98f;
+        Projectile.velocity = Projectile.velocity.MoveTowards(unitVectorTowardsPlayer * maxForcedRetractSpeed, forcedRetractAcceleration);
+        
+        Vector2 target = Projectile.Center + Projectile.velocity;
+        Vector2 value = mountedCenter.DirectionFrom(target).SafeNormalize(Vector2.Zero);
+        if (Vector2.Dot(unitVectorTowardsPlayer, value) < 0f) {
+            Projectile.Kill();
+            return;
+        }
+        Owner.ChangeDir((Owner.Center.X < Projectile.Center.X) ? 1 : -1);
     }
 
     public override bool OnTileCollide(Vector2 oldVelocity) {
-        Projectile.rotation = 0;
-
-        if(State == 0) {
+        if (CurrentAIState == AIState.LaunchingForward || CurrentAIState == AIState.Dropping) {
             OnImpact(true);
 
             bool hitHorizontalSurface = oldVelocity.Y != Projectile.velocity.Y;
-            bool hitVerticalSurface = oldVelocity.X != Projectile.velocity.X;
 
-            if(hitHorizontalSurface && oldVelocity.Y > 0f) {
-                if(_hasBounced == 0f) {
-                    float bounceFactor = 0.5f;
+            if (hitHorizontalSurface && oldVelocity.Y > 0f) {
+                if (!hasBounced) {
+                    float bounceFactor = 0.4f;
                     Projectile.velocity.Y = -oldVelocity.Y * bounceFactor;
-                    _hasBounced = 1f;
+                    hasBounced = true;
                     Projectile.netUpdate = true;
                 }
                 else {
                     Projectile.velocity = Vector2.Zero;
-
-                    Length = Vector2.Distance(Owner.Center, Projectile.Center);
-                    State = 5;
-                    Projectile.netUpdate = true;
+                    ChangeState(AIState.StuckToGround);
+                    Projectile.rotation = 0f;
                 }
             }
-            else if(hitHorizontalSurface && oldVelocity.Y < 0f) {
-                Projectile.velocity = Vector2.Zero;
-                State = 4;
-                Projectile.netUpdate = true;
-            }
-            else if(hitVerticalSurface) {
-                Projectile.velocity = Vector2.Zero;
-                State = 4;
-                Projectile.netUpdate = true;
+            else {
+                ChangeState(AIState.Retracting);
             }
 
             return false;
         }
-        if(State == 5) {
+
+        if (CurrentAIState == AIState.StuckToGround) {
             Projectile.velocity = Vector2.Zero;
+            Projectile.rotation = 0f;
         }
 
         return false;
     }
 
-    public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
-        Rectangle collisionHitbox = Projectile.Hitbox;
+    public override bool? CanDamage() {
+        if (CurrentAIState == AIState.Spinning && SpinningStateTimer <= 12f)
+            return false;
+        return base.CanDamage();
+    }
 
-        return collisionHitbox.Intersects(targetHitbox);
+    public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
+        if (CurrentAIState == AIState.Spinning) {
+            Vector2 mountedCenter = Owner.MountedCenter;
+            Vector2 shortestVectorFromPlayerToTarget = targetHitbox.ClosestPointInRect(mountedCenter) - mountedCenter;
+            shortestVectorFromPlayerToTarget.Y /= 0.8f;
+            return shortestVectorFromPlayerToTarget.Length() <= 55f;
+        }
+        return base.Colliding(projHitbox, targetHitbox);
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
         OnImpact(false);
     }
 
-    //from examplemod
+    public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
+        if (CurrentAIState == AIState.Spinning)
+            modifiers.SourceDamage *= 1.2f;
+
+        if (CurrentAIState is AIState.LaunchingForward or AIState.Retracting)
+            modifiers.SourceDamage *= 2f;
+
+        modifiers.HitDirectionOverride = (Owner.Center.X < target.Center.X) ? 1 : -1;
+
+        if (CurrentAIState == AIState.Spinning)
+            modifiers.Knockback *= 0.25f;
+        if (CurrentAIState == AIState.Dropping)
+            modifiers.Knockback *= 0.5f;
+    }
+
     public override bool PreDraw(ref Color lightColor) {
-        float squishProgress = _visualTimer / GroundSplatDuration;
-        float easedSquish = MathF.Sin(squishProgress * MathF.PI);
-
-        const float MaxSquishAmount = 0.2f;
-        Vector2 squishScale = new Vector2(1f + easedSquish * MaxSquishAmount, 1f - easedSquish * MaxSquishAmount);
-        Vector2 finalDrawScale = squishScale * Projectile.scale;
-
+        float drawRotation = Projectile.rotation;
+        Vector2 drawScale = Vector2.One * Projectile.scale;
         Vector2 ballPos = Projectile.Center;
 
-        if(easedSquish > 0.01f) {
-            float visualHeightShrinkAmount = BlockTexture.Height * Projectile.scale * (1f - squishScale.Y) / 2f;
-            ballPos.Y += visualHeightShrinkAmount;
+        float speed = Projectile.velocity.Length();
+        if (speed > 1f) {
+            float stretch = MathHelper.Clamp(speed * 0.025f, 0f, 0.5f);
+            drawScale.X *= (1f - stretch * 0.4f);
+            drawScale.Y *= (1f + stretch);
+            drawRotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
         }
 
-        Vector2 playerArmPosition = Main.GetPlayerArmPosition(Projectile) + new Vector2(Owner.direction * 10f, 6f);
+        if (visualTimer > 0) {
+            float progress = 1f - (visualTimer / GroundSplatDuration);
+            float damping = MathF.Exp(-progress * 4.5f);
+            float oscillation = MathF.Sin(progress * MathHelper.TwoPi * 3f);
+            float squish = 0.4f * damping * oscillation;
+
+            drawScale.X *= (1f + squish);
+            drawScale.Y *= (1f - squish);
+        }
+
+        if (CurrentAIState == AIState.StuckToGround) {
+            drawRotation = 0f;
+            float heightShrinkOffset = (BlockTexture.Height / 2f) * Projectile.scale * (1f - drawScale.Y);
+            ballPos.Y += heightShrinkOffset;
+        }
+
+        Vector2 playerArmPosition = Main.GetPlayerArmPosition(Projectile) + new Vector2(Owner.direction * -4f, -3f);
         playerArmPosition.Y -= Main.player[Projectile.owner].gfxOffY;
 
         Rectangle? chainSourceRectangle = null;
         Vector2 chainOrigin = chainSourceRectangle.HasValue ? (chainSourceRectangle.Value.Size() / 2f) : (ChainTexture.Size() / 2f);
 
         float chainSegmentDrawLength = chainSourceRectangle.HasValue ? chainSourceRectangle.Value.Height : ChainTexture.Height;
-        if(chainSegmentDrawLength == 0) {
+        if (chainSegmentDrawLength == 0) {
             chainSegmentDrawLength = 10;
         }
+
         float chainRotation = (Projectile.Center - playerArmPosition).ToRotation() + MathHelper.PiOver2;
         float chainLengthRemainingToDraw = Vector2.Distance(playerArmPosition, Projectile.Center) + chainSegmentDrawLength / 2f;
 
-        Vector2 currentChainDrawPosition = playerArmPosition; // Start drawing from the player's arm
+        Vector2 currentChainDrawPosition = playerArmPosition;
         Vector2 unitVectorTowardsFlail = (Projectile.Center - playerArmPosition).SafeNormalize(Vector2.UnitY);
 
+        while (chainLengthRemainingToDraw > 0f) {
+            Color chainDrawColor = Lighting.GetColor((int)(currentChainDrawPosition.X / 16f), (int)(currentChainDrawPosition.Y / 16f));
 
-        while(chainLengthRemainingToDraw > 0f) {
-            Color chainDrawColor = Lighting.GetColor((int)currentChainDrawPosition.X / 16, (int)(currentChainDrawPosition.Y / 16f));
-
-            Main.spriteBatch.Draw(ChainTexture, currentChainDrawPosition - Main.screenPosition, chainSourceRectangle, chainDrawColor, chainRotation, chainOrigin, 1f, SpriteEffects.None, 0f);
+            Main.spriteBatch.Draw(
+                ChainTexture, 
+                currentChainDrawPosition - Main.screenPosition, 
+                chainSourceRectangle, 
+                chainDrawColor, 
+                chainRotation, 
+                chainOrigin, 
+                1f, 
+                SpriteEffects.None, 
+                0f
+            );
 
             currentChainDrawPosition += unitVectorTowardsFlail * chainSegmentDrawLength;
             chainLengthRemainingToDraw -= chainSegmentDrawLength;
@@ -273,13 +446,12 @@ public class SpamOnAStickProjectile : ModProjectile {
             ballPos - Main.screenPosition,
             null,
             lightColor,
-            Projectile.rotation,
+            drawRotation,
             BlockTexture.Size() / 2f,
-            finalDrawScale,
+            drawScale,
             SpriteEffects.None
         );
 
         return false;
     }
 }
-// ReSharper restore CompareOfFloatsByEqualityOperator

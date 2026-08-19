@@ -59,6 +59,12 @@ public class CartilageOreTile : ModTile {
             return false;
         });
     }
+    
+    public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) {
+        var tile = Main.tile[i, j];
+        tile.LiquidType = LiquidID.Lava;
+        tile.LiquidAmount = 255;
+    }
 
     public override void Convert(int i, int j, int conversionType) {
         switch(conversionType) {

@@ -8,6 +8,9 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Corruption;
 
 public class PolypOreTile : ModTile {
+    public override bool CanExplode(int i, int j) {
+        return false;
+    }
     public override string Texture => Assets.Images.Corruption.Tiles.PolypOre.KEY;
 
     public override void SetStaticDefaults() {
@@ -29,9 +32,18 @@ public class PolypOreTile : ModTile {
         
         Main.tileMerge[Type][TileID.Hellstone] = true;
         Main.tileMerge[TileID.Hellstone][Type] = true;
-        
+
+        Main.tileMerge[Type][ModContent.TileType<CartilageOreTile>()] = true;
+        Main.tileMerge[ModContent.TileType<CartilageOreTile>()][Type] = true;
+
         Main.tileMerge[Type][TileID.Ash] = true;
         Main.tileMerge[TileID.Ash][Type] = true;
+
+        Main.tileMerge[Type][ModContent.TileType<CrimsonAsh>()] = true;
+        Main.tileMerge[ModContent.TileType<CrimsonAsh>()][Type] = true;
+
+        Main.tileMerge[Type][ModContent.TileType<CrimsonAshGrass>()] = true;
+        Main.tileMerge[ModContent.TileType<CrimsonAshGrass>()][Type] = true;
 
         Main.tileMerge[Type][ModContent.TileType<CorruptAsh>()] = true;
         Main.tileMerge[ModContent.TileType<CorruptAsh>()][Type] = true;
@@ -48,6 +60,7 @@ public class PolypOreTile : ModTile {
         if(!player.fireWalk) {
             player.AddBuff(BuffID.Burning, 10, false);
         }
+        player.AddBuff(BuffID.CursedInferno, 10, false);
     }
 
     public bool ConvertToCorruption(int i, int j, int type, int conversionType) {
@@ -72,9 +85,11 @@ public class PolypOreTile : ModTile {
         g = 0.246f;
         b = 0.42f;
     }
-
-    public override void RandomUpdate(int i, int j) {
-        Dust.NewDust(new Vector2(i, j), 5, 5, DustID.Demonite);
+    public override void EmitParticles(int i, int j, Tile tile, short tileFrameX, short tileFrameY, Color tileLight, bool visible) {
+        if (Main.rand.NextBool(200)){
+            Dust.NewDust(new Vector2(i * 16, j * 16), 5, 5, DustID.Demonite);
+            Dust.NewDust(new Vector2(i * 16, j * 16), 5, 5, DustID.CursedTorch);
+        }
     }
 }
 
@@ -84,7 +99,9 @@ public class PolypOreItem : ModItem {
     public override void SetStaticDefaults() {
         ItemTrader.ChlorophyteExtractinator.AddOption_OneWay(Type, 1, ModContent.ItemType<CartilageOreItem>(), 1);
     }
-
+    public override void PostUpdate() {
+        Lighting.AddLight(Item.Center, Color.YellowGreen.ToVector3() * 0.3f * Main.essScale);
+    }
     public override void SetDefaults() {
         Item.DefaultToPlaceableTile(ModContent.TileType<PolypOreTile>());
         Item.width = 16;

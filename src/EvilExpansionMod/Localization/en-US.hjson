@@ -284,8 +284,8 @@ Mods: {
 			}
 
 			InflatableDevilOWarItem: {
-				DisplayName: Inflatable Devil O War
-				Tooltip: Increases jump height
+				DisplayName: Inflatable Devil O' War
+				Tooltip: Increases jump height and vertical acceleration
 			}
 
 			GulpyYoyoItem: {
@@ -347,9 +347,9 @@ Mods: {
 		}
 
 		Projectiles: {
-			DevilOWarStingerProjectile.DisplayName: Devil O War Stinger Projectile
+			DevilOWarStingerProjectile.DisplayName: Devil O War Stinger
 			HellbatSpit.DisplayName: Hellbat Spit
-			HellbatSpitProjectile.DisplayName: Hellbat Spit Projectile
+			HellbatSpitProjectile.DisplayName: Hellbat Spit
 			TerrorBatSpit.DisplayName: Terror Bat Spit
 			SpiritFireball.DisplayName: Spirit Fireball
 			CursehoundMace.DisplayName: Cursehound Mace
@@ -359,49 +359,49 @@ Mods: {
 			CursedFog.DisplayName: Cursed Fog
 			CultistPortal.DisplayName: Cultist Portal
 			MaceDebris.DisplayName: Mace Debris
-			StalactiteProjectile.DisplayName: Stalactite Projectile
+			StalactiteProjectile.DisplayName: Stalactite
 			PortalGore.DisplayName: Portal Gore
 			PusGlob.DisplayName: Pus Glob
 			PusCreepProjectile.DisplayName: Pus Creep
-			HeadPounderHeldProjectile.DisplayName: Head Pounder Held Projectile
-			PusBottleProjectile.DisplayName: Pus Bottle Projectile
-			StinkgrubGasProjectile.DisplayName: Stinkgrub Gas Projectile
+			HeadPounderHeldProjectile.DisplayName: Head Pounder
+			PusBottleProjectile.DisplayName: Bottle Pus
+			StinkgrubGasProjectile.DisplayName: Stinkgrub Gas
 			PounderSpike.DisplayName: Pounder Spike
 			BloodWarden.DisplayName: Blood Warden
-			ShadowOrbProjectile.DisplayName: Shadow Orb Projectile
-			CorruptlingProjectile.DisplayName: Corruptling Projectile
-			ExplosionProjectile.DisplayName: Explosion Projectile
-			TendonProjectile.DisplayName: Tendon Projectile
-			MarrowLazerProjectile.DisplayName: Marrow Lazer Projectile
-			FriendlyCulstistPortal.DisplayName: Friendly Culstist Portal
-			PlanetoidProjectile.DisplayName: Planetoid Projectile
+			ShadowOrbProjectile.DisplayName: Shadow Orb
+			CorruptlingProjectile.DisplayName: Corruptling
+			ExplosionProjectile.DisplayName: Explosion
+			TendonProjectile.DisplayName: Tendon
+			MarrowLazerProjectile.DisplayName: Marrow Lazer
+			FriendlyCulstistPortal.DisplayName: Friendly Cultist Portal
+			PlanetoidProjectile.DisplayName: Planetoid
 			PlanetoidLauncherHeldProjectile.DisplayName: Planetoid Launcher Held Projectile
 			RingProjectile.DisplayName: Ring Projectile
 			LanternProjectile.DisplayName: Lantern Projectile
-			LingerFlameProjectile.DisplayName: Linger Flame Projectile
+			LingerFlameProjectile.DisplayName: Linger Flame
 			CirclingPlanetoidProjectile.DisplayName: Circling Planetoid Projectile
 			NormalPlanetoidProjectile.DisplayName: Normal Planetoid Projectile
-			LingeringFlameProjectile.DisplayName: Lingering Flame Projectile
+			LingeringFlameProjectile.DisplayName: Lingering Flame
 			LingeringFlame.DisplayName: Lingering Flame
-			LanternFlameProjectile.DisplayName: Lantern Flame Projectile
+			LanternFlameProjectile.DisplayName: Lantern Flame
 			IchorProjectile.DisplayName: Ichor Projectile
 			LamethrowerHeldProjectile.DisplayName: Lamethrower Held Projectile
 			SlippedWhipProjectile.DisplayName: Slipped Whip Projectile
 			SlippedWhipCageProjectile.DisplayName: Slipped Whip Cage Projectile
-			SpamOnAStickProjectile.DisplayName: Spam On A Stick Projectile
-			MeatAxeHeldProjectile.DisplayName: Meat Axe Held Projectile
-			SpamonAStickProjectile.DisplayName: Spamon A Stick Projectile
-			CorruptionJackhammerProjectile.DisplayName: Corruption Jackhammer Projectile
-			CrimsonDrillProjectile.DisplayName: Crimson Drill Projectile
+			SpamOnAStickProjectile.DisplayName: Spam On A Stick
+			MeatAxeHeldProjectile.DisplayName: Meat Axe
+			SpamonAStickProjectile.DisplayName: Spamon A Stick
+			CorruptionJackhammerProjectile.DisplayName: Corruption Jackhammer
+			CrimsonDrillProjectile.DisplayName: Crimson Drill
 			CrytapeteFlame.DisplayName: Crytapete Flame
 			CrytapeteMinion.DisplayName: Crytapete Minion
 			CutProjectile.DisplayName: Cut Projectile
 			CrytapeteTear.DisplayName: Crytapete Tear
 			FireInALanternFlame.DisplayName: Fire In A Lantern Flame
 			InflatableDevilOWarProjectile.DisplayName: Inflatable Devil O War Projectile
-			LingeringIchorProjectile.DisplayName: Lingering Ichor Projectile
-			GulpyYoyoProjectile.DisplayName: Gulpy Yoyo Projectile
-			GulpyHandProjectile.DisplayName: Gulpy Hand Projectile
+			LingeringIchorProjectile.DisplayName: Lingering Ichor
+			GulpyYoyoProjectile.DisplayName: Gulpy Yoyo
+			GulpyHandProjectile.DisplayName: Gulpy Hand
 		}
 
 		Biomes: {
@@ -440,18 +440,22 @@ Mods: {
 		}
 
 		Bestiary: {
-			DevilOWarNPCBestiary: Marine life in the underworld? this organism uses hot gases to float in the air, and a sharp stinger to feed off its prey!
-			TerrorBatNPCBestiary: The terror bat grooves and dives in the air, while also using its acidic spit as a weapon that you wouldn't want to stain your clothes!
-			CursedSpiritNPCBestiary: ""
-			CultistEyeBestiary: ""
-			StinkgrubNPCBestiary: ""
-			LanternBatNPCBestiary: ""
+			DevilOWarNPCBestiary: Marine life in the underworld??? This organism uses hot gases to float in the air, and a sharp stinger to feed off its prey!
+			TerrorBatNPCBestiary: The terror bats stalk the cave ceilings in droves... The last thing you want to happen is to have your clothes stained by their acidic spit!
+			CursedSpiritNPCBestiary: The power of the Corruption is such that even the inanimate can be made to do its bidding.
+			EffigyNPCBestiary: Poor souls, overcome by the Corruption. Their twisted bodies now serve as cancerous hives, allowing the darkness to spread further.
+			CursehoundNPCBestiary: Cursed Spirits that accumulate too much power develop an armored form, and a monstrous ride to boot.
+			ThoughtfulCultistNPC: Thirsting for power, these hell-born cultists have given themselves over to the Crimson.
+			CultistEyeBestiary: Somehow, Cultists of the Crimson have learnt to harness Demon Eyes to do their bidding...
+			PusImpNPC: A unholy mixture of Crimson bile and hell energy, these hollow imitations of hell's denizens only serve as extensions of the Crimson's will.
+			StinkgrubNPCBestiary: Once simple cavedwellers, engorged by the Crimson. These hardy grubs occasionally migrate deeper underground in search of nutrients.
+			LanternBatNPCBestiary: Some servants of the Crimson occult have had their mind and bodies warped, forced to serve their masters as Lantern Bats.
 		}
 
 		Buffs: {
 			BloodWardenBuff: {
 				DisplayName: Blood Warden
-				Description: It breathes aggressively
+				Description: It radiates aggression
 			}
 
 			NormalPlanetoidBuff: {

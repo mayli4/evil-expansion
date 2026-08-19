@@ -1,4 +1,7 @@
-﻿using Terraria.ID;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Corruption;
@@ -20,7 +23,9 @@ public class PolypBarItem : ModItem {
 
         Item.rare = ItemRarityID.Orange;
     }
-
+    public override void PostUpdate() {
+        Lighting.AddLight(Item.Center, Color.YellowGreen.ToVector3() * 0.5f * Main.essScale);
+    }
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient<PolypOreItem>(3)

@@ -71,7 +71,7 @@ public struct SpiritData {
 }
 
 public sealed class CursedSpiritNPC : ModNPC {
-    const float ExploderExplosionTime = 120f;
+    const float ExploderExplosionTime = 100f;
     const float SplitterSplitTime = 90f;
     const float SplitterMaxDepth = 1;
     const int MaxLife = 110;

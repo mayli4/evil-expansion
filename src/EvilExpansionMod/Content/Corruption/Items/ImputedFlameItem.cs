@@ -1,3 +1,6 @@
+using Microsoft.CodeAnalysis;
+using Microsoft.Xna.Framework;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -14,5 +17,12 @@ public class ImputedFlameItem : ModItem {
         Item.maxStack = Terraria.Item.CommonMaxStack;
 
         Item.rare = ItemRarityID.Orange;
+    }
+    public override Color? GetAlpha(Color lightColor) {
+        return (new Color (255,255,255));
+    }
+
+    public override void PostUpdate() {
+        Lighting.AddLight(Item.Center, Color.YellowGreen.ToVector3() * 0.55f * Main.essScale);
     }
 }

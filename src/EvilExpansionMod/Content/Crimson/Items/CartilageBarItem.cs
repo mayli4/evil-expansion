@@ -1,4 +1,7 @@
-﻿using Terraria.ID;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Crimson;
@@ -20,7 +23,9 @@ public class CartilageBarItem : ModItem {
 
         Item.rare = ItemRarityID.Orange;
     }
-
+    public override void PostUpdate() {
+        Lighting.AddLight(Item.Center, Color.Red.ToVector3() * 0.3f * Main.essScale);
+    }
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient<CartilageOreItem>(3)

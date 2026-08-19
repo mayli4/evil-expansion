@@ -46,8 +46,9 @@ public class InflatableDevilOWarItem : ModItem {
     }
 
     public override void UpdateAccessory(Player player, bool hideVisual) {
-        player.jumpSpeedBoost += 3.5f;
-
+        player.jumpSpeedBoost = 3f;
+        player.jumpBoost = true;
+        
         if(player.whoAmI == Main.myPlayer) {
             if(_projectileID != -1 && Main.projectile[_projectileID].active && Main.projectile[_projectileID].owner == player.whoAmI && Main.projectile[_projectileID].type == ModContent.ProjectileType<InflatableDevilOWarProjectile>()) {
                 Main.projectile[_projectileID].timeLeft = 2;

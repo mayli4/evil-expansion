@@ -11,7 +11,8 @@ namespace EvilExpansionMod.Content.Crimson;
 
 public class MarrowLazerProjectile : ModProjectile {
     public override string Texture => Assets.Images.Crimson.NPCs.MarrowEye.MarrowEyeNPC.KEY;
-    public static readonly int DisapearFrames = 8;
+
+    public static readonly int DisapearFrames = 16;
 
     public override void SetDefaults() {
         Projectile.width = 0;
@@ -22,7 +23,7 @@ public class MarrowLazerProjectile : ModProjectile {
         Projectile.penetrate = -1;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = false;
-        Projectile.timeLeft = DisapearFrames * 2;
+        Projectile.timeLeft = DisapearFrames * 2 + 40;
     }
 
     public override bool ShouldUpdatePosition() => false;
@@ -35,13 +36,15 @@ public class MarrowLazerProjectile : ModProjectile {
             var foundPlayerCollision = false;
             foreach(var player in Main.player[0..Main.maxPlayers]) {
                 if(player.Hitbox.Contains((int)hitPoint.X, (int)hitPoint.Y)) {
-                    player.Hurt(new Player.HurtInfo
-                    {
-                        SoundDisabled = true,
-                        DamageSource = PlayerDeathReason.ByProjectile(player.whoAmI, Projectile.whoAmI),
-                        Damage = 1,
-                        HitDirection = MathF.Sign(player.Center.X - Projectile.position.X),
-                    });
+                    if(Projectile.timeLeft < DisapearFrames * 2) {
+                        player.Hurt(new Player.HurtInfo
+                        {
+                            SoundDisabled = true,
+                            DamageSource = PlayerDeathReason.ByProjectile(player.whoAmI, Projectile.whoAmI),
+                            Damage = 1,
+                            HitDirection = MathF.Sign(player.Center.X - Projectile.position.X),
+                        });
+                    }
 
                     foundPlayerCollision = true;
                     break;
@@ -56,12 +59,17 @@ public class MarrowLazerProjectile : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var scale = MathF.Sin(MathF.PI * Projectile.timeLeft / (DisapearFrames * 2f));
-        var rotation = Projectile.velocity.ToRotation();
-        var glowTexture = Assets.Images.Sample.Glow1.Asset.Value;
+        var scale = 0.2f;
+        if(Projectile.timeLeft <= DisapearFrames * 2f) {
+            scale += MathF.Sin(MathF.PI * Projectile.timeLeft / (DisapearFrames * 2f)) * 0.8f;
+        }
 
-        var mainColor = new Color(253, 60, 179);
-        var secondaryColor = new Color(63, 28, 72);
+        var rotation = Projectile.velocity.ToRotation();
+        var glowTexture = Assets.Images.Sample.SmokeGlow.Asset.Value;
+
+        var mainColor = new Color(63, 28, 72);
+        var secondaryColor = new Color(253, 60, 179);
+        var highlightColor = new Color(255, 155, 220);
 
         var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
         Main.spriteBatch.Draw(
@@ -80,7 +88,7 @@ public class MarrowLazerProjectile : ModProjectile {
             glowTexture,
             Projectile.position + Projectile.velocity * Projectile.scale / 2f - Main.screenPosition,
             null,
-            mainColor * 0.4f,
+            mainColor * 0.8f,
             rotation,
             glowTexture.Size() / 2f,
             new Vector2(0.6f + Projectile.scale / glowTexture.Width, scale * 0.175f),
@@ -89,19 +97,23 @@ public class MarrowLazerProjectile : ModProjectile {
         );
         Main.spriteBatch.EndBegin(snapshot);
 
-        var texture0 = Assets.Images.Sample.Pebbles.Asset.Value;
-        var texture1 = Assets.Images.Sample.PlasmaNoise.Asset.Value;
+        var texture0 = Assets.Images.Sample.PerlinNoise.Asset.Value;
+        var texture1 = Assets.Images.Sample.Noise2.Asset.Value;
         var effect = Assets.Shaders.Pixel.MarrowLaser.Asset.Value;
 
         Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
             .SetEffectParams(
                 effect,
                 ("uLength", Projectile.scale),
-                ("uColor1", secondaryColor.ToVector4()),
-                ("uColor2", mainColor.ToVector4()),
-                ("uTime", Main.GameUpdateCount * 0.2f)
+                ("uColor1", secondaryColor),
+                ("uColor2", mainColor),
+                ("uColor3", highlightColor),
+                ("uTime", -Main.GameUpdateCount * 0.025f),
+                ("uStepThreshold", 0.25f),
+                ("uStepColor", 0.14f)
             )
             .SetTexture(1, texture1)
+            .SetBlendState(BlendState.AlphaBlend)
             .DrawTexture(new()
             {
                 Texture = texture0,
@@ -109,12 +121,11 @@ public class MarrowLazerProjectile : ModProjectile {
                 Color = Color.White,
                 Rotation = rotation,
                 Origin = new Vector2(0, texture0.Height / 2f),
-                Scale = new Vector2(Projectile.scale / texture0.Width, scale * 5f / texture0.Height),
+                Scale = new Vector2(Projectile.scale / texture0.Width, scale * 20f / texture0.Height),
                 SpriteEffects = SpriteEffects.None,
                 Effect = effect,
             })
-            .ApplyOutline(mainColor)
-            .ApplyOutline(secondaryColor)
+            .ApplyBloom(2f)
             .End();
 
 

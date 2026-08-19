@@ -1,33 +1,37 @@
+#include "../Common.h"
+
 sampler uImage0 : register(s0);
 sampler uImage1 : register(s1);
+sampler uImage2 : register(s2);
 
+float uStepThreshold;
+float uStepColor;
+
+float uTime;
 float uLength;
+float uProgress;
+
 float4 uColor1;
 float4 uColor2;
-float uTime;
+float4 uColor3;
 
-float2 rotate(float r, float2 uv)
-{
-    float rotCos = cos(r);
-    float rotSin = sin(r);
-    return float2(uv.x * rotCos - uv.y * rotSin, uv.x * rotSin + uv.y * rotCos);
+float4 PS(QuadPSInput input) : COLOR0 {
+    float s0 = tex2D(uImage0, float2((input.uv.x - uTime) * uLength / 1000, input.uv.y));
+    float s1 = tex2D(uImage1, float2((input.uv.x + uTime * 0.85) * uLength / 1000, input.uv.y));
+
+    float s = s0 * 0.5 + s1 * 0.5;
+    float sinY = sin(input.uv.y * PI);
+    float sinX = sin(input.uv.x * PI);
+    float stepValue = 1 - sinY
+        + uStepThreshold 
+        + sin(input.uv.x * 3 + uTime * 0.4) * 0.06
+        + sin(input.uv.x * 7.3 + 0.3789457 + uTime * 0.65) * 0.08;
+
+    return lerp(uColor3, lerp(uColor1, uColor2, step(s - uStepColor, stepValue)), 1 - sinY) * step(stepValue, s);
 }
 
-float4 frag(float2 uv : TEXCOORD0) : COLOR0 {
-    float distMask = uv.y - 0.5 + uv.x * sin(-uTime + uv.x * 4) * 0.7;
-    
-    float2 sampleUV = float2(uv.x * uLength / 1000.0, uv.y * 0.25);
-    float s1 = tex2D(uImage0, sampleUV + float2(uTime, 0)).r;
-    float s2 = tex2D(uImage1, sampleUV + float2(uTime * 0.333, 0)).r;
-
-    float s3 = tex2D(uImage0, uv * float2(1, 0.1) - uTime * 0.2).r;
-    float s4 = tex2D(uImage1, uv * float2(1, 0.1) - uTime * 0.1).r;
-    
-    return lerp(uColor1, uColor2, step(s3 * s4, 0.2)) * step(distMask - 0.2, s1 * s2);
-}
-
-technique Technique1 {
-    pass AwesomePass {
-        PixelShader = compile ps_2_0 frag();
+technique {
+    pass {
+        PixelShader = compile ps_3_0 PS();
     }
 };

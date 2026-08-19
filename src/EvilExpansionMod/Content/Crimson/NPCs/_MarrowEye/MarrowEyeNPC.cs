@@ -1,5 +1,4 @@
 ﻿using EvilExpansionMod.Content.Biomes;
-using EvilExpansionMod.Content.Crimson;
 using EvilExpansionMod.Content.Tiles.Banners;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,7 +14,8 @@ namespace EvilExpansionMod.Content.Crimson;
 
 enum State {
     Idle,
-    Targeting
+    Targeting,
+    Waking,
 }
 
 public class MarrowEyeNPC : ModNPC {
@@ -29,13 +29,22 @@ public class MarrowEyeNPC : ModNPC {
             NPC.netUpdate = true;
         }
     }
+
+    MarrowLazerProjectile? LazerProjectile {
+        get => NPC.ai[1] == -1 ? null : Main.projectile[(int)NPC.ai[1]].ModProjectile as MarrowLazerProjectile;
+        set => NPC.ai[1] = value?.Projectile.whoAmI ?? -1;
+    }
+
     Vector2 _lookDirection;
-    int _shootTimer;
+    Vector2 _eyePosition;
+
+    float _distanceToTarget;
+    Vector2 _directionToTarget;
 
     int _ring;
     int _tendonA;
     int _tendonB;
-    int _tendonC;
+    int _tendonC = -1;
 
     public override void SetDefaults() {
         NPC.width = 50;
@@ -188,77 +197,77 @@ public class MarrowEyeNPC : ModNPC {
         NPC.rotation = MathF.Sin(Main.GameUpdateCount * 0.03f + NPC.whoAmI * 574f) * 0.1f;
 
         var origin = new Vector2(-4f, -38f);
-        var eyePosition = NPC.Center + origin + _lookDirection * 7f - origin.RotatedBy(NPC.rotation) - Vector2.UnitY * 4f;
+        _eyePosition = NPC.Center + origin + _lookDirection * 7f - origin.RotatedBy(NPC.rotation) - Vector2.UnitY * 4f;
+
+        _distanceToTarget = NPC.Center.Distance(Target.Center);
+        _directionToTarget = (Target.Center - NPC.Center) / _distanceToTarget;
 
         switch(State) {
             case State.Idle:
+                LazerProjectile = null;
+
                 _lookDirection *= 0.95f;
                 NPC.frameCounter = Math.Max(NPC.frameCounter - 0.1, 0);
 
                 NPC.TargetClosest();
 
-                var targetingDistance = 400f;
-                if(Target != null) {
-                    if(
-                        NPC.Center.DistanceSQ(Target.Center) < targetingDistance * targetingDistance
-                        && Collision.CanHit(eyePosition, 1, 1, Target.Center, 1, 1)
-                    ) {
-                        State = State.Targeting;
-                        NPC.netUpdate = true;
-                    }
+                if(IsTargetValid(400f)) State = State.Waking;
+                break;
+            case State.Waking:
+                if(Target == null || !Target.active) {
+                    State = State.Idle;
+                    break;
                 }
 
+                LookAtTarget();
+                NPC.frameCounter = Math.Min(NPC.frameCounter + 0.1, 2d);
+
+                if(NPC.frameCounter == 2d) State = State.Targeting;
                 break;
             case State.Targeting:
                 if(Target == null || !Target.active) {
                     State = State.Idle;
-                    NPC.netUpdate = true;
                     break;
                 }
 
-                var directionToTarget = NPC.Center.DirectionTo(Target.Center);
-                _lookDirection = Vector2.Lerp(_lookDirection, directionToTarget, 0.04f);
-                NPC.frameCounter = Math.Min(NPC.frameCounter + 0.1, 2);
+                LookAtTarget();
 
-                _shootTimer -= 1;
-                if(Main.netMode != NetmodeID.MultiplayerClient && NPC.frameCounter == 2 && _shootTimer <= 0) {
-                    _shootTimer = Main.rand.Next(30, 90);
-
-                    Projectile.NewProjectile(
+                if(LazerProjectile is MarrowLazerProjectile lazerProjectile) {
+                    lazerProjectile.Projectile.position = _eyePosition;
+                    lazerProjectile.Projectile.velocity = _lookDirection;
+                    lazerProjectile.Projectile.timeLeft = Math.Max(
+                        MarrowLazerProjectile.DisapearFrames,
+                        lazerProjectile.Projectile.timeLeft);
+                }
+                else if(Main.netMode != NetmodeID.MultiplayerClient) {
+                    var projectile = Projectile.NewProjectileDirect(
                         NPC.GetSource_FromAI(),
-                        eyePosition,
-                        directionToTarget * 14f,
-                        ProjectileID.EyeLaser,
+                        _eyePosition,
+                        _directionToTarget,
+                        ModContent.ProjectileType<MarrowLazerProjectile>(),
                         NPC.damage,
                         0.1f
                     );
 
-                    for(var i = 0; i < 15; i++) {
-                        Dust.NewDustPerfect(
-                            eyePosition + Main.rand.NextVector2Unit() * Main.rand.NextFloat(15f),
-                            DustID.PurpleTorch
-                        );
-                    }
+                    LazerProjectile = (projectile.ModProjectile as MarrowLazerProjectile)!;
                 }
 
-                var idleDistance = 800;
-                if(
-                    NPC.Center.DistanceSQ(Target.Center) > idleDistance * idleDistance
-                    || !Collision.CanHit(eyePosition, 1, 1, Target.Center, 1, 1)
-                ) {
-                    State = State.Idle;
-                    NPC.netUpdate = true;
-                }
-
+                if(!IsTargetValid(800f)) State = State.Idle;
                 break;
         }
 
-        if(Main.netMode != NetmodeID.MultiplayerClient) {
-            Main.projectile[_ring].timeLeft = RingProjectile.DisapearFrames;
-            Main.projectile[_tendonA].timeLeft = TendonProjectile.DisapearFrames;
-            Main.projectile[_tendonB].timeLeft = TendonProjectile.DisapearFrames;
-            Main.projectile[_tendonC].timeLeft = TendonProjectile.DisapearFrames;
-        }
+        Main.projectile[_ring].timeLeft = RingProjectile.DisapearFrames;
+        Main.projectile[_tendonA].timeLeft = TendonProjectile.DisapearFrames;
+        Main.projectile[_tendonB].timeLeft = TendonProjectile.DisapearFrames;
+        if(_tendonC != -1) Main.projectile[_tendonC].timeLeft = TendonProjectile.DisapearFrames;
+    }
+
+    bool IsTargetValid(float distance) {
+        return _distanceToTarget < distance && Collision.CanHit(_eyePosition, 1, 1, Target.Center, 1, 1);
+    }
+
+    void LookAtTarget() {
+        _lookDirection = Vector2.Lerp(_lookDirection, _directionToTarget, 0.04f);
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {

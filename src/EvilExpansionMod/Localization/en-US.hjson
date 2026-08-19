@@ -133,7 +133,7 @@ Mods: {
 					'''
 					Creates a planetoid, which becomes more dangerous as it grows
 					Planetoids that grow too large explode violently
-					“Definitely DON’T use purification powder on these…”
+					'Definitely DON’T use purification powder on these…'
 					'''
 			}
 
@@ -163,10 +163,10 @@ Mods: {
 
 			SpamonAStickItem: {
 				DisplayName: Spam on a Stick
-				Tooltip: 
+				Tooltip:
 					'''
 					Drop it onto enemies to deal crushing damage
-					"'Home grown!'"
+					'Home grown!'
 					'''
 			}
 

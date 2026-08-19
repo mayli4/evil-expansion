@@ -4,7 +4,9 @@ using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Utilities;
 using System;
 using System.Collections;
 using System.Linq;
@@ -21,7 +23,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
     Player Owner => Main.player[Projectile.owner];
 
     readonly static int PostChargeFrames = 15;
-    readonly static int MaxCharge = 30;
+    readonly static int MaxCharge = 60;
 
     int _charge;
     bool _hitCheck;
@@ -29,7 +31,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
     float _outlineAlpha;
 
     float ChargeProgress => MathF.Min((float)_charge / MaxCharge, 1f);
-    Vector2 RotationVector => (Projectile.rotation - MathF.PI / 4f).ToRotationVector2() * new Vector2(Owner.direction, 1f);
+    Vector2 RotationVector => (Projectile.rotation - MathF.PI / 4f).ToRotationVector2() * new Vector2(Owner.direction, 0.5f);
     Vector2[] _trailPositions;
 
     public override string Texture => Assets.Images.Corruption.Items.HeadPounder.HeadPounderItem.KEY;
@@ -60,12 +62,12 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
         return true;
     }
-
+    SlotId _Hitsound = SlotId.Invalid;
     public override void AI() {
         Owner.heldProj = Projectile.whoAmI;
         if(Owner.channel) {
             Projectile.timeLeft = PostChargeFrames;
-            Projectile.rotation = -3f * MathF.PI / 4f - ChargeProgress * MathF.PI / 8f;
+            Projectile.rotation = -3.5f * MathF.PI / 4f - ChargeProgress * MathF.PI / 4f;
 
             _charge += 1;
             _outlineAlpha = MathF.Pow(ChargeProgress, 2);
@@ -83,9 +85,11 @@ public class HeadPounderHeldProjectile : ModProjectile {
             var progress = 1f - (float)Projectile.timeLeft / PostChargeFrames;
             var progressHit = 0.4f;
 
-            Projectile.rotation = -3f * MathF.PI / 4f * (1f - MathF.Pow(progress / progressHit, 2));
+            Projectile.rotation = -3.5f * MathF.PI / 4f * (1f - MathF.Pow(progress / progressHit, 2));
             if(progress >= progressHit) {
                 if(charged && !_hitCheck) {
+                    if(_hitCheck == true);
+
                     _hitCheck = true;
 
                     var hitCenter = Projectile.position
@@ -95,6 +99,9 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
                     var hitPosition = hitCenter - Vector2.One * hitSize / 2f;
                     if(Collision.SolidTiles(hitPosition, hitSize, hitSize)) {
+                        if(SoundEngine.TryGetActiveSound(_Hitsound, out var sound)) {
+                            sound.Stop();
+                        }
                         SoundEngine.PlaySound(
                             Assets.Sounds.Cursehound.MaceSlam.Asset with
                             {
@@ -112,7 +119,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                             0
                         );
 
-                        for(int i = 0; i < 5; i++) {
+                        for(int i = 0; i < 6; i++) {
                             var dustPos = hitCenter + Main.rand.NextVector2Circular(120f, 20f)
                                 + Vector2.UnitY * Projectile.height * 1.5f;
                             var dustVelocity = -Vector2.UnitY * Main.rand.NextFloat(3f, 6f)
@@ -129,7 +136,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                                 ColorStart = dustColorStart,
                                 ColorFade = dustColorFade,
                                 Spin = 0.03f,
-                                InitialScale = Main.rand.NextFloat(1f, 2f)
+                                InitialScale = Main.rand.NextFloat(0.75f, 1.5f)
                             };
 
                             var newDust = Dust.NewDustPerfect(
@@ -170,6 +177,12 @@ public class HeadPounderHeldProjectile : ModProjectile {
                          ));
                         _hit = true;
                     }
+                }
+                else {
+                    if(!SoundEngine.TryGetActiveSound(_Hitsound, out var sound) || !sound.IsPlaying) {
+                        _Hitsound = SoundEngine.PlaySound(SoundID.NPCHit52 with { Volume = 1f });
+                    }
+                   
                 }
 
                 Projectile.rotation = _hit ? 0

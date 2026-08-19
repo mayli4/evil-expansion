@@ -1,15 +1,42 @@
 ﻿using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Dusts;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Corruption;
 
 public class PounderSpike : ModProjectile {
+    public override void OnSpawn(IEntitySource source) {
+
+    SoundEngine.PlaySound(SoundID.Item51, Projectile.position);
+        // No. of dust particles
+    int dustCount = 8; 
+        // Velocity
+    float burstSpeed = 2f; 
+
+    for (int i = 0; i < dustCount; i++) {
+            // Angle
+        float progress = (float)i / (dustCount - 1);
+        float angle = MathHelper.Lerp(MathHelper.ToRadians(-95), MathHelper.ToRadians(-85), progress);
+            // Convert the angle into a velocity vector
+        Vector2 velocity = angle.ToRotationVector2() * burstSpeed;
+            // Randomness
+        velocity.X += Main.rand.NextFloat(-0.95f, 0.95f);
+        velocity.Y += Main.rand.NextFloat(-0.95f, 0.95f);
+            // Spawn the dust at the projectile's center
+        Dust dust = Dust.NewDustDirect(Projectile.Center, 5, -10, DustID.Dirt, velocity.X, velocity.Y);
+        
+        dust.scale = Main.rand.NextFloat(0.8f, 1.4f);
+    }
+    }
     public override string Texture => Assets.Images.Corruption.Items.HeadPounder.PounderSpike.KEY;
 
     int SpikeIndex => (int)Projectile.ai[0];
@@ -62,7 +89,7 @@ public class PounderSpike : ModProjectile {
     }
 
     public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) {
-        behindNPCsAndTiles.Add(index);
+        overPlayers.Add(index);
     }
 
     public override bool PreDraw(ref Color lightColor) {

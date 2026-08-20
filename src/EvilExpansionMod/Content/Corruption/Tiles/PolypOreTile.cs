@@ -1,4 +1,5 @@
 using EvilExpansionMod.Content.Crimson;
+using Microsoft.Build.Tasks;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.GameContent;
@@ -22,12 +23,11 @@ public class PolypOreTile : ModTile {
 
         TileID.Sets.Ore[Type] = true;
 
-        DustType = DustID.Demonite;
-        MinPick = 65;
+        DustType = DustID.PurpleCrystalShard;
         HitSound = SoundID.Tink;
         Main.tileSpelunker[Type] = true;
 
-        MineResist = 2f;
+        MineResist = 5f;
         MinPick = 110;
         
         Main.tileMerge[Type][TileID.Hellstone] = true;
@@ -58,8 +58,11 @@ public class PolypOreTile : ModTile {
     
     public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) {
         var tile = Main.tile[i, j];
-        tile.LiquidType = LiquidID.Lava;
-        tile.LiquidAmount = 255;
+        if (fail == false && j > 700) {
+            tile.LiquidType = LiquidID.Lava;
+            tile.LiquidAmount = 255;
+        }
+        Dust.NewDust(new Vector2(i * 16, j * 16), 5, 5, DustID.CursedTorch);
     }
 
     public override void FloorVisuals(Player player) {

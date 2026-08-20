@@ -440,15 +440,15 @@ Mods: {
 		}
 
 		Bestiary: {
-			DevilOWarNPCBestiary: Marine life in the underworld??? This organism uses hot gases to float in the air, and a sharp stinger to feed off its prey!
-			TerrorBatNPCBestiary: The terror bats stalk the cave ceilings in droves... The last thing you want to happen is to have your clothes stained by their acidic spit!
+			DevilOWarNPCBestiary: Marine life in the underworld?... This organism uses hot gases to float in the air, and a sharp stinger to feed off its prey!
+			TerrorBatNPCBestiary: These beasts stalk the cave ceilings in droves... The last thing you want to happen is to have your clothes stained by their acidic spit!
 			CursedSpiritNPCBestiary: The power of the Corruption is such that even the inanimate can be made to do its bidding.
-			EffigyNPCBestiary: Poor souls, overcome by the Corruption. Their twisted bodies now serve as cancerous hives, allowing the darkness to spread further.
+			EffigyNPCBestiary: Poor souls, overcome by the Corruption. Their twisted bodies now serve as cancerous hives, through which the darkness spreads further.
 			CursehoundNPCBestiary: Cursed Spirits that accumulate too much power develop an armored form, and a monstrous ride to boot.
 			ThoughtfulCultistNPC: Thirsting for power, these hell-born cultists have given themselves over to the Crimson.
 			CultistEyeBestiary: Somehow, Cultists of the Crimson have learnt to harness Demon Eyes to do their bidding...
 			PusImpNPC: A unholy mixture of Crimson bile and hell energy, these hollow imitations of hell's denizens only serve as extensions of the Crimson's will.
-			StinkgrubNPCBestiary: Once simple cavedwellers, engorged by the Crimson. These hardy grubs occasionally migrate deeper underground in search of nutrients.
+			StinkgrubNPCBestiary: Simple cavedwellers, engorged by the Crimson. These hardy grubs often migrate deeper underground in search of nutrients.
 			LanternBatNPCBestiary: Some servants of the Crimson occult have had their mind and bodies warped, forced to serve their masters as Lantern Bats.
 		}
 

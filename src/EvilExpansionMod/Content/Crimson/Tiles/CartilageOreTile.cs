@@ -22,10 +22,12 @@ public class CartilageOreTile : ModTile {
 
         TileID.Sets.Ore[Type] = true;
 
-        DustType = DustID.Demonite;
-        MinPick = 65;
+        DustType = DustID.CrimtaneWeapons;
         HitSound = SoundID.Tink;
         Main.tileSpelunker[Type] = true;
+
+        MineResist = 5f;
+        MinPick = 110;
 
         Main.tileMerge[Type][TileID.Hellstone] = true;
         Main.tileMerge[TileID.Hellstone][Type] = true;
@@ -48,9 +50,6 @@ public class CartilageOreTile : ModTile {
         Main.tileMerge[Type][ModContent.TileType<OvergrownCorruptAsh>()] = true;
         Main.tileMerge[ModContent.TileType<OvergrownCorruptAsh>()][Type] = true;
 
-        MineResist = 2f;
-        MinPick = 110;
-
         AddMapEntry(new Color(140, 83, 14), CreateMapEntryName());
 
         TileLoader.RegisterConversion(TileID.Hellstone, BiomeConversionID.Crimson, (i, j, type, _) =>
@@ -62,8 +61,12 @@ public class CartilageOreTile : ModTile {
     
     public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) {
         var tile = Main.tile[i, j];
-        tile.LiquidType = LiquidID.Lava;
-        tile.LiquidAmount = 255;
+        if(fail == false && j > 700) {
+            tile.LiquidType = LiquidID.Lava;
+            tile.LiquidAmount = 255;
+        }
+        Dust.NewDust(new Vector2(i * 16, j * 16), 5, 5, DustID.Blood);
+        Dust.NewDust(new Vector2(i * 16, j * 16), 5, 5, DustID.BloodWater);
     }
 
     public override void Convert(int i, int j, int conversionType) {
@@ -94,6 +97,7 @@ public class CartilageOreTile : ModTile {
         if(Main.rand.NextBool(200)) {
             Dust.NewDust(new Vector2(i * 16, j * 16), 5, 5, DustID.CrimtaneWeapons);
             Dust.NewDust(new Vector2(i * 16, j * 16), 5, 5, DustID.Blood);
+            Dust.NewDust(new Vector2(i * 16, j * 16), 5, 5, DustID.BloodWater);
         }
     }
 

@@ -102,7 +102,13 @@ public class HellShadetree : ModTile {
         LocalizedText name = CreateMapEntryName();
         AddMapEntry(new Color(151, 107, 75), name);
     }
-
+    public override void EmitParticles(int i, int j, Tile tile, short tileFrameX, short tileFrameY, Color tileLight, bool visible) {
+        if(Main.rand.NextBool(200)) {
+            Dust.NewDust(new Vector2(i * 16, j * 16), 5, 5, DustID.CrimtaneWeapons);
+            Dust.NewDust(new Vector2(i * 16, j * 16), 5, 5, DustID.Blood);
+            Dust.NewDust(new Vector2(i * 16, j * 16), 5, 5, DustID.BloodWater);
+        }
+    }
     public static void KillTile_GetTreeDrops(int i, int j, Tile tileCache, ref bool bonusWood, ref int dropItem, ref int secondaryItem) {
         if(tileCache.TileFrameX >= 22 && tileCache.TileFrameY >= 198) {
             if(Main.netMode != NetmodeID.MultiplayerClient) {

@@ -1,4 +1,3 @@
-using EvilExpansionMod.Common.Bestiary;
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
@@ -96,7 +95,12 @@ public class TerrorBatNPC : ModNPC {
         return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.5f : 0;
     }
 
-    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.TerrorBatNPCBestiary.KEY),
+        });
+    }
 
     public override void OnSpawn(IEntitySource source) {
 

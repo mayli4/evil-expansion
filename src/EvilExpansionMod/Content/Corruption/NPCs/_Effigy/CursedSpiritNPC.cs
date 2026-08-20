@@ -1,5 +1,4 @@
-﻿using EvilExpansionMod.Common.Bestiary;
-using EvilExpansionMod.Common.Graphics;
+﻿using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Content.Projectiles;
 using EvilExpansionMod.Content.Tiles.Banners;
@@ -128,8 +127,6 @@ public sealed class CursedSpiritNPC : ModNPC {
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<CursedSpiritBannerItem>();
     }
-
-    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.25f : 0;

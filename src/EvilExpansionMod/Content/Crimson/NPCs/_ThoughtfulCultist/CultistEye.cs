@@ -1,5 +1,4 @@
-﻿using EvilExpansionMod.Common.Bestiary;
-using EvilExpansionMod.Content.Biomes;
+﻿using EvilExpansionMod.Content.Biomes;
 using System;
 using Terraria;
 using Terraria.GameContent.Bestiary;
@@ -38,7 +37,12 @@ public class CultistEye : ModNPC {
         // BannerItem = ModContent.ItemType<CursedSpiritBannerItem>();
     }
 
-    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) => bestiaryEntry.AddInfo(this, "");
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.CultistEyeBestiary.KEY),
+        });
+    }
 
     public override void AI() {
         NPC.TargetClosest();

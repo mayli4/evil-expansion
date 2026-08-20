@@ -1,4 +1,3 @@
-using EvilExpansionMod.Common.Bestiary;
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Content.Tiles.Banners;
@@ -101,9 +100,13 @@ public sealed class DevilOWarNPC : ModNPC {
             _tentacleWaveDirections[i] = Main.rand.NextFloat(MathHelper.TwoPi);
         }
     }
-
-    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) =>
-        bestiaryEntry.AddInfo(this, "");
+    
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.DevilOWarNPCBestiary.KEY),
+        });
+    }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) =>
         spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.2f : 0;

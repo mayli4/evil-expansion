@@ -58,7 +58,7 @@ public class HellShadeModTree : ModTree {
     }
 
     public override int DropWood() {
-        return ItemID.Ebonwood;
+        return ModContent.ItemType<CharredBloodwoodItem>();
     }
 }
 
@@ -117,17 +117,17 @@ public class HellShadetree : ModTile {
                     for(k = j; Main.tile[i, k] != null && (!Main.tile[i, k].HasTile || !Main.tileSolid[Main.tile[i, k].TileType] || Main.tileSolidTop[Main.tile[i, k].TileType]); k++) {
                     }
                     if(Main.tile[i, k] != null) {
-                        dropItem = ItemID.Ebonwood;
+                        dropItem = ModContent.ItemType<CharredBloodwoodItem>();
                         secondaryItem = ItemID.Acorn;
                     }
                 }
                 else {
-                    dropItem = ItemID.Ebonwood;
+                    dropItem = ModContent.ItemType<CharredBloodwoodItem>();
                 }
             }
         }
         else {
-            dropItem = ItemID.Ebonwood;
+            dropItem = ModContent.ItemType<CharredBloodwoodItem>();
         }
 
         GetTreeBottom(i, j, out var x, out var y);
@@ -642,9 +642,9 @@ public class HellShadetree : ModTile {
     }
 
     public override IEnumerable<Item> GetItemDrops(int i, int j) {
-        int dropItem = ItemID.Ebonwood;
+        int dropItem = ModContent.ItemType<CharredBloodwoodItem>();
         int dropItemStack = 1;
-        int secondaryItem = ItemID.Ebonwood;
+        int secondaryItem = ModContent.ItemType<CharredBloodwoodItem>();
         Tile tileCache = Main.tile[i, j];
         bool bonusWood = false;
         KillTile_GetTreeDrops(i, j, tileCache, ref bonusWood, ref dropItem, ref secondaryItem);

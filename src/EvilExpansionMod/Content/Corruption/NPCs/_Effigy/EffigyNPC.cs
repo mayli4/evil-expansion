@@ -112,6 +112,21 @@ public sealed class EffigyNPC : ModNPC {
                     ParticleEngine.PARTICLES.Add(ember);
                 }
             }
+
+            if ((int)NPC.frameCounter is 16 or 18) {
+                var particle = SmokeParticle.Pool.RequestParticle();
+
+                Vector2 randomVelocity = new Vector2(
+                    Main.rand.NextFloat(-1.5f, 1.5f),
+                    Main.rand.NextFloat(-2f, -0.5f)
+                );
+
+                Color smokeColor = Color.Lerp(Color.DarkGray, Color.DarkGray, Main.rand.NextFloat());
+                float scale = Main.rand.NextFloat(0.1f, 1.2f);
+                int lifetime = Main.rand.Next(40, 90);
+
+                particle.Spawn(NPC.Center + Main.rand.NextVector2Circular(15, 45), randomVelocity, smokeColor, scale, lifetime);
+            }
         
             if(deadTimer >= DEATH_TIME) {
                 NPC.life = 0;
@@ -142,23 +157,13 @@ public sealed class EffigyNPC : ModNPC {
 
     public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone) {
         if(Main.rand.NextBool(5)) {
-            //SpawnSpirit(projectile);
+            SpawnSpirit(projectile);
         }
     }
 
     public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone) {
         if(Main.rand.NextBool(5)) {
-            //SpawnSpirit(player);
-        }
-    }
-
-    public override void HitEffect(NPC.HitInfo hit) {
-        if(Main.netMode == NetmodeID.Server || NPC.life > 0) {
-            return;
-        }
-        
-        for(int i = 1; i <= 5; i++) {
-            //Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("EffigyGore" + i).Type);
+            SpawnSpirit(player);
         }
     }
 

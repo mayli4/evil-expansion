@@ -128,21 +128,6 @@ file static class SmokeParticleRendering {
     [ModSystemHooks.PostUpdateEverything, UsedImplicitly]
     private static void UpdateParticles() {
         Particles.Update();
-
-        if(Mouse.GetState().LeftButton == ButtonState.Pressed) {
-            SmokeParticle particle = SmokeParticle.Pool.RequestParticle();
-
-            Vector2 randomVelocity = new Vector2(
-                Main.rand.NextFloat(-1.5f, 1.5f),
-                Main.rand.NextFloat(-2f, -0.5f)
-            );
-
-            Color smokeColor = Color.Lerp(Color.DarkGray, Color.LightGray, Main.rand.NextFloat());
-            float scale = Main.rand.NextFloat(0.1f, 1.2f);
-            int lifetime = Main.rand.Next(40, 90);
-
-            particle.Spawn(Main.MouseWorld, randomVelocity, smokeColor, scale, lifetime);
-        }
     }
     
     private static void DrawCloudParticles(On_Main.orig_DrawDust orig, Main self) {

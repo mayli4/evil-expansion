@@ -322,6 +322,11 @@ Mods: {
 				DisplayName: Spam On A Stick Item
 				Tooltip: ""
 			}
+
+			CharredBloodwoodWallItem: {
+				DisplayName: Charred Bloodwood Wall Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {

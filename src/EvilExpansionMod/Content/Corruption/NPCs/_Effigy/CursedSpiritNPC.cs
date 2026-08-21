@@ -18,6 +18,7 @@ using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Daybreak.Common.Rendering;
 
 namespace EvilExpansionMod.Content.Corruption;
 
@@ -143,7 +144,8 @@ public sealed class CursedSpiritNPC : ModNPC {
             _trailPositions[i] = NPC.Center;
         }
 
-        SpiritType = (SpiritType)Main.rand.Next(0, 3);
+        SpiritType = SpiritType.Ram;
+        //SpiritType = (SpiritType)Main.rand.Next(0, 3);
         switch(SpiritType) {
             case SpiritType.Splitter:
                 _data.Splitter = new()
@@ -528,7 +530,7 @@ public sealed class CursedSpiritNPC : ModNPC {
         }
     }
 
-    public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
+public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var glowTexture = Assets.Images.Sample.Glow1.Asset.Value;
         var blinker = (MathF.Sin(0.1f * Main.GameUpdateCount + 23.2f * NPC.whoAmI) + MathF.Cos(0.06f * Main.GameUpdateCount) + 2f) / 4f;
         var bigGlowColor = GhostColor2 * (0.3f + 0.3f * blinker);
@@ -611,6 +613,58 @@ public sealed class CursedSpiritNPC : ModNPC {
         }
 
         var maskPositionOffset = _lookDirection * _lookOffset * 10f + Main.rand.NextVector2Unit() * maskShake;
+
+        if(SpiritType == SpiritType.Ram && State<RamState>() == RamState.Dash) {
+            var starTex = TextureAssets.Extra[ExtrasID.FallingStar].Value;
+            float dashRotation = _data.Ram.DashDirection.ToRotation() + MathHelper.PiOver2;
+    
+            Vector2 drawPosition = NPC.Center - screenPos - (_data.Ram.DashDirection * 30f);
+
+            float pulse = 1.5f + MathF.Sin(Main.GameUpdateCount * 0.35f) * 0.15f;
+            float finalScale = NPC.scale * maskScale * pulse;
+
+            spriteBatch.End(out var ss);
+            spriteBatch.Begin(ss with { BlendState = BlendState.Additive });
+    
+            float glowPulse = 0.4f + MathF.Sin(Main.GameUpdateCount * 0.5f) * 0.2f;
+            spriteBatch.Draw(
+                starTex,
+                drawPosition,
+                null,
+                GhostColor1 * 0.5f,
+                dashRotation,
+                starTex.Size() * 0.5f,
+                finalScale * 1f,
+                SpriteEffects.None,
+                0
+            );
+            
+            spriteBatch.Draw(
+                starTex,
+                drawPosition - (_data.Ram.DashDirection * 10f),
+                null,
+                GhostColor1 * 0.5f,
+                dashRotation,
+                starTex.Size() * 0.5f,
+                finalScale * 1.25f,
+                SpriteEffects.None,
+                0
+            );
+            
+            spriteBatch.Draw(
+                glowTexture,
+                NPC.Center - screenPos + maskPositionOffset,
+                null,
+                GhostColor1 * 0.7f,
+                0f,
+                glowTexture.Size() * 0.5f,
+                0.3f,
+                SpriteEffects.None,
+                0
+            );
+
+            spriteBatch.Restart(ss);
+        }
 
         var maskTexture = TextureAssets.Npc[Type].Value;
         var maskSource = new Rectangle(

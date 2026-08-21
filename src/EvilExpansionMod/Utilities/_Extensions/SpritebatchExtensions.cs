@@ -81,10 +81,10 @@ public static class SpritebatchExtensions {
         spriteBatch.Begin(data);
     }
 
-    public static void End(this SpriteBatch spriteBatch, out SpriteBatchSnapshot snapshot) {
-        snapshot = spriteBatch.Capture();
-        spriteBatch.End();
-    }
+    // public static void End(this SpriteBatch spriteBatch, out SpriteBatchSnapshot snapshot) {
+    //     snapshot = spriteBatch.Capture();
+    //     spriteBatch.End();
+    // }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining | MethodImplOptions.AggressiveOptimization)]
     public static void DrawLine(this SpriteBatch sb, Vector2 start, Vector2 end, Color? color = null, int width = 1, Texture2D? texture = null) {

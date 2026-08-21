@@ -110,7 +110,7 @@ internal class Renderer : ModSystem {
 
         SpriteBatchSnapshot? spriteBatchSnapshot = null;
         if(Main.spriteBatch.beginCalled) {
-            SpritebatchExtensions.End(Main.spriteBatch, out var snapshot);
+            Main.spriteBatch.End(out var snapshot);
             spriteBatchSnapshot = snapshot;
         }
 

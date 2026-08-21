@@ -1,4 +1,6 @@
-﻿using Microsoft.Xna.Framework;
+﻿using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Particles;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
@@ -77,6 +79,17 @@ public class SlippedWhipProjectile : ModProjectile {
             Vector2 spinningPoint = points[pointIndex] - points[pointIndex - 1];
             dust.velocity += spinningPoint.RotatedBy(owner.direction * ((float)Math.PI / 2f));
             dust.velocity *= 0.5f;
+
+            if(Main.rand.NextBool(9)) {
+                Vector2 randomVelocity = new Vector2(
+                    Main.rand.NextFloat(-1.5f, 1.5f),
+                    Main.rand.NextFloat(-7f, 0.5f)
+                );
+
+                float scale = Main.rand.NextFloat(0.5f, 1.2f);
+                var particle = BloodParticle.NewParticle(points[pointIndex], randomVelocity, scale, new Color(180, 15, 25));
+                ParticleEngine.PARTICLES.Add(particle);
+            }
         }
     }
 

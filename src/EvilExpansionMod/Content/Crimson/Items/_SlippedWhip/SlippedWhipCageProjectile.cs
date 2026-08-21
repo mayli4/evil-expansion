@@ -1,5 +1,6 @@
 ﻿using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.CameraModifiers;
+using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -98,6 +99,15 @@ public class SlippedWhipCageProjectile : ModProjectile {
                 size,
                 DustID.Bone
             );
+            
+            Vector2 randomVelocity = new Vector2(
+                Main.rand.NextFloat(-1.5f, 1.5f),
+                Main.rand.NextFloat(-7f, -3f)
+            );
+
+            float scale = Main.rand.NextFloat(0.5f, 1.2f);
+            var particle = BloodParticle.NewParticle(Projectile.Center, randomVelocity, scale, new Color(180, 15, 25));
+            ParticleEngine.PARTICLES.Add(particle);
         }
 
         SoundEngine.PlaySound(SoundID.NPCHit2, Projectile.Center);

@@ -7,8 +7,9 @@ namespace EvilExpansionMod.Content.Crimson;
 public class SlippedWhipItem : ModItem {
     public override string Texture => Assets.Images.Crimson.Items.SlippedWhip.SlippedWhipItem.KEY;
 
-    public readonly static float CageSpawnChance = 0.1f;
-    public readonly static float CageMinionDamageMultiplier = 0.1f;
+    public static readonly float CageSpawnChance = 0.1f;
+    public static readonly float CageMinionDamageMultiplier = 0.2f;
+    
     public override LocalizedText Tooltip => base.Tooltip.WithFormatArgs(
         (int)(100f * CageSpawnChance),
         (int)(100f * CageMinionDamageMultiplier)
@@ -24,8 +25,8 @@ public class SlippedWhipItem : ModItem {
         Item.shootSpeed = 6;
 
         Item.useStyle = ItemUseStyleID.Swing;
-        Item.useTime = 10;
-        Item.useAnimation = 20;
+        Item.useTime = 30;
+        Item.useAnimation = 30;
         Item.UseSound = SoundID.Item152;
         Item.noMelee = true;
         Item.noUseGraphic = true;

@@ -60,7 +60,7 @@ public class SlippedWhipProjectile : ModProjectile {
         }
 
         var swingProgress = Timer / swingTime;
-        if(Utils.GetLerpValue(0.1f, 0.7f, swingProgress, clamped: true) * Utils.GetLerpValue(0.9f, 0.7f, swingProgress, clamped: true) > 0.5f && !Main.rand.NextBool(3)) {
+        if(Utils.GetLerpValue(0.1f, 0.7f, swingProgress, clamped: true) * Utils.GetLerpValue(0.9f, 0.7f, swingProgress, clamped: true) > 0.5f && !Main.rand.NextBool(7)) {
             List<Vector2> points = Projectile.WhipPointsForCollision;
             points.Clear();
             Projectile.FillWhipControlPoints(Projectile, points);
@@ -68,8 +68,6 @@ public class SlippedWhipProjectile : ModProjectile {
             int pointIndex = Main.rand.Next(points.Count - 10, points.Count);
             Rectangle spawnArea = Utils.CenteredRectangle(points[pointIndex], new Vector2(30f, 30f));
             int dustType = DustID.Blood;
-            if(Main.rand.NextBool(2))
-                dustType = DustID.Bone;
 
             Dust dust = Dust.NewDustDirect(spawnArea.TopLeft(), spawnArea.Width, spawnArea.Height, dustType, 0f, 0f, 100, Color.White);
             dust.position = points[pointIndex];

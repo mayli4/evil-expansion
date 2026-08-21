@@ -91,7 +91,7 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
                 }
             }
 
-            if(_stingerDuration >= DevilOWarNPC.stinger_duration_max || ParentNPC.Center.Distance(TargetPlayer.Center) >= DevilOWarNPC.charging_radius + 16 * 2) {
+            if(_stingerDuration >= DevilOWarNPC.STINGER_DURATION_MAX || ParentNPC.Center.Distance(TargetPlayer.Center) >= DevilOWarNPC.CHARGING_RADIUS + 16 * 2) {
                 StartRetraction();
             }
         }
@@ -107,8 +107,8 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
     private void DespawnIntoDangling() {
         if(ParentNPC.active
             && ParentNPC.ModNPC is DevilOWarNPC devilOWarNPC) {
-            if(devilOWarNPC._stingerProjectileId == Projectile.whoAmI) {
-                devilOWarNPC._stingerProjectileId = -1;
+            if(devilOWarNPC.StingerProjectileId == Projectile.whoAmI) {
+                devilOWarNPC.StingerProjectileId = -1;
             }
         }
 
@@ -141,8 +141,8 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
 
         if(ParentNPC.active
             && ParentNPC.ModNPC is DevilOWarNPC devilOWarNPC
-            && devilOWarNPC._stingerProjectileId == Projectile.whoAmI) {
-            devilOWarNPC._stingerProjectileId = -1;
+            && devilOWarNPC.StingerProjectileId == Projectile.whoAmI) {
+            devilOWarNPC.StingerProjectileId = -1;
         }
     }
 

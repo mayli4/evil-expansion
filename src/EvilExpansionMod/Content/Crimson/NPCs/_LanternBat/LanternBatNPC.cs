@@ -171,7 +171,7 @@ public class LanternBatNPC : ModNPC {
         }
 
         NPC.spriteDirection = NPC.direction = (NPC.velocity.X > 0) ? 1 : -1;
-        NPC.rotation = Math.Clamp(NPC.velocity.X * 0.15f, -0.4f, 0.4f);
+        NPC.rotation = Math.Clamp(NPC.velocity.X * 0.15f, -0.8f, 0.8f);
 
         if(NPC.velocity.Length() < 0.1f && CurrentState != State.Dashing) {
             NPC.velocity = Main.rand.NextVector2Circular(0.5f, 0.5f);

@@ -1,4 +1,5 @@
 using Microsoft.Xna.Framework;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.ID;
@@ -6,8 +7,8 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Corruption;
 
-public class CorruptionJackhammerItem : ModItem {
-    public override string Texture => Assets.Images.Corruption.Items.CorruptionJackhammerItem.KEY;
+public class CorruptedBlockbreakerItem : ModItem {
+    public override string Texture => Assets.Images.Corruption.Items.CorruptedBlockbreakerItem.KEY;
 
     public override void SetStaticDefaults() {
         ItemID.Sets.IsDrill[Type] = true;
@@ -19,30 +20,32 @@ public class CorruptionJackhammerItem : ModItem {
         Item.width = 20;
         Item.height = 12;
 
-        Item.useTime = 4;
-        Item.useAnimation = 15;
+        Item.useTime = 1;
+        Item.useAnimation = 8;
         Item.useStyle = ItemUseStyleID.Shoot;
         Item.knockBack = 0.5f;
         Item.value = Item.buyPrice(gold: 12, silver: 60);
         Item.rare = ItemRarityID.LightRed;
         Item.UseSound = SoundID.Item23;
-        Item.shoot = ModContent.ProjectileType<CorruptionJackhammerProjectile>();
+        Item.shoot = ModContent.ProjectileType<CorruptedBlockbreakerProjectile>();
         Item.shootSpeed = 32f;
         Item.noMelee = true;
         Item.noUseGraphic = true;
         Item.channel = true;
-        Item.tileBoost = 10;
+        Item.tileBoost = -3;
 
         Item.pick = 110;
     }
-
+    public override void ModifyTooltips(List<TooltipLine> tooltips) {
+        tooltips.Find(t => t.Name == "Speed").Text = "Ridiculously fast speed";
+    }
     public override void AddRecipes() {
 
     }
 }
 
-public class CorruptionJackhammerProjectile : ModProjectile {
-    public override string Texture => Assets.Images.Corruption.Items.CorruptionJackhammer.KEY;
+public class CorruptedBlockbreakerProjectile : ModProjectile {
+    public override string Texture => Assets.Images.Corruption.Items.CorruptedBlockbreaker.KEY;
 
     public override void SetStaticDefaults() {
         // Prevents jitter when stepping up and down blocks and half blocks
@@ -57,6 +60,8 @@ public class CorruptionJackhammerProjectile : ModProjectile {
         Projectile.penetrate = -1;
         Projectile.DamageType = DamageClass.Melee;
         Projectile.ownerHitCheck = true;
+        Projectile.usesLocalNPCImmunity = true;
+        Projectile.localNPCHitCooldown = 5;
         Projectile.aiStyle = -1; // Replace with 20 if you do not want custom code
         Projectile.hide = true; // Hides the projectile, so it will draw in the player's hand when we set the player's heldProj to this one.
     }
@@ -72,8 +77,8 @@ public class CorruptionJackhammerProjectile : ModProjectile {
 
         // Plays a sound every 20 ticks. In aiStyle 20, soundDelay is set to 30 ticks.
         if(Projectile.soundDelay <= 0) {
-            SoundEngine.PlaySound(SoundID.Item22, Projectile.Center);
-            Projectile.soundDelay = 20;
+            SoundEngine.PlaySound(SoundID.Item22 with { PitchRange = (0.8f, 1.0f) }, Projectile.Center);
+            Projectile.soundDelay = 10;
         }
 
         Vector2 playerCenter = player.RotatedRelativePoint(player.MountedCenter);

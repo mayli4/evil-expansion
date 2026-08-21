@@ -175,14 +175,14 @@ Mods: {
 				Tooltip: The gashes it creates shred enemies rapidly
 			}
 
-			CorruptionJackhammerItem: {
-				DisplayName: Corruption Jackhammer
-				Tooltip: ""
+			CorruptedBlockbreakerItem: {
+				DisplayName: Corrupt Blockbreaker
+				Tooltip: "'Pulverizes tiles and enemies alike'"
 			}
 
 			CrimsonDrillItem: {
-				DisplayName: Crimson Drill
-				Tooltip: ""
+				DisplayName: Crimson Spike Drill
+				Tooltip: "'Tears apart tiles and enemies alike'"
 			}
 
 			RawShadowScalesItem: {
@@ -324,7 +324,7 @@ Mods: {
 			}
 
 			CharredBloodwoodWallItem: {
-				DisplayName: Charred Bloodwood Wall Item
+				DisplayName: Charred Bloodwood Wall
 				Tooltip: ""
 			}
 		}
@@ -396,7 +396,7 @@ Mods: {
 			SpamOnAStickProjectile.DisplayName: Spam On A Stick
 			MeatAxeHeldProjectile.DisplayName: Meat Axe
 			SpamonAStickProjectile.DisplayName: Spamon A Stick
-			CorruptionJackhammerProjectile.DisplayName: Corruption Jackhammer
+			CorruptedBlockbreakerProjectile.DisplayName: Corrupt Blockbreaker
 			CrimsonDrillProjectile.DisplayName: Crimson Drill
 			CrytapeteFlame.DisplayName: Crytapete Flame
 			CrytapeteMinion.DisplayName: Crytapete Minion

@@ -620,7 +620,7 @@ public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color d
     
             Vector2 drawPosition = NPC.Center - screenPos - (_data.Ram.DashDirection * 30f);
 
-            float pulse = 1.5f + MathF.Sin(Main.GameUpdateCount * 0.35f) * 0.15f;
+            float pulse = 1.5f + MathF.Sin(Main.GameUpdateCount * 0.35f) * 0.15f; 
             float finalScale = NPC.scale * maskScale * pulse;
 
             spriteBatch.End(out var ss);

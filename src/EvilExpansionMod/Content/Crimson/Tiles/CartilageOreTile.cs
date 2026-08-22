@@ -15,7 +15,7 @@ public class CartilageOreTile : ModTile {
 
     public override void SetStaticDefaults() {
         Main.tileOreFinderPriority[Type] = 450;
-        Main.tileBlockLight[Type] = false;
+        Main.tileBlockLight[Type] = true;
         Main.tileSolid[Type] = true;
         Main.tileLighted[Type] = true;
         Main.tileNoSunLight[Type] = false;

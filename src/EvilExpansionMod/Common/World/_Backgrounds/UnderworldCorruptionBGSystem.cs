@@ -14,10 +14,10 @@ namespace EvilExpansionMod.Common.World;
 
 //this is still pretty bad, and most of it is adapted vanilla code, but its workable
 
-public class UnderworldCorruptionBGSystem : ModSystem {
-    public Asset<Texture2D>[] BackgroundTextures = new Asset<Texture2D>[4];
+internal sealed class UnderworldCorruptionBgSystem : ModSystem {
+    public Asset<Texture2D>[] BackgroundTextures = new Asset<Texture2D>[5];
 
-    private static float _fadeOpacity;
+    private static float fadeOpacity;
     private const float fade_speed = 0.05f;
 
     public override void PostSetupContent() {
@@ -41,18 +41,13 @@ public class UnderworldCorruptionBGSystem : ModSystem {
             IL_Main.DrawBG -= UnderworldCorruptionBackground_DrawBG;
             IL_Main.DrawCapture -= UnderworldCorruptionBackground_DrawCapture;
         }
-        _fadeOpacity = 0f;
+        fadeOpacity = 0f;
     }
 
     public override void PostUpdateEverything() {
         var inBiome = Main.LocalPlayer.InModBiome<UnderworldCorruptionBiome>();
 
-        if(inBiome) {
-            _fadeOpacity = Math.Min(_fadeOpacity + fade_speed, 1f);
-        }
-        else {
-            _fadeOpacity = Math.Max(_fadeOpacity - fade_speed, 0f);
-        }
+        fadeOpacity = inBiome ? Math.Min(fadeOpacity + fade_speed, 1f) : Math.Max(fadeOpacity - fade_speed, 0f);
     }
 
     private void UnderworldCorruptionBackground_DrawBG(ILContext il) {
@@ -84,7 +79,7 @@ public class UnderworldCorruptionBGSystem : ModSystem {
     }
 
     protected void DrawCorruptionUnderworldBackground(bool flat) {
-        if(_fadeOpacity <= 0f)
+        if(fadeOpacity <= 0f)
             return;
 
         if(!(Main.screenPosition.Y + Main.screenHeight < (Main.maxTilesY - 220) * 16f)) {
@@ -97,6 +92,7 @@ public class UnderworldCorruptionBGSystem : ModSystem {
             SkyManager.Instance.ResetDepthTracker();
 
             DrawCorruptionUnderworldLayer(flat, screenOffset, pushUp, 0);
+            DrawCorruptionUnderworldLayer(flat, screenOffset, pushUp, 4);
 
             for(int layerTextureIndex = 4; layerTextureIndex >= 0; layerTextureIndex--) {
                 int customTextureIndex;
@@ -115,8 +111,9 @@ public class UnderworldCorruptionBGSystem : ModSystem {
                     default:
                         continue;
                 }
+
                 DrawCorruptionUnderworldLayer(flat, screenOffset, pushUp, customTextureIndex);
-            }
+            } 
 
             if(!Main.mapFullscreen) {
                 SkyManager.Instance.DrawRemainingDepth(Main.spriteBatch);
@@ -137,7 +134,7 @@ public class UnderworldCorruptionBGSystem : ModSystem {
         Texture2D value = asset.Value;
 
         Rectangle value2 = new(0, 0, value.Width, value.Height);
-        Vector2 vec = new Vector2(value.Width, value.Height) * 0.5f;
+        Vector2 vec = new Vector2(value.Width, value.Height) * 0.9f;
 
         float num7;
         if(isGradient) {
@@ -173,13 +170,16 @@ public class UnderworldCorruptionBGSystem : ModSystem {
                 num8 = 1.3f;
                 break;
             case 1:
-                zero.Y -= 10f;
+                zero.Y += 180f;
                 break;
             case 2:
-                //zero.Y -= 20;
+                zero.Y += 200;
                 break;
             case 3:
-                zero.Y += 200f;
+                zero.Y += 240f;
+                break;
+            case 4:
+                zero.Y += 250f;
                 break;
         }
 
@@ -224,7 +224,7 @@ public class UnderworldCorruptionBGSystem : ModSystem {
         }
 
         for(int i = startTileX - 2; i <= startTileX + 4 + numTilesToDraw; i++) {
-            Color drawColor = Color.White * _fadeOpacity;
+            Color drawColor = Color.White * fadeOpacity;
             Main.spriteBatch.Draw(
                 value,
                 drawPos,
@@ -244,10 +244,10 @@ public class UnderworldCorruptionBGSystem : ModSystem {
                     new Rectangle(
                         (int)drawPos.X,
                         bottomY,
-                        (int)(textureRenderWidth),
+                        (int)(textureRenderWidth + 10),
                         Math.Max(0, Main.screenHeight - bottomY)
                     ),
-                    new Color(226, 255, 41)
+                    new Color(194, 196, 60)
                 );
             }
             drawPos.X += textureRenderWidth;

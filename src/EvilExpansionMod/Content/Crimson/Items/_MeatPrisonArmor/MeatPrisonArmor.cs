@@ -87,6 +87,7 @@ public class MeatPrisonLegs : ModItem {
     public override string Texture => Assets.Images.Crimson.Items.MeatPrisonArmor.MeatPrisonLegs.KEY;
     public override void SetStaticDefaults() {
         CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
+        ArmorIDs.Legs.Sets.OverridesLegs[Item.legSlot] = true;
     }
 
     public override void SetDefaults() {

@@ -1,6 +1,11 @@
-﻿using Microsoft.Xna.Framework;
+﻿using Daybreak.Common.Features.Hooks;
+using Daybreak.Common.Features.Models;
+using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
+using Daybreak.Common.Rendering;
+using EvilExpansionMod.Core;
+using JetBrains.Annotations;
 using Terraria;
 using Terraria.ModLoader;
 
@@ -10,181 +15,114 @@ public interface ITileMask {
     void DrawTileMask(SpriteBatch spriteBatch);
 }
 
-internal sealed class TileMasking : ModSystem {
-    public static RenderTarget2D MaskTarget;
-    public static RenderTarget2D SolidTilesTarget;
-    public static readonly List<ITileMask> RenderQueue = [];
+file static class Impl {
+    internal sealed class Buffers : IStatic<Buffers> {
+        public required RenderTargetLease MaskTargetLease { get; init; }
+        public required RenderTargetLease SolidTilesTargetLease { get; init; }
+        
+        public static Buffers LoadData(Mod mod) {
+            return Main.RunOnMainThread(() => new Buffers
+            {
+                MaskTargetLease = ScreenspaceTargetPool.Shared.Rent(Main.graphics.GraphicsDevice),
+                SolidTilesTargetLease = ScreenspaceTargetPool.Shared.Rent(Main.graphics.GraphicsDevice),
+            }).GetAwaiter().GetResult();
+        }
+        
+        public static void UnloadData(Buffers data) {
+            Main.RunOnMainThread(() => {
+                data.MaskTargetLease.Dispose();
+                data.SolidTilesTargetLease.Dispose();
+            });
+        }
+    }
+    
+    private static readonly List<ITileMask> render_queue = new();
 
-    private static bool _refreshTarget;
-
-    private Vector2 _oldScreenSize;
-
-    public override void Load() {
-        On_Main.CheckMonoliths += DrawToRenderTargets;
+    [OnLoad, UsedImplicitly]
+    public static void Load() {
+        On_Main.DoDraw_Tiles_Solid += HookPostDrawTilesSolid;
         On_Main.DrawProjectiles += DrawSolidMask;
     }
 
-    public override void PostUpdateEverything() {
-        CheckScreenSize();
-    }
-
-    private void CheckScreenSize() {
-        if(Main.dedServ || Main.gameMenu) {
-            return;
-        }
-
-        Vector2 newScreenSize = new Vector2(Main.screenWidth, Main.screenHeight);
-        if(_oldScreenSize != newScreenSize) {
-            ResizeRenderTargets();
-        }
-        _oldScreenSize = newScreenSize;
-    }
-
-    private void ResizeRenderTargets() {
-        if(Main.dedServ) {
-            return;
-        }
-
-        Main.QueueMainThreadAction(() =>
-        {
-            DisposeTargets();
-            MaskTarget = new RenderTarget2D(
-                Main.graphics.GraphicsDevice,
-                Main.screenWidth,
-                Main.screenHeight
-            );
-            SolidTilesTarget = new RenderTarget2D(
-                Main.graphics.GraphicsDevice,
-                Main.screenWidth,
-                Main.screenHeight
-            );
-        });
-    }
-
-    public void DisposeTargets() {
-        if(MaskTarget != null && !MaskTarget.IsDisposed) {
-            MaskTarget.Dispose();
-        }
-        if(SolidTilesTarget != null && !SolidTilesTarget.IsDisposed) {
-            SolidTilesTarget.Dispose();
-        }
-    }
-
-    public override void Unload() {
-        if(Main.dedServ) {
-            return;
-        }
-
-        Main.QueueMainThreadAction(() =>
-        {
-            DisposeTargets();
-        });
-
-        On_Main.CheckMonoliths -= DrawToRenderTargets;
+    [OnUnload, UsedImplicitly]
+    public static void Unload() {
+        On_Main.DoDraw_Tiles_Solid -= HookPostDrawTilesSolid;
         On_Main.DrawProjectiles -= DrawSolidMask;
     }
 
-    private void DrawToRenderTargets(On_Main.orig_CheckMonoliths orig) {
-        orig();
-
-        if(Main.dedServ || Main.spriteBatch == null || Main.graphics.GraphicsDevice == null) {
-            return;
-        }
-
-        RenderQueue.Clear();
-
-        for(int i = 0; i < Main.maxProjectiles; i++) {
-            Projectile proj = Main.projectile[i];
-            if(proj.active && proj.ModProjectile is ITileMask maskDraw) {
-                RenderQueue.Add(maskDraw);
+    private static void HookPostDrawTilesSolid(On_Main.orig_DoDraw_Tiles_Solid orig, Main self) {
+        orig(self);
+    
+        render_queue.Clear();
+        for (int i = 0; i < Main.maxProjectiles; i++) {
+            var proj = Main.projectile[i];
+            if (proj.active && proj.ModProjectile is ITileMask maskDraw) {
+                render_queue.Add(maskDraw);
             }
         }
 
-        _refreshTarget = RenderQueue.Count > 0;
+        var data = IStatic<Buffers>.Instance;
 
-        if(!_refreshTarget) {
-            return;
+        var sb = Main.spriteBatch;
+
+        using (data.SolidTilesTargetLease.Scope(preserveContents: false, clearColor: Color.Transparent)) {
+            sb.Begin(
+                SpriteSortMode.Deferred,
+                BlendState.AlphaBlend,
+                SamplerState.PointClamp,
+                DepthStencilState.Default,
+                RasterizerState.CullNone
+            );
+            
+            sb.Draw(Main.instance.tileTarget, Main.sceneTilePos - Main.screenPosition, Color.White);
+            sb.End();
         }
 
-        if(SolidTilesTarget == null || SolidTilesTarget.IsDisposed || SolidTilesTarget.IsContentLost) {
-            ResizeRenderTargets();
-            if(SolidTilesTarget == null || SolidTilesTarget.IsDisposed || SolidTilesTarget.IsContentLost) return;
-        }
-        if(MaskTarget == null || MaskTarget.IsDisposed || MaskTarget.IsContentLost) {
-            ResizeRenderTargets();
-            if(MaskTarget == null || MaskTarget.IsDisposed || MaskTarget.IsContentLost) return;
-        }
+        using (data.MaskTargetLease.Scope(preserveContents: false, clearColor: Color.Transparent)) {
+            sb.Begin(
+                SpriteSortMode.Deferred,
+                BlendState.AlphaBlend,
+                SamplerState.PointClamp,
+                DepthStencilState.Default,
+                RasterizerState.CullNone
+            );
 
-        SwitchToRenderTarget(SolidTilesTarget);
-        Main.spriteBatch.Begin(
-            SpriteSortMode.Deferred,
-            BlendState.AlphaBlend,
-            SamplerState.PointClamp,
-            DepthStencilState.Default,
-            RasterizerState.CullNone,
-            null
-        );
-        Main.spriteBatch.Draw(
-            Main.instance.tileTarget,
-            Main.sceneTilePos - Main.screenPosition,
-            Color.White
-        );
-        Main.spriteBatch.End();
+            foreach(var t in render_queue) {
+                t.DrawTileMask(Main.spriteBatch);
+            }
 
-        SwitchToRenderTarget(MaskTarget);
-        Main.spriteBatch.Begin(
-            SpriteSortMode.Deferred,
-            BlendState.AlphaBlend,
-            SamplerState.PointClamp,
-            DepthStencilState.Default,
-            RasterizerState.CullNone
-        );
-
-        for(int i = 0; i < RenderQueue.Count; i++) {
-            RenderQueue[i].DrawTileMask(Main.spriteBatch);
+            sb.End();
         }
 
-        Main.spriteBatch.End();
-        RenderQueue.Clear();
-
-        static bool SwitchToRenderTarget(RenderTarget2D renderTarget) {
-            GraphicsDevice gD = Main.graphics.GraphicsDevice;
-
-            if(Main.gameMenu || renderTarget is null)
-                return false;
-
-            gD.SetRenderTarget(renderTarget);
-            gD.Clear(Color.Transparent);
-            return true;
-        }
+        render_queue.Clear();
     }
 
-    private void DrawSolidMask(On_Main.orig_DrawProjectiles orig, Main self) {
+    private static void DrawSolidMask(On_Main.orig_DrawProjectiles orig, Main self) {
         orig(self);
 
-        if(!_refreshTarget || MaskTarget == null || SolidTilesTarget == null) {
-            return;
-        }
+        var shader = Assets.Shaders.Pixel.TileMask.CreatePixelPass();
+        
+        var data = IStatic<Buffers>.Instance;
 
-        Effect effect = Assets.Shaders.Pixel.TileMask.Asset.Value;
-
-        if(effect is null) {
-            return;
-        }
-
-        effect.Parameters["mask"].SetValue(SolidTilesTarget);
-
+        shader.Parameters.MaskSampler = new HlslSampler()
+        {
+            Texture = data.SolidTilesTargetLease.Target,
+            Sampler = SamplerState.PointClamp
+        };
+        
         Main.spriteBatch.Begin(
             SpriteSortMode.Immediate,
             BlendState.AlphaBlend,
-            SamplerState.LinearClamp,
+            SamplerState.PointClamp,
             DepthStencilState.Default,
             RasterizerState.CullNone,
-            effect,
+            null,
             Main.GameViewMatrix.TransformationMatrix
         );
+        
+        shader.Apply();
 
-        Main.spriteBatch.Draw(MaskTarget, new Rectangle(0, 0, Main.screenWidth, Main.screenHeight), Color.White);
+        Main.spriteBatch.Draw(data.MaskTargetLease.Target, Vector2.Zero, Color.White);
         Main.spriteBatch.End();
     }
 }

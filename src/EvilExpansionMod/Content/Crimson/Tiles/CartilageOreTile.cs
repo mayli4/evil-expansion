@@ -49,6 +49,8 @@ public class CartilageOreTile : ModTile {
 
         Main.tileMerge[Type][ModContent.TileType<OvergrownCorruptAsh>()] = true;
         Main.tileMerge[ModContent.TileType<OvergrownCorruptAsh>()][Type] = true;
+        
+        TileID.Sets.ChecksForMerge[Type] = true;
 
         AddMapEntry(new Color(140, 83, 14), CreateMapEntryName());
 
@@ -58,6 +60,9 @@ public class CartilageOreTile : ModTile {
             return false;
         });
     }
+    
+    public override void ModifyFrameMerge(int i, int j, ref int up, ref int down, ref int left, ref int right, ref int upLeft, ref int upRight, ref int downLeft, ref int downRight)
+        => WorldGen.TileMergeAttempt(-2, ModContent.TileType<CrimsonAsh>(), ref up, ref down, ref left, ref right, ref upLeft, ref upRight, ref downLeft, ref downRight);
     
     public override void KillTile(int i, int j, ref bool fail, ref bool effectOnly, ref bool noItem) {
         var tile = Main.tile[i, j];

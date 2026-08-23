@@ -209,7 +209,6 @@ public class MarrowEyeNPC : ModNPC {
             case State.Idle:
                 LazerProjectile = null;
 
-                _lookDirection *= 0.95f;
                 NPC.frameCounter = Math.Max(NPC.frameCounter - 0.1, 0);
 
                 NPC.TargetClosest();
@@ -222,7 +221,7 @@ public class MarrowEyeNPC : ModNPC {
                     break;
                 }
 
-                _lookRotation = Utils.AngleLerp(_lookRotation, _directionToTarget.ToRotation(), 0.04f);
+                _lookRotation = Utils.AngleLerp(_lookRotation, _directionToTarget.ToRotation(), 0.4f);
                 NPC.frameCounter = Math.Min(NPC.frameCounter + 0.1, 2d);
 
                 if(NPC.frameCounter == 2d) State = State.Targeting;

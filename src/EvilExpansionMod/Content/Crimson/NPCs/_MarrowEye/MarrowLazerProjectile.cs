@@ -95,10 +95,12 @@ public class MarrowLazerProjectile : ModProjectile {
 
     public override bool PreDraw(ref Color lightColor) {
         var rotation = Projectile.velocity.ToRotation();
+
         var glowTexture = Assets.Images.Sample.Glow1.Asset.Value;
+        var glowBallTexture = Assets.Images.Sample.GlowBall.Asset.Value;
         var starTexture = Assets.Images.Sample.Star1.Asset.Value;
 
-        var texture0 = Assets.Images.Sample.Noise2.Asset.Value;
+        var texture0 = Assets.Images.Sample.DissolveNoise.Asset.Value;
         var texture1 = Assets.Images.Sample.Noise1.Asset.Value;
         var effect = Assets.Shaders.Pixel.MarrowLaser.Asset.Value;
 
@@ -109,9 +111,9 @@ public class MarrowLazerProjectile : ModProjectile {
                 ("uColor1", _secondaryColor),
                 ("uColor2", _mainColor),
                 ("uColor3", _highlightColor),
-                ("uTime", -Main.GameUpdateCount * 0.01f),
-                ("uStepThreshold", 0.02f),
-                ("uStepColor", 0.14f)
+                ("uTime", -Main.GameUpdateCount * 0.008f),
+                ("uStepThreshold", 0.02f + 0.05f * Scale),
+                ("uStepColor", 0.16f)
             )
             .SetTexture(1, texture1)
             .SetBlendState(BlendState.AlphaBlend)
@@ -122,7 +124,7 @@ public class MarrowLazerProjectile : ModProjectile {
                 Color = Color.White,
                 Rotation = rotation,
                 Origin = new Vector2(0, texture0.Height / 2f),
-                Scale = new Vector2(Projectile.scale / texture0.Width, Scale * 20f / texture0.Height),
+                Scale = new Vector2(Projectile.scale / texture0.Width, Scale * 22f / texture0.Height),
                 SpriteEffects = SpriteEffects.None,
                 Effect = effect,
             })
@@ -151,8 +153,20 @@ public class MarrowLazerProjectile : ModProjectile {
             null,
             _highlightColor,
             0.32f + Main.rand.NextFloat() * 0.1f,
-            glowTexture.Size() / 2f,
-            Scale * 0.1f + Main.rand.NextFloat() * 0.15f,
+            starTexture.Size() / 2f,
+            Scale * 0.2f + Main.rand.NextFloat() * 0.25f,
+            SpriteEffects.None,
+            0f
+        );
+
+        Main.spriteBatch.Draw(
+            glowBallTexture,
+            Projectile.position - Main.screenPosition,
+            null,
+            _highlightColor * 0.25f,
+            0.32f + Main.rand.NextFloat() * 0.1f,
+            glowBallTexture.Size() / 2f,
+            Scale * 0.3f + Main.rand.NextFloat() * 0.05f,
             SpriteEffects.None,
             0f
         );

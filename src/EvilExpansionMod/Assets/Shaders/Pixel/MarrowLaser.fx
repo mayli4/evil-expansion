@@ -28,8 +28,8 @@ float4 PS(QuadPSInput input) : COLOR0 {
 
     float stepValue = 1 - sinY
         + uStepThreshold
-        + sin(uv.x * 3 + uTime * 0.4) * 0.06
-        + sin(uv.x * 7.3 + 0.3789457 + uTime * 0.65) * 0.08;
+        + sin(uv.x * 3 + uTime * 2.4) * 0.06
+        + sin(uv.x * 7.3 + 0.3789457 + uTime * 3.65) * 0.08;
 
     return lerp(uColor3, lerp(uColor1, uColor2, step(s - uStepColor, stepValue)), step(s - uStepColor - 0.1, stepValue)) * step(stepValue, s);
 }

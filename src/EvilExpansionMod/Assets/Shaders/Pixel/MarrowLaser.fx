@@ -16,18 +16,22 @@ float4 uColor2;
 float4 uColor3;
 
 float4 PS(QuadPSInput input) : COLOR0 {
-    float s0 = tex2D(uImage0, float2((input.uv.x - uTime) * uLength / 1000, input.uv.y));
-    float s1 = tex2D(uImage1, float2((input.uv.x + uTime * 0.85) * uLength / 1000, input.uv.y));
+    float2 uv = input.uv;
+
+    float s0 = tex2D(uImage0, float2(uv.x * uLength / 1000 - uTime, uv.y));
+    float s1 = tex2D(uImage1, float2(uv.x * uLength / 1000 + uTime * 0.85, uv.y));
 
     float s = s0 * 0.5 + s1 * 0.5;
-    float sinY = sin(input.uv.y * PI);
-    float sinX = sin(input.uv.x * PI);
-    float stepValue = 1 - sinY
-        + uStepThreshold 
-        + sin(input.uv.x * 3 + uTime * 0.4) * 0.06
-        + sin(input.uv.x * 7.3 + 0.3789457 + uTime * 0.65) * 0.08;
 
-    return lerp(uColor3, lerp(uColor1, uColor2, step(s - uStepColor, stepValue)), 1 - sinY) * step(stepValue, s);
+    float sinY = sin(uv.y * PI);
+    float sinX = sin(uv.x * PI);
+
+    float stepValue = 1 - sinY
+        + uStepThreshold
+        + sin(uv.x * 3 + uTime * 0.4) * 0.06
+        + sin(uv.x * 7.3 + 0.3789457 + uTime * 0.65) * 0.08;
+
+    return lerp(uColor3, lerp(uColor1, uColor2, step(s - uStepColor, stepValue)), step(s - uStepColor - 0.1, stepValue)) * step(stepValue, s);
 }
 
 technique {

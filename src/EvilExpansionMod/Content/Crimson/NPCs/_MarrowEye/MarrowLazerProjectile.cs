@@ -1,10 +1,13 @@
-﻿using EvilExpansionMod.Common.Graphics;
+﻿using Daybreak.Common.Rendering;
+using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Crimson;
@@ -13,6 +16,21 @@ public class MarrowLazerProjectile : ModProjectile {
     public override string Texture => Assets.Images.Crimson.NPCs.MarrowEye.MarrowEyeNPC.KEY;
 
     public static readonly int DisapearFrames = 16;
+
+    Color _mainColor = new(63, 28, 72);
+    Color _secondaryColor = new(253, 60, 179);
+    Color _highlightColor = new(255, 155, 220);
+
+    float Scale {
+        get {
+            var scale = 0.2f;
+            if(Projectile.timeLeft <= DisapearFrames * 2f) {
+                scale += MathF.Sin(MathF.PI * Projectile.timeLeft / (DisapearFrames * 2f)) * 0.8f;
+            }
+
+            return scale;
+        }
+    }
 
     public override void SetDefaults() {
         Projectile.width = 0;
@@ -30,7 +48,9 @@ public class MarrowLazerProjectile : ModProjectile {
 
     public override void AI() {
         var hitPoint = Projectile.position + Projectile.velocity * 8f;
-        for(var i = 0; i < 200; i++) {
+        var lightColor = _secondaryColor * 0.005f * Scale;
+
+        for(var i = 0; i < 400; i++) {
             if(Collision.SolidCollision(hitPoint, 1, 1)) break;
 
             var foundPlayerCollision = false;
@@ -51,65 +71,46 @@ public class MarrowLazerProjectile : ModProjectile {
                 }
             }
 
+            Lighting.AddLight(hitPoint, lightColor.R, lightColor.G, lightColor.B);
+
             if(foundPlayerCollision) break;
             hitPoint += Projectile.velocity * 8f;
         }
 
         Projectile.scale = (hitPoint - Projectile.position).Length();
+
+        if (Projectile.timeLeft < DisapearFrames * 2 && Main.rand.NextBool(5)) {
+             var ember = GlowEmberParticle.NewParticle(
+                hitPoint + Main.rand.NextVector2Unit() * 5f,
+                Main.rand.NextVector2Unit() * Main.rand.NextFloat(4.2f, 7.5f),
+                Main.rand.NextFloat(0.25f, 1.5f),
+                _secondaryColor,
+                _highlightColor);
+
+            ember.Randomness *= 2f;
+            ember.LossPerSecond *= 2f;
+            ParticleEngine.PARTICLES.Add(ember);
+        }
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var scale = 0.2f;
-        if(Projectile.timeLeft <= DisapearFrames * 2f) {
-            scale += MathF.Sin(MathF.PI * Projectile.timeLeft / (DisapearFrames * 2f)) * 0.8f;
-        }
-
         var rotation = Projectile.velocity.ToRotation();
-        var glowTexture = Assets.Images.Sample.SmokeGlow.Asset.Value;
+        var glowTexture = Assets.Images.Sample.Glow1.Asset.Value;
+        var starTexture = Assets.Images.Sample.Star1.Asset.Value;
 
-        var mainColor = new Color(63, 28, 72);
-        var secondaryColor = new Color(253, 60, 179);
-        var highlightColor = new Color(255, 155, 220);
-
-        var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
-        Main.spriteBatch.Draw(
-            glowTexture,
-            Projectile.position - Main.screenPosition,
-            null,
-            mainColor * 0.6f,
-            rotation,
-            glowTexture.Size() / 2f,
-            0.2f * scale,
-            SpriteEffects.None,
-            0f
-        );
-
-        Main.spriteBatch.Draw(
-            glowTexture,
-            Projectile.position + Projectile.velocity * Projectile.scale / 2f - Main.screenPosition,
-            null,
-            mainColor * 0.8f,
-            rotation,
-            glowTexture.Size() / 2f,
-            new Vector2(0.6f + Projectile.scale / glowTexture.Width, scale * 0.175f),
-            SpriteEffects.None,
-            0f
-        );
-        Main.spriteBatch.EndBegin(snapshot);
-
-        var texture0 = Assets.Images.Sample.PerlinNoise.Asset.Value;
-        var texture1 = Assets.Images.Sample.Noise2.Asset.Value;
+        var texture0 = Assets.Images.Sample.Noise2.Asset.Value;
+        var texture1 = Assets.Images.Sample.Noise1.Asset.Value;
         var effect = Assets.Shaders.Pixel.MarrowLaser.Asset.Value;
 
         Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
             .SetEffectParams(
                 effect,
                 ("uLength", Projectile.scale),
-                ("uColor1", secondaryColor),
-                ("uColor2", mainColor),
-                ("uColor3", highlightColor),
-                ("uTime", -Main.GameUpdateCount * 0.025f),
-                ("uStepThreshold", 0.25f),
+                ("uColor1", _secondaryColor),
+                ("uColor2", _mainColor),
+                ("uColor3", _highlightColor),
+                ("uTime", -Main.GameUpdateCount * 0.01f),
+                ("uStepThreshold", 0.02f),
                 ("uStepColor", 0.14f)
             )
             .SetTexture(1, texture1)
@@ -121,13 +122,66 @@ public class MarrowLazerProjectile : ModProjectile {
                 Color = Color.White,
                 Rotation = rotation,
                 Origin = new Vector2(0, texture0.Height / 2f),
-                Scale = new Vector2(Projectile.scale / texture0.Width, scale * 20f / texture0.Height),
+                Scale = new Vector2(Projectile.scale / texture0.Width, Scale * 20f / texture0.Height),
                 SpriteEffects = SpriteEffects.None,
                 Effect = effect,
             })
-            .ApplyBloom(2f)
+            .ApplyOutline(_mainColor)
+            .ApplyBloom(1.5f)
             .End();
 
+        Main.spriteBatch.End(out var ss);
+        Main.spriteBatch.Begin(ss with { BlendState = BlendState.Additive });
+
+        Main.spriteBatch.Draw(
+            glowTexture,
+            Projectile.position - Main.screenPosition,
+            null,
+            _highlightColor * 0.6f,
+            rotation,
+            glowTexture.Size() / 2f,
+            Scale * 0.1f + Main.rand.NextFloat() * 0.05f,
+            SpriteEffects.None,
+            0f
+        );
+
+        Main.spriteBatch.Draw(
+            starTexture,
+            Projectile.position - Main.screenPosition,
+            null,
+            _highlightColor,
+            0.32f + Main.rand.NextFloat() * 0.1f,
+            glowTexture.Size() / 2f,
+            Scale * 0.1f + Main.rand.NextFloat() * 0.15f,
+            SpriteEffects.None,
+            0f
+        );
+
+        Main.spriteBatch.Draw(
+            glowTexture,
+            Projectile.position + Projectile.velocity * Projectile.scale / 2f - Main.screenPosition,
+            null,
+            _highlightColor * 0.3f,
+            rotation,
+            glowTexture.Size() / 2f,
+            new Vector2(0.6f + Projectile.scale / glowTexture.Width, Scale * 0.175f),
+            SpriteEffects.None,
+            0f
+        );
+
+        Main.spriteBatch.Draw(
+            glowTexture,
+            Projectile.position + Projectile.velocity * Projectile.scale - Main.screenPosition,
+            null,
+            _highlightColor * 0.6f,
+            rotation,
+            glowTexture.Size() / 2f,
+            Scale * 0.1f + Main.rand.NextFloat() * 0.05f,
+            SpriteEffects.None,
+            0f
+        );
+
+        Main.spriteBatch.EndBegin(ss);
 
         return false;
     }

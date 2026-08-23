@@ -27,13 +27,13 @@ public class IchorLavaStyle : ModLavaStyle {
     public override int DebuffType() => BuffID.Ichor;
 
     public override void SelectLightColor(ref Color initialLightColor) {
-        initialLightColor = Color.Yellow;
+        initialLightColor = Color.DarkGoldenrod;
         initialLightColor.A = 255;
     }
 
     public override void ModifyVertexColors(int x, int y, ref VertexColors colors) {
         var colorA = Color.Yellow;
-        var colorB = new Color(250, 195, 0, 255);
+        var colorB = new Color(250, 145, 0, 255);
 
         var distanceFromBottom = Math.Max(Main.maxTilesY - y - 88f, 0f);
         var range = 35f;

@@ -27,7 +27,7 @@ public class UnderworldCorruptLavaStyle : ModLavaStyle {
     public override int DebuffType() => BuffID.CursedInferno;
 
     public override void SelectLightColor(ref Color initialLightColor) {
-        initialLightColor = Color.Yellow;
+        initialLightColor = Color.Yellow * 0.7f;
         initialLightColor.A = 200;
     }
 

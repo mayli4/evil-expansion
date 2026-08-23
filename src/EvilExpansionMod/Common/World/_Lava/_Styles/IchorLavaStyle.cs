@@ -23,6 +23,8 @@ public class IchorLavaStyle : ModLavaStyle {
     public override int GetSplashDust() => DustID.Ichor;
 
     public override int GetDropletGore() => 0;
+    
+    public override int DebuffType() => BuffID.Ichor;
 
     public override void SelectLightColor(ref Color initialLightColor) {
         initialLightColor = Color.Yellow;

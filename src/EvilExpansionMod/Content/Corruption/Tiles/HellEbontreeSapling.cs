@@ -31,7 +31,7 @@ public class HellEbontreeSapling : ModTile {
         TileObjectData.newTile.StyleHorizontal = true;
         TileObjectData.newTile.DrawFlipHorizontal = true;
         TileObjectData.newTile.LavaPlacement = LiquidPlacement.Allowed;
-        TileObjectData.newTile.LavaDeath = true;
+        TileObjectData.newTile.LavaDeath = false;
         TileObjectData.newTile.RandomStyleRange = 3;
         TileObjectData.newTile.StyleMultiplier = 3;
 

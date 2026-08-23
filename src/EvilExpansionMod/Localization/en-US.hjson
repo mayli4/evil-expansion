@@ -478,5 +478,12 @@ Mods: {
 				Description: Mods.EvilExpansionMod.Buffs.RibcagedNPCDebuff.Description
 			}
 		}
+
+		AuthorTags: {
+			Mags.DisplayName: salem witchfinder
+			Tobias.DisplayName: Tobias
+			Scss.DisplayName: Scss
+			Waff.DisplayName: Waff
+		}
 	}
 }

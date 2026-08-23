@@ -1,6 +1,6 @@
 ﻿displayName = Evil Expansion
 author = Tobias, mathica, sucss
-version = 0.1.0
+version = 1.0.0
 hideCode = false
 hideResources = true
 includeSource = true

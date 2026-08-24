@@ -35,6 +35,7 @@ public class MarrowEyeNPC : ModNPC {
         set => NPC.ai[1] = value?.Projectile.whoAmI ?? -1;
     }
 
+    float _lookRotation;
     Vector2 _lookDirection;
     Vector2 _eyePosition;
 
@@ -202,11 +203,12 @@ public class MarrowEyeNPC : ModNPC {
         _distanceToTarget = NPC.Center.Distance(Target.Center);
         _directionToTarget = (Target.Center - NPC.Center) / _distanceToTarget;
 
+        _lookDirection = _lookRotation.ToRotationVector2();
+
         switch(State) {
             case State.Idle:
                 LazerProjectile = null;
 
-                _lookDirection *= 0.95f;
                 NPC.frameCounter = Math.Max(NPC.frameCounter - 0.1, 0);
 
                 NPC.TargetClosest();
@@ -219,7 +221,7 @@ public class MarrowEyeNPC : ModNPC {
                     break;
                 }
 
-                LookAtTarget();
+                _lookRotation = Utils.AngleLerp(_lookRotation, _directionToTarget.ToRotation(), 0.4f);
                 NPC.frameCounter = Math.Min(NPC.frameCounter + 0.1, 2d);
 
                 if(NPC.frameCounter == 2d) State = State.Targeting;
@@ -230,7 +232,10 @@ public class MarrowEyeNPC : ModNPC {
                     break;
                 }
 
-                LookAtTarget();
+                _lookRotation = Utils.AngleTowards(
+                    _lookRotation,
+                    _directionToTarget.ToRotation(),
+                    0.01f);
 
                 if(LazerProjectile is MarrowLazerProjectile lazerProjectile) {
                     lazerProjectile.Projectile.position = _eyePosition;
@@ -264,10 +269,6 @@ public class MarrowEyeNPC : ModNPC {
 
     bool IsTargetValid(float distance) {
         return _distanceToTarget < distance && Collision.CanHit(_eyePosition, 1, 1, Target.Center, 1, 1);
-    }
-
-    void LookAtTarget() {
-        _lookDirection = Vector2.Lerp(_lookDirection, _directionToTarget, 0.04f);
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {

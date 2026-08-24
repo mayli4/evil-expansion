@@ -1,5 +1,6 @@
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Dusts;
+using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -26,7 +27,7 @@ public sealed class PusGlob : ModProjectile {
         Projectile.penetrate = 1;
         Projectile.tileCollide = true;
         Projectile.ignoreWater = false;
-        Projectile.timeLeft = 180;
+        Projectile.timeLeft = 1180;
         Projectile.alpha = 0;
     }
 
@@ -40,7 +41,7 @@ public sealed class PusGlob : ModProjectile {
             Projectile.alpha = (int)MathHelper.Lerp(0, 255, (30f - Projectile.timeLeft) / 30f);
         }
 
-        _trailPositions ??= [.. Enumerable.Repeat(Projectile.Center, 7)];
+        _trailPositions ??= [.. Enumerable.Repeat(Projectile.Center, 17)];
         var i = _trailPositions.Length - 1;
         while(i > 0) {
             _trailPositions[i] = _trailPositions[i - 1];
@@ -84,14 +85,14 @@ public sealed class PusGlob : ModProjectile {
                 trailEffect,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
                 ("mat", Graphics.WorldTransformMatrix),
-                ("stepY", 0.25f),
-                ("scale", 0.25f),
+                ("stepY", 0.15f),
+                ("scale", 0.5f),
                 ("texture1", Assets.Images.Sample.Pebbles.Asset.Value),
-                ("texture2", Assets.Images.Sample.Noise2.Asset.Value)
+                ("texture2", Assets.Images.Sample.Pebbles.Asset.Value)
             )
             .DrawTrail(
                 _trailPositions,
-                static _ => 14f,
+                static _ => 20f,
                 _ => color,
                 trailEffect
             )
@@ -101,9 +102,10 @@ public sealed class PusGlob : ModProjectile {
                 Position = Projectile.Center,
                 Color = color,
                 Origin = 16f * Vector2.One,
-                Scale = Vector2.One * 0.3f,
+                Scale = Vector2.One * 0.5f,
             })
             .ApplyOutline(outlineColor)
+            .ApplyBloom()
             .End();
 
         return false;
@@ -142,14 +144,19 @@ public sealed class PusCreepProjectile : ModProjectile, ITileMask {
             Projectile.alpha = 0;
         }
 
-        if(Main.rand.NextBool(60)) {
-            Dust.NewDustPerfect(
-                Projectile.position,
-                ModContent.DustType<PusGas>(),
-                Vector2.Zero,
-                100,
-                new Color(98, 90, 40)
+        if(Main.rand.NextBool(4)) {
+            var particle = SmokeParticle.Pool.RequestParticle();
+
+            Vector2 randomVelocity = new Vector2(
+                Main.rand.NextFloat(-1.5f, 1.5f),
+                Main.rand.NextFloat(-2f, -0.5f)
             );
+
+            Color smokeColor = Color.Lerp(Color.White, Color.Black, Main.rand.NextFloat());
+            float scale = Main.rand.NextFloat(0.1f, 1.2f);
+            int lifetime = Main.rand.Next(40, 90);
+
+            particle.Spawn(Projectile.Center + Main.rand.NextVector2Circular(15, 45), randomVelocity, smokeColor, scale, lifetime);
         }
     }
 

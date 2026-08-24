@@ -197,7 +197,7 @@ public class PusImpNPC : ModNPC {
             var tileY = (int)(teleportY / 16f);
 
             for(int i = 0; i < 20; i++) {
-                if(WorldGen.InWorld(tileX, tileY + i) && Main.tile[tileX, tileY + i].HasTile && Main.tileSolid[Main.tile[tileX, tileY + i].TileType]) {
+                if(WorldGen.InWorld(tileX, tileY + i) && Main.tile[tileX, tileY + i].HasTile && Main.tileSolid[Main.tile[tileX, tileY + i].TileType] && Main.tile[tileX, tileY + i].LiquidAmount == 0) {
                     teleportPosition = new Vector2(tileX * 16f + NPC.width / 2, (tileY + i) * 16f - NPC.height);
 
                     foundSpot = true;

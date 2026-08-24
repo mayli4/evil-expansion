@@ -181,7 +181,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                 zero.Y -= 10f;
                 break;
             case 2:
-                zero.Y -= 20;
+                zero.Y += 170;
                 zero.Y -= heightChange * 0.5f;
                 num8 = newScaleFactorForLayer2;
                 break;

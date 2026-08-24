@@ -90,7 +90,9 @@ public class PolypOreTile : ModTile {
             case BiomeConversionID.Corruption:
                 WorldGen.ConvertTile(i, j, ModContent.TileType<PolypOreTile>());
                 return;
-
+            case BiomeConversionID.Crimson:
+                WorldGen.ConvertTile(i, j, ModContent.TileType<CartilageOreTile>());
+                return;
         }
     }
 
@@ -102,7 +104,6 @@ public class PolypOreTile : ModTile {
     public override void EmitParticles(int i, int j, Tile tile, short tileFrameX, short tileFrameY, Color tileLight, bool visible) {
         if (Main.rand.NextBool(200)){
             Dust.NewDust(new Vector2(i * 16, j * 16), 5, 5, DustID.Demonite);
-            Dust.NewDust(new Vector2(i * 16, j * 16), 5, 5, DustID.CursedTorch);
         }
     }
 }

@@ -1,3 +1,4 @@
+using EvilExpansionMod.Content.Corruption;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -13,12 +14,18 @@ public class CrimsonAsh : ModTile {
         Main.tileBlockLight[Type] = true;
         Main.tileSolid[Type] = true;
 
+        TileID.Sets.BlockMergesWithMergeAllBlockOverride[Type] = true;
         Main.tileMerge[Type][TileID.Ash] = true;
         Main.tileMerge[TileID.Ash][Type] = true;
+        Main.tileMerge[Type][ModContent.TileType<CorruptAsh>()] = true;
+        Main.tileMerge[ModContent.TileType<CorruptAsh>()][Type] = true;
         Main.tileMerge[Type][TileID.ObsidianBrick] = true;
         Main.tileMerge[TileID.ObsidianBrick][Type] = true;
         Main.tileMerge[Type][TileID.HellstoneBrick] = true;
         Main.tileMerge[TileID.HellstoneBrick][Type] = true;
+
+        Main.tileMerge[Type][ModContent.TileType<CartilageOreTile>()] = true;
+        Main.tileMerge[ModContent.TileType<CartilageOreTile>()][Type] = true;
 
         DustType = DustID.Crimson;
 
@@ -48,16 +55,15 @@ public class CrimsonAsh : ModTile {
             case BiomeConversionID.Crimson:
                 WorldGen.ConvertTile(i, j, ModContent.TileType<CrimsonAsh>());
                 return;
+            case BiomeConversionID.Corruption:
+                WorldGen.ConvertTile(i, j, ModContent.TileType<CorruptAsh>());
+                return;
 
         }
     }
 
     public override void RandomUpdate(int i, int j) {
         WorldGen.SpreadInfectionToNearbyTile(i, j, BiomeConversionID.Crimson);
-    }
-
-    public override void ModifyFrameMerge(int i, int j, ref int up, ref int down, ref int left, ref int right, ref int upLeft, ref int upRight, ref int downLeft, ref int downRight) {
-        WorldGen.TileMergeAttempt(-2, TileID.Ash, ref up, ref down, ref left, ref right, ref upLeft, ref upRight, ref downLeft, ref downRight);
     }
 }
 

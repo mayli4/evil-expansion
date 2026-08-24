@@ -486,6 +486,9 @@ Mods: {
 			Tobias.DisplayName: Tobias
 			Scss.DisplayName: Scss
 			Waff.DisplayName: Waff
+			Jax.DisplayName: JAX
+			Moonburn.DisplayName: Moonburn
+			Roton.DisplayName: Roton
 		}
 	}
 }

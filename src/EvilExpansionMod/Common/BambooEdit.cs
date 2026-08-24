@@ -1,3 +1,5 @@
+using Daybreak.Common.Features.Hooks;
+using JetBrains.Annotations;
 using MonoMod.Cil;
 using System;
 using Terraria;
@@ -6,20 +8,19 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Tiles;
 
-internal class BambooSystem : ILoadable {
+[UsedImplicitly]
+internal sealed class BambooEdits {
     public static bool[] CanGrowBamboo = TileID.Sets.Factory.CreateBoolSet(false, TileID.JungleGrass);
     
+    [OnLoad]
     public void Load(Mod mod) {
         IL_WorldGen.CheckBamboo += WorldGen_CheckBamboo;
         IL_WorldGen.PlaceBamboo += WorldGen_PlaceBamboo;
         IL_WorldGen.UpdateWorld_OvergroundTile += WorldGen_UpdateWorld_OvergroundTile;
     }
 
-    public void Unload() { }
-
     private void WorldGen_CheckBamboo(ILContext il) {
         ILCursor c = new ILCursor(il);
-
         DoSwap(c);
     }
 
@@ -50,13 +51,13 @@ internal class BambooSystem : ILoadable {
     }
 
     private int SwapDelegate(int tileType) => CanGrowBamboo[tileType] ? TileID.JungleGrass : tileType;
-}
-
-internal sealed class BambooGlobalTile : GlobalTile {
-    public override void SetStaticDefaults() {
-        for(int i = 0; i < TileLoader.TileCount; i++) {
-            if(i == TileID.CorruptJungleGrass || i == TileID.CrimsonJungleGrass) {
-                BambooSystem.CanGrowBamboo[i] = true;
+    
+    internal sealed class BambooGlobalTile : GlobalTile {
+        public override void SetStaticDefaults() {
+            for(int i = 0; i < TileLoader.TileCount; i++) {
+                if(i == TileID.CorruptJungleGrass || i == TileID.CrimsonJungleGrass) {
+                    CanGrowBamboo[i] = true;
+                }
             }
         }
     }

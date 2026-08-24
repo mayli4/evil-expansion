@@ -103,21 +103,34 @@ public class LamethrowerHeldProjectile : ModProjectile {
             FlameWidth * FlameScale
         );
 
-        foreach(var tile in tiles[..count]) {
-            if(
+        foreach (var tile in tiles[..count]) {
+            if (
                 Main.tile[tile.X, tile.Y].HasTile
                 && Main.tile[tile.X, tile.Y].BlockType == BlockType.Solid
                 && !Main.tile[tile.X, tile.Y - 1].HasTile
-                && Main.rand.NextFloat() < 0.05f
+                && Main.rand.NextFloat() < 0.015f
             ) {
-                Projectile.NewProjectile(
-                    Projectile.GetSource_FromAI(),
-                    tile.ToVector2() * 16f + Vector2.UnitX * 8f,
-                    Vector2.Zero,
-                    ModContent.ProjectileType<LingeringIchorProjectile>(),
-                    Projectile.damage,
-                    0f
-                );
+                Vector2 spawnPos = tile.ToVector2() * 16f + Vector2.UnitX * 8f;
+
+                bool alreadyExists = false;
+                for (int i = 0; i < Main.maxProjectiles; i++) {
+                    Projectile p = Main.projectile[i];
+                    if (p.active && p.type == ModContent.ProjectileType<LingeringIchorProjectile>() && Vector2.DistanceSquared(p.position, spawnPos) < 16f * 16f) {
+                        alreadyExists = true;
+                        break;
+                    }
+                }
+
+                if (!alreadyExists) {
+                    Projectile.NewProjectile(
+                        Projectile.GetSource_FromAI(),
+                        spawnPos,
+                        Vector2.Zero,
+                        ModContent.ProjectileType<LingeringIchorProjectile>(),
+                        Projectile.damage,
+                        0f
+                    );
+                }
             }
         }
 

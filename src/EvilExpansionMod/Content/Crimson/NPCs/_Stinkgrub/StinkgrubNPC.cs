@@ -75,7 +75,7 @@ public sealed class StinkgrubNPC : ModNPC {
     }
 
     public override void OnSpawn(IEntitySource source) {
-        if(Main.rand.NextBool(5)) {
+        if (Main.rand.NextBool(4, 5)) { // 80/20
             int npcIndex = NPC.NewNPC(
                 NPC.GetSource_FromThis(),
                 (int)NPC.Center.X,
@@ -139,12 +139,9 @@ public sealed class StinkgrubNPC : ModNPC {
             float moveSpeed = 0.8f;
             float acceleration = 0.05f;
 
-            if(Math.Abs(NPC.Center.X - Target.Center.X) > NPC.width * 3) {
-                NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * moveSpeed, acceleration);
-            }
-            else {
-                NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * Main.rand.NextFloat(-0.5f, 0.5f), acceleration);
-            }
+            NPC.velocity.X = Math.Abs(NPC.Center.X - Target.Center.X) > NPC.width * 3 
+                ? MathHelper.Lerp(NPC.velocity.X, NPC.direction * moveSpeed, acceleration) 
+                : MathHelper.Lerp(NPC.velocity.X, NPC.direction * Main.rand.NextFloat(-0.5f, 0.5f), acceleration);
 
             Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
 
@@ -162,9 +159,8 @@ public sealed class StinkgrubNPC : ModNPC {
 
     public override void OnKill() {
         if(IsPusCarrier) {
-            NPC pusBottleNPC;
             if(PusBottleNPCID >= 0 && PusBottleNPCID < Main.maxNPCs) {
-                pusBottleNPC = Main.npc[(int)PusBottleNPCID];
+                NPC pusBottleNPC = Main.npc[(int)PusBottleNPCID];
                 if(pusBottleNPC.active && pusBottleNPC.type == ModContent.NPCType<PusBottleNPC>() && (int)pusBottleNPC.ai[0] == NPC.whoAmI) {
                     pusBottleNPC.ai[1] = 1;
                     pusBottleNPC.netUpdate = true;

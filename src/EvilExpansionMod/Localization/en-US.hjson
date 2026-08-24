@@ -407,6 +407,8 @@ Mods: {
 			LingeringIchorProjectile.DisplayName: Lingering Ichor
 			GulpyYoyoProjectile.DisplayName: Gulpy Yoyo
 			GulpyHandProjectile.DisplayName: Gulpy Hand
+			SpiritExplosion.DisplayName: Spirit Explosion
+			SpiritContactExplosion.DisplayName: Spirit Contact Explosion
 		}
 
 		Biomes: {

@@ -18,7 +18,7 @@ public class MeatPrisonHead : ModItem {
         Item.height = 20;
         Item.value = Item.sellPrice(silver: 90);
         Item.rare = ItemRarityID.LightRed;
-        Item.defense = 6;
+        Item.defense = 9;
 
         Item.DamageType = DamageClass.Summon;
     }
@@ -32,7 +32,7 @@ public class MeatPrisonHead : ModItem {
     }
 
     public override void UpdateEquip(Player player) {
-        player.GetDamage(DamageClass.Summon) += 0.03f;
+        player.whipRangeMultiplier += 0.05f;
         player.maxMinions += 1;
     }
 
@@ -95,7 +95,7 @@ public class MeatPrisonLegs : ModItem {
         Item.height = 20;
         Item.value = Item.sellPrice(silver: 60);
         Item.rare = ItemRarityID.LightRed;
-        Item.defense = 8;
+        Item.defense = 5;
 
         Item.DamageType = DamageClass.Summon;
     }

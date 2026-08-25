@@ -82,7 +82,9 @@ public class CartilageOreTile : ModTile {
             case BiomeConversionID.Crimson:
                 WorldGen.ConvertTile(i, j, ModContent.TileType<CartilageOreTile>());
                 return;
-
+            case BiomeConversionID.Corruption:
+                WorldGen.ConvertTile(i, j, ModContent.TileType<PolypOreTile>());
+                return;
         }
     }
 

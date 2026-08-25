@@ -181,12 +181,12 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                 zero.Y -= 10f;
                 break;
             case 2:
-                zero.Y -= 20;
+                zero.Y += 170;
                 zero.Y -= heightChange * 0.5f;
                 num8 = newScaleFactorForLayer2;
                 break;
             case 3:
-                zero.Y += 150f;
+                zero.Y += 90f;
                 break;
         }
 
@@ -230,6 +230,9 @@ public class UnderworldCrimsonBGSystem : ModSystem {
         for(int i = startTileX - 2; i <= startTileX + 4 + numTilesToDraw; i++) {
             Color drawColor = Color.White * _fadeOpacity;
         
+            Main.spriteBatch.End(out var ss);
+            Main.spriteBatch.Begin(ss with { BlendState = BlendState.AlphaBlend });
+            
             Main.spriteBatch.Draw(
                 value,
                 drawPos,
@@ -241,6 +244,8 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                 SpriteEffects.None,
                 0f
             );
+            
+            Main.spriteBatch.Restart(ss);
 
             if(isGradient || textureArrayIndex == 1) {
                 int bottomY = (int)(drawPos.Y + value2.Height * num8);

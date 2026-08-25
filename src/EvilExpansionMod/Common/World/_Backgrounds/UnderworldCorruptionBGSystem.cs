@@ -179,7 +179,7 @@ internal sealed class UnderworldCorruptionBgSystem : ModSystem {
                 zero.Y += 240f;
                 break;
             case 4:
-                zero.Y += 250f;
+                zero.Y += 150f;
                 break;
         }
 

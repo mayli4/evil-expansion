@@ -40,8 +40,8 @@ public class PusImpNPC : ModNPC {
     private const int teleport_cooldown = 60 * 4;
 
 
-    private int _attackCooldownTimer;
-    private int _teleportCooldownTimer;
+    private int attackCooldownTimer;
+    private int teleportCooldownTimer;
 
     public override string Texture => Assets.Images.Crimson.NPCs.PusImp.PusImpNPC.KEY;
 
@@ -90,8 +90,8 @@ public class PusImpNPC : ModNPC {
             return;
         }
 
-        if(_attackCooldownTimer > 0) _attackCooldownTimer--;
-        if(_teleportCooldownTimer > 0) _teleportCooldownTimer--;
+        if(attackCooldownTimer > 0) attackCooldownTimer--;
+        if(teleportCooldownTimer > 0) teleportCooldownTimer--;
 
         switch(CurrentState) {
             case State.Idle:
@@ -143,17 +143,17 @@ public class PusImpNPC : ModNPC {
         NPC.velocity.X = 0;
 
         if(Timer >= Main.rand.Next(120, 240)) {
-            var canAttack = _attackCooldownTimer <= 0;
-            var canTeleport = _teleportCooldownTimer <= 0;
+            var canAttack = attackCooldownTimer <= 0;
+            var canTeleport = teleportCooldownTimer <= 0;
             var lineOfSight = Collision.CanHitLine(NPC.position, NPC.width, NPC.height, Target.position, Target.width, Target.height);
 
             if(canAttack && lineOfSight && Main.rand.NextBool(2)) {
                 ChangeState(State.Spitting);
-                _attackCooldownTimer = spit_cooldown;
+                attackCooldownTimer = spit_cooldown;
             }
             else if(canTeleport) {
                 ChangeState(State.Disintegrating);
-                _teleportCooldownTimer = teleport_cooldown;
+                teleportCooldownTimer = teleport_cooldown;
             }
             else {
                 Timer = 0;
@@ -171,7 +171,7 @@ public class PusImpNPC : ModNPC {
             ChangeState(State.Reappearing);
         }
     }
-
+ 
     private void Unmelt() {
         Timer++;
         NPC.velocity.X = 0;
@@ -197,7 +197,11 @@ public class PusImpNPC : ModNPC {
             var tileY = (int)(teleportY / 16f);
 
             for(int i = 0; i < 20; i++) {
-                if(WorldGen.InWorld(tileX, tileY + i) && Main.tile[tileX, tileY + i].HasTile && Main.tileSolid[Main.tile[tileX, tileY + i].TileType]) {
+                if(WorldGen.InWorld(tileX, tileY + i) 
+                   && Main.tile[tileX, tileY + i].HasTile 
+                   && Main.tileSolid[Main.tile[tileX, tileY + i].TileType] 
+                   && Main.tile[tileX, tileY + i].LiquidAmount == 0) 
+                {
                     teleportPosition = new Vector2(tileX * 16f + NPC.width / 2, (tileY + i) * 16f - NPC.height);
 
                     foundSpot = true;
@@ -205,7 +209,7 @@ public class PusImpNPC : ModNPC {
                 }
             }
         }
-
+    
         if(foundSpot) {
             NPC.position = teleportPosition;
         }

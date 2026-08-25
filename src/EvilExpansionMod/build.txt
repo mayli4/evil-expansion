@@ -1,5 +1,5 @@
 ﻿displayName = Evil Expansion
-author = Tobias, mathica, sucss
+author = Tobias, salem witchfinder, sucss, JAX, Roton, moonburn
 version = 1.0.0
 hideCode = false
 hideResources = true

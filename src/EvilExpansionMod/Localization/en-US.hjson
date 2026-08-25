@@ -59,7 +59,7 @@ Mods: {
 			HeadPounderItem: {
 				DisplayName: Head Pounder
 				Damage: 1-{0} melee damage
-				Tooltip: Striking the earth at full power unleashes bursts of corrupt mass
+				Tooltip: Striking the earth at full power unleashes a burst of corrupt mass
 			}
 
 			HellbringerBody: {
@@ -67,7 +67,7 @@ Mods: {
 				Tooltip:
 					'''
 					Increases summon damage by 10%
-					Increases movement speed by 20%
+					Increases melee and movement speed by 20%
 					'''
 			}
 
@@ -90,7 +90,7 @@ Mods: {
 				DisplayName: Meat Prison Grill
 				Tooltip:
 					'''
-					Increases summon damage by 3%
+					Increases whip range by 5%
 					Increases your max number of minions by 1
 					'''
 				SetBonus: Summons a blood warden to fight for you
@@ -327,6 +327,15 @@ Mods: {
 				DisplayName: Charred Bloodwood Wall
 				Tooltip: ""
 			}
+
+			FlameInAnInflatableDevilOWarItem: {
+				DisplayName: Flame In An Inflatable Devil O War
+				Tooltip:
+					'''
+					Allows the user to double jump, emitting damaging flames
+					Increases jump height and vertical acceleration
+					'''
+			}
 		}
 
 		NPCs: {
@@ -407,6 +416,8 @@ Mods: {
 			LingeringIchorProjectile.DisplayName: Lingering Ichor
 			GulpyYoyoProjectile.DisplayName: Gulpy Yoyo
 			GulpyHandProjectile.DisplayName: Gulpy Hand
+			SpiritExplosion.DisplayName: Spirit Explosion
+			SpiritContactExplosion.DisplayName: Spirit Contact Explosion
 		}
 
 		Biomes: {
@@ -484,6 +495,9 @@ Mods: {
 			Tobias.DisplayName: Tobias
 			Scss.DisplayName: Scss
 			Waff.DisplayName: Waff
+			Jax.DisplayName: JAX
+			Moonburn.DisplayName: Moonburn
+			Roton.DisplayName: Roton
 		}
 	}
 }

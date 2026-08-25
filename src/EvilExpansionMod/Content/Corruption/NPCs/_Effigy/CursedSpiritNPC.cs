@@ -21,7 +21,6 @@ using Terraria.ModLoader;
 using Daybreak.Common.Rendering;
 
 namespace EvilExpansionMod.Content.Corruption;
-
 public enum SpiritType {
     Splitter,
     Exploder,
@@ -74,7 +73,7 @@ public sealed class CursedSpiritNPC : ModNPC {
     const float ExploderExplosionTime = 100f;
     const float SplitterSplitTime = 90f;
     const float SplitterMaxDepth = 1;
-    const int MaxLife = 110;
+    const int MaxLife = 100;
 
     SpiritType SpiritType {
         get => Unsafe.BitCast<float, SpiritType>(NPC.ai[0]);
@@ -109,13 +108,14 @@ public sealed class CursedSpiritNPC : ModNPC {
         NPC.width = 38;
         NPC.height = 38;
         NPC.lifeMax = MaxLife;
+        NPC.defense = 28;
         NPC.value = 150;
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
         NPC.knockBackResist = 0.05f;
         NPC.friendly = false;
-        NPC.damage = 20;
+        NPC.damage = 40;
 
         NPC.HitSound = SoundID.NPCHit23;
 
@@ -144,8 +144,9 @@ public sealed class CursedSpiritNPC : ModNPC {
             _trailPositions[i] = NPC.Center;
         }
 
-        SpiritType = SpiritType.Ram;
+        SpiritType = (SpiritType)Main.rand.Next(0, 3);
         //SpiritType = (SpiritType)Main.rand.Next(0, 3);
+        //SpiritType = SpiritType.XXX;
         switch(SpiritType) {
             case SpiritType.Splitter:
                 _data.Splitter = new()
@@ -317,13 +318,20 @@ public sealed class CursedSpiritNPC : ModNPC {
                         ExplosionProjectile.New(
                             NPC.GetSource_Death(),
                             NPC.Center,
-                            40,
+                            (int)(NPC.damage *1.5 / difficultyScaler),
                             Color.Yellow,
                             Color.LightGoldenrodYellow,
                             size: ExplosionRange,
-                            timeLeft: 35
+                            timeLeft: 35,
+                            friendly: true,
+                            hostile: true
                         );
-
+                        for(int i = 0; i < 15; i++) {
+                            var ember = GlowEmberParticle.NewParticle(NPC.Center + Main.rand.NextVector2Circular(15, 15), Main.rand.NextVector2Circular(11, 11), Main.rand.NextFloat(1f, 2f), GhostColor1 with { A = 0 }, Color.White with { A = 0 });
+                            ember.Randomness *= 2f;
+                            ember.LossPerSecond *= 2f;
+                            ParticleEngine.PARTICLES.Add(ember);
+                        }
                         NPC.StrikeInstantKill();
                     }
 
@@ -353,10 +361,42 @@ public sealed class CursedSpiritNPC : ModNPC {
             case RamState.Charge:
                 UpdateLookDirection(directionToTarget);
 
-                NPC.velocity *= 0.99f;
+                NPC.velocity *= 0.98f;
+
+                Dust.NewDust(NPC.Center + Main.rand.NextVector2Circular(15, 15) + Main.rand.NextVector2Circular(15, 15), 2, 2, DustID.CursedTorch, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-3f, 3f), 0, new Color(207, 255, 0));
+                var particle = SmokeParticle.Pool.RequestParticle();
+
+                Vector2 randomVelocity = new Vector2(
+                    Main.rand.NextFloat(-1.5f, 1.5f),
+                    Main.rand.NextFloat(-2f, -0.5f)
+                );
+
+                Color smokeColor = Color.Lerp(Color.White, Color.Black, Main.rand.NextFloat());
+                float scale = Main.rand.NextFloat(0.1f, 1.2f);
+                int lifetime = Main.rand.Next(40, 90);
+
+                particle.Spawn(NPC.Center + Main.rand.NextVector2Circular(15, 45), randomVelocity, smokeColor, scale, lifetime);
+
                 if(Timer > 60 * 1.5f && Main.netMode != NetmodeID.MultiplayerClient) {
                     _data.Ram.DashDirection = directionToTarget;
-                    NPC.velocity = _data.Ram.DashDirection * 0.8f;
+                    if(Main.expertMode) {
+                        NPC.velocity = _data.Ram.DashDirection * 32f;
+                    }
+                    else {
+                        NPC.velocity = _data.Ram.DashDirection * 25f;
+                    }
+                    float difficultyScaler = Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
+                    Projectile.NewProjectile(
+                        NPC.GetSource_FromAI(),
+                        NPC.Center,
+                        new Microsoft.Xna.Framework.Vector2(0f, 0f),
+                        ModContent.ProjectileType<SpiritContactExplosion>(),
+                        (int)(NPC.damage / difficultyScaler),
+                        //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! Compensate in equation
+                        0.5f,
+                        Main.myPlayer);
+                    SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1f }, NPC.Center);
+
                     SetState(RamState.Dash);
                 }
 
@@ -366,7 +406,7 @@ public sealed class CursedSpiritNPC : ModNPC {
                 _lookOffset = MathF.Min(moveSpeed * 0.25f, 1f);
 
                 NPC.velocity += _data.Ram.DashDirection * 0.7f;
-                NPC.velocity *= 0.97f;
+                NPC.velocity *= 0.95f;
 
                 if(Timer > 120) {
                     SetState(RamState.FlyAround);
@@ -385,8 +425,9 @@ public sealed class CursedSpiritNPC : ModNPC {
                 break;
         }
     }
-
+    float difficultyScaler = Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
     void FlyToTarget(Vector2 moveDirection) {
+
         UpdateLookDirection(moveDirection);
         _lookOffset = MathF.Min(_lookOffset + 0.05f, 0.75f);
 
@@ -405,7 +446,7 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         fireballTimer -= 1;
         if(fireballTimer <= 0 && Target != null) {
-            fireballTimer = Main.rand.Next(220, 300);
+            fireballTimer = Main.rand.Next(220 / (int)difficultyScaler, 300 / (int)difficultyScaler);
 
             var position = NPC.Center;
             var velocity = Helper.InitialVelocityRequiredToHitPosition(
@@ -525,6 +566,21 @@ public sealed class CursedSpiritNPC : ModNPC {
         switch(SpiritType) {
             case SpiritType.Ram:
                 NPC.velocity = -NPC.velocity;
+                if (Main.expertMode) {
+                    Projectile.NewProjectile(
+                            NPC.GetSource_FromAI(),
+                            NPC.Center,
+                            new Microsoft.Xna.Framework.Vector2(0f, 0f),
+                            ModContent.ProjectileType<SpiritContactExplosion>(),
+                            (int)(NPC.damage * 0.5 / difficultyScaler),
+                            //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! Compensate in equation
+                            0.5f,
+                            Main.myPlayer);
+                    SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1f }, NPC.Center);
+                 }
+                else {
+                    SoundEngine.PlaySound(SoundID.Item178 with { Volume = 1f } with { PitchRange = (-1.0f, -0.5f) }, NPC.Center);
+                }
                 SetState(RamState.Concussion);
                 break;
         }
@@ -602,11 +658,17 @@ public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color d
         var maskRotation = NPC.direction == 1 ? NPC.rotation : NPC.rotation + MathF.PI;
         switch(SpiritType) {
             case SpiritType.Ram:
-                if(State<RamState>() == RamState.Charge) maskShake += Timer * 0.01f;
+                if(State<RamState>() == RamState.Charge) maskShake += Timer * 0.04f;
                 break;
             case SpiritType.Exploder:
                 if(State<ExploderState>() == ExploderState.Exploding) {
-                    maskShake += (Main.GameUpdateCount % 4 == 0 ? 1f : 0f) * Timer * 0.015f;
+                    maskShake += (Main.GameUpdateCount % 4 == 0 ? 1f : 0f) * Timer * 0.02f;
+                    maskRotation += Main.rand.NextFloat(-0.001f, 0.001f) * Timer;
+                }
+                break;
+            case SpiritType.Splitter:
+                if(State<SplitterState>() == SplitterState.Splitting) {
+                    maskShake += (Main.GameUpdateCount % 4 == 0 ? 1f : 0f) * Timer * 0.02f;
                     maskRotation += Main.rand.NextFloat(-0.001f, 0.001f) * Timer;
                 }
                 break;
@@ -621,7 +683,7 @@ public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color d
             Vector2 drawPosition = NPC.Center - screenPos - (_data.Ram.DashDirection * 30f);
 
             float pulse = 1.5f + MathF.Sin(Main.GameUpdateCount * 0.35f) * 0.15f; 
-            float finalScale = NPC.scale * maskScale * pulse;
+            float finalScale = NPC.scale * maskScale * pulse - 0.2f;
 
             spriteBatch.End(out var ss);
             spriteBatch.Begin(ss with { BlendState = BlendState.Additive });
@@ -726,5 +788,49 @@ public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color d
         }
 
         return false;
+    }
+}
+public class SpiritContactExplosion : ModProjectile {
+    public override string Texture => Assets.Images.Corruption.NPCs.Effigy.CursedSpiritExplode.KEY;
+    public override void SetDefaults() {
+        Projectile.width = 98;
+        Projectile.height = 98;
+        Projectile.hostile = true;
+        Projectile.friendly = false;
+        Projectile.DamageType = DamageClass.Ranged;
+        Projectile.tileCollide = false;
+        Projectile.ignoreWater = true;
+        Projectile.timeLeft = 30;
+        Projectile.penetrate = -1;
+
+        CooldownSlot = 0;
+
+        Projectile.aiStyle = -1;
+        Main.projFrames[Projectile.type] = 7;
+    }
+    public override void AI() {
+        // Visuals: Create dust explosion effects here
+        for(int i = 0; i < 5; i++) {
+            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.CursedTorch, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-3f, 3f), 255, new Color(207, 255, 0));
+        }
+        Lighting.AddLight(Projectile.Center, 1.0f, 0.9f, 0.1f);
+        AnimateProjectile();
+    }
+    private const int FrameCount = 7;
+    private void AnimateProjectile() {
+        int frameDuration = 2;
+        Projectile.frameCounter++;
+        if(Projectile.frameCounter >= frameDuration) {
+            Projectile.frame++;
+            Projectile.frameCounter = 0;
+            if(Projectile.frame >= FrameCount) {
+                Projectile.active = false;
+            }
+        }
+    }
+   
+    public override void OnHitPlayer(Player target, Player.HurtInfo info) {
+        base.OnHitPlayer(target, info);
+        target.AddBuff(BuffID.CursedInferno, 125, false);
     }
 }

@@ -13,3 +13,6 @@ public abstract class CommonAuthorTag : AuthorTag {
 [UsedImplicitly] public class TobiasTag : CommonAuthorTag;
 [UsedImplicitly] public class WaffTag : CommonAuthorTag;
 [UsedImplicitly] public class ScssTag : CommonAuthorTag;
+[UsedImplicitly] public class RotonTag : CommonAuthorTag;
+[UsedImplicitly] public class JaxTag : CommonAuthorTag;
+[UsedImplicitly] public class MoonburnTag : CommonAuthorTag;

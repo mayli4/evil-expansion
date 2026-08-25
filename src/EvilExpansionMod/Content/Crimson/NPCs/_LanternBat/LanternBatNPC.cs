@@ -72,7 +72,7 @@ public class LanternBatNPC : ModNPC {
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FireInALanternItem>(), 20, 3, 6));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FireInALanternItem>(), 50, 1, 1));
     }
 
     public override void OnSpawn(IEntitySource source) {

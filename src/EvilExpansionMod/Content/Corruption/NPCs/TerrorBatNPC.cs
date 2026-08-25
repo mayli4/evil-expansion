@@ -70,7 +70,7 @@ public class TerrorBatNPC : ModNPC {
         NPC.width = 40;
         NPC.height = 30;
         NPC.lifeMax = 180;
-        NPC.damage = 30;
+        NPC.damage = 40;
         NPC.defense = 10;
         NPC.value = 100 * 2;
         NPC.noTileCollide = false;
@@ -347,20 +347,21 @@ public class TerrorBatNPC : ModNPC {
 
         if(StateTimer == (spit_duration / 2)) {
             var shootDirection = Vector2.Normalize(targetPlayer.Center - NPC.Center);
-
+            float difficultyScaler = Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
             Projectile.NewProjectile(
                 NPC.GetSource_FromAI(),
                 NPC.Center,
                 shootDirection * 8f,
                 ModContent.ProjectileType<TerrorBatSpit>(),
-                NPC.damage / 2,
+                (int) (NPC.damage * 0.125f / difficultyScaler),
+                //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! To compensate, it is divided by 8 instead of 4.
                 0.5f,
                 Main.myPlayer
             );
 
             NPC.velocity += shootDirection * -4;
 
-            SoundEngine.PlaySound(SoundID.NPCDeath13, NPC.Center);
+            SoundEngine.PlaySound(SoundID.NPCDeath13 with { Volume = 0.75f }, NPC.Center);
         }
 
         NPC.rotation = NPC.velocity.X * rotation_factor;
@@ -485,6 +486,10 @@ public class TerrorBatSpit : ModProjectile {
         positionCache = new(30);
     }
 
+    public override void OnHitPlayer(Player target, Player.HurtInfo info) {
+        base.OnHitPlayer(target, info);
+        target.AddBuff(BuffID.CursedInferno, 125, false);
+    }
     public override void AI() {
         Projectile.velocity.Y += 0.1f;
         if(Projectile.velocity.Y > 16f) {

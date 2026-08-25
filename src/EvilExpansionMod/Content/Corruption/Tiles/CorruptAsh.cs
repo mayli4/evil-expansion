@@ -1,3 +1,4 @@
+using EvilExpansionMod.Content.Crimson;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.ID;
@@ -13,14 +14,20 @@ public class CorruptAsh : ModTile {
         Main.tileBlockLight[Type] = true;
         Main.tileSolid[Type] = true;
 
-        DustType = DustID.Corruption;
-
+        TileID.Sets.BlockMergesWithMergeAllBlockOverride[Type] = true;
         Main.tileMerge[Type][TileID.Ash] = true;
         Main.tileMerge[TileID.Ash][Type] = true;
+        Main.tileMerge[Type][ModContent.TileType<CrimsonAsh>()] = true;
+        Main.tileMerge[ModContent.TileType<CrimsonAsh>()][Type] = true;
         Main.tileMerge[Type][TileID.ObsidianBrick] = true;
         Main.tileMerge[TileID.ObsidianBrick][Type] = true;
         Main.tileMerge[Type][TileID.HellstoneBrick] = true;
         Main.tileMerge[TileID.HellstoneBrick][Type] = true;
+
+        Main.tileMerge[Type][ModContent.TileType<PolypOreTile>()] = true;
+        Main.tileMerge[ModContent.TileType<PolypOreTile>()][Type] = true;
+
+        DustType = DustID.Corruption;
 
         AddMapEntry(new Color(53, 37, 62));
         Main.tileMerge[Type][ModContent.TileType<OvergrownCorruptAsh>()] = true;
@@ -48,16 +55,15 @@ public class CorruptAsh : ModTile {
             case BiomeConversionID.Corruption:
                 WorldGen.ConvertTile(i, j, ModContent.TileType<CorruptAsh>());
                 return;
+            case BiomeConversionID.Crimson:
+                WorldGen.ConvertTile(i, j, ModContent.TileType<CrimsonAsh>());
+                return;
 
         }
     }
 
     public override void RandomUpdate(int i, int j) {
         WorldGen.SpreadInfectionToNearbyTile(i, j, BiomeConversionID.Corruption);
-    }
-
-    public override void ModifyFrameMerge(int i, int j, ref int up, ref int down, ref int left, ref int right, ref int upLeft, ref int upRight, ref int downLeft, ref int downRight) {
-        WorldGen.TileMergeAttempt(-2, TileID.Ash, ref up, ref down, ref left, ref right, ref upLeft, ref upRight, ref downLeft, ref downRight);
     }
 }
 

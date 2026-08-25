@@ -50,7 +50,7 @@ public class MarrowEyeNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 50;
         NPC.height = 50;
-        NPC.lifeMax = 100;
+        NPC.lifeMax = 333;
         NPC.value = 250f;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;

@@ -54,8 +54,7 @@ file static class Impl {
         orig(self);
     
         render_queue.Clear();
-        for (int i = 0; i < Main.maxProjectiles; i++) {
-            var proj = Main.projectile[i];
+        foreach(var proj in Main.ActiveProjectiles) {
             if (proj.active && proj.ModProjectile is ITileMask maskDraw) {
                 render_queue.Add(maskDraw);
             }

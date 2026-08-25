@@ -9,7 +9,7 @@ namespace EvilExpansionMod.Content.Corruption;
 public class HellbringerHead : ModItem {
     public readonly static float ShadowOrbSpawnRange = 800;
     public readonly static float ShadowOrbSpawnChance = 0.24f;
-    public readonly static int CorruptlingDamage = 20;
+    public readonly static int CorruptlingDamage = 24;
 
     public override string Texture => Assets.Images.Corruption.Items.HellbringerArmor.HellbringerHead.KEY;
     public override void SetStaticDefaults() {
@@ -26,7 +26,7 @@ public class HellbringerHead : ModItem {
         Item.height = 20;
         Item.value = Item.sellPrice(silver: 90);
         Item.rare = ItemRarityID.LightRed;
-        Item.defense = 6;
+        Item.defense = 9;
     }
 
     public override void UpdateEquip(Player player) {
@@ -74,6 +74,7 @@ public class HellbringerBody : ModItem {
 
     public override void UpdateEquip(Player player) {
         player.GetDamage(DamageClass.Summon) += 0.10f;
+        player.GetAttackSpeed(DamageClass.Melee) += 0.20f;
         player.moveSpeed += 0.20f;
     }
 
@@ -107,7 +108,7 @@ public class HellbringerLegs : ModItem {
         Item.height = 20;
         Item.value = Item.sellPrice(silver: 60);
         Item.rare = ItemRarityID.LightRed;
-        Item.defense = 8;
+        Item.defense = 5;
     }
 
     public override void UpdateEquip(Player player) {

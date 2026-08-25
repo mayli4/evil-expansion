@@ -144,11 +144,19 @@ public class PusBottleNPC : ModNPC {
 
         int pusImpCount = Main.rand.Next(2, 4);
         for(int i = 0; i < pusImpCount; i++) {
-            NPC.NewNPC(
+            float speed = Main.rand.NextFloat(4f, 7f);
+            Vector2 velocity = new Vector2(Main.rand.NextFloat(-0.8f, 0.8f), -1f).SafeNormalize(Vector2.UnitY) * speed;
+
+            Projectile.NewProjectile(
                 NPC.GetSource_FromThis(),
-                (int)NPC.Center.X + Main.rand.Next(-10, 10),
-                (int)NPC.Center.Y + Main.rand.Next(-10, 10),
-                ModContent.NPCType<PusImpNPC>()
+                NPC.Center - new Vector2(20, 100),
+                velocity,
+                ModContent.ProjectileType<PusGlob>(),
+                (int)(ParentNPCID != -1 && Main.npc[ParentNPCID].active ? Main.npc[ParentNPCID].damage * 0.75f : 10),
+                0.5f,
+                0,
+                0f,
+                1f
             );
         }
     }

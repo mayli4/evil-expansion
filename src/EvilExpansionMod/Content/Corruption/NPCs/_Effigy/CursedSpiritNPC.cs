@@ -73,7 +73,7 @@ public sealed class CursedSpiritNPC : ModNPC {
     const float ExploderExplosionTime = 100f;
     const float SplitterSplitTime = 90f;
     const float SplitterMaxDepth = 1;
-    const int MaxLife = 110;
+    const int MaxLife = 100;
 
     SpiritType SpiritType {
         get => Unsafe.BitCast<float, SpiritType>(NPC.ai[0]);
@@ -115,7 +115,7 @@ public sealed class CursedSpiritNPC : ModNPC {
         NPC.noGravity = true;
         NPC.knockBackResist = 0.05f;
         NPC.friendly = false;
-        NPC.damage = 20;
+        NPC.damage = 40;
 
         NPC.HitSound = SoundID.NPCHit23;
 
@@ -318,13 +318,20 @@ public sealed class CursedSpiritNPC : ModNPC {
                         ExplosionProjectile.New(
                             NPC.GetSource_Death(),
                             NPC.Center,
-                            (int)(NPC.damage*1.5 / difficultyScaler),
+                            (int)(NPC.damage *1.5 / difficultyScaler),
                             Color.Yellow,
                             Color.LightGoldenrodYellow,
                             size: ExplosionRange,
-                            timeLeft: 35
+                            timeLeft: 35,
+                            friendly: true,
+                            hostile: true
                         );
-
+                        for(int i = 0; i < 15; i++) {
+                            var ember = GlowEmberParticle.NewParticle(NPC.Center + Main.rand.NextVector2Circular(15, 15), Main.rand.NextVector2Circular(11, 11), Main.rand.NextFloat(1f, 2f), GhostColor1 with { A = 0 }, Color.White with { A = 0 });
+                            ember.Randomness *= 2f;
+                            ember.LossPerSecond *= 2f;
+                            ParticleEngine.PARTICLES.Add(ember);
+                        }
                         NPC.StrikeInstantKill();
                     }
 
@@ -560,13 +567,12 @@ public sealed class CursedSpiritNPC : ModNPC {
             case SpiritType.Ram:
                 NPC.velocity = -NPC.velocity;
                 if (Main.expertMode) {
-                    float difficultyScaler = Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
                     Projectile.NewProjectile(
                             NPC.GetSource_FromAI(),
                             NPC.Center,
                             new Microsoft.Xna.Framework.Vector2(0f, 0f),
                             ModContent.ProjectileType<SpiritContactExplosion>(),
-                            (int)(NPC.damage / difficultyScaler),
+                            (int)(NPC.damage * 0.5 / difficultyScaler),
                             //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! Compensate in equation
                             0.5f,
                             Main.myPlayer);

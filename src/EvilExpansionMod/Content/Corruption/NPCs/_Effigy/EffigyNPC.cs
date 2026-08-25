@@ -52,6 +52,7 @@ public sealed class EffigyNPC : ModNPC {
         NPC.HitSound = Assets.Sounds.EffigyHit.Asset with {
             PitchVariance = 0.4f,
             Pitch = -0.3f,
+            Volume = 0.8f
         };
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];

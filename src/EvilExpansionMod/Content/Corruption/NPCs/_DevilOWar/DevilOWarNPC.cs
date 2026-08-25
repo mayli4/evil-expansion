@@ -118,7 +118,7 @@ public sealed class DevilOWarNPC : ModNPC {
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ItemID.Gel, 1, 3, 6));
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<InflatableDevilOWarItem>(), 20, 3, 6));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<InflatableDevilOWarItem>(), 50, 1, 1));
     }
 
     public override void AI() {
@@ -188,11 +188,10 @@ public sealed class DevilOWarNPC : ModNPC {
             Pulsation = 0f;
             DrawScale = Vector2.One;
         }
-
+        float difficultyScaler = Main.expertMode ? 2f : 1f; //aggro range, move speed multiplied on Expert and higher
         switch(CurrentState) {
             case State.Idle:
-                float difficultyScaler = Main.expertMode ? 2f : 1f; //aggro range 4x, move speed 2x on Expert and higher
-                if(NPC.Center.Distance(Target!.Center) < follow_range * difficultyScaler * difficultyScaler) {
+                if(NPC.Center.Distance(Target!.Center) < follow_range * difficultyScaler) {
                     NPC.velocity += 0.05f * NPC.Center.DirectionTo(Target.Center) * difficultyScaler;
                     if(NPC.velocity.Length() > 2f * difficultyScaler) {
                         NPC.velocity = Vector2.Normalize(NPC.velocity) * 2f * difficultyScaler;
@@ -215,9 +214,9 @@ public sealed class DevilOWarNPC : ModNPC {
             case State.Charging:
                 if(StingerProjectileId != -1 && Main.projectile[StingerProjectileId].active && Main.projectile[StingerProjectileId].ModProjectile is DevilOWarStingerProjectile stinger) {
                     if(!stinger.IsRetracting) {
-                        NPC.velocity += 0.02f * NPC.Center.DirectionTo(Target!.Center);
+                        NPC.velocity += 0.1f * NPC.Center.DirectionTo(Target!.Center);
                         if(NPC.velocity.Length() > 1.5f) {
-                            NPC.velocity = Vector2.Normalize(NPC.velocity) * 1.5f;
+                            NPC.velocity = Vector2.Normalize(NPC.velocity) * 1.5f * difficultyScaler;
                         }
 
                         if(NPC.Center.Distance(Target.Center) >= CHARGING_RADIUS + 16 * 2) {
@@ -236,7 +235,7 @@ public sealed class DevilOWarNPC : ModNPC {
                 break;
 
             case State.AttackCooldown:
-                NPC.velocity *= 0.95f;
+                NPC.velocity *= 0.90f;
                 attackCooldownTimer--;
                 if(attackCooldownTimer <= 0) {
                     CurrentState = State.Idle;

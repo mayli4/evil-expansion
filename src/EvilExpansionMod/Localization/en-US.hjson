@@ -332,8 +332,8 @@ Mods: {
 				DisplayName: Flame In An Inflatable Devil O War
 				Tooltip:
 					'''
-				Allows the user to double jump, emitting damaging flames
-				Increases jump height and vertical acceleration
+					Allows the user to double jump, emitting damaging flames
+					Increases jump height and vertical acceleration
 					'''
 			}
 		}

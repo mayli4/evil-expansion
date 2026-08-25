@@ -23,7 +23,9 @@ public class ExplosionProjectile : ModProjectile {
         Color endColor,
         float knockback = 10f,
         int size = 50,
-        int timeLeft = 120
+        int timeLeft = 120,
+        bool friendly = true,
+        bool hostile = false
     ) {
         _startColor = startColor;
         _endColor = endColor;
@@ -42,6 +44,8 @@ public class ExplosionProjectile : ModProjectile {
         explosion.Projectile.Center = position;
         explosion.Projectile.rotation = Main.rand.NextFloatDirection() * 14f;
         explosion.Projectile.netUpdate = true;
+        explosion.Projectile.friendly = friendly;
+        explosion.Projectile.hostile = hostile;
     }
 
     private int _maxTimeLeft = -1;
@@ -54,8 +58,6 @@ public class ExplosionProjectile : ModProjectile {
         Projectile.penetrate = -1;
         Projectile.ignoreWater = true;
         Projectile.tileCollide = false;
-        Projectile.friendly = true;
-        Projectile.hostile = false;
         Projectile.hide = true;
     }
 

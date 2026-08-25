@@ -11,7 +11,7 @@ namespace EvilExpansionMod.Content.Corruption;
 public sealed class StalactiteProjectile : ModProjectile {
     public override string Texture => Assets.Images.Corruption.NPCs.Cursehound.Stalactites.KEY;
 
-    private Rectangle _frame;
+    private Rectangle frame;
 
     public override void SetDefaults() {
         Projectile.width = 16;
@@ -27,7 +27,7 @@ public sealed class StalactiteProjectile : ModProjectile {
     }
 
     public override void OnSpawn(IEntitySource source) {
-        _frame = new Rectangle(18 * Main.rand.Next(3), 0, 16, 28);
+        frame = new Rectangle(18 * Main.rand.Next(3), 0, 16, 28);
     }
 
     public override void AI() {
@@ -54,7 +54,14 @@ public sealed class StalactiteProjectile : ModProjectile {
         Terraria.Audio.SoundEngine.PlaySound(SoundID.Dig, Projectile.position);
 
         for(int i = 0; i < 10; i++) {
-            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Corruption, Main.rand.NextFloat(-2f, 2f), Main.rand.NextFloat(-2f, 0f), 0, default, 1f);
+            Dust.NewDust(
+                Projectile.position, 
+                Projectile.width, 
+                Projectile.height, 
+                DustID.Corruption, 
+                Main.rand.NextFloat(-2f, 2f), 
+                Main.rand.NextFloat(-2f, 0f)
+                );
         }
         return true;
     }
@@ -65,10 +72,10 @@ public sealed class StalactiteProjectile : ModProjectile {
         Main.spriteBatch.Draw(
             texture,
             Projectile.Center - Main.screenPosition,
-            _frame,
+            frame,
             Projectile.GetAlpha(lightColor),
             Projectile.rotation,
-            _frame.Size() / 2f,
+            frame.Size() / 2f,
             Projectile.scale,
             SpriteEffects.None,
             0f

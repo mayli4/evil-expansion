@@ -10,7 +10,7 @@ namespace EvilExpansionMod.Content.Corruption;
 internal class MaceCrack : ModProjectile, ITileMask {
     public override string Texture => Helper.PlaceholderTextureKey;
 
-    private Color _lightColor;
+    private Color lightColor;
 
     public override void SetDefaults() {
         Projectile.tileCollide = false;
@@ -23,12 +23,12 @@ internal class MaceCrack : ModProjectile, ITileMask {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        _lightColor = lightColor;
+        this.lightColor = lightColor;
         return false;
     }
 
     public void DrawTileMask(SpriteBatch spriteBatch) {
-        var color = _lightColor;
+        var color = lightColor;
         color *= Projectile.timeLeft > 100 ? 1f : Projectile.timeLeft / 100f;
         var glow = Assets.Images.Misc.Glow2.Asset.Value;
         var tex = Assets.Images.Misc.Crack.Asset.Value;

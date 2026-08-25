@@ -148,7 +148,7 @@ public class CultistPortal : ModProjectile {
         };
 
         var circleTexture = Assets.Images.Misc.Circle.Asset.Value;
-        Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+        Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
             .DrawTexture(new()
             {
                 Texture = circleTexture,
@@ -162,7 +162,7 @@ public class CultistPortal : ModProjectile {
             .ApplyOutline(middleColor)
             .End();
 
-        Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+        Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
             .SetEffectParams(
                 effect,
                 ("tex1", sampleTexture1),

@@ -93,7 +93,7 @@ public class PounderSpike : ModProjectile {
         var cellWidth = 40;
         var source = new Vector4(SpikeIndex * cellWidth, 0, cellWidth, texture.Height);
 
-        Renderer.BeginPipeline(scale: Scale)
+        Renderer.Begin(scale: Scale)
             .DrawTexture(new()
             {
                 Texture = texture,

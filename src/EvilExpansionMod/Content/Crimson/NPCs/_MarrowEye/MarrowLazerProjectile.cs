@@ -8,6 +8,7 @@ using System;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Crimson;
@@ -20,6 +21,8 @@ public class MarrowLazerProjectile : ModProjectile {
     Color _mainColor = new(63, 28, 72);
     Color _secondaryColor = new(253, 60, 179);
     Color _highlightColor = new(255, 155, 220);
+
+    int _hitCd;
 
     float Scale {
         get {
@@ -56,14 +59,16 @@ public class MarrowLazerProjectile : ModProjectile {
             var foundPlayerCollision = false;
             foreach(var player in Main.player[0..Main.maxPlayers]) {
                 if(player.Hitbox.Contains((int)hitPoint.X, (int)hitPoint.Y)) {
-                    if(Projectile.timeLeft < DisapearFrames * 2) {
+                    if(Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft < DisapearFrames * 2 && _hitCd <= 0) {
                         player.Hurt(new Player.HurtInfo
                         {
                             SoundDisabled = true,
                             DamageSource = PlayerDeathReason.ByProjectile(player.whoAmI, Projectile.whoAmI),
-                            Damage = 1,
+                            Damage = 5,
                             HitDirection = MathF.Sign(player.Center.X - Projectile.position.X),
                         });
+
+                        _hitCd = 10;
                     }
 
                     foundPlayerCollision = true;
@@ -91,6 +96,8 @@ public class MarrowLazerProjectile : ModProjectile {
             ember.LossPerSecond *= 2f;
             ParticleEngine.PARTICLES.Add(ember);
         }
+
+        if (_hitCd > 0) _hitCd--;
     }
 
     public override bool PreDraw(ref Color lightColor) {
@@ -104,7 +111,7 @@ public class MarrowLazerProjectile : ModProjectile {
         var texture1 = Assets.Images.Sample.Noise1.Asset.Value;
         var effect = Assets.Shaders.Pixel.MarrowLaser.Asset.Value;
 
-        Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+        Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
             .SetEffectParams(
                 effect,
                 ("uLength", Projectile.scale),
@@ -166,7 +173,7 @@ public class MarrowLazerProjectile : ModProjectile {
             _highlightColor * 0.25f,
             0.32f + Main.rand.NextFloat() * 0.1f,
             glowBallTexture.Size() / 2f,
-            Scale * 0.3f + Main.rand.NextFloat() * 0.05f,
+            Scale * 0.3f + Main.rand.NextFloat() * 0.075f,
             SpriteEffects.None,
             0f
         );

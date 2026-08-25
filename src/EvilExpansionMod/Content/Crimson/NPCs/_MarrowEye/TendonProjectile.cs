@@ -12,8 +12,6 @@ public class TendonProjectile : ModProjectile {
     public override string Texture => Assets.Images.Crimson.NPCs.MarrowEye.Tendon.KEY;
     public const int DisapearFrames = 120;
 
-    float _alpha;
-
     public override void SetDefaults() {
         Projectile.width = 0;
         Projectile.height = 0;
@@ -29,23 +27,23 @@ public class TendonProjectile : ModProjectile {
 
     public override bool ShouldUpdatePosition() => false;
 
-    public override void OnKill(int timeLeft) {
-        var rotation = Main.rand.NextFloat();
-        for(var i = 0; i < 1; i++) {
-            var direction = rotation.ToRotationVector2();
-            Gore.NewGoreDirect(
-                Projectile.GetSource_Death(),
-                Projectile.Center + direction * 10f - new Vector2(8, 8),
-                direction * Main.rand.NextFloat(3f, 5f),
-                Mod.Find<ModGore>("MuscleGore" + i).Type
-            );
+    // public override void OnKill(int timeLeft) {
+    //     var rotation = Main.rand.NextFloat();
+    //     for(var i = 0; i < 1; i++) {
+    //         var direction = rotation.ToRotationVector2();
+    //         Gore.NewGoreDirect(
+    //             Projectile.GetSource_Death(),
+    //             Projectile.Center + direction * 10f - new Vector2(8, 8),
+    //             direction * Main.rand.NextFloat(3f, 5f),
+    //             Mod.Find<ModGore>("MuscleGore" + i).Type
+    //         );
 
-            rotation += MathF.PI * 2f / 3f + Main.rand.NextFloatDirection() * 0.2f;
-        }
-    }
+    //         rotation += MathF.PI * 2f / 3f + Main.rand.NextFloatDirection() * 0.2f;
+    //     }
+    // }
 
     public override void AI() {
-        _alpha = MathF.Min(_alpha + 0.075f, 1f);
+        Projectile.alpha = 255 - (int)(255f * Projectile.timeLeft / DisapearFrames);
     }
 
     public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) {
@@ -64,12 +62,13 @@ public class TendonProjectile : ModProjectile {
         var middlePartHeight = texture.Height - bulbHeight * 2;
 
         var rotation = Projectile.rotation - MathF.PI / 2f;
+        var alpha = (255 - Projectile.alpha) / 255f;
 
         Main.spriteBatch.Draw(
             texture,
             Projectile.position - Main.screenPosition,
             new Rectangle(sourceX, bulbHeight, CellWidth, middlePartHeight),
-            lightColor * _alpha,
+            lightColor * alpha,
             rotation,
             new(CellWidth / 2f, middlePartHeight / 2f),
             new Vector2(1f, (Projectile.scale - bulbHeight) / middlePartHeight),
@@ -82,7 +81,7 @@ public class TendonProjectile : ModProjectile {
             texture,
             Projectile.position - Main.screenPosition - rotationVector * Projectile.scale / 2f,
             new Rectangle(sourceX, 0, CellWidth, bulbHeight),
-            lightColor * _alpha,
+            lightColor * alpha,
             rotation,
             new(CellWidth / 2f, bulbHeight / 2f),
             1f,
@@ -94,7 +93,7 @@ public class TendonProjectile : ModProjectile {
             texture,
             Projectile.position - Main.screenPosition + rotationVector * Projectile.scale / 2f,
             new Rectangle(sourceX, texture.Height - bulbHeight, CellWidth, bulbHeight),
-            lightColor * _alpha,
+            lightColor * alpha,
             rotation,
             new(CellWidth / 2f, bulbHeight / 2f),
             1f,

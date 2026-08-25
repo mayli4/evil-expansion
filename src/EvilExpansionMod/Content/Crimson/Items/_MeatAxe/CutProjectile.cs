@@ -61,7 +61,7 @@ public class CutProjectile : ModProjectile {
     public override bool PreDraw(ref Color lightColor) {
         var progress = 1f - (float)Projectile.timeLeft / MaxTimeLeft;
 
-        var pipeline = Renderer.BeginPipeline(0.5f);
+        var pipeline = Renderer.BeginPixelated();
         pipeline.SetTexture(TextureAssets.MagicPixel.Value);
 
         var buf = new Vector2[2];

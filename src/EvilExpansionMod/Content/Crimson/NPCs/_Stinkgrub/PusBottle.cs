@@ -197,7 +197,7 @@ public class PusBottleNPC : ModNPC {
         var fluidEffect = Assets.Shaders.Pixel.DevilOWarFluid.Asset.Value;
 
         if(!NPC.IsABestiaryIconDummy) {
-            Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+            Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
                 .SetEffectParams(
                     fluidEffect,
                     ("level", 0.3f),

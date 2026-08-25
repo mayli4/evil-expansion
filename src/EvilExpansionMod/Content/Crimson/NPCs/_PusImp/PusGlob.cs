@@ -79,7 +79,7 @@ public sealed class PusGlob : ModProjectile {
         var color = new Color(98, 90, 40).MultiplyRGB(lightColor);
         var outlineColor = new Color(161, 131, 78).MultiplyRGB(lightColor);
 
-        Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+        Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
             .SetEffectParams(
                 trailEffect,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),

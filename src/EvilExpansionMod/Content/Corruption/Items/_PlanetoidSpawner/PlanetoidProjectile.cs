@@ -364,7 +364,7 @@ public class PlanetoidProjectile : ModProjectile {
             float easedCrackProgress = MathF.Pow(crackProgress, 2f);
             var crackShader = Assets.Shaders.Pixel.PlanetoidCracks.Asset.Value;
 
-            Renderer.BeginPipeline(1f)
+            Renderer.Begin()
                 .SetEffectParams(
                     crackShader,
                     ("sampleTexture2", Assets.Images.Sample.CrackMap.Asset.Value),

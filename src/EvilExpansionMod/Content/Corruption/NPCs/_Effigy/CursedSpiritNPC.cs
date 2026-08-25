@@ -572,7 +572,7 @@ public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color d
 
         if(!NPC.IsABestiaryIconDummy) {
             var trailEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
-            Renderer.BeginPipeline(0.5f)
+            Renderer.BeginPixelated()
                 .SetEffectParams(
                     trailEffect,
                     ("time", 0.025f * Main.GameUpdateCount + NPC.whoAmI * 3.432f),

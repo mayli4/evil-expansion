@@ -265,7 +265,7 @@ public sealed class BloodWarden : ModProjectile {
 
 
         var color = lightColor;
-        Renderer.BeginPipeline()
+        Renderer.Begin()
             .SetTexture(chainTexture)
             .DrawTrail(chainPoints.ToArray(), static _ => 6, _ => color)
             .End();

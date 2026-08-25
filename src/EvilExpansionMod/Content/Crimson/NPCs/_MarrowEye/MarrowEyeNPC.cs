@@ -261,10 +261,12 @@ public class MarrowEyeNPC : ModNPC {
                 break;
         }
 
-        Main.projectile[_ring].timeLeft = RingProjectile.DisapearFrames;
-        Main.projectile[_tendonA].timeLeft = TendonProjectile.DisapearFrames;
-        Main.projectile[_tendonB].timeLeft = TendonProjectile.DisapearFrames;
-        if(_tendonC != -1) Main.projectile[_tendonC].timeLeft = TendonProjectile.DisapearFrames;
+        var disapearOffset = 240;
+        Main.projectile[_ring].timeLeft = RingProjectile.DisapearFrames + disapearOffset;
+        Main.projectile[_tendonA].timeLeft = TendonProjectile.DisapearFrames + disapearOffset;
+        Main.projectile[_tendonB].timeLeft = TendonProjectile.DisapearFrames + disapearOffset;
+
+        if(_tendonC != -1) Main.projectile[_tendonC].timeLeft = TendonProjectile.DisapearFrames + disapearOffset;
     }
 
     bool IsTargetValid(float distance) {

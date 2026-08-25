@@ -409,7 +409,7 @@ public sealed class DevilOWarNPC : ModNPC {
             return false;
         }
 
-        var pipeline = Renderer.BeginPipeline(1f, Graphics.WorldTransformMatrix);
+        var pipeline = Renderer.Begin(Graphics.WorldTransformMatrix);
 
         var offsetForTrails = flipped ? new Vector2(-5, 30) : new Vector2(5, 30);
         Vector2 bodyWorldPositionForTrails = NPC.Center + offsetForTrails;
@@ -424,7 +424,7 @@ public sealed class DevilOWarNPC : ModNPC {
 
         Main.spriteBatch.Draw(insidesTexture, NPC.Center + new Vector2(0, 19) - screenPos, null, drawColor, NPC.rotation, insidesTexture.Size() / 2, 1f, effects, 0f);
 
-        Renderer.BeginPipeline(0.5f)
+        Renderer.BeginPixelated()
             .SetEffectParams(
                 fluidEffect,
                 ("level", mappedLevel),

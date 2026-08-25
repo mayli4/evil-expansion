@@ -58,7 +58,7 @@ public class PortalGore : ModProjectile {
         ).Value;
 
         var outlineColor = Color.Red.MultiplyRGB(lightColor);
-        Renderer.BeginPipeline(1f)
+        Renderer.Begin()
             .DrawTexture(new()
             {
                 Texture = texture,

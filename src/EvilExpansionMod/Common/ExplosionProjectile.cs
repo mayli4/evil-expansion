@@ -121,7 +121,7 @@ public class ExplosionProjectile : ModProjectile {
 
         var explosionProgress = 1f - MathF.Pow(progress - 1f, 2);
 
-        Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+        Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
             .SetTexture(1, noiseTexture2)
             .SetEffectParams(
                 explosionEffect,

@@ -76,7 +76,15 @@ internal class Renderer : ModSystem {
         _commands.Clear(); // NOTE: In case there is some left for whatever reason.
     }
 
-    public static RenderPipeline BeginPipeline(float scale = 1f, Matrix? matrix = null)
+    public static RenderPipeline Begin(Matrix? matrix = null) {
+        return Begin(1f, matrix);
+    }
+
+    public static RenderPipeline BeginPixelated(Matrix? matrix = null) {
+        return Begin(0.5f, matrix);
+    }
+
+    public static RenderPipeline Begin(float scale, Matrix? matrix = null)
         => s_Instance.BeginPipeline(scale, matrix ?? Graphics.ScreenTransformMatrix, 0);
 
     public RenderPipeline BeginPipeline(float scale, Matrix? matrix, int depth) {
@@ -106,7 +114,7 @@ internal class Renderer : ModSystem {
         Device.SamplerStates[1] = SamplerState.PointWrap;
         Device.SamplerStates[2] = SamplerState.PointWrap;
         Device.SamplerStates[3] = SamplerState.PointWrap;
-        Device.RasterizerState = RasterizerState.CullNone;
+        Device.RasterizerState = RasterizerState.CullClockwise;
 
         SpriteBatchSnapshot? spriteBatchSnapshot = null;
         if(Main.spriteBatch.beginCalled) {

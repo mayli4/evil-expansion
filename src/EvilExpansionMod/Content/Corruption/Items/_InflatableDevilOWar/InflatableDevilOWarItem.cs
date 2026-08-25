@@ -212,7 +212,7 @@ public class InflatableDevilOWarProjectile : ModProjectile {
         var origin = headTexture.Size() / 2f;
         origin.X = flipped ? headTexture.Width - origin.X : origin.X;
 
-        using var pipeline = Renderer.BeginPipeline(1.0f, Graphics.WorldTransformMatrix);
+        using var pipeline = Renderer.Begin(Graphics.WorldTransformMatrix);
         if(_tentacleTrailPositions != null) {
 
             pipeline.SetSamplerState(0, SamplerState.PointClamp);

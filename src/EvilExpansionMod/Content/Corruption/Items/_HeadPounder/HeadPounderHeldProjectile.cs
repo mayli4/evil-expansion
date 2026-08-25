@@ -34,6 +34,8 @@ public class HeadPounderHeldProjectile : ModProjectile {
     Vector2 RotationVector => (Projectile.rotation - MathF.PI / 4f).ToRotationVector2() * new Vector2(Owner.direction, 0.5f);
     Vector2[] _trailPositions;
 
+    SlotId _Hitsound = SlotId.Invalid;
+
     public override string Texture => Assets.Images.Corruption.Items.HeadPounder.HeadPounderItem.KEY;
     public override void SetDefaults() {
         Projectile.width = 0;
@@ -62,7 +64,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
         return true;
     }
-    SlotId _Hitsound = SlotId.Invalid;
+
     public override void AI() {
         Owner.heldProj = Projectile.whoAmI;
         if(Owner.channel) {
@@ -277,7 +279,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
         var trailColor = new Color(96, 91, 206) * _outlineAlpha * 0.4f;
 
-        Renderer.BeginPipeline(0.5f, Graphics.WorldTransformMatrix)
+        Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
             .DrawTrail(
                 _trailPositions.Select(p => p + Projectile.position).ToArray(),
                 static t => (1.25f - t) * 20f,
@@ -305,7 +307,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                 * MathF.Max(1f - MathF.Pow(2f * MathF.Max(_charge - MaxCharge + tintFlashFrames / 2, 0) / tintFlashFrames - 1f, 2), 0f);
         }
 
-        Renderer.BeginPipeline(1f, Graphics.WorldTransformMatrix)
+        Renderer.Begin(Graphics.WorldTransformMatrix)
             .DrawTexture(new()
             {
                 Texture = texture,

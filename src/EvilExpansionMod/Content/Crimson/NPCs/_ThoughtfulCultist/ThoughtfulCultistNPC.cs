@@ -234,7 +234,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                 break;
         }
 
-        Renderer.BeginPipeline(1f, Graphics.WorldTransformMatrix)
+        Renderer.Begin(Graphics.WorldTransformMatrix)
             .SetSamplerState(0, SamplerState.PointWrap)
             .SetTexture(robeTextureBack)
             .DrawTrail(robeTrailPositions, static _ => 88, _ => drawColor, spriteRotation: 1)
@@ -244,7 +244,7 @@ public class ThoughtfulCultistNPC : ModNPC {
             .DrawTrail(robeTrailPositions, static _ => 88, _ => drawColor, spriteRotation: 1)
             .End();
 
-        Renderer.BeginPipeline()
+        Renderer.Begin()
             .DrawTexture(new()
             {
                 Texture = pendantTexture,

@@ -1,5 +1,4 @@
 using EvilExpansionMod.Common.Graphics;
-using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
@@ -17,6 +16,8 @@ public sealed class PusGlob : ModProjectile {
     public override string Texture => Assets.Images.Crimson.NPCs.PusImp.PusGlob.KEY;
 
     private Vector2[] _trailPositions;
+
+    public ref float SpawnedByGrub => ref Projectile.ai[1];
 
     public override void SetDefaults() {
         Projectile.width = 16;
@@ -58,6 +59,15 @@ public sealed class PusGlob : ModProjectile {
         SoundEngine.PlaySound(SoundID.Item17, Projectile.position);
 
         SpawnPusCreep();
+
+        if(SpawnedByGrub == 1f) {
+            NPC.NewNPC(
+                Projectile.GetSource_FromThis(),
+                (int)Projectile.Center.X + Main.rand.Next(-10, 10),
+                (int)Projectile.Center.Y + Main.rand.Next(-10, 10),
+                ModContent.NPCType<PusImpNPC>()
+            );
+        }
 
         return true;
     }

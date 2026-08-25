@@ -171,7 +171,7 @@ public class PusImpNPC : ModNPC {
             ChangeState(State.Reappearing);
         }
     }
-
+ 
     private void Unmelt() {
         Timer++;
         NPC.velocity.X = 0;

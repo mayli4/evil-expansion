@@ -29,7 +29,27 @@ public class ShadowOrbProjectile : ModProjectile {
         Projectile.penetrate = -1;
         Projectile.aiStyle = -1;
     }
+    public override bool PreAI() {
+        int maxGlobalOrbs = 18;
+        int totalOrbs = 0;
+        // Counting
+        for(int i = 0; i < Main.maxProjectiles; i++) {
+            if(Main.projectile[i].active && Main.projectile[i].type == Type) {
+                totalOrbs++;
+            }
+        }
+        // Killing oldest
+        if(totalOrbs > maxGlobalOrbs) {
+            for(int i = 0; i < Main.maxProjectiles; i++) {
+                if(Main.projectile[i].active && Main.projectile[i].type == Type) {
+                    Main.projectile[i].Kill(); // Yeah!
+                    break;    // Stop after killing just one
+                }
+            }
+        }
 
+        return true;
+    }
     public override void AI() {
         if(Projectile.timeLeft == MaxTimeLeft) {
             SoundEngine.PlaySound(SoundID.Item106, Projectile.Center);

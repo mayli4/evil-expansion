@@ -32,7 +32,7 @@ public sealed class DevilOWarNPC : ModNPC {
 
     public Player Target => Main.player[NPC.target];
 
-    private const int follow_range = 16 * 30;
+    private const int follow_range = 10 * 30;
     public const int CHARGING_RADIUS = 26 * 10;
     private const int attack_cooldown_time = 60 * 1;
     public const int STINGER_DURATION_MAX = 60 * 30;
@@ -78,7 +78,11 @@ public sealed class DevilOWarNPC : ModNPC {
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<DevilOWarBannerItem>();
     }
-
+    public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
+        if(Main.expertMode) {
+            NPC.knockBackResist = 0f;
+        }
+    }
     public override void Load() {
         for(int j = 1; j <= 5; j++)
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/DevilOWarGore" + j);
@@ -128,7 +132,7 @@ public sealed class DevilOWarNPC : ModNPC {
             }
         }
 
-        NPC.rotation = NPC.velocity.X * 0.1f;
+        NPC.rotation = NPC.velocity.X * 0.05f;
 
         if(StingerProjectileId != -1) {
             Projectile stingerProj = Main.projectile[StingerProjectileId];
@@ -187,10 +191,11 @@ public sealed class DevilOWarNPC : ModNPC {
 
         switch(CurrentState) {
             case State.Idle:
-                if(NPC.Center.Distance(Target!.Center) < follow_range) {
-                    NPC.velocity += 0.05f * NPC.Center.DirectionTo(Target.Center);
-                    if(NPC.velocity.Length() > 2f) {
-                        NPC.velocity = Vector2.Normalize(NPC.velocity) * 2f;
+                float difficultyScaler = Main.expertMode ? 2f : 1f; //aggro range 4x, move speed 2x on Expert and higher
+                if(NPC.Center.Distance(Target!.Center) < follow_range * difficultyScaler * difficultyScaler) {
+                    NPC.velocity += 0.05f * NPC.Center.DirectionTo(Target.Center) * difficultyScaler;
+                    if(NPC.velocity.Length() > 2f * difficultyScaler) {
+                        NPC.velocity = Vector2.Normalize(NPC.velocity) * 2f * difficultyScaler;
                     }
                 }
                 else {

@@ -327,6 +327,15 @@ Mods: {
 				DisplayName: Charred Bloodwood Wall
 				Tooltip: ""
 			}
+
+			FlameInAnInflatableDevilOWarItem: {
+				DisplayName: Flame In An Inflatable Devil O War
+				Tooltip:
+					'''
+				Allows the user to double jump, emitting damaging flames
+				Increases jump height and vertical acceleration
+					'''
+			}
 		}
 
 		NPCs: {

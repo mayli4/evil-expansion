@@ -26,7 +26,7 @@ public class HellbringerHead : ModItem {
         Item.height = 20;
         Item.value = Item.sellPrice(silver: 90);
         Item.rare = ItemRarityID.LightRed;
-        Item.defense = 6;
+        Item.defense = 9;
     }
 
     public override void UpdateEquip(Player player) {
@@ -74,6 +74,7 @@ public class HellbringerBody : ModItem {
 
     public override void UpdateEquip(Player player) {
         player.GetDamage(DamageClass.Summon) += 0.10f;
+        player.GetAttackSpeed(DamageClass.Melee) += 0.20f;
         player.moveSpeed += 0.20f;
     }
 
@@ -107,7 +108,7 @@ public class HellbringerLegs : ModItem {
         Item.height = 20;
         Item.value = Item.sellPrice(silver: 60);
         Item.rare = ItemRarityID.LightRed;
-        Item.defense = 8;
+        Item.defense = 5;
     }
 
     public override void UpdateEquip(Player player) {

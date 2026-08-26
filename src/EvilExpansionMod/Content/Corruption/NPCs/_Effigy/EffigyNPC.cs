@@ -261,7 +261,7 @@ public sealed class EffigyNPC : ModNPC {
                 NPC.frameCounter = 20;
         }
         else {
-            NPC.frameCounter += 0.15f;
+            NPC.frameCounter += 0.17f;
             if(NPC.frameCounter >= 4)
                 NPC.frameCounter = 0;
         }

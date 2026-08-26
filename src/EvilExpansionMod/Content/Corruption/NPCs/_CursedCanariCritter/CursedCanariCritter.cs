@@ -1,6 +1,7 @@
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -32,25 +33,45 @@ public sealed class CursedCanariCritter : ModNPC {
         NPC.defense = 0;
         NPC.lifeMax = 5;
         NPC.gravity = 0.1f;
-        NPC.HitSound = SoundID.NPCHit1;
-        NPC.DeathSound = SoundID.NPCDeath1;
+        NPC.HitSound = SoundID.NPCHit4;
+        NPC.DeathSound = SoundID.NPCDeath6 with { Volume = 0.8f };
         NPC.catchItem = ModContent.ItemType<CursedCanariItem>();
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
 
+        NPC.buffImmune[BuffID.CursedInferno] = true;
+        NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
     }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.2f : 0f;
     }
-
+    private int dustTimer = 0;
     public override void PostAI() {
         NPC.TargetClosest(false);
 
         var range = 440;
         var targetInRange = ValidTarget && Target.Center.DistanceSQ(NPC.Center) < (range * range);
-
+        Lighting.AddLight(NPC.Center, 0.77f,1f,0.56f);
+        dustTimer++;
+        if(dustTimer >= Main.rand.NextFloat(10,100)) // Spawns every x ticks
+        {
+            if(Main.netMode != NetmodeID.Server) {
+                int dustIndex = Dust.NewDust(
+                    NPC.position,
+                    NPC.width,
+                    NPC.height,
+                    DustID.CursedTorch,
+                    0f, 0f,
+                    100,
+                    default,
+                    Main.rand.NextFloat(0.5f, 1.5f)
+                );
+                Main.dust[dustIndex].noGravity = false;
+            }
+            dustTimer = 0;
+        }
         switch(State) {
             case 0:
             case 1:
@@ -67,7 +88,7 @@ public sealed class CursedCanariCritter : ModNPC {
                 if(targetInRange) {
                     State = 2;
                     NPC.netUpdate = true;
-                    NPC.velocity.Y -= 0.4f;
+                    NPC.velocity.Y -= 2f;
                     NPC.ai[1] = 0f;
                     break;
                 }
@@ -126,7 +147,21 @@ public sealed class CursedCanariCritter : ModNPC {
         }
 
     }
-
+    public override void OnKill() {
+        Projectile.NewProjectile(
+            NPC.GetSource_FromAI(),
+            NPC.Center,
+            new Microsoft.Xna.Framework.Vector2(0f, 0f),
+            ModContent.ProjectileType<SpiritContactExplosion>(),
+            80,
+            //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! Compensate in equation
+            0.5f,
+            Main.myPlayer,
+            ai0: 1,
+            ai1: 1
+            );
+        SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1f }, NPC.Center);
+    }
     public override void FindFrame(int frameHeight) {
         NPC.frameCounter += 0.2f;
         switch(State) {

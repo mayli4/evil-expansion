@@ -32,18 +32,21 @@ public class ShadowOrbProjectile : ModProjectile {
     public override bool PreAI() {
         int maxGlobalOrbs = 18;
         int totalOrbs = 0;
+        
+        
         // Counting
-        for(int i = 0; i < Main.maxProjectiles; i++) {
-            if(Main.projectile[i].active && Main.projectile[i].type == Type) {
+        foreach(var proj in Main.ActiveProjectiles) {
+            if(proj.active && proj.type == Type) {
                 totalOrbs++;
             }
         }
+        
         // Killing oldest
         if(totalOrbs > maxGlobalOrbs) {
-            for(int i = 0; i < Main.maxProjectiles; i++) {
-                if(Main.projectile[i].active && Main.projectile[i].type == Type) {
-                    Main.projectile[i].Kill(); // Yeah!
-                    break;    // Stop after killing just one
+            foreach(var proj in Main.ActiveProjectiles) {
+                if(proj.active && proj.type == Type) {
+                    proj.Kill();
+                    break;
                 }
             }
         }

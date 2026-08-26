@@ -4,10 +4,11 @@ using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Utilities;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -34,6 +35,14 @@ public class MarrowLazerProjectile : ModProjectile {
             return scale;
         }
     }
+    
+    private SlotId loopSoundSlot = SlotId.Invalid;
+
+    public static readonly SoundStyle LaserLoopSound = new(Assets.Sounds.MarrowEye.MarrowEyeLoopedLaser.KEY) {
+        IsLooped = true,
+        Volume = 0.8f,
+        PitchVariance = 0f,
+    };
 
     public override void SetDefaults() {
         Projectile.width = 0;
@@ -52,6 +61,21 @@ public class MarrowLazerProjectile : ModProjectile {
     public override void AI() {
         var hitPoint = Projectile.position + Projectile.velocity * 8f;
         var lightColor = _secondaryColor * 0.005f * Scale;
+        
+        if (Projectile.timeLeft < DisapearFrames * 2) {
+            if (!SoundEngine.TryGetActiveSound(loopSoundSlot, out var activeSound)) {
+                if (Projectile.timeLeft > DisapearFrames) {
+                    loopSoundSlot = SoundEngine.PlaySound(LaserLoopSound, Projectile.position);
+                }
+            } else {
+                activeSound.Position = Projectile.position;
+
+                if (Projectile.timeLeft <= DisapearFrames) {
+                    float fadeProgress = (float)Projectile.timeLeft / DisapearFrames;
+                    activeSound.Volume = LaserLoopSound.Volume * fadeProgress;
+                }
+            }
+        }
 
         for(var i = 0; i < 400; i++) {
             if(Collision.SolidCollision(hitPoint, 1, 1)) break;
@@ -68,7 +92,7 @@ public class MarrowLazerProjectile : ModProjectile {
                             HitDirection = MathF.Sign(player.Center.X - Projectile.position.X),
                         });
 
-                        _hitCd = 10;
+                        _hitCd = 50;
                     }
 
                     foundPlayerCollision = true;
@@ -98,6 +122,12 @@ public class MarrowLazerProjectile : ModProjectile {
         }
 
         if (_hitCd > 0) _hitCd--;
+    }
+    
+    public override void OnKill(int timeLeft) {
+        if (SoundEngine.TryGetActiveSound(loopSoundSlot, out var activeSound)) {
+            activeSound.Stop();
+        }
     }
 
     public override bool PreDraw(ref Color lightColor) {

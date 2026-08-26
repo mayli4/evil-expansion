@@ -62,6 +62,7 @@ public class PusImpNPC : ModNPC {
         NPC.knockBackResist = 0f;
         NPC.friendly = false;
         NPC.damage = 20;
+        NPC.behindTiles = true;
 
         NPC.HitSound = SoundID.NPCHit23;
         NPC.DeathSound = SoundID.NPCDeath1;

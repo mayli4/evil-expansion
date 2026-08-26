@@ -38,12 +38,6 @@ internal class Renderer : ModSystem {
     DynamicIndexBuffer _trailIndexBuffer = null!;
     readonly ushort[] _trailIndices = new ushort[TrailIndexCount];
 
-    Viewport ActiveViewport => new(
-        0,
-        0,
-        (int)(Main.screenWidth * _scale / Main.GameViewMatrix.Zoom.X),
-        (int)(Main.screenHeight * _scale / Main.GameViewMatrix.Zoom.Y));
-
     Matrix _matrix = Matrix.Identity;
     float _scale = 1f;
 
@@ -55,7 +49,7 @@ internal class Renderer : ModSystem {
 
             for(var i = 0; i < 4; i++) _targetPool.Add(CreateRenderTarget());
 
-            _quadVertexBuffer = new DynamicVertexBuffer(Device, typeof(VertexPositionTexture), 4, BufferUsage.WriteOnly);
+            _quadVertexBuffer = new DynamicVertexBuffer(Device, typeof(VertexPositionColorTexture), 4, BufferUsage.WriteOnly);
             _trailVertexBuffer = new(
                 Device,
                 typeof(VertexPositionColorTexture),
@@ -361,6 +355,8 @@ internal class Renderer : ModSystem {
             _targetPool.Add(rt);
         }
 
+        var oldViewport = Device.Viewport;
+
         (_targetPool[_targetPoolIndex], _drawTarget) = (_drawTarget!, _targetPool[_targetPoolIndex]);
         _targetPoolIndex++;
 
@@ -372,7 +368,11 @@ internal class Renderer : ModSystem {
         _scale = beginData.Scale;
         if(beginData.MatrixIndex > -1) _matrix = _commands.Matrices[beginData.MatrixIndex];
 
-        Device.Viewport = ActiveViewport;
+        Device.Viewport = new(
+            0,
+            0,
+            (int)(oldViewport.Width * _scale / Main.GameViewMatrix.Zoom.X),
+            (int)(oldViewport.Height * _scale / Main.GameViewMatrix.Zoom.Y));
     }
 
     void ExecuteEnd() {
@@ -380,20 +380,12 @@ internal class Renderer : ModSystem {
         (_targetPool[_targetPoolIndex], _drawTarget) = (_drawTarget!, _targetPool[_targetPoolIndex]);
 
         Device.SetRenderTarget(_drawTarget);
-
-        var oldTarget = _targetPool[_targetPoolIndex];
-
-        var targetRatio = Vector2.One;
-        if(_drawTarget is not null) {
-            targetRatio = Vector2.One * _scale * _drawTarget.Size() / oldTarget.Size() / Main.GameViewMatrix.Zoom;
-        }
-
         Device.BlendState = BlendState.AlphaBlend;
 
         DrawQuad(
-            oldTarget,
+            _targetPool[_targetPoolIndex],
             [new(1, 1), new(1, -1), new(-1, 1), new(-1, -1)],
-            new(0, 0, targetRatio.X, targetRatio.Y),
+            new(0, 0, _scale / Main.GameViewMatrix.Zoom.X, _scale / Main.GameViewMatrix.Zoom.Y),
             Color.White,
             Matrix.Identity,
             null);
@@ -488,10 +480,11 @@ internal class Renderer : ModSystem {
     void ExecuteApplyEffect(int dataIndex) {
         var effect = _commands.Effects[dataIndex];
 
+        var currentViewPort = Device.Viewport;
+        var currentBlendState = Device.BlendState;
+
         (_swapTarget, _drawTarget) = (_drawTarget!, _swapTarget);
         Device.SetRenderTarget(_drawTarget);
-
-        var oldBlendState = Device.BlendState;
         Device.BlendState = BlendState.AlphaBlend;
 
         DrawQuad(
@@ -502,8 +495,8 @@ internal class Renderer : ModSystem {
             Matrix.Identity,
             effect);
 
-        Device.Viewport = ActiveViewport;
-        Device.BlendState = oldBlendState;
+        Device.Viewport = currentViewPort;
+        Device.BlendState = currentBlendState;
     }
 
     void ExecuteClear(int dataIndex) {
@@ -566,18 +559,16 @@ internal class Renderer : ModSystem {
         Matrix matrix,
         Effect? effect
     ) {
-        _quadVertexBuffer.SetData<VertexPositionTexture>([
-            new(positions[0].ToVector3(), new(source.X + source.Z, source.Y)),
-            new(positions[1].ToVector3(), new(source.X + source.Z, source.Y + source.W)),
-            new(positions[2].ToVector3(), new(source.X, source.Y)),
-            new(positions[3].ToVector3(), new(source.X, source.Y + source.W))]); // meh
-        Device.SetVertexBuffer(_quadVertexBuffer);
+        _quadVertexBuffer.SetData<VertexPositionColorTexture>([
+            new(positions[0].ToVector3(), color, new(source.X + source.Z, source.Y)),
+            new(positions[1].ToVector3(), color, new(source.X + source.Z, source.Y + source.W)),
+            new(positions[2].ToVector3(), color, new(source.X, source.Y)),
+            new(positions[3].ToVector3(), color, new(source.X, source.Y + source.W))]); // meh
 
+        Device.SetVertexBuffer(_quadVertexBuffer);
         Device.Indices = null;
 
         QuadEffect.Parameters["uMatrix"].SetValue(matrix);
-        QuadEffect.Parameters["uColor"].SetValue(color.ToVector4());
-
         QuadEffect.CurrentTechnique.Passes[0].Apply();
 
         if(effect is not null) {

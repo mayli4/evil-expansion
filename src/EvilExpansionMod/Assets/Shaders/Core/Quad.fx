@@ -8,6 +8,7 @@ float4 uColor;
 struct VSInput
 {
     float3 position : POSITION;
+    float4 color : COLOR;
     float2 uv : TEXCOORD;
 };
 
@@ -15,6 +16,7 @@ QuadPSInput VS(VSInput input)
 {
     QuadPSInput output;
     output.position = mul(float4(input.position, 1), uMatrix);
+    output.color = input.color;
     output.uv = input.uv;
 
     return output;
@@ -22,7 +24,7 @@ QuadPSInput VS(VSInput input)
 
 float4 PS(QuadPSInput input) : COLOR0
 {
-    return tex2D(uTexture, input.uv) * uColor;
+    return tex2D(uTexture, input.uv) * input.color;
 }
 
 technique

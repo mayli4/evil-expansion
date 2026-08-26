@@ -9,7 +9,6 @@ using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -93,7 +92,7 @@ public class MarrowLazerProjectile : ModProjectile {
                             HitDirection = MathF.Sign(player.Center.X - Projectile.position.X),
                         });
 
-                        _hitCd = 10;
+                        _hitCd = 50;
                     }
 
                     foundPlayerCollision = true;

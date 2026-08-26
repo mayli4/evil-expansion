@@ -213,7 +213,10 @@ public class MarrowEyeNPC : ModNPC {
 
                 NPC.TargetClosest();
 
-                if(IsTargetValid(400f)) State = State.Waking;
+                if(IsTargetValid(400f)) {
+                    State = State.Waking;
+                    SoundEngine.PlaySound(Assets.Sounds.MarrowEye.MarrowEyeChargeup.Asset, NPC.Center);
+                }
                 break;
             case State.Waking:
                 if(Target == null || !Target.active) {
@@ -221,7 +224,7 @@ public class MarrowEyeNPC : ModNPC {
                     break;
                 }
 
-                _lookRotation = Utils.AngleLerp(_lookRotation, _directionToTarget.ToRotation(), 0.4f);
+                _lookRotation = _lookRotation.AngleLerp(_directionToTarget.ToRotation(), 0.4f);
                 NPC.frameCounter = Math.Min(NPC.frameCounter + 0.1, 2d);
 
                 if(NPC.frameCounter == 2d) State = State.Targeting;

@@ -380,10 +380,10 @@ public sealed class CursedSpiritNPC : ModNPC {
                 if(Timer > 60 * 1.5f && Main.netMode != NetmodeID.MultiplayerClient) {
                     _data.Ram.DashDirection = directionToTarget;
                     if(Main.expertMode) {
-                        NPC.velocity = _data.Ram.DashDirection * 32f;
+                        NPC.velocity = _data.Ram.DashDirection * 42f;
                     }
                     else {
-                        NPC.velocity = _data.Ram.DashDirection * 25f;
+                        NPC.velocity = _data.Ram.DashDirection * 30f;
                     }
                     float difficultyScaler = Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
                     Projectile.NewProjectile(
@@ -394,7 +394,10 @@ public sealed class CursedSpiritNPC : ModNPC {
                         (int)(NPC.damage / difficultyScaler),
                         //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! Compensate in equation
                         0.5f,
-                        Main.myPlayer);
+                        Main.myPlayer,
+                        ai0: 1,
+                        ai1: 1
+                        );
                     SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1f }, NPC.Center);
 
                     SetState(RamState.Dash);
@@ -575,7 +578,10 @@ public sealed class CursedSpiritNPC : ModNPC {
                             (int)(NPC.damage * 0.5 / difficultyScaler),
                             //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! Compensate in equation
                             0.5f,
-                            Main.myPlayer);
+                            Main.myPlayer,
+                            ai0: 1,
+                            ai1: 0
+                            );
                     SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1f }, NPC.Center);
                  }
                 else {
@@ -795,20 +801,32 @@ public class SpiritContactExplosion : ModProjectile {
     public override void SetDefaults() {
         Projectile.width = 98;
         Projectile.height = 98;
-        Projectile.hostile = true;
-        Projectile.friendly = false;
         Projectile.DamageType = DamageClass.Ranged;
+        Projectile.knockBack = 0f;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
         Projectile.timeLeft = 30;
         Projectile.penetrate = -1;
-
+        Projectile.usesLocalNPCImmunity = true;
+        Projectile.localNPCHitCooldown = -1;
         CooldownSlot = 0;
 
         Projectile.aiStyle = -1;
         Main.projFrames[Projectile.type] = 7;
     }
     public override void AI() {
+        if (Projectile.ai[0] == 1) {
+            Projectile.hostile = true;
+        }
+        else {
+            Projectile.hostile = false;
+        }
+        if(Projectile.ai[1] == 1) {
+            Projectile.friendly = true;
+        }
+        else {
+            Projectile.friendly = false;
+        }
         // Visuals: Create dust explosion effects here
         for(int i = 0; i < 5; i++) {
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.CursedTorch, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-3f, 3f), 255, new Color(207, 255, 0));

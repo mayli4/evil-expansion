@@ -150,7 +150,12 @@ public sealed class StinkgrubNPC : ModNPC {
                 ChangeState(State.Idle);
             }
         }
-
+        bool inLava = Collision.LavaCollision(NPC.position, NPC.width, NPC.height);  //Making it float... floaty grub
+        if(inLava) {
+            if(NPC.velocity.Y > -8f) {
+                NPC.velocity.Y -= 0.8f;
+            }
+        }
         GasTimer++;
         if(GasTimer >= gas_interval) {
             GasTimer = 0;

@@ -40,7 +40,10 @@ public class LingeringFlameProjectile : ModProjectile {
     }
 
     public override bool ShouldUpdatePosition() => false;
-
+    public override void OnHitPlayer(Player target, Player.HurtInfo info) {
+        base.OnHitPlayer(target, info);
+        target.AddBuff(BuffID.OnFire, 300, false);
+    }
     public override void AI() {
         Projectile.direction = (int)Projectile.ai[1];
         if(_freePositionCount < _trailVelocities.Length) {

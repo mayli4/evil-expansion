@@ -134,8 +134,8 @@ public sealed class CursedSpiritNPC : ModNPC {
     }
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>()));
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 1, 2, 3));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>(), 2, 1, 2));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 2, 1, 2));
     }
 
     public override void OnSpawn(IEntitySource source) {

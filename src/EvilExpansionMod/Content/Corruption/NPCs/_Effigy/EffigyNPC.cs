@@ -10,6 +10,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -79,7 +80,10 @@ public sealed class EffigyNPC : ModNPC {
             new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.EffigyNPCBestiary.KEY),
         });
     }
-
+    public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        npcLoot.Add(ItemDropRule.Common(itemId: 68, 3));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 1, 2, 5));
+    }
     public override void Load() {
         for(int j = 1; j <= 5; j++)
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/EffigyGore" + j);

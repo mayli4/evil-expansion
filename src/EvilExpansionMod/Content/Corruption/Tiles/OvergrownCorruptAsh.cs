@@ -1,3 +1,4 @@
+using EvilExpansionMod.Content.Crimson;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -22,10 +23,20 @@ public class OvergrownCorruptAsh : ModTile {
 
         Main.tileMerge[Type][TileID.Ash] = true;
         Main.tileMerge[TileID.Ash][Type] = true;
+        Main.tileMerge[Type][ModContent.TileType<CorruptAsh>()] = true;
+        Main.tileMerge[ModContent.TileType<CorruptAsh>()][Type] = true;
+        Main.tileMerge[Type][ModContent.TileType<CrimsonAshGrass>()] = true;
+        Main.tileMerge[ModContent.TileType<CrimsonAshGrass>()][Type] = true;
         Main.tileMerge[Type][TileID.ObsidianBrick] = true;
         Main.tileMerge[TileID.ObsidianBrick][Type] = true;
         Main.tileMerge[Type][TileID.HellstoneBrick] = true;
         Main.tileMerge[TileID.HellstoneBrick][Type] = true;
+        Main.tileMerge[Type][TileID.Hellstone] = true;
+        Main.tileMerge[TileID.Hellstone][Type] = true;
+        Main.tileMerge[Type][ModContent.TileType<PolypOreTile>()] = true;
+        Main.tileMerge[ModContent.TileType<PolypOreTile>()][Type] = true;
+        Main.tileMerge[Type][ModContent.TileType<CartilageOreTile>()] = true;
+        Main.tileMerge[ModContent.TileType<CartilageOreTile>()][Type] = true;
 
         Main.tileMerge[Type][ModContent.TileType<CorruptAsh>()] = true;
 

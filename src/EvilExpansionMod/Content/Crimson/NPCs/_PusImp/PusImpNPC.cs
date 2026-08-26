@@ -39,7 +39,6 @@ public class PusImpNPC : ModNPC {
     private const int teleport_range = 30 * 16;
     private const int teleport_cooldown = 60 * 4;
 
-
     private int attackCooldownTimer;
     private int teleportCooldownTimer;
 
@@ -52,7 +51,7 @@ public class PusImpNPC : ModNPC {
     }
 
     public override void SetDefaults() {
-        NPC.width = 25;
+        NPC.width = 2;
         NPC.height = 38;
         NPC.lifeMax = 100;
         NPC.value = 250f;
@@ -64,8 +63,8 @@ public class PusImpNPC : ModNPC {
         NPC.damage = 20;
         NPC.behindTiles = true;
 
-        NPC.HitSound = SoundID.NPCHit23;
-        NPC.DeathSound = SoundID.NPCDeath1;
+        NPC.HitSound = SoundID.NPCHit13;
+        NPC.DeathSound = SoundID.NPCDeath19;
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
 
@@ -80,7 +79,7 @@ public class PusImpNPC : ModNPC {
     public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.2f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PusClumpItem>(), 1, 2, 4));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PusClumpItem>(), 1, 1, 3));
     }
 
     public override void AI() {
@@ -131,7 +130,7 @@ public class PusImpNPC : ModNPC {
                     Main.myPlayer
                 );
             }
-            SoundEngine.PlaySound(SoundID.NPCDeath13 with { Pitch = -0.2f, PitchVariance = 0.5f }, NPC.Center);
+            SoundEngine.PlaySound(SoundID.NPCDeath13 with { Pitch = Main.rand.NextFloat(0.5f, 0.8f) }, NPC.Center);
         }
 
         if(Timer >= spit_time) {

@@ -136,7 +136,7 @@ public class PusBottleNPC : ModNPC {
             );
         }
 
-        SoundEngine.PlaySound(SoundID.NPCDeath13 with { Pitch = Main.rand.NextFloat(0.5f, 0.8f) }, NPC.Center);
+        SoundEngine.PlaySound(SoundID.NPCHit8 with { Volume = 0.7f, Pitch = Main.rand.NextFloat(0.0f, 0.2f) }, NPC.Center);
     }
 
     public override void OnKill() {

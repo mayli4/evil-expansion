@@ -49,8 +49,24 @@ public sealed class PusGlob : ModProjectile {
             i -= 1;
         }
         _trailPositions[0] = Projectile.Center + Projectile.velocity;
-    }
 
+        if(Projectile.lavaWet && Projectile.timeLeft > 6) {
+            // Soo... timeleft = 0 leads to fizzle, higher values lead to splat (ref below)
+            Projectile.timeLeft = 6;
+        }
+    }
+    public override void OnKill(int timeLeft) {
+        if(Projectile.lavaWet && timeLeft < 1) {
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.LiquidsWaterLava with { PitchVariance = 0.5f }, Projectile.position);
+            for(int i = 0; i < 5; i++) {
+                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, 0f, 0f, 100, default, 1f);
+                dust.velocity *= 0.5f;
+            }
+        }
+        else { 
+            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { Volume = 0.4f, Pitch = Main.rand.NextFloat(-0.8f, 0.1f) }, Projectile.position);
+        }
+    }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
         SpawnPusCreep();
     }
@@ -140,7 +156,10 @@ public sealed class PusCreepProjectile : ModProjectile, ITileMask {
         Projectile.friendly = false;
         Projectile.alpha = 255;
     }
-
+    public override void ModifyHitPlayer(Player target, ref Player.HurtModifiers modifiers) {
+        // No KB?
+        modifiers.Knockback *= 0.5f;
+    }
     public override void AI() {
         if(Projectile.timeLeft > lifetime - 15) {
             float fadeInProgress = (lifetime - Projectile.timeLeft) / 15f;

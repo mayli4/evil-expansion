@@ -295,7 +295,7 @@ Mods: {
 
 			CursedCanariItem: {
 				DisplayName: Cursed Canari
-				Tooltip: ""
+				Tooltip: It's volatile...
 			}
 
 			PolypBarItem: {

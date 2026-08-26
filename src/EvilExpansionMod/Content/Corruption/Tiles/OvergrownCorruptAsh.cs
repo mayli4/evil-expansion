@@ -61,9 +61,11 @@ public class OvergrownCorruptAsh : ModTile {
                 return;
             case BiomeConversionID.Sand:
             case BiomeConversionID.Crimson:
+                WorldGen.ConvertTile(i, j, ModContent.TileType<CrimsonAshGrass>());
+                return;
+            case BiomeConversionID.Corruption:
                 WorldGen.ConvertTile(i, j, ModContent.TileType<OvergrownCorruptAsh>());
                 return;
-
         }
     }
 

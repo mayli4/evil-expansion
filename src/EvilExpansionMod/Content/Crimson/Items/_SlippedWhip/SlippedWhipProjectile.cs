@@ -164,7 +164,7 @@ public class SlippedWhipProjectile : ModProjectile {
             texture,
             whipPositions[0] - Main.screenPosition,
             new Rectangle(0, 0, 16, 10),
-            lightColor,
+            Lighting.GetColor(whipPositions[0].ToTileCoordinates()),
             deltas[0].ToRotation() + rotationOffset,
             Projectile.spriteDirection < 0 ? origin : new Vector2(16, 10 - origin.Y),
             new Vector2(deltaLengths[0] / 16f, 1) * Projectile.scale,

@@ -21,7 +21,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
         Projectile.penetrate = -1;
-        Projectile.timeLeft = 360;
+        Projectile.timeLeft = 240;
         Projectile.DamageType = DamageClass.Ranged;
         Projectile.usesIDStaticNPCImmunity = true;
         Projectile.idStaticNPCHitCooldown = 5;

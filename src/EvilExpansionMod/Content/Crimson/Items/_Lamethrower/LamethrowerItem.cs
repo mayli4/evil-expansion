@@ -30,6 +30,7 @@ public class LamethrowerItem : ModItem {
         Item.noUseGraphic = true;
         Item.noMelee = true;
 
+        Item.noUseGraphic = true;
         Item.shoot = ModContent.ProjectileType<LamethrowerHeldProjectile>();
         Item.shootSpeed = 6f;
 

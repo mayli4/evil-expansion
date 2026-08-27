@@ -41,9 +41,11 @@ public class MeatAxeHeldProjectile : ModProjectile {
         Projectile.localNPCHitCooldown = 999;
         Projectile.usesLocalNPCImmunity = true;
     }
+
     public override bool? CanCutTiles() {
         return true;
     }
+
     public override void CutTiles() {
         // Replicate the exact line geometry from your Colliding hook
         Vector2 startPos = Projectile.position;

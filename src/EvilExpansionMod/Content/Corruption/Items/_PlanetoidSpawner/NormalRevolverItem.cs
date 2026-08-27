@@ -234,12 +234,8 @@ public class NormalPlanetoidProjectile : ModProjectile {
             SpriteEffects.None
         );
 
-        var snapshot = Main.spriteBatch.CaptureEndBegin(new());
-
         Main.spriteBatch.Draw(planetoidTexture, Projectile.Center - Main.screenPosition, null, lightColor, Projectile.rotation, planetoidTexture.Size() / 2f, Projectile.scale, SpriteEffects.None, 0f);
         Main.spriteBatch.Draw(faceTexture, faceDrawPosition - Main.screenPosition, faceSourceRect, lightColor, _faceRotationAngle, faceOrigin, Projectile.scale, SpriteEffects.None, 0f);
-
-        Main.spriteBatch.EndBegin(snapshot);
     }
 
     public override bool PreDraw(ref Color lightColor) {

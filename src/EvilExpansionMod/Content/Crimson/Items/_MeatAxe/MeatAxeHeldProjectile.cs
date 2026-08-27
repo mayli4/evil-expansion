@@ -41,7 +41,19 @@ public class MeatAxeHeldProjectile : ModProjectile {
         Projectile.localNPCHitCooldown = 999;
         Projectile.usesLocalNPCImmunity = true;
     }
+    public override bool? CanCutTiles() {
+        return true;
+    }
+    public override void CutTiles() {
+        // Replicate the exact line geometry from your Colliding hook
+        Vector2 startPos = Projectile.position;
+        Vector2 endPos = Projectile.position + _rotationVector * 90f;
+        float lineThickness = 40f;
 
+        // Set context to attack projectile and map the sweeping line onto Terraria's tiles
+        DelegateMethods.tilecut_0 = Terraria.Enums.TileCuttingContext.AttackProjectile;
+        Utils.PlotTileLine(startPos, endPos, lineThickness, DelegateMethods.CutTiles);
+    }
     public override bool ShouldUpdatePosition() => false;
 
     public override void OnSpawn(IEntitySource source) {

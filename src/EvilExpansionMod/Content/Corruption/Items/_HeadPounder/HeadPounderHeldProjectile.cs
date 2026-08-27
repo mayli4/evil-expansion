@@ -54,7 +54,39 @@ public class HeadPounderHeldProjectile : ModProjectile {
     }
 
     public override bool ShouldUpdatePosition() => false;
+    public override bool? CanCutTiles() {
+        return true;
+    }
+    public override void CutTiles() {       // As you can tell... I copied these from an LLM.........hope the code doesn't result in lag spikes or memory leaks or breaks anything else
+        // Enforce the attack context for breaking tiles
+        DelegateMethods.tilecut_0 = Terraria.Enums.TileCuttingContext.AttackProjectile;
 
+        // 1. CLEAR THE SWEEPING SWING HITBOX
+        // Replicates the line geometry used in your Colliding hook (outwards from the player along the weapon's head vector)
+        Vector2 startPos = Projectile.position;
+        Vector2 endPos = Projectile.position + RotationVector * 90f; // Extends slightly past the weapon center
+        float swingThickness = 60f;
+
+        Utils.PlotTileLine(startPos, endPos, swingThickness, DelegateMethods.CutTiles);
+
+        // 2. CLEAR THE IMPACT SHOCKWAVE EXPLOSION (Only triggers precisely upon ground contact)
+        if(_hitCheck && _hit) {
+            // Reconstruct the exact hitCenter calculated in your AI method
+            Vector2 hitCenter = Projectile.position
+                + RotationVector * 65f
+                + Owner.direction * RotationVector.RotatedBy(MathF.PI / 2f) * 25f;
+
+            // Define the radius of your ground shockwave impact zone (Matches your ForEachNPCInRange 80f radius)
+            float shockwaveRadius = 100f;
+
+            // Draw a horizontal line cutting directly across the ground surface where the slam landed
+            Vector2 blastLeft = hitCenter - Vector2.UnitX * shockwaveRadius;
+            Vector2 blastRight = hitCenter + Vector2.UnitX * shockwaveRadius;
+
+            // Plot the explosive shockwave cut line
+            Utils.PlotTileLine(blastLeft, blastRight, 32f, DelegateMethods.CutTiles);
+        }
+    }
     public override bool PreAI() {
         Owner.itemAnimation = 1;
         if(Owner.HeldItem.type != ModContent.ItemType<HeadPounderItem>()) {

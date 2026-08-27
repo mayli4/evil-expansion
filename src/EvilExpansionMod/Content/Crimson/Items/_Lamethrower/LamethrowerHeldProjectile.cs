@@ -42,7 +42,22 @@ public class LamethrowerHeldProjectile : ModProjectile {
         Projectile.localNPCHitCooldown = 5;
         Projectile.usesLocalNPCImmunity = true;
     }
+    public override bool? CanCutTiles() {
+        return true;
+    }
+    public override void CutTiles() {
+        DelegateMethods.tilecut_0 = Terraria.Enums.TileCuttingContext.AttackProjectile;
 
+        if(_trailPositions != null && _trailPositions.Length > 1) {
+            for(int i = 0; i < _trailPositions.Length - 1; i++) {
+                Vector2 startPos = _trailOrigin + _trailPositions[i];
+                Vector2 endPos = _trailOrigin + _trailPositions[i + 1];
+                float dynamicWidth = FlameWidth * FlameScale;
+
+                Utils.PlotTileLine(startPos, endPos, dynamicWidth, DelegateMethods.CutTiles);
+            }
+        }
+    }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
         target.AddBuff(BuffID.Oiled, 1200, false);
         target.AddBuff(BuffID.Ichor, 900, false);
@@ -134,12 +149,32 @@ public class LamethrowerHeldProjectile : ModProjectile {
             }
         }
 
-        Lighting.AddLight(
-            _trailOrigin + _trailPositions[0],
-            2.41f * FlameScale,
-            1.94f * FlameScale,
-            0.92f * FlameScale
-        );
+        if(_trailPositions != null && _trailPositions.Length > 1) {
+            // Define how many total light points to plant down the beam. 
+            // 24 to 32 points provides perfect grid blending for a 450px line.
+            int denseLightPoints = 28;
+            float currentFlameLength = FlameScale * FlameLength;
+
+            for(int i = 0; i < denseLightPoints; i++) {
+                float progress = (float)i / (denseLightPoints - 1);
+
+                // Plot directly using the actual aim vector to eliminate trailing lag
+                Vector2 lightLocation = _trailOrigin + (_rotationVector * currentFlameLength * progress);
+
+                // Strong exponential taper curve
+                float distanceFade = 1f - MathF.Pow(progress, 0.5f);
+                float currentIntensity = FlameScale * distanceFade;
+
+                if(currentIntensity > 0.05f) {
+                    Lighting.AddLight(
+                        lightLocation,
+                        2.41f * currentIntensity,
+                        1.94f * currentIntensity,
+                        0.92f * currentIntensity
+                    );
+                }
+            }
+        }
     }
 
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {

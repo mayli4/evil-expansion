@@ -59,7 +59,7 @@ public class PlanetoidProjectile : ModProjectile {
 
     public override bool ShouldUpdatePosition() => true;
 
-    public override bool? CanCutTiles() => false;
+    public override bool? CanCutTiles() => true;
 
     public override void OnSpawn(IEntitySource source) {
         GrowthTimer = 0;

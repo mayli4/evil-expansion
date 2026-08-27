@@ -36,7 +36,30 @@ public class PounderSpike : ModProjectile {
         Projectile.hide = true;
         Projectile.aiStyle = -1;
     }
-    
+    public override bool? CanCutTiles() {
+        return true;
+    }
+    public override void CutTiles() {
+        // 1. Colliding hook
+        var spikeWidth = SpikeIndex switch
+        {
+            0 or 1 or 2 => 20,
+            3 or 4 or 5 => 25,
+            _ => 35,
+        };
+        var spikeHeight = SpikeIndex switch
+        {
+            0 or 1 or 2 => 45,
+            3 or 4 or 5 => 60,
+            _ => 95,
+        };
+        // 2. Start point and end point of the spike's damage line
+        Vector2 startPos = Projectile.Center;
+        Vector2 endPos = Projectile.Center + (Projectile.rotation - MathF.PI / 2f).ToRotationVector2() * spikeHeight;
+        // 3. Set the context to an attacking projectile and plot the cut line across tiles
+        DelegateMethods.tilecut_0 = Terraria.Enums.TileCuttingContext.AttackProjectile;
+        Utils.PlotTileLine(startPos, endPos, spikeWidth, DelegateMethods.CutTiles);
+    }
     public override void OnSpawn(IEntitySource source) {
         SoundEngine.PlaySound(SoundID.Item51, Projectile.position);
         int dustCount = 8; 
@@ -56,6 +79,7 @@ public class PounderSpike : ModProjectile {
     }
 
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
+        
         if(Projectile.timeLeft < MaxTimeLeft - PopUpFrames - 5) return false;
 
         var _ = 0f;

@@ -97,10 +97,7 @@ file static class Impl {
     }
 
     private static void DrawSolidMask(On_Main.orig_DrawProjectiles orig, Main self) {
-        orig(self);
-
         var shader = Assets.Shaders.Pixel.TileMask.CreatePixelPass();
-        
         var data = IStatic<Buffers>.Instance;
 
         shader.Parameters.MaskSampler = new HlslSampler()
@@ -123,5 +120,7 @@ file static class Impl {
 
         Main.spriteBatch.Draw(data.MaskTargetLease.Target, Vector2.Zero, Color.White);
         Main.spriteBatch.End();
+
+        orig(self);
     }
 }

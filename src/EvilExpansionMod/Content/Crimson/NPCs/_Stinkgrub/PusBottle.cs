@@ -109,7 +109,8 @@ public class PusBottleNPC : ModNPC {
     }
 
     private void FirePus() {
-        var amount = Main.rand.Next(2, 4);
+        float difficultyScaler = Main.expertMode ? (Main.masterMode ? 2f : 1.5f) : 1f;
+        var amount = Main.rand.Next(3, 6) * difficultyScaler;
 
         SquishTimer = _maxSquishTime;
 
@@ -120,23 +121,23 @@ public class PusBottleNPC : ModNPC {
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(),
                 NPC.Center - new Vector2(20, 100),
-                velocity,
+                velocity * Main.rand.NextFloat(0.75f, 1.25f* difficultyScaler),
                 ModContent.ProjectileType<PusGlob>(),
                 (int)(ParentNPCID != -1 && Main.npc[ParentNPCID].active ? Main.npc[ParentNPCID].damage * 0.75f : 10),
                 0.5f,
                 Main.myPlayer
             );
-
+        }
+        for(int i = 0; i < Main.rand.NextFloat(2f, 4f); i++) {
             Dust.NewDustPerfect(
-                NPC.Center - new Vector2(20, 100),
+                NPC.Center - new Vector2(20, 100) + Main.rand.NextVector2Circular(20f, 20f),
                 ModContent.DustType<PusGas>(),
                 Vector2.Zero,
                 100,
                 new Color(98, 90, 40)
             );
+            SoundEngine.PlaySound(SoundID.NPCHit8 with { Volume = 0.7f, Pitch = Main.rand.NextFloat(0.0f, 0.2f) }, NPC.Center);
         }
-
-        SoundEngine.PlaySound(SoundID.NPCHit8 with { Volume = 0.7f, Pitch = Main.rand.NextFloat(0.0f, 0.2f) }, NPC.Center);
     }
 
     public override void OnKill() {

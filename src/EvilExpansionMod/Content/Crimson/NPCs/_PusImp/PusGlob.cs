@@ -1,5 +1,6 @@
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Particles;
+using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -16,7 +17,7 @@ public sealed class PusGlob : ModProjectile {
     public override string Texture => Assets.Images.Crimson.NPCs.PusImp.PusGlob.KEY;
 
     private Vector2[] _trailPositions;
-
+    private bool hasCollided = false;
     public ref float SpawnedByGrub => ref Projectile.ai[1];
 
     public override void SetDefaults() {
@@ -50,17 +51,54 @@ public sealed class PusGlob : ModProjectile {
         }
         _trailPositions[0] = Projectile.Center + Projectile.velocity;
 
-        if(Projectile.lavaWet && Projectile.timeLeft > 6) {
+        if(Projectile.lavaWet && Projectile.timeLeft > 4) {
             // Soo... timeleft = 0 leads to fizzle, higher values lead to splat (ref below)
-            Projectile.timeLeft = 6;
+            Projectile.timeLeft = 4;
         }
     }
     public override void OnKill(int timeLeft) {
-        if(Projectile.lavaWet && timeLeft < 1) {
+        if(Projectile.lavaWet) {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.LiquidsWaterLava with { PitchVariance = 0.5f }, Projectile.position);
-            for(int i = 0; i < 5; i++) {
-                Dust dust = Dust.NewDustDirect(Projectile.position, Projectile.width, Projectile.height, DustID.Smoke, 0f, 0f, 100, default, 1f);
-                dust.velocity *= 0.5f;
+            for(int i = 0; i < 4; i++) {
+                var dustPos = Projectile.position + Main.rand.NextVector2Circular(10f, 60f) + new Vector2(0f, -5f);
+                var dustVelocity = -Vector2.UnitY * Main.rand.NextFloat(30f, 600f)
+                    + Projectile.position.DirectionTo(dustPos) * 5f;
+
+                var dustColorStart = new Color(133, 122, 94);
+                var dustColorFade = dustColorStart * 0.4f;
+
+                var newDustData = new Smoke.Data()
+                {
+                    InitialLifetime = 40,
+                    ElapsedFrames = 0,
+                    InitialOpacity = 0.8f,
+                    ColorStart = dustColorStart,
+                    ColorFade = dustColorFade,
+                    Spin = 0.03f,
+                    InitialScale = Main.rand.NextFloat(0.3f, 1.0f)
+                };
+
+                var newDust = Dust.NewDustPerfect(
+                    dustPos,
+                    ModContent.DustType<Smoke>(),
+                    dustVelocity,
+                    0,
+                    newColor: Color.White,
+                    newDustData.InitialScale
+                );
+
+                newDust.customData = newDustData;
+                int dustIndex = Dust.NewDust(
+                    dustPos,
+                    Projectile.width,
+                    Projectile.height,
+                    DustID.Smoke,
+                    Main.rand.NextFloat(-3f, 3f),
+                    Main.rand.NextFloat(-7f, 0f),
+                    (int)Main.rand.NextFloat(0f, 100f),
+                    default,
+                    Main.rand.NextFloat(0.5f, 1.5f)
+                );
             }
         }
         else { 
@@ -85,7 +123,12 @@ public sealed class PusGlob : ModProjectile {
             );
         }
 
-        return true;
+        if(!hasCollided) {
+            hasCollided = true;
+            Projectile.velocity = Vector2.Zero;
+            Projectile.timeLeft = 7;
+        }
+        return false;
     }
 
     private void SpawnPusCreep() {
@@ -131,7 +174,6 @@ public sealed class PusGlob : ModProjectile {
                 Scale = Vector2.One * 0.5f,
             })
             .ApplyOutline(outlineColor)
-            .ApplyBloom()
             .End();
 
         return false;

@@ -364,7 +364,7 @@ public class PlanetoidProjectile : ModProjectile {
             float easedCrackProgress = MathF.Pow(crackProgress, 2f);
             var crackShader = Assets.Shaders.Pixel.PlanetoidCracks.Asset.Value;
 
-            Renderer.Begin()
+            Renderer.Begin(Graphics.WorldTransformMatrix)
                 .SetEffectParams(
                     crackShader,
                     ("sampleTexture2", Assets.Images.Sample.CrackMap.Asset.Value),
@@ -377,7 +377,7 @@ public class PlanetoidProjectile : ModProjectile {
                 .DrawTexture(new()
                 {
                     Texture = currentTexture,
-                    Position = Projectile.Center - Main.screenPosition,
+                    Position = Projectile.Center,
                     Color = Projectile.GetAlpha(lightColor),
                     Rotation = Projectile.rotation,
                     Origin = currentTexture.Size() / 2f,

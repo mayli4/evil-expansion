@@ -9,6 +9,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static EvilExpansionMod.Core.LocalizationReferences.Mods.EvilExpansionMod.Projectiles;
 
 namespace EvilExpansionMod.Content.Crimson;
 
@@ -26,7 +27,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
 
     Vector2[] _trailPositions;
 
-    public override string Texture => Assets.Images.Crimson.Items.Lamethrower.LamethrowerItem.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.Lamethrower.LamethrowerHeldSprite.KEY;
     public override void SetDefaults() {
         Projectile.width = 0;
         Projectile.height = 0;
@@ -119,31 +120,35 @@ public class LamethrowerHeldProjectile : ModProjectile {
         );
 
         foreach (var tile in tiles[..count]) {
-            if (
-                Main.tile[tile.X, tile.Y].HasTile
-                && Main.tile[tile.X, tile.Y].BlockType == BlockType.Solid
-                && !Main.tile[tile.X, tile.Y - 1].HasTile
+            Tile surface = Main.tile[tile.X, tile.Y];
+            Tile airAbove = Main.tile[tile.X, tile.Y - 1];
+            if(
+                surface.HasTile
+                && (Main.tileSolid[surface.type] || Main.tileSolidTop[surface.type])
+                && !surface.inActive()
+                && (!airAbove.HasTile || !Main.tileSolid[airAbove.type] || airAbove.inActive())
                 && Main.rand.NextFloat() < 0.015f
-            ) {
+            ){
                 Vector2 spawnPos = tile.ToVector2() * 16f + Vector2.UnitX * 8f;
 
                 bool alreadyExists = false;
                 for (int i = 0; i < Main.maxProjectiles; i++) {
                     Projectile p = Main.projectile[i];
+
                     if (p.active && p.type == ModContent.ProjectileType<LingeringIchorProjectile>() && Vector2.DistanceSquared(p.position, spawnPos) < 16f * 16f) {
                         alreadyExists = true;
                         break;
+                        }
                     }
-                }
 
-                if (!alreadyExists) {
-                    Projectile.NewProjectile(
-                        Projectile.GetSource_FromAI(),
-                        spawnPos,
-                        Vector2.Zero,
-                        ModContent.ProjectileType<LingeringIchorProjectile>(),
-                        Projectile.damage,
-                        0f
+                    if (!alreadyExists) {
+                        Projectile.NewProjectile(
+                            Projectile.GetSource_FromAI(),
+                            spawnPos,
+                            Vector2.Zero,
+                            ModContent.ProjectileType<LingeringIchorProjectile>(),
+                            Projectile.damage,
+                            0f
                     );
                 }
             }
@@ -176,7 +181,6 @@ public class LamethrowerHeldProjectile : ModProjectile {
             }
         }
     }
-
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
         for(var i = 0; i < _trailPositions.Length - 1; i++) {
             var _ = 0f;

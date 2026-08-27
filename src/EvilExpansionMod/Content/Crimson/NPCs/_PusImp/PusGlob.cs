@@ -225,7 +225,7 @@ public sealed class PusCreepProjectile : ModProjectile, ITileMask {
 
             Color smokeColor = Color.Lerp(Color.White, Color.Black, Main.rand.NextFloat());
             float scale = Main.rand.NextFloat(0.1f, 1.2f);
-            int lifetime = Main.rand.Next(40, 90);
+            int lifetime = Main.rand.Next(20, 60);
 
             particle.Spawn(Projectile.Center + Main.rand.NextVector2Circular(15, 45), randomVelocity, smokeColor, scale, lifetime);
         }

@@ -117,7 +117,14 @@ public class InflatableDevilOWarProjectile : ModProjectile {
 
     public override void AI() {
         Player player = Main.player[Projectile.owner];
+
         Vector2 targetPos = player.Center + new Vector2(player.direction * 20f, -player.height / 2f - 40f);
+        foreach (var projectile in Main.ActiveProjectiles) {
+            if (player.whoAmI == Projectile.owner && projectile.type == Projectile.type && projectile.whoAmI < Projectile.whoAmI) {
+                targetPos += new Vector2(-32f * player.direction, -8f);
+                break;
+            }
+        }
 
         Projectile.spriteDirection = -player.direction;
 
@@ -146,8 +153,8 @@ public class InflatableDevilOWarProjectile : ModProjectile {
             new Vector2(-0.2f, 0.4f)
         };
 
-        var rotatedBodyOffset = new Vector2(Projectile.spriteDirection * -3, 10).RotatedBy(Projectile.rotation);
-        var bodyDrawPosition = interpolatedBodyPosition + rotatedBodyOffset;
+        var bodyOffset = new Vector2(Projectile.spriteDirection * -3, 10);
+        var bodyDrawPosition = interpolatedBodyPosition + bodyOffset.RotatedBy(Projectile.rotation);
 
         for(int i = 0; i < _tentacleTrailPositions.Length; i++) {
             var positions = _tentacleTrailPositions[i];

@@ -1,4 +1,5 @@
 ﻿using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -128,7 +129,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
                 && !surface.inActive()
                 && (!airAbove.HasTile || !Main.tileSolid[airAbove.type] || airAbove.inActive())
                 && Main.rand.NextFloat() < 0.015f
-            ){
+            ) {
                 Vector2 spawnPos = tile.ToVector2() * 16f + Vector2.UnitX * 8f;
 
                 bool alreadyExists = false;
@@ -179,6 +180,15 @@ public class LamethrowerHeldProjectile : ModProjectile {
                     );
                 }
             }
+        }
+
+        if (Main.rand.NextBool(8)) {
+            var particle = SmokeParticle.Pool.RequestParticle();
+            particle.Spawn(
+                _trailOrigin + Main.rand.NextVector2Unit() * Main.rand.NextFloat(24) - _rotationVector * 5f - Vector2.UnitY * 16f,
+                Vector2.Zero,
+                Color.Gray,
+                Main.rand.NextFloat(0.1f, 0.3f));
         }
     }
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {

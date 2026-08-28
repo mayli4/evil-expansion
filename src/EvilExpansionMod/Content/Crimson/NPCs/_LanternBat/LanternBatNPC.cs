@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.ItemDropRules;
@@ -138,7 +139,10 @@ public class LanternBatNPC : ModNPC {
                         NPC.whoAmI,
                         storedDashDirection.X > 0 ? 1 : -1
                     );
+
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Pitch = 0.1f * Main.rand.NextFloatDirection()}, NPC.Center);
                 }
+
                 break;
             case State.Dashing:
                 NPC.velocity += storedDashDirection * 0.5f;
@@ -168,6 +172,10 @@ public class LanternBatNPC : ModNPC {
                     CurrentState = State.IdleFlight;
                 }
                 break;
+        }
+
+        if (StateTimer % 30 == 0) {
+            SoundEngine.PlaySound(SoundID.DD2_SkyDragonsFurySwing with { Pitch = 0.1f * Main.rand.NextFloatDirection()}, NPC.Center);
         }
 
         NPC.spriteDirection = NPC.direction = (NPC.velocity.X > 0) ? 1 : -1;

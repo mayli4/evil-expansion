@@ -189,11 +189,13 @@ public sealed class CursehoundNPC : ModNPC {
 
         float baseJumpPower = 5f;
         float jumpScaleFactor = 0.05f;
-        float maxJumpPower = 20f;
+        float maxJumpPower = 12f;
 
         float verticalDifference = NPC.Center.Y - Target.Center.Y;
-        float dynamicJumpVelocity = -(baseJumpPower + Math.Max(0, verticalDifference) * jumpScaleFactor);
-        dynamicJumpVelocity = MathHelper.Clamp(dynamicJumpVelocity, -maxJumpPower, -baseJumpPower);
+        float dynamicJumpVelocity = MathHelper.Clamp(
+            -(baseJumpPower + Math.Max(0, verticalDifference) * jumpScaleFactor), 
+            -maxJumpPower, 
+            -baseJumpPower);
 
         if(NPC.velocity.Y == 0 && _timeGrounded >= GROUND_TIME_FOR_ATTACK && RoarAttackCooldown <= 0 && broadLineOfSight && distanceToTarget >= roarAttackMinRange && distanceToTarget <= roarAttackMaxRange) {
             if(Main.rand.NextBool(20)) {

@@ -329,7 +329,7 @@ Mods: {
 			}
 
 			FlameInAnInflatableDevilOWarItem: {
-				DisplayName: Flame In An Inflatable Devil O War
+				DisplayName: Flame in an Inflatable Devil O' War
 				Tooltip:
 					'''
 					Allows the user to double jump, emitting damaging flames
@@ -479,7 +479,7 @@ Mods: {
 		Buffs: {
 			BloodWardenBuff: {
 				DisplayName: Blood Warden
-				Description: It radiates aggression
+				Description: You can hear it breathing heavily
 			}
 
 			NormalPlanetoidBuff: {

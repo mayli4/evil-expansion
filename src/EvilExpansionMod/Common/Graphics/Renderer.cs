@@ -499,6 +499,7 @@ internal class Renderer : ModSystem {
 
         (_swapTarget, _drawTarget) = (_drawTarget!, _swapTarget);
         Device.SetRenderTarget(_drawTarget);
+        Device.Clear(Color.Transparent);
         Device.BlendState = BlendState.AlphaBlend;
 
         DrawQuad(
@@ -602,8 +603,8 @@ internal class Renderer : ModSystem {
 
     static RenderTarget2D CreateRenderTarget() => new(
         Device,
-        GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width,
-        GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height,
+        GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Width * 2,
+        GraphicsAdapter.DefaultAdapter.CurrentDisplayMode.Height * 2,
         false,
         SurfaceFormat.Color,
         DepthFormat.None,

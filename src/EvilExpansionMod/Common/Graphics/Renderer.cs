@@ -71,7 +71,7 @@ internal class Renderer : ModSystem {
     }
 
     public static RenderPipeline Begin(Matrix? matrix = null) {
-        return Begin(1f, matrix);
+        return Begin(2f, matrix);
     }
 
     public static RenderPipeline BeginPixelated(Matrix? matrix = null) {
@@ -128,9 +128,6 @@ internal class Renderer : ModSystem {
         else {
             _drawTarget = null;
         }
-
-        Device.SetRenderTarget(_swapTarget);
-        Device.Clear(Color.Transparent);
 
         var beginCount = 0;
         var commandsCount = _commands.Tags.Count;
@@ -355,7 +352,8 @@ internal class Renderer : ModSystem {
             _targetPool.Add(rt);
         }
 
-        var oldViewport = Device.Viewport;
+        var oldViewportWidth = Device.Viewport.Width;
+        var oldViewportHeight = Device.Viewport.Height;
 
         (_targetPool[_targetPoolIndex], _drawTarget) = (_drawTarget!, _targetPool[_targetPoolIndex]);
         _targetPoolIndex++;
@@ -371,8 +369,8 @@ internal class Renderer : ModSystem {
         Device.Viewport = new(
             0,
             0,
-            (int)(oldViewport.Width * _scale / Main.GameViewMatrix.Zoom.X),
-            (int)(oldViewport.Height * _scale / Main.GameViewMatrix.Zoom.Y));
+            (int)(oldViewportWidth * _scale / Main.GameViewMatrix.Zoom.X),
+            (int)(oldViewportHeight * _scale / Main.GameViewMatrix.Zoom.X));
     }
 
     void ExecuteEnd() {
@@ -380,12 +378,28 @@ internal class Renderer : ModSystem {
         (_targetPool[_targetPoolIndex], _drawTarget) = (_drawTarget!, _targetPool[_targetPoolIndex]);
 
         Device.SetRenderTarget(_drawTarget);
+
+        var viewportWidth = Device.Viewport.Width;
+        var viewportHeight = Device.Viewport.Height;
+
         Device.BlendState = BlendState.AlphaBlend;
+        Device.SamplerStates[0] = SamplerState.PointClamp;
+
+        var oldTarget = _targetPool[_targetPoolIndex];
+        var viewportTargetRatio = new Vector2(
+            (float)viewportWidth / oldTarget.Width, 
+            (float)viewportHeight / oldTarget.Height);
+
+        var source = new Vector4(
+            0,
+            0,
+            _scale * viewportTargetRatio.X / Main.GameViewMatrix.Zoom.X,
+            _scale * viewportTargetRatio.Y / Main.GameViewMatrix.Zoom.Y);
 
         DrawQuad(
-            _targetPool[_targetPoolIndex],
+            oldTarget,
             [new(1, 1), new(1, -1), new(-1, 1), new(-1, -1)],
-            new(0, 0, _scale / Main.GameViewMatrix.Zoom.X, _scale / Main.GameViewMatrix.Zoom.Y),
+            source,
             Color.White,
             Matrix.Identity,
             null);

@@ -1,4 +1,5 @@
-﻿using EvilExpansionMod.Content.CameraModifiers;
+﻿using EvilExpansionMod.Common;
+using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
@@ -44,20 +45,21 @@ public sealed class CursehoundNPC : ModNPC {
     public ref float MaceAttackCooldown => ref NPC.ai[2];
     public ref float RoarAttackCooldown => ref NPC.ai[3];
 
-    private const int roar_telegraph_duration = (int)(0.5 * 60);
-    private const int roar_duration = 2 * 60;
-    private const int roar_downtime_duration = 1 * 60;
+    private const int ROAR_TELEGRAPH_DURATION = (int)(0.5 * 60);
+    private const int ROAR_DURATION = 2 * 60;
+    private const int ROAR_DOWNTIME_DURATION = 1 * 60;
 
-    private const int mace_spin_duration = 1 * 60;
-    private const int mace_duration = (int)(2.5f * 60);
-    private const int mace_retract_duration = 1 * 60;
+    private const int MACE_SPIN_DURATION = 1 * 60;
+    private const int MACE_DURATION = (int)(2.5f * 60);
+    private const int MACE_RETRACT_DURATION = 1 * 60;
 
     public override string Texture => Assets.Images.Corruption.NPCs.Cursehound.CursehoundNPC.KEY;
 
     public Player Target => Main.player[NPC.target];
 
-    private float timeGrounded;
-    private const int ground_time_for_attack = 1 * 60;
+    private Projectile _roarProjectile = null!;
+    private float _timeGrounded;
+    private const int GROUND_TIME_FOR_ATTACK = 1 * 60;
 
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 29;
@@ -112,7 +114,7 @@ public sealed class CursehoundNPC : ModNPC {
 
 
     public override void AI() {
-        NPC.TargetClosest();
+        NPC.TargetClosest(false);
         var target = Target;
 
         if(target.dead || !target.active) {
@@ -125,10 +127,10 @@ public sealed class CursehoundNPC : ModNPC {
         RoarAttackCooldown -= 1f;
 
         if(NPC.velocity.Y == 0) {
-            timeGrounded++;
+            _timeGrounded++;
         }
         else {
-            timeGrounded = 0;
+            _timeGrounded = 0;
         }
 
         var los = Collision.CanHitLine(target.position, target.width, target.height, NPC.Top, 1, 1);
@@ -141,17 +143,18 @@ public sealed class CursehoundNPC : ModNPC {
         float distanceToTarget = NPC.Distance(target.Center);
         float distanceToPlayerX = Math.Abs(target.Center.X - NPC.Center.X);
 
-        NPC.direction = (target.Center.X < NPC.Center.X) ? -1 : 1;
-        NPC.spriteDirection = NPC.direction;
-
         switch(CurrentState) {
             case State.Idle:
                 if(distanceToTarget < 1000f && broadLos) {
                     CurrentState = State.Walking;
                 }
-                NPC.velocity.X *= 0.9f;
-                break;
 
+                NPC.velocity.X *= 0.9f;
+
+                NPC.direction = (Target.Center.X < NPC.Center.X) ? -1 : 1;
+                NPC.spriteDirection = NPC.direction;
+
+                break;
             case State.Walking:
             case State.Running:
                 Movement(distanceToTarget, distanceToPlayerX, broadLos);
@@ -184,7 +187,7 @@ public sealed class CursehoundNPC : ModNPC {
         float roarAttackMaxRange = 500f;
         float runThreshold = 300f;
 
-        float baseJumpPower = 10f;
+        float baseJumpPower = 5f;
         float jumpScaleFactor = 0.05f;
         float maxJumpPower = 20f;
 
@@ -192,7 +195,7 @@ public sealed class CursehoundNPC : ModNPC {
         float dynamicJumpVelocity = -(baseJumpPower + Math.Max(0, verticalDifference) * jumpScaleFactor);
         dynamicJumpVelocity = MathHelper.Clamp(dynamicJumpVelocity, -maxJumpPower, -baseJumpPower);
 
-        if(NPC.velocity.Y == 0 && timeGrounded >= ground_time_for_attack && RoarAttackCooldown <= 0 && broadLineOfSight && distanceToTarget >= roarAttackMinRange && distanceToTarget <= roarAttackMaxRange) {
+        if(NPC.velocity.Y == 0 && _timeGrounded >= GROUND_TIME_FOR_ATTACK && RoarAttackCooldown <= 0 && broadLineOfSight && distanceToTarget >= roarAttackMinRange && distanceToTarget <= roarAttackMaxRange) {
             if(Main.rand.NextBool(20)) {
                 CurrentState = State.RoarTelegraph;
                 RoarAttackCooldown = 60 * 5;
@@ -200,7 +203,7 @@ public sealed class CursehoundNPC : ModNPC {
             return;
         }
 
-        if(MaceAttackCooldown <= 0 && broadLineOfSight && distanceToTarget < maceAttackRange && timeGrounded >= ground_time_for_attack) {
+        if(MaceAttackCooldown <= 0 && broadLineOfSight && distanceToTarget < maceAttackRange && _timeGrounded >= GROUND_TIME_FOR_ATTACK) {
             if(Main.rand.NextBool(30)) {
                 CurrentState = State.MaceSpinning;
                 MaceAttackCooldown = 60 * 5;
@@ -230,13 +233,13 @@ public sealed class CursehoundNPC : ModNPC {
 
         if (NPC.collideX && NPC.velocity.Y == 0) {
             NPC.velocity.Y = dynamicJumpVelocity;
-            timeGrounded = 0;
+            _timeGrounded = 0;
             NPC.noTileCollide = true;
         }
 
         if (NPC.velocity.Y == 0 && Target.Top.Y < NPC.Bottom.Y && Helper.HoleAtPosition(NPC, NPC.Center.X + NPC.velocity.X)) {
             NPC.velocity.Y = dynamicJumpVelocity;
-            timeGrounded = 0;
+            _timeGrounded = 0;
             NPC.noTileCollide = true;
         }
 
@@ -246,6 +249,9 @@ public sealed class CursehoundNPC : ModNPC {
             >= 0f => false,
             _ => NPC.noTileCollide,
         };
+
+        NPC.direction = (Target.Center.X < NPC.Center.X) ? -1 : 1;
+        NPC.spriteDirection = NPC.direction;
 
         NPC.spriteDirection = NPC.direction;
         NPC.rotation = -NPC.velocity.Y * 0.06f * -NPC.direction;
@@ -260,9 +266,11 @@ public sealed class CursehoundNPC : ModNPC {
             SoundEngine.PlaySound(Assets.Sounds.Cursehound.MaceSwing.Asset, NPC.Center);
         }
 
-        if(Timer >= mace_spin_duration) {
+        if(Timer >= MACE_SPIN_DURATION) {
             CurrentState = State.MaceAttacking;
         }
+
+        LookAtTarget();
     }
 
     private void MaceAttack(ref Player _) {
@@ -298,16 +306,18 @@ public sealed class CursehoundNPC : ModNPC {
             );
         }
 
-        if(Timer >= mace_duration) {
+        if(Timer >= MACE_DURATION) {
             CurrentState = State.MaceRetracting;
         }
+
+        LookAtTarget();
     }
 
     private void MaceRetracting() {
         NPC.velocity.X *= 0.2f;
         Timer++;
 
-        if(Timer >= mace_retract_duration) {
+        if(Timer >= MACE_RETRACT_DURATION) {
             CurrentState = State.Walking;
         }
     }
@@ -316,13 +326,23 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.velocity.X *= 0.1f;
         Timer++;
 
+        Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(1.25f, 0.9f, NPC.Center, 2000f));
+
+        var roarProjectilePosition = NPC.Center + new Vector2(126f * NPC.direction, 12f);
         if(Timer == 1) {
             SoundEngine.PlaySound(SoundID.DD2_BetsyDeath with { Volume = 1.2f, Pitch = 0.1f }, NPC.Center);
             SoundEngine.PlaySound(SoundID.DD2_BetsyScream with { Volume = 1.2f, Pitch = 0.1f }, NPC.Center);
 
-            Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(12f, 0.6f));
+            Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(22f, 0.6f, NPC.Center, 2000f));
+
+            _roarProjectile = RoarProjectile.New(
+                NPC.GetSource_FromAI(),
+                roarProjectilePosition,
+                1800,
+                120);
         }
 
+        var waterShaderData = Filters.Scene["WaterDistortion"].GetShader() as WaterShaderData;
         if(Timer is > 30 and < 90 && Timer % 10 == 0) {
             var searchRadiusTiles = 40;
             List<Point> lavaTiles = new();
@@ -349,15 +369,11 @@ public sealed class CursehoundNPC : ModNPC {
                 var velocity = new Vector2(0, Helper.InitialVelocityRequiredToHitPosition(spawnPos, Target.position - new Vector2(0, 40), 0.4f, 16f).Y);
                 Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, velocity, ModContent.ProjectileType<SpiritFireball>(), NPC.damage / 2, 0f, Main.myPlayer);
 
-                if(Filters.Scene["WaterDistortion"].GetShader() is not WaterShaderData data) {
-                    return;
-                }
-
-                data.QueueRipple(spawnPos, 30f, RippleShape.Circle, MathHelper.PiOver4);
+                waterShaderData?.QueueRipple(spawnPos, 30f, RippleShape.Circle, MathHelper.PiOver4);
             }
         }
 
-        if(Timer is > 40 and < roar_duration - 30 && Timer % 20 == 0) {
+        if(Timer is > 40 and < ROAR_DURATION - 30 && Timer % 20 == 0) {
             int numberOfStalactites = Main.rand.Next(2, 4);
             float spawnAreaWidth = 300f;
 
@@ -385,7 +401,7 @@ public sealed class CursehoundNPC : ModNPC {
             }
         }
 
-        if(Timer >= roar_duration) {
+        if(Timer >= ROAR_DURATION) {
             CurrentState = State.RoarDowntime;
         }
     }
@@ -394,18 +410,27 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.velocity.X *= 0.8f;
         Timer++;
 
-        if(Timer >= roar_telegraph_duration) {
+        if(Timer >= ROAR_TELEGRAPH_DURATION) {
             CurrentState = State.Roaring;
         }
+
+        LookAtTarget();
     }
 
     private void HandleRoarDowntime() {
         NPC.velocity.X *= 0.5f;
         Timer++;
 
-        if(Timer >= roar_downtime_duration) {
+        if(Timer >= ROAR_DOWNTIME_DURATION) {
             CurrentState = State.Walking;
         }
+
+        LookAtTarget();
+    }
+ 
+    private void LookAtTarget() {
+        NPC.direction = (Target.Center.X < NPC.Center.X) ? -1 : 1;
+        NPC.spriteDirection = NPC.direction;
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
@@ -486,7 +511,7 @@ public sealed class CursehoundNPC : ModNPC {
 
             case State.MaceSpinning:
                 float loops = 3f;
-                float maceSpinAnimationSpeed = (3 * loops) / mace_spin_duration;
+                float maceSpinAnimationSpeed = (3 * loops) / MACE_SPIN_DURATION;
 
                 NPC.frameCounter += maceSpinAnimationSpeed;
 
@@ -497,7 +522,7 @@ public sealed class CursehoundNPC : ModNPC {
                 break;
 
             case State.MaceAttacking:
-                NPC.frameCounter = Timer / (mace_duration / 3f);
+                NPC.frameCounter = Timer / (MACE_DURATION / 3f);
                 if(NPC.frameCounter >= 3) {
                     NPC.frameCounter = 2;
                 }
@@ -509,7 +534,7 @@ public sealed class CursehoundNPC : ModNPC {
                 break;
 
             case State.RoarTelegraph:
-                NPC.frameCounter = Timer / (roar_telegraph_duration / 3f);
+                NPC.frameCounter = Timer / (ROAR_TELEGRAPH_DURATION / 3f);
                 if(NPC.frameCounter >= 3) {
                     NPC.frameCounter = 2;
                 }

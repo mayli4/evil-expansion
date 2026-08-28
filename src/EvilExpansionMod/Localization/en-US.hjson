@@ -418,6 +418,9 @@ Mods: {
 			GulpyHandProjectile.DisplayName: Gulpy Hand
 			SpiritExplosion.DisplayName: Spirit Explosion
 			SpiritContactExplosion.DisplayName: Cursed Explosion
+			CherryScreamProjectile.DisplayName: Cherry Scream Projectile
+			ScreamProjectile.DisplayName: Scream Projectile
+			RoarProjectile.DisplayName: Roar Projectile
 		}
 
 		Biomes: {

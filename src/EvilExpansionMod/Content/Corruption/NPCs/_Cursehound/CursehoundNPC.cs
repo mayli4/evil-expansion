@@ -75,7 +75,7 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = false;
-        NPC.knockBackResist = 0.05f;
+        NPC.knockBackResist = 0.01f;
         NPC.friendly = false;
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath2;

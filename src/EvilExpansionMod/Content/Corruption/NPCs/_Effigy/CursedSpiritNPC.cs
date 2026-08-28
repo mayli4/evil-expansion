@@ -88,6 +88,7 @@ public sealed class CursedSpiritNPC : ModNPC {
     float _lookOffset;
     Vector2 _lookDirection;
     Player Target => Main.player[NPC.target];
+    static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     T State<T>() where T : struct => Unsafe.BitCast<float, T>(NPC.ai[2]);
@@ -145,8 +146,6 @@ public sealed class CursedSpiritNPC : ModNPC {
         }
 
         SpiritType = (SpiritType)Main.rand.Next(0, 3);
-        //SpiritType = (SpiritType)Main.rand.Next(0, 3);
-        //SpiritType = SpiritType.XXX;
         switch(SpiritType) {
             case SpiritType.Splitter:
                 _data.Splitter = new()
@@ -218,7 +217,9 @@ public sealed class CursedSpiritNPC : ModNPC {
                     DustID.CursedTorch,
                     newColor: Main.rand.NextFromList(GhostColor1, GhostColor2)
                 );
+            }
 
+            if (Main.rand.NextBool(12)) {
                 var ember = GlowEmberParticle.NewParticle(
                     NPC.Center + Main.rand.NextVector2Circular(11, 11),
                     Main.rand.NextVector2Circular(11, 11),
@@ -318,7 +319,7 @@ public sealed class CursedSpiritNPC : ModNPC {
                         ExplosionProjectile.New(
                             NPC.GetSource_Death(),
                             NPC.Center,
-                            (int)(NPC.damage *1.5 / difficultyScaler),
+                            (int)(NPC.damage *1.5 / DifficultyScaler),
                             Color.Yellow,
                             Color.LightGoldenrodYellow,
                             size: ExplosionRange,
@@ -428,7 +429,7 @@ public sealed class CursedSpiritNPC : ModNPC {
                 break;
         }
     }
-    float difficultyScaler = Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
+
     void FlyToTarget(Vector2 moveDirection) {
 
         UpdateLookDirection(moveDirection);
@@ -449,7 +450,7 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         fireballTimer -= 1;
         if(fireballTimer <= 0 && Target != null) {
-            fireballTimer = Main.rand.Next(220 / (int)difficultyScaler, 300 / (int)difficultyScaler);
+            fireballTimer = Main.rand.Next(220 / (int)DifficultyScaler, 300 / (int)DifficultyScaler);
 
             var position = NPC.Center;
             var velocity = Helper.InitialVelocityRequiredToHitPosition(
@@ -571,19 +572,18 @@ public sealed class CursedSpiritNPC : ModNPC {
                 NPC.velocity = -NPC.velocity;
                 if (Main.expertMode) {
                     Projectile.NewProjectile(
-                            NPC.GetSource_FromAI(),
-                            NPC.Center,
-                            new Microsoft.Xna.Framework.Vector2(0f, 0f),
-                            ModContent.ProjectileType<SpiritContactExplosion>(),
-                            (int)(NPC.damage * 0.5 / difficultyScaler),
-                            //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! Compensate in equation
-                            0.5f,
-                            Main.myPlayer,
-                            ai0: 1,
-                            ai1: 0
-                            );
+                        NPC.GetSource_FromAI(),
+                        NPC.Center,
+                        new Vector2(0f, 0f),
+                        ModContent.ProjectileType<SpiritContactExplosion>(),
+                        (int)(NPC.damage * 0.5 / DifficultyScaler),
+                        //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! Compensate in equation
+                        0.5f,
+                        Main.myPlayer,
+                        ai0: 1,
+                        ai1: 0);
                     SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1f }, NPC.Center);
-                 }
+                }
                 else {
                     SoundEngine.PlaySound(SoundID.Item178 with { Volume = 1f } with { PitchRange = (-1.0f, -0.5f) }, NPC.Center);
                 }
@@ -592,7 +592,7 @@ public sealed class CursedSpiritNPC : ModNPC {
         }
     }
 
-public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
+    public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var glowTexture = Assets.Images.Sample.Glow1.Asset.Value;
         var blinker = (MathF.Sin(0.1f * Main.GameUpdateCount + 23.2f * NPC.whoAmI) + MathF.Cos(0.06f * Main.GameUpdateCount) + 2f) / 4f;
         var bigGlowColor = GhostColor2 * (0.3f + 0.3f * blinker);

@@ -1,4 +1,5 @@
-﻿using EvilExpansionMod.Common.Graphics;
+﻿using Daybreak.Common.Rendering;
+using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Utilities;
@@ -118,7 +119,6 @@ public class ExplosionProjectile : ModProjectile {
         var noiseTexture2 = Assets.Images.Sample.Noise2.Asset.Value;
         var explosionEffect = Assets.Shaders.Pixel.Explosion.Asset.Value;
 
-        var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
         var progress = 1f - (float)Projectile.timeLeft / _maxTimeLeft;
 
         var explosionProgress = 1f - MathF.Pow(progress - 1f, 2);
@@ -162,6 +162,9 @@ public class ExplosionProjectile : ModProjectile {
         var glowScale = Projectile.width * 0.0035f;
         flashScale *= glowScale;
 
+        Main.spriteBatch.End(out var ss);
+        Main.spriteBatch.Begin(ss with { BlendState = BlendState.Additive });
+       
         Main.spriteBatch.Draw(
             glowTexture,
             Projectile.Center - Main.screenPosition,
@@ -180,14 +183,14 @@ public class ExplosionProjectile : ModProjectile {
                 + 0.2f * Main.rand.NextVector2Square(-Projectile.width, Projectile.width),
             null,
             _startColor * flashAlpha,
-            Projectile.rotation + Main.rand.NextFloat(),
+            Projectile.rotation + Main.rand.NextFloat() * 0.1f,
             glowTexture.Size() / 2f,
             1.8f * flashScale * Main.rand.NextFloat(),
             SpriteEffects.None,
             0f
         );
 
-        Main.spriteBatch.EndBegin(snapshot);
+        Main.spriteBatch.Restart(ss);
         return false;
     }
 }

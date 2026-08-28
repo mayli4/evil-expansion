@@ -102,7 +102,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                 }
                 break;
             case CultistState.SpearAttack:
-                NPC.velocity *= 0.99f;
+                NPC.velocity *= 0.98f;
                 if(Target == null) {
                     ChangeState(CultistState.FlyToTarget);
                 }
@@ -129,7 +129,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                 }
                 break;
             case CultistState.EyeAttack:
-                NPC.velocity *= 0.99f;
+                NPC.velocity *= 0.98f;
                 if(Target == null) {
                 }
                 else if(_timer > 60 && (int)_timer % 30 == 0) {

@@ -32,12 +32,12 @@ public sealed class DevilOWarNPC : ModNPC {
 
     public Player Target => Main.player[NPC.target];
 
-    private const int follow_range = 10 * 30;
+    private const int FOLLOW_RANGE = 16 * 64;
     public const int CHARGING_RADIUS = 26 * 10;
-    private const int attack_cooldown_time = 60 * 1;
+    private const int ATTACK_COOLDOWN = 60 * 1;
     public const int STINGER_DURATION_MAX = 60 * 30;
     public const int MAX_DRAIN_FOR_LEVEL = 160;
-    private const int tentacle_segment_count = 8;
+    private const int TENATCLE_SEGMENT_COUNT = 8;
 
     public Vector2 DrawScale = Vector2.One;
     public float Pulsation;
@@ -91,13 +91,13 @@ public sealed class DevilOWarNPC : ModNPC {
     public override void OnSpawn(IEntitySource source) {
         tentacleTrailPositions = new Vector2[4][];
         for(int i = 0; i < tentacleTrailPositions.Length; i++) {
-            tentacleTrailPositions[i] = new Vector2[tentacle_segment_count];
-            for(int j = 0; j < tentacle_segment_count; j++) {
+            tentacleTrailPositions[i] = new Vector2[TENATCLE_SEGMENT_COUNT];
+            for(int j = 0; j < TENATCLE_SEGMENT_COUNT; j++) {
                 tentacleTrailPositions[i][j] = NPC.Center;
             }
         }
-        stingerTrailPositions = new Vector2[tentacle_segment_count];
-        for(int i = 0; i < tentacle_segment_count; i++) {
+        stingerTrailPositions = new Vector2[TENATCLE_SEGMENT_COUNT];
+        for(int i = 0; i < TENATCLE_SEGMENT_COUNT; i++) {
             stingerTrailPositions[i] = NPC.Center;
         }
         tentacleWaveDirections = new float[tentacleTrailPositions.Length];
@@ -147,7 +147,7 @@ public sealed class DevilOWarNPC : ModNPC {
                         stingerTrailPositions,
                         activeStingerStart,
                         stingerProj.Center,
-                        tentacle_segment_count,
+                        TENATCLE_SEGMENT_COUNT,
                         0.5f,
                         0.1f,
                         15f
@@ -160,7 +160,7 @@ public sealed class DevilOWarNPC : ModNPC {
                         stingerTrailPositions,
                         retractingStingerStart,
                         retractingStinger.Projectile.Center,
-                        tentacle_segment_count,
+                        TENATCLE_SEGMENT_COUNT,
                         0.5f,
                         0.1f,
                         15f
@@ -191,7 +191,7 @@ public sealed class DevilOWarNPC : ModNPC {
         float difficultyScaler = Main.expertMode ? 2f : 1f; //aggro range, move speed multiplied on Expert and higher
         switch(CurrentState) {
             case State.Idle:
-                if(NPC.Center.Distance(Target!.Center) < follow_range * difficultyScaler) {
+                if(NPC.Center.Distance(Target!.Center) < FOLLOW_RANGE * difficultyScaler) {
                     NPC.velocity += 0.05f * NPC.Center.DirectionTo(Target.Center) * difficultyScaler;
                     if(NPC.velocity.Length() > 2f * difficultyScaler) {
                         NPC.velocity = Vector2.Normalize(NPC.velocity) * 2f * difficultyScaler;
@@ -225,12 +225,12 @@ public sealed class DevilOWarNPC : ModNPC {
                     }
                     else {
                         CurrentState = State.AttackCooldown;
-                        attackCooldownTimer = attack_cooldown_time;
+                        attackCooldownTimer = ATTACK_COOLDOWN;
                     }
                 }
                 else {
                     CurrentState = State.AttackCooldown;
-                    attackCooldownTimer = attack_cooldown_time;
+                    attackCooldownTimer = ATTACK_COOLDOWN;
                 }
                 break;
 
@@ -264,7 +264,7 @@ public sealed class DevilOWarNPC : ModNPC {
             else {
                 StingerProjectileId = -1;
                 CurrentState = State.AttackCooldown;
-                attackCooldownTimer = attack_cooldown_time;
+                attackCooldownTimer = ATTACK_COOLDOWN;
             }
         }
     }
@@ -340,8 +340,8 @@ public sealed class DevilOWarNPC : ModNPC {
 
             float phaseOffsetMainTentacles = NPC.whoAmI * 0.123f;
 
-            for(int j = 1; j < tentacle_segment_count; j++) {
-                float factor = j / (tentacle_segment_count - 1f);
+            for(int j = 1; j < TENATCLE_SEGMENT_COUNT; j++) {
+                float factor = j / (TENATCLE_SEGMENT_COUNT - 1f);
                 positions[j] = currentTentacleBase
                                + moveDirection
                                * MathHelper.Lerp(110, 130, MathF.Sin(Main.GameUpdateCount * (0.02f + i * 0.003f) + i * 0.6f + phaseOffsetMainTentacles))
@@ -360,10 +360,10 @@ public sealed class DevilOWarNPC : ModNPC {
             if(stingerProj.active && stingerProj.ModProjectile is DevilOWarStingerProjectile stinger) {
                 var activeStingerStart = NPC.Center;
                 if(!stinger.IsRetracting) {
-                    GenerateWavyTentaclePoints(stingerTrailPositions, activeStingerStart, stingerProj.Center, tentacle_segment_count, 0.5f, 0.1f, 15f, NPC.whoAmI * 0.234f);
+                    GenerateWavyTentaclePoints(stingerTrailPositions, activeStingerStart, stingerProj.Center, TENATCLE_SEGMENT_COUNT, 0.5f, 0.1f, 15f, NPC.whoAmI * 0.234f);
                 }
                 else {
-                    GenerateWavyTentaclePoints(stingerTrailPositions, activeStingerStart, stinger.Projectile.Center, tentacle_segment_count, 0.5f, 0.1f, 15f, NPC.whoAmI * 0.234f);
+                    GenerateWavyTentaclePoints(stingerTrailPositions, activeStingerStart, stinger.Projectile.Center, TENATCLE_SEGMENT_COUNT, 0.5f, 0.1f, 15f, NPC.whoAmI * 0.234f);
                 }
 
                 var stingerColor = Color.Lerp(drawColor, Color.Yellow, 0.5f + MathF.Sin(Main.GameUpdateCount * 0.1f) * 0.2f);

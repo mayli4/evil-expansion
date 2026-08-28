@@ -170,10 +170,10 @@ internal sealed class UnderworldCorruptionBgSystem : ModSystem {
                 num8 = 1.3f;
                 break;
             case 1:
-                zero.Y += 180f;
+                zero.Y += 140f;
                 break;
             case 2:
-                zero.Y += 200;
+                zero.Y += 160;
                 break;
             case 3:
                 zero.Y += 240f;

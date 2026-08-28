@@ -174,19 +174,19 @@ public class UnderworldCrimsonBGSystem : ModSystem {
 
         switch(textureArrayIndex) {
             case 0:
-                zero.Y += 0f;
+                zero.Y -= 0f;
                 num8 = 1.3f;
                 break;
             case 1:
-                zero.Y -= 10f;
+                zero.Y += 10f;
                 break;
             case 2:
-                zero.Y += 170;
+                zero.Y += 100;
                 zero.Y -= heightChange * 0.5f;
                 num8 = newScaleFactorForLayer2;
                 break;
             case 3:
-                zero.Y += 90f;
+                zero.Y -= 30f;
                 break;
         }
 

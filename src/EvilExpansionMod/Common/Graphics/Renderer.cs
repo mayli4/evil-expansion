@@ -387,7 +387,7 @@ internal class Renderer : ModSystem {
 
         var oldTarget = _targetPool[_targetPoolIndex];
         var viewportTargetRatio = new Vector2(
-            (float)viewportWidth / oldTarget.Width, 
+            (float)viewportWidth / oldTarget.Width,
             (float)viewportHeight / oldTarget.Height);
 
         var source = new Vector4(

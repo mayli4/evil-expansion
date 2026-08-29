@@ -9,7 +9,7 @@ internal static class RenderPipelineExtensions {
         public RenderPipeline ApplyTint(Color color) {
             return @this.ApplyEffect(Assets.Shaders.Pixel.Tint.Asset.Value, ("uColor", color));
         }
-        
+
         public RenderPipeline ApplyOutline(Color color, float threshold = 0.001f) {
             return @this.ApplyEffect(
                 Assets.Shaders.Pixel.Outline.Asset.Value,
@@ -17,7 +17,7 @@ internal static class RenderPipelineExtensions {
                 ("uThreshold", threshold),
                 ("uSize", Main.ScreenSize.ToVector2() * 2f));
         }
-        
+
         public RenderPipeline ApplyBloom(float intensity = 1.5f, float threshold = 0.5f) {
             return @this.ApplyEffect(
                 Assets.Shaders.Pixel.Bloom.Asset.Value,
@@ -26,5 +26,4 @@ internal static class RenderPipelineExtensions {
                 ("uSize", Main.ScreenSize.ToVector2() * 2f));
         }
     }
-
 }

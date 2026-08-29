@@ -37,6 +37,7 @@ public class PlanetoidProjectile : ModProjectile {
     private ref float _preExplosionDelayTimer => ref Projectile.localAI[2];
 
     private bool _canExplode;
+    private float _shake;
 
     private const float growth_time = 60 * 5;
 
@@ -335,9 +336,12 @@ public class PlanetoidProjectile : ModProjectile {
                 Dust.NewDustPerfect(dustPos, DustID.Dirt);
             }
             _currentTextureIndex = newTextureIndex;
+            _shake = 1f;
 
             SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Projectile.Center);
         }
+
+        _shake *= 0.95f;
 
         float startingScale = 0.7f;
         float easedDrawProgress = MathF.Pow(drawProgress, 0.5f);
@@ -347,10 +351,11 @@ public class PlanetoidProjectile : ModProjectile {
         var height = (int)(currentTexture.Height * finalDrawScale);
 
         Projectile.Resize(Math.Max(1, width - 12), Math.Max(1, height - 12));
+        var drawPosition = Projectile.Center + _shake * Main.rand.NextVector2Unit() * 2f;
 
         Main.EntitySpriteDraw(
             currentTexture,
-            Projectile.Center - Main.screenPosition,
+            drawPosition - Main.screenPosition,
             null,
             Projectile.GetAlpha(lightColor),
             Projectile.rotation,
@@ -377,7 +382,7 @@ public class PlanetoidProjectile : ModProjectile {
                 .DrawTexture(new()
                 {
                     Texture = currentTexture,
-                    Position = Projectile.Center,
+                    Position = drawPosition,
                     Color = Projectile.GetAlpha(lightColor),
                     Rotation = Projectile.rotation,
                     Origin = currentTexture.Size() / 2f,

@@ -4,9 +4,9 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.Graphics.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -54,8 +54,8 @@ public sealed class BloodWarden : ModProjectile {
     }
 
     public override void SetDefaults() {
-        Projectile.width = 70;
-        Projectile.height = 90;
+        Projectile.width = 60;
+        Projectile.height = 60;
 
         Projectile.tileCollide = false;
 
@@ -65,6 +65,7 @@ public sealed class BloodWarden : ModProjectile {
         Projectile.friendly = true;
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = ATTACK_ANIMATION_SPEED * 2;
+        Projectile.manualDirectionChange = true;
 
         Projectile.damage = 30;
 
@@ -76,8 +77,8 @@ public sealed class BloodWarden : ModProjectile {
 
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
         return Collision.CheckAABBvAABBCollision(
-            projHitbox.TopLeft() + Vector2.UnitX * Projectile.direction * HITBOX_OFFSET, 
-            projHitbox.Size(), 
+            projHitbox.TopLeft() + Vector2.UnitX * Projectile.direction * Projectile.Size.X,
+            projHitbox.Size(),
             targetHitbox.TopLeft(),
             targetHitbox.Size());
     }
@@ -93,7 +94,8 @@ public sealed class BloodWarden : ModProjectile {
     public override void AI() {
         if(Owner.HasBuff<BloodWardenBuff>()) {
             Projectile.timeLeft = 2;
-        } else {
+        }
+        else {
             Projectile.Kill();
         }
 
@@ -108,11 +110,11 @@ public sealed class BloodWarden : ModProjectile {
                     break;
                 }
 
-                Projectile.direction = 
-                    Projectile.spriteDirection = (Owner.Center.X < Projectile.Center.X) ? -1 : 1;
+                Projectile.direction = (Owner.Center.X < Projectile.Center.X) ? -1 : 1;
+                Projectile.spriteDirection = Projectile.direction;
 
                 var targetPosition = Owner.Center + new Vector2(
-                    Owner.direction == 1 ? -80f : 80f, 
+                    Owner.direction == 1 ? -80f : 80f,
                     MathF.Sin(Main.GameUpdateCount * 0.05f + Projectile.whoAmI * 0.1f) * 10f - 30f);
 
                 Vector2 vectorToTarget = targetPosition - Projectile.Center;
@@ -154,10 +156,10 @@ public sealed class BloodWarden : ModProjectile {
                     break;
                 }
 
-                Projectile.direction = 
-                    Projectile.spriteDirection = (Target!.Center.X < Projectile.Center.X) ? -1 : 1;
+                Projectile.direction = (Target!.Center.X < Projectile.Center.X) ? -1 : 1;
+                Projectile.spriteDirection = Projectile.direction;
 
-                targetPosition = Target.Center - Vector2.UnitX * Projectile.spriteDirection * HITBOX_OFFSET * 2f;
+                targetPosition = Target!.Center - Projectile.direction * Vector2.UnitX * Projectile.Size.X;
                 Projectile.velocity += Projectile.Center.DirectionTo(targetPosition) * 3.5f;
                 Projectile.velocity *= 0.8f;
 
@@ -172,11 +174,11 @@ public sealed class BloodWarden : ModProjectile {
                 break;
         }
 
-        if (Main.rand.NextBool(12)) {
+        if(Main.rand.NextBool(12)) {
             var particle = BloodParticle.NewParticle(
                 Projectile.Center + Vector2.UnitY * 30f + Main.rand.NextVector2Unit() * Main.rand.NextFloat(15f),
-                Vector2.UnitY, 
-                Main.rand.NextFloat(0.2f, 0.5f), 
+                Vector2.UnitY,
+                Main.rand.NextFloat(0.2f, 0.5f),
                 new Color(180, 15, 25));
             ParticleEngine.PARTICLES.Add(particle);
         }
@@ -198,7 +200,7 @@ public sealed class BloodWarden : ModProjectile {
                 }
             }
         }
-        
+
         TargetId = bestTarget?.whoAmI ?? -1;
     }
 
@@ -209,7 +211,7 @@ public sealed class BloodWarden : ModProjectile {
         var chainTexture = Assets.Images.Crimson.Items.MeatPrisonArmor.BloodWardenCord.Asset.Value;
 
         var origin = new Vector2(
-            Projectile.spriteDirection == 1 ? 58 : texture.Width - 58, 
+            Projectile.spriteDirection == 1 ? 58 : texture.Width - 58,
             texture.Height / Main.projFrames[Projectile.type] / 2f);
 
         int frameHeight = texture.Height / Main.projFrames[Projectile.type];
@@ -225,9 +227,10 @@ public sealed class BloodWarden : ModProjectile {
 
         pipeline
             .SetTexture(chainTexture)
-            .DrawTrail(chainPoints.ToArray(), 6, lightColor);
+            .DrawTrail(CollectionsMarshal.AsSpan(chainPoints), 6, lightColor);
 
-        pipeline.DrawTexture(new() {
+        pipeline.DrawTexture(new()
+        {
             Texture = texture,
             Position = Projectile.Center - Vector2.UnitY * 10f,
             Source = source,
@@ -257,7 +260,7 @@ public sealed class BloodWarden : ModProjectile {
             var t = (float)i / (segments - 1);
             var basePoint = Vector2.Lerp(start, end, t);
 
-            var waveDisplacement = 
+            var waveDisplacement =
                 (float)Math.Sin(t * MathHelper.TwoPi * waveFrequency + instancePhaseOffset)
                 * waveAmplitude * (1f - t);
 

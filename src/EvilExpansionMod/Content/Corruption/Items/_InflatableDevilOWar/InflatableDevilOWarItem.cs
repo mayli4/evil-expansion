@@ -48,7 +48,7 @@ public class InflatableDevilOWarItem : ModItem {
     public override void UpdateAccessory(Player player, bool hideVisual) {
         player.jumpSpeedBoost = 3f;
         player.jumpBoost = true;
-        
+
         if(player.whoAmI == Main.myPlayer) {
             if(_projectileID != -1 && Main.projectile[_projectileID].active && Main.projectile[_projectileID].owner == player.whoAmI && Main.projectile[_projectileID].type == ModContent.ProjectileType<InflatableDevilOWarProjectile>()) {
                 Main.projectile[_projectileID].timeLeft = 2;
@@ -119,8 +119,8 @@ public class InflatableDevilOWarProjectile : ModProjectile {
         Player player = Main.player[Projectile.owner];
 
         Vector2 targetPos = player.Center + new Vector2(player.direction * 20f, -player.height / 2f - 40f);
-        foreach (var projectile in Main.ActiveProjectiles) {
-            if (player.whoAmI == Projectile.owner && projectile.type == Projectile.type && projectile.whoAmI < Projectile.whoAmI) {
+        foreach(var projectile in Main.ActiveProjectiles) {
+            if(player.whoAmI == Projectile.owner && projectile.type == Projectile.type && projectile.whoAmI < Projectile.whoAmI) {
                 targetPos += new Vector2(-32f * player.direction, -8f);
                 break;
             }
@@ -132,7 +132,7 @@ public class InflatableDevilOWarProjectile : ModProjectile {
         Vector2 velocityToTarget = (targetPos - Projectile.Center);
         Projectile.velocity = velocityToTarget * speed;
 
-        Projectile.velocity.Y += MathF.Sin(Main.GameUpdateCount * 0.05f + Projectile.whoAmI * 0.1f) * 1.0f;
+        Projectile.velocity.Y += MathF.Sin(Main.GameUpdateCount * 0.05f + Projectile.whoAmI * 0.7f) * 1.0f;
 
         Projectile.rotation = -Projectile.velocity.X * 0.02f;
 

@@ -23,12 +23,14 @@ public class CorruptlingProjectile : ModProjectile {
         Projectile.friendly = true;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = false;
-        Projectile.timeLeft = 420;
+        Projectile.timeLeft = 10*60;
         Projectile.penetrate = 6;
         Projectile.aiStyle = -1;
 
-        Projectile.usesIDStaticNPCImmunity = true;
-        Projectile.idStaticNPCHitCooldown = 8;
+        Projectile.usesLocalNPCImmunity = true;
+        Projectile.localNPCHitCooldown = 10;
+        //Projectile.usesIDStaticNPCImmunity = true;
+        //Projectile.idStaticNPCHitCooldown = 8;
 
         Projectile.SetAISlotNPC(1, null);
     }

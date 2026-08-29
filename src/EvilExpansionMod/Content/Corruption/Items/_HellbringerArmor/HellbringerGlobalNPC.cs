@@ -11,6 +11,9 @@ public class HellbringerGlobalNPC : GlobalNPC {
     }
 
     public override void OnHitByProjectile(NPC npc, Projectile projectile, NPC.HitInfo hit, int damageDone) {
+        if(projectile.type == ModContent.ProjectileType<CorruptlingProjectile>()) {
+            return;
+        }
         OnHit(npc);
     }
 

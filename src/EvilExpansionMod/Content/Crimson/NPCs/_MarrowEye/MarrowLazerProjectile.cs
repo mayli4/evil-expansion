@@ -81,7 +81,7 @@ public class MarrowLazerProjectile : ModProjectile {
             if(Collision.SolidCollision(hitPoint, 1, 1)) break;
 
             var foundPlayerCollision = false;
-            foreach(var player in Main.player[0..Main.maxPlayers]) {
+            foreach(var player in Main.ActivePlayers) {
                 if(player.Hitbox.Contains((int)hitPoint.X, (int)hitPoint.Y)) {
                     if(Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft < DisapearFrames * 2 && _hitCd <= 0) {
                         player.Hurt(new Player.HurtInfo

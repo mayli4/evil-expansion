@@ -17,19 +17,19 @@ namespace EvilExpansionMod.Content.Crimson;
 public class MarrowLazerProjectile : ModProjectile {
     public override string Texture => Assets.Images.Crimson.NPCs.MarrowEye.MarrowEyeNPC.KEY;
 
-    public static readonly int DisapearFrames = 16;
+    public static readonly int DisappearFrames = 16;
 
-    Color _mainColor = new(63, 28, 72);
-    Color _secondaryColor = new(253, 60, 179);
-    Color _highlightColor = new(255, 155, 220);
+    Color mainColor = new(63, 28, 72);
+    Color secondaryColor = new(253, 60, 179);
+    Color highlightColor = new(255, 155, 220);
 
-    int _hitCd;
+    int hitCd;
 
     float Scale {
         get {
             var scale = 0.2f;
-            if(Projectile.timeLeft <= DisapearFrames * 2f) {
-                scale += MathF.Sin(MathF.PI * Projectile.timeLeft / (DisapearFrames * 2f)) * 0.8f;
+            if(Projectile.timeLeft <= DisappearFrames * 2f) {
+                scale += MathF.Sin(MathF.PI * Projectile.timeLeft / (DisappearFrames * 2f)) * 0.8f;
             }
 
             return scale;
@@ -53,25 +53,25 @@ public class MarrowLazerProjectile : ModProjectile {
         Projectile.penetrate = -1;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = false;
-        Projectile.timeLeft = DisapearFrames * 2 + 40;
+        Projectile.timeLeft = DisappearFrames * 2 + 40;
     }
 
     public override bool ShouldUpdatePosition() => false;
 
     public override void AI() {
         var hitPoint = Projectile.position + Projectile.velocity * 8f;
-        var lightColor = _secondaryColor * 0.005f * Scale;
+        var lightColor = secondaryColor * 0.005f * Scale;
         
-        if (Projectile.timeLeft < DisapearFrames * 2) {
+        if (Projectile.timeLeft < DisappearFrames * 2) {
             if (!SoundEngine.TryGetActiveSound(loopSoundSlot, out var activeSound)) {
-                if (Projectile.timeLeft > DisapearFrames) {
+                if (Projectile.timeLeft > DisappearFrames) {
                     loopSoundSlot = SoundEngine.PlaySound(LaserLoopSound, Projectile.position);
                 }
             } else {
                 activeSound.Position = Projectile.position;
 
-                if (Projectile.timeLeft <= DisapearFrames) {
-                    float fadeProgress = (float)Projectile.timeLeft / DisapearFrames;
+                if (Projectile.timeLeft <= DisappearFrames) {
+                    float fadeProgress = (float)Projectile.timeLeft / DisappearFrames;
                     activeSound.Volume = LaserLoopSound.Volume * fadeProgress;
                 }
             }
@@ -83,7 +83,7 @@ public class MarrowLazerProjectile : ModProjectile {
             var foundPlayerCollision = false;
             foreach(var player in Main.ActivePlayers) {
                 if(player.Hitbox.Contains((int)hitPoint.X, (int)hitPoint.Y)) {
-                    if(Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft < DisapearFrames * 2 && _hitCd <= 0) {
+                    if(Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft < DisappearFrames * 2 && hitCd <= 0) {
                         player.Hurt(new Player.HurtInfo
                         {
                             SoundDisabled = true,
@@ -92,7 +92,7 @@ public class MarrowLazerProjectile : ModProjectile {
                             HitDirection = MathF.Sign(player.Center.X - Projectile.position.X),
                         });
 
-                        _hitCd = 50;
+                        hitCd = 50;
                     }
 
                     foundPlayerCollision = true;
@@ -108,20 +108,20 @@ public class MarrowLazerProjectile : ModProjectile {
 
         Projectile.scale = (hitPoint - Projectile.position).Length();
 
-        if (Projectile.timeLeft < DisapearFrames * 2 && Main.rand.NextBool(5)) {
+        if (Projectile.timeLeft < DisappearFrames * 2 && Main.rand.NextBool(5)) {
              var ember = GlowEmberParticle.NewParticle(
                 hitPoint + Main.rand.NextVector2Unit() * 5f,
                 Main.rand.NextVector2Unit() * Main.rand.NextFloat(4.2f, 7.5f),
                 Main.rand.NextFloat(0.25f, 1.5f),
-                _secondaryColor,
-                _highlightColor);
+                secondaryColor,
+                highlightColor);
 
             ember.Randomness *= 2f;
             ember.LossPerSecond *= 2f;
             ParticleEngine.PARTICLES.Add(ember);
         }
 
-        if (_hitCd > 0) _hitCd--;
+        if (hitCd > 0) hitCd--;
     }
     
     public override void OnKill(int timeLeft) {
@@ -145,9 +145,9 @@ public class MarrowLazerProjectile : ModProjectile {
             .SetEffectParams(
                 effect,
                 ("uLength", Projectile.scale),
-                ("uColor1", _secondaryColor),
-                ("uColor2", _mainColor),
-                ("uColor3", _highlightColor),
+                ("uColor1", secondaryColor),
+                ("uColor2", mainColor),
+                ("uColor3", highlightColor),
                 ("uTime", -Main.GameUpdateCount * 0.008f),
                 ("uStepThreshold", 0.02f + 0.05f * Scale),
                 ("uStepColor", 0.16f)
@@ -165,7 +165,7 @@ public class MarrowLazerProjectile : ModProjectile {
                 SpriteEffects = SpriteEffects.None,
                 Effect = effect,
             })
-            .ApplyOutline(_mainColor)
+            .ApplyOutline(mainColor)
             .ApplyBloom(1.5f)
             .End();
 
@@ -176,7 +176,7 @@ public class MarrowLazerProjectile : ModProjectile {
             glowTexture,
             Projectile.position - Main.screenPosition,
             null,
-            _highlightColor * 0.6f,
+            highlightColor * 0.6f,
             rotation,
             glowTexture.Size() / 2f,
             Scale * 0.1f + Main.rand.NextFloat() * 0.05f,
@@ -188,7 +188,7 @@ public class MarrowLazerProjectile : ModProjectile {
             starTexture,
             Projectile.position - Main.screenPosition,
             null,
-            _highlightColor,
+            highlightColor,
             0.32f + Main.rand.NextFloat() * 0.1f,
             starTexture.Size() / 2f,
             Scale * 0.2f + Main.rand.NextFloat() * 0.25f,
@@ -200,7 +200,7 @@ public class MarrowLazerProjectile : ModProjectile {
             glowBallTexture,
             Projectile.position - Main.screenPosition,
             null,
-            _highlightColor * 0.25f,
+            highlightColor * 0.25f,
             0.32f + Main.rand.NextFloat() * 0.1f,
             glowBallTexture.Size() / 2f,
             Scale * 0.3f + Main.rand.NextFloat() * 0.075f,
@@ -212,7 +212,7 @@ public class MarrowLazerProjectile : ModProjectile {
             glowTexture,
             Projectile.position + Projectile.velocity * Projectile.scale / 2f - Main.screenPosition,
             null,
-            _highlightColor * 0.3f,
+            highlightColor * 0.3f,
             rotation,
             glowTexture.Size() / 2f,
             new Vector2(0.6f + Projectile.scale / glowTexture.Width, Scale * 0.175f),
@@ -224,7 +224,7 @@ public class MarrowLazerProjectile : ModProjectile {
             glowTexture,
             Projectile.position + Projectile.velocity * Projectile.scale - Main.screenPosition,
             null,
-            _highlightColor * 0.6f,
+            highlightColor * 0.6f,
             rotation,
             glowTexture.Size() / 2f,
             Scale * 0.1f + Main.rand.NextFloat() * 0.05f,

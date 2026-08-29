@@ -245,7 +245,7 @@ public class MarrowEyeNPC : ModNPC {
                     lazerProjectile.Projectile.position = _eyePosition;
                     lazerProjectile.Projectile.velocity = _lookDirection;
                     lazerProjectile.Projectile.timeLeft = Math.Max(
-                        MarrowLazerProjectile.DisapearFrames,
+                        MarrowLazerProjectile.DisappearFrames,
                         lazerProjectile.Projectile.timeLeft);
                 }
                 else if(Main.netMode != NetmodeID.MultiplayerClient) {

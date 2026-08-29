@@ -105,7 +105,8 @@ public sealed class BloodWarden : ModProjectile {
             case State.Idle:
                 FindBestTarget();
 
-                if(IsTargetValid && Projectile.Distance(Owner.Center) < MAX_ATTACK_RANGE) {
+                var distanceToOwner = Projectile.Distance(Owner.Center);
+                if(IsTargetValid && distanceToOwner < MAX_ATTACK_RANGE) {
                     CurrentState = State.Attacking;
                     break;
                 }
@@ -116,6 +117,10 @@ public sealed class BloodWarden : ModProjectile {
                 var targetPosition = Owner.Center + new Vector2(
                     Owner.direction == 1 ? -80f : 80f,
                     MathF.Sin(Main.GameUpdateCount * 0.05f + Projectile.whoAmI * 0.1f) * 10f - 30f);
+
+                if(distanceToOwner > MAX_ATTACK_RANGE * 2.25f) {
+                    Projectile.Center = targetPosition;
+                }
 
                 Vector2 vectorToTarget = targetPosition - Projectile.Center;
                 float distance = vectorToTarget.Length();
@@ -177,7 +182,7 @@ public sealed class BloodWarden : ModProjectile {
         if(Main.rand.NextBool(12)) {
             var particle = BloodParticle.NewParticle(
                 Projectile.Center + Vector2.UnitY * 30f + Main.rand.NextVector2Unit() * Main.rand.NextFloat(15f),
-                Vector2.UnitY,
+                Vector2.UnitY * Projectile.velocity.Y,
                 Main.rand.NextFloat(0.2f, 0.5f),
                 new Color(180, 15, 25));
             ParticleEngine.PARTICLES.Add(particle);

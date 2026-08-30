@@ -67,6 +67,7 @@ public class ThoughtfulCultistNPC : ModNPC {
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ThoughtfulPendantItem>(), 50, 1, 1));
     }
 
     public override void OnSpawn(IEntitySource source) {

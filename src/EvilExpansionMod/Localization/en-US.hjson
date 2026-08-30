@@ -118,7 +118,7 @@ Mods: {
 
 			ThoughtfulPendantItem: {
 				DisplayName: Thoughtful Pendant
-				Tooltip: Has a chance to conjure Spear Portals around your cursor while attacking
+				Tooltip: Has a chance to conjure Spear Portals around your cursor when you attack
 			}
 
 			ImputedFlameItem: {
@@ -338,8 +338,13 @@ Mods: {
 			}
 
 			CurseknightsHelm: {
-				DisplayName: Curseknights Helm
-				Tooltip: ""
+				DisplayName: Curseknight's Helm
+				Tooltip:
+					'''
+					Taking damage sets you ablaze while above 50% life
+					Repeated hits lengthen the debuff's duration
+					Below 50% life, increases damage massively as long as Cursed Inferno is active
+					'''
 			}
 		}
 
@@ -500,6 +505,15 @@ Mods: {
 			RibcagedNPCDebuff: {
 				DisplayName: Ribcaged N P C Debuff
 				Description: Mods.EvilExpansionMod.Buffs.RibcagedNPCDebuff.Description
+			}
+
+			CursedWrath: {
+				DisplayName: Cursed Wrath
+				Description:
+					'''
+					You are consumed with rage...
+					Increases damage by 50%
+					'''
 			}
 		}
 

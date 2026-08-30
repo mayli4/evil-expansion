@@ -20,10 +20,10 @@ public class CurseknightsHelm : ModItem {
     public override string Texture => Assets.Images.Corruption.Items.CurseknightsHelm.CurseknightsHelmItem.KEY;
     public static int HelmOn;
     public static int HelmOff;
-    private static bool HelmExploded;
+    public static bool HelmExploded;
     bool IsBoostingDamage = false;
-    static int HealthThreshold = Main.LocalPlayer.statLifeMax2 / 2;
-    public static bool IsAboveThreshold => Main.LocalPlayer.statLife > HealthThreshold;
+    public static float DifficultylessDebuff => Main.expertMode ? (Main.masterMode ? 0.4f : 0.5f) : 1f; //Expert and master mode multiply debuff time... need to counteract this
+    
     public override void Load() {
         EquipLoader.AddEquipTexture(Mod, Assets.Images.Corruption.Items.CurseknightsHelm.CurseknightsHelmOn_Head.KEY, EquipType.Head, this, name:"OnCurseknightsHelm");
         EquipLoader.AddEquipTexture(Mod, Assets.Images.Corruption.Items.CurseknightsHelm.CurseknightsHelmOff_Head.KEY, EquipType.Head, this, name: "OffCurseknightsHelm");
@@ -37,66 +37,106 @@ public class CurseknightsHelm : ModItem {
         Item.rare = ItemRarityID.Pink;
         Item.value = Item.sellPrice(gold: 1);
         Item.defense = 10;
-        HelmOn = EquipLoader.GetEquipSlot(Mod, Assets.Images.Corruption.Items.CurseknightsHelm.CurseknightsHelmOn_Head.KEY, EquipType.Head);
-        HelmOff = EquipLoader.GetEquipSlot(Mod, Assets.Images.Corruption.Items.CurseknightsHelm.CurseknightsHelmOff_Head.KEY, EquipType.Head);
+        HelmOn = EquipLoader.GetEquipSlot(Mod, "OnCurseknightsHelm", EquipType.Head);
+        HelmOff = EquipLoader.GetEquipSlot(Mod, "OffCurseknightsHelm", EquipType.Head);
         HelmExploded = false;
     }
-    public class ExampleModPlayer : ModPlayer {
-        public override void OnHitByNPC(NPC npc, Player.HurtInfo hurtInfo) {
-            if(IsAboveThreshold) {
-                int buffIndex = Player.FindBuffIndex(BuffID.CursedInferno);
+    public override void UpdateAccessory(Player player, bool hideVisual) {
+        int HealthThreshold = player.statLifeMax2 / 2;
+        var modPlayer = player.GetModPlayer<CurseknightsHelmPlayer>();
+        modPlayer.IsWearingHelm = true;//this keeps setting the accessory being equipped... a little inefficient, oh well
+        modPlayer.HideVisual = hideVisual;
 
-                if(buffIndex != -1) {
-                    int timeLeftInTicks = Player.buffTime[buffIndex];
-                    Player.AddBuff(BuffID.CursedInferno, 8 * 60 + timeLeftInTicks, false);
+        if (player.statLife < HealthThreshold) {
+            modPlayer.IsBelowThreshold = true;
+        }
+        else {
+            modPlayer.IsBelowThreshold = false;
+        }
+
+        if(!modPlayer.IsBelowThreshold) { //if HP >50%
+            if(HelmExploded) { //if Helm was broken prior (Reform effects goes here)
+                SoundEngine.PlaySound(SoundID.Item52 with { Volume = 0.9f }, player.position);
+                for(int i = 0; i < 5; i++) {
+                    Dust.NewDust(player.position, player.width, player.height, DustID.CursedTorch, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.5f, 2f));
                 }
-                else {
-                    Player.AddBuff(BuffID.CursedInferno, 8 * 60, false);
-                    for(int i = 0; i < 5; i++) {
-                        Dust.NewDust(Player.position, Player.width, Player.height, DustID.CursedTorch, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default);
-                    }
-                }
+                HelmExploded = false;
+            }
+        }
+        else {
+            if(player.HasBuff(BuffID.CursedInferno)) {
+                player.AddBuff(ModContent.BuffType<CursedWrath>(), int.MaxValue, false);
+                IsBoostingDamage = true;
+            }
+            if(!HelmExploded) { //If Helm was not broken prior (Breaking effects goes here)
+                
+                Projectile.NewProjectile(
+                player.GetSource_FromThis(),
+                player.position,
+                new Microsoft.Xna.Framework.Vector2(0f, 0f),
+                ModContent.ProjectileType<SpiritContactExplosion>(),
+                (int)(0),
+                0.5f,
+                Main.myPlayer,
+                ai0: 0,
+                ai1: 0
+            );
+            SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1f }, player.position);
+            for(int i = 0; i <= 4; i++) {
+                Gore.NewGoreDirect(Entity.GetSource_FromThis(), player.position, Main.rand.NextVector2Circular(15f, 15f), Mod.Find<ModGore>("CurseknightsHelmGore" + i).Type); //Debris Blasts Off
+            }
+            HelmExploded = true;
+            
             }
         }
     }
+}
+public class CursedWrath : ModBuff {
+    public override string Texture => Assets.Images.Corruption.Items.CurseknightsHelm.CurseknightsHelmBuff.KEY;
+    public override void SetStaticDefaults() {
+        Main.buffNoTimeDisplay[Type] = true;
+        Main.buffNoSave[Type] = true;
+        Main.debuff[Type] = false; // Set to true if it is a negative effect
+    }
 
-    public override void UpdateAccessory(Player player, bool hideVisual) {
-        if(!hideVisual) {
-            if(IsAboveThreshold) {
-                player.head = HelmOn;
-                HelmExploded = false;
+    public override void Update(Player player, ref int buffIndex) {
+        // Apply ongoing effects while the buff is active on the player
+        player.GetDamage(DamageClass.Generic) += 0.5f;
+        if(!player.HasBuff(BuffID.CursedInferno)) {
+            player.ClearBuff(ModContent.BuffType<CursedWrath>());
+        }
+
+    }
+}
+public class CurseknightsHelmPlayer : ModPlayer {
+    public bool IsWearingHelm; //UpdateAccessory uses this to tell Modplayer if the helmet is in the accessory slot
+    public bool HideVisual; //UpdateAccessory uses this to tell Modplayer if the accessory is hidden
+    public bool IsBelowThreshold;
+    public override void ResetEffects() {
+        IsWearingHelm = false;
+    }
+    public override void FrameEffects() {
+        if(IsWearingHelm && !HideVisual) {
+            if(CurseknightsHelm.HelmExploded) {
+                Player.head = CurseknightsHelm.HelmOff;
             }
             else {
-                player.head = HelmOff;
-                HelmExploded = true;
+                Player.head = CurseknightsHelm.HelmOn;
             }
         }
-        if(IsAboveThreshold) {
-            if(HelmExploded) {
-                Projectile.NewProjectile(
-                    Entity.GetSource_FromThis(),
-                    Entity.position,
-                    new Microsoft.Xna.Framework.Vector2(0f, 0f),
-                    ModContent.ProjectileType<SpiritContactExplosion>(),
-                    (int)(0),
-                    0.5f,
-                    Main.myPlayer,
-                    ai0: 0,
-                    ai1: 0
-                    );
-                SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1f }, Entity.position);
-                for(int i = 0; i <= 4; i++) {
-                    Gore.NewGoreDirect(Entity.GetSource_FromThis(), Entity.position, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("CurseknightsHelmGore" + i).Type);
-                }
+    }
+    public override void OnHitByNPC(NPC npc, Player.HurtInfo hurtInfo) { //Inflictng +8s Cursed Inferno when above HP threshold
+        if(IsWearingHelm && !IsBelowThreshold) {
+            int buffIndex = Player.FindBuffIndex(BuffID.CursedInferno);
+            if(buffIndex != -1) {
+                int timeLeftInTicks = Player.buffTime[buffIndex];
+                Player.AddBuff(BuffID.CursedInferno, (int)((8 * 60 + timeLeftInTicks) * CurseknightsHelm.DifficultylessDebuff), false);
             }
             else {
-                if(!HelmExploded) {
-                    SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1f }, Entity.position);
-                }
-                if(player.HasBuff(BuffID.CursedInferno)) {
-                    player.GetDamage(DamageClass.Generic) += 0.5f;
-                    IsBoostingDamage = true;
-                }
+                Player.AddBuff(BuffID.CursedInferno, (int)(8 * 60 * CurseknightsHelm.DifficultylessDebuff), false);
+            }
+            for(int i = 0; i < 5; i++) { //On-hit VFX goes here
+                Dust.NewDust(Player.position, Player.width, Player.height, DustID.CursedTorch, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.5f, 2f));
             }
         }
     }

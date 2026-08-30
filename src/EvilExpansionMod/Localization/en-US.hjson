@@ -336,6 +336,11 @@ Mods: {
 					Increases jump height and vertical acceleration
 					'''
 			}
+
+			CurseknightsHelm: {
+				DisplayName: Curseknights Helm
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {

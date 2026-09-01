@@ -118,8 +118,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                         20,
                         0.2f,
                         ai0: (float)PortalType.Spear,
-                        ai1: 120
-                    );
+                        ai1: 112);
 
                     _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
                     SoundEngine.PlaySound(SoundID.Item79, position);
@@ -144,7 +143,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                         20,
                         0.2f,
                         ai0: (float)PortalType.Blood,
-                        ai1: 360
+                        ai1: 336
                     );
 
                     _portalRotation += Main.rand.NextFloat(MathF.PI / 4f, MathF.PI / 2f);
@@ -185,6 +184,8 @@ public class ThoughtfulCultistNPC : ModNPC {
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var brainTexture = TextureAssets.Npc[Type].Value;
+
+        var whiskerTexture = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistWhisker.Asset.Value;
         var robeTextureBack = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistRobeBack.Asset.Value;
         var robeTextureFront = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistRobeFront.Asset.Value;
         var pendantTexture = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPendant.Asset.Value;
@@ -206,9 +207,9 @@ public class ThoughtfulCultistNPC : ModNPC {
                 + 1.25f * MathF.Sin(NPC.whoAmI * 23.2f + Main.GameUpdateCount * 0.03f);
         }
 
-        var center = NPC.Center + Vector2.UnitY * 120;
+        var center = NPC.Center + Vector2.UnitY * 92;
 
-        var offsetX = 30;
+        var offsetX = 20;
         var offsetY = 80;
         var bezierRight = center + new Vector2(offsetX, -offsetY);
         var bezierLeft = center + new Vector2(-offsetX, -offsetY);
@@ -241,15 +242,13 @@ public class ThoughtfulCultistNPC : ModNPC {
             .DrawTrail(robeTrailPositions, static _ => 88, _ => drawColor, spriteRotation: 1)
             .SetTexture(chainTexture)
             .DrawTrail(chainPoints, static _ => 6, _ => drawColor)
-            .SetTexture(robeTextureFront)
-            .DrawTrail(robeTrailPositions, static _ => 88, _ => drawColor, spriteRotation: 1)
             .End();
 
-        Renderer.Begin()
+        Renderer.Begin(Graphics.WorldTransformMatrix)
             .DrawTexture(new()
             {
                 Texture = pendantTexture,
-                Position = chainPoints[chainPoints.Length / 2] - screenPos,
+                Position = chainPoints[chainPoints.Length / 2],
                 Color = drawColor,
                 Rotation = 0f,
                 Origin = pendantTexture.Size() / 2f,
@@ -257,15 +256,49 @@ public class ThoughtfulCultistNPC : ModNPC {
             .DrawTexture(new()
             {
                 Texture = pendantGlowmaskTexture,
-                Position = chainPoints[chainPoints.Length / 2] - screenPos,
+                Position = chainPoints[chainPoints.Length / 2],
                 Color = pendantOutlineColor,
                 Rotation = 0f,
-                Origin = pendantTexture.Size() / 2f,
+                Origin = pendantGlowmaskTexture.Size() / 2f,
             })
             .ApplyOutline(pendantOutlineColor)
             .End();
 
-        spriteBatch.Draw(brainTexture, NPC.Center - screenPos, null, drawColor, 0f, new Vector2(53, 55), 1f, SpriteEffects.None, 0f);
+        Renderer.Begin(Graphics.WorldTransformMatrix)
+            .SetTexture(robeTextureFront)
+            .SetSamplerState(0, SamplerState.PointWrap)
+            .DrawTrail(robeTrailPositions, static _ => 88, _ => drawColor, spriteRotation: 1)
+            .End();
+
+        var brainFrameHeight = 78;
+        var brainSource = new Rectangle(0, brainFrameHeight, brainTexture.Width, brainFrameHeight);
+        if(MathF.Abs(NPC.velocity.X) > 2f) {
+            brainSource.Y = NPC.velocity.X > 0 ? brainFrameHeight * 2 : 0;
+        }
+
+        spriteBatch.Draw(
+            whiskerTexture,
+            NPC.Center + new Vector2(4f, 6f) - screenPos,
+            null,
+            drawColor,
+            -0.1f - 0.1f * MathF.Sin(2.34f + Main.GameUpdateCount * 0.025f + NPC.whoAmI),
+            new Vector2(3f, 0f),
+            1f,
+            SpriteEffects.None,
+            0f);
+
+        spriteBatch.Draw(
+            whiskerTexture,
+            NPC.Center + new Vector2(-4f, 6f) - screenPos,
+            null,
+            drawColor,
+            0.1f + 0.1f * MathF.Sin(Main.GameUpdateCount * 0.02f + NPC.whoAmI),
+            new Vector2(13f, 0f),
+            1f,
+            SpriteEffects.FlipHorizontally,
+            0f);
+
+        spriteBatch.Draw(brainTexture, NPC.Center - screenPos, brainSource, drawColor, 0f, new Vector2(53, 55), 1f, SpriteEffects.None, 0f);
         return false;
     }
 }

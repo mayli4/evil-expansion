@@ -1,4 +1,4 @@
-﻿using EvilExpansionMod.Common.Graphics;
+﻿using Daybreak.Common.Rendering;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -18,7 +18,8 @@ internal enum PortalType {
 }
 
 public class CultistPortal : ModProjectile {
-    public override string Texture => Assets.Images.Crimson.NPCs.ThoughtfulCultist.PortalSpear.KEY;
+    private const int AnimationSpeed = 5;
+    public override string Texture => Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPortal.KEY;
 
     PortalType PortalType => (PortalType)Projectile.ai[0];
     bool _spawnedEye;
@@ -102,7 +103,7 @@ public class CultistPortal : ModProjectile {
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
         var t = Projectile.timeLeft / Projectile.ai[1];
 
-        if(PortalType != PortalType.Spear || t > 0.3f || t < 0.1f) return false;
+        if(PortalType != PortalType.Spear || t > 0.5f || t < 0.3f) return false;
 
         float _ = 0;
         return Collision.CheckAABBvLineCollision(
@@ -120,69 +121,33 @@ public class CultistPortal : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var spearTexture = TextureAssets.Projectile[Type].Value;
-        var sampleTexture0 = Assets.Images.Sample.PerlinNoise.Asset.Value;
-        var sampleTexture1 = Assets.Images.Sample.Noise2.Asset.Value;
+        var portalTexture = TextureAssets.Projectile[Type].Value;
+        var spearTexture = Assets.Images.Crimson.NPCs.ThoughtfulCultist.PortalSpear.Asset.Value;
         var glowTexture = Assets.Images.Sample.Glow1.Asset.Value;
 
-        var effect = Assets.Shaders.Pixel.CultistPortal.Asset.Value;
-        var destination = new Rectangle(
-            (int)(Projectile.Center.X - Main.screenPosition.X),
-            (int)(Projectile.Center.Y - Main.screenPosition.Y),
-            Projectile.width,
-            Projectile.height
-        );
+        var maxTimeLeft = (int)Projectile.ai[1];
 
-
-        var t = Projectile.timeLeft / Projectile.ai[1];
-        var scale = t < 0.1f ? t / 0.1f : (t > 0.9f ? (0.1f - (t - 0.9f)) / 0.1f : 1f);
-
-        var color1 = new Color(249, 197, 55);
-        var color2 = new Color(242, 95, 2);
+        var t = (float)Projectile.timeLeft / maxTimeLeft;
         var rotation = Projectile.velocity.ToRotation();
 
-        var middleColor = PortalType switch
-        {
-            PortalType.Spear => new Color(34, 11, 23),
-            PortalType.Blood => new Color(90, 21, 30),
-        };
+        var timer = (maxTimeLeft - Projectile.timeLeft) / AnimationSpeed;
+        var frame = timer < 8 ?
+            timer :
+            (timer >= maxTimeLeft / AnimationSpeed - 8 ? 23 + timer - maxTimeLeft / AnimationSpeed : 8 + (timer - 8) % 5);
 
-        var circleTexture = Assets.Images.Misc.Circle.Asset.Value;
-        Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
-            .DrawTexture(new()
-            {
-                Texture = circleTexture,
-                Position = Projectile.Center + Projectile.velocity * 20f,
-                Color = middleColor,
-                Rotation = rotation,
-                Origin = circleTexture.Size() / 2f + Vector2.UnitY * 4f,
-                Scale = scale * new Vector2(0.7f, 2.2f),
-            })
-            .ApplyOutline(color2)
-            .ApplyOutline(middleColor)
-            .End();
+        var frameHeight = 86;
+        var portalSource = new Rectangle(0, frame * frameHeight, portalTexture.Width, frameHeight);
 
-        Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
-            .SetEffectParams(
-                effect,
-                ("tex1", sampleTexture1),
-                ("size", scale),
-                ("time", Main.GameUpdateCount * 0.05f),
-                ("color1", color1.ToVector4()),
-                ("color2", color2.ToVector4())
-            )
-            .DrawTexture(new()
-            {
-                Texture = sampleTexture0,
-                Position = Projectile.Center + Projectile.velocity * 20f,
-                Size = Projectile.Size,
-                Rotation = rotation,
-                Origin = new Vector2(22f, 80f),
-                Effect = effect,
-            })
-            .ApplyOutline(color2)
-            .ApplyOutline(middleColor)
-            .End();
+        Main.spriteBatch.Draw(
+            portalTexture,
+            Projectile.Center - Main.screenPosition,
+            portalSource,
+            Color.Lerp(lightColor, Color.White, 0.5f),
+            rotation,
+            portalSource.Size() / 2f,
+            1f,
+            rotation > MathHelper.Pi ? SpriteEffects.FlipVertically : SpriteEffects.FlipHorizontally,
+            0f);
 
         switch(PortalType) {
             case PortalType.Blood:
@@ -191,19 +156,19 @@ public class CultistPortal : ModProjectile {
 
                 float spearX = 0f;
 
-                if(t is < 0.4f and >= 0.3f) {
-                    spearX = (0.4f - t) / 0.1f;
+                if(t is < 0.6f and >= 0.5f) {
+                    spearX = (0.6f - t) / 0.1f;
                 }
-                else if(t is < 0.3f and >= 0.1f) {
+                else if(t is < 0.5f and >= 0.3f) {
                     spearX = 1f;
                 }
-                else if(t < 0.1f) {
-                    spearX = t / 0.1f;
+                else if(t < 0.3f) {
+                    spearX = MathF.Max(0f, (t - 0.2f) / 0.1f);
                 }
 
                 Main.spriteBatch.Draw(
                     spearTexture,
-                    Projectile.Center - Main.screenPosition + Projectile.velocity * 14f,
+                    Projectile.Center - Main.screenPosition,
                     new Rectangle(0, 0, (int)(spearX * spearTexture.Width), spearTexture.Height),
                     lightColor,
                     rotation,
@@ -215,19 +180,23 @@ public class CultistPortal : ModProjectile {
                 break;
         }
 
-        var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
+        Main.spriteBatch.End(out var ss);
+        Main.spriteBatch.Begin(ss with { BlendState = BlendState.Additive });
+
+        var scale = t < 0.1f ? t / 0.1f : (t > 0.9f ? MathF.Max(0f, (0.1f - (t - 0.9f)) / 0.1f) : 1f);
         Main.spriteBatch.Draw(
             glowTexture,
-            Projectile.Center - Main.screenPosition + Projectile.velocity * 20f,
+            Projectile.Center - Main.screenPosition,
             null,
-            color1 * 0.2f,
+            Color.Red * 0.2f,
             rotation,
             glowTexture.Size() * 0.5f,
             0.55f * scale * new Vector2(1.25f, 2.2f),
             SpriteEffects.None,
             0
         );
-        Main.spriteBatch.EndBegin(snapshot);
+
+        Main.spriteBatch.Restart(ss);
         return false;
     }
 }

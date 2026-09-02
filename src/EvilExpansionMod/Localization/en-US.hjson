@@ -241,7 +241,7 @@ Mods: {
 
 			PusSlugItem: {
 				DisplayName: Pus Slug
-				Tooltip: ""
+				Tooltip: "It's volatile..."
 			}
 
 			LavaLizardItem: {
@@ -293,8 +293,8 @@ Mods: {
 				Tooltip: ""
 			}
 
-			CursedCanariItem: {
-				DisplayName: Cursed Canari
+			CursedCanaryItem: {
+				DisplayName: Cursed Canary
 				Tooltip: It's volatile...
 			}
 
@@ -366,7 +366,7 @@ Mods: {
 			MarrowEyeNPC.DisplayName: Marrow Eye
 			LanternBatNPC.DisplayName: Lantern Bat
 			PusSlugCritter.DisplayName: Pus Slug
-			CursedCanariCritter.DisplayName: Cursed Canari
+			CursedCanaryCritter.DisplayName: Cursed Canary
 			LavaLizardCritter.DisplayName: Lava Lizard
 		}
 
@@ -405,8 +405,8 @@ Mods: {
 			LingerFlameProjectile.DisplayName: Linger Flame
 			CirclingPlanetoidProjectile.DisplayName: Circling Planetoid Projectile
 			NormalPlanetoidProjectile.DisplayName: Normal Planetoid Projectile
-			LingeringFlameProjectile.DisplayName: Lingering Flame
-			LingeringFlame.DisplayName: Lingering Flame
+			LingeringFlameProjectile.DisplayName: Lantern Flame
+			LingeringFlame.DisplayName: Lantern Flame
 			LanternFlameProjectile.DisplayName: Lantern Flame
 			IchorProjectile.DisplayName: Ichor Projectile
 			LamethrowerHeldProjectile.DisplayName: Lamethrower Held Projectile
@@ -458,7 +458,7 @@ Mods: {
 		Tiles: {
 			UnderworldDemonite.MapEntry: Underworld Demonite
 			UnderworldCorruptLavaDropletSource.MapEntry: Lava Dripping
-			CorruptHellTreeSapling.MapEntry: Corrupt Hell Tree Sapling
+			CorruptHellTreeSapling.MapEntry: Hell Ebontree Sapling
 			HellEbontree.MapEntry: Hell Ebontree
 			HellEbontreeSapling.MapEntry: Hell Ebontree Sapling
 			CorruptFireblossom.MapEntry: Corrupt Fireblossom
@@ -471,17 +471,17 @@ Mods: {
 		Bestiary: {
 			StinkFlyCritterBestiary: Flies that make themselves at home in the warm, nutrition-rich environment of the Crimson-infested underworld.
 			PusSlugCritterBestiary: Slow and dumb, these slugs defend themselves by secreting acidic mucus... stay away!
-			CursedCanariCritterBestiary: Lower concentrations of Imputed Flame can sometimes manifest as these harmless critters. Cute, but mind the heat!
-			LavaLizardCritterBestiary: Juvenile form of the elusive Helldrake, these can be found scurrying around for food. Once grown, they fly off and are never seen again.
+			CursedCanaryCritterBestiary: Lower concentrations of Imputed Flame can sometimes manifest as these docile critters. Cute, but mind the heat!
+			LavaLizardCritterBestiary: Juvenile form of the elusive Lavadrake. Once fully grown, they fly off and are never seen again.
 			CursedSpiritNPCBestiary: The power of the Corruption is such that even the inanimate can be made to do its bidding.
 			CursehoundNPCBestiary: Cursed Spirits that accumulate too much power develop an armored form, and a monstrous ride to boot.
 			DevilOWarNPCBestiary: Marine life in the underworld??? This organism uses hot gases to float in the air, and a sharp stinger to feed off its prey!
-			EffigyNPCBestiary: Poor souls, overcome by the Corruption. Their twisted bodies now serve as cancerous hives, through which the darkness further spreads.
+			EffigyNPCBestiary: Poor souls, overcome by the Corruption. Their twisted bodies now serve as cancerous hives, through which the darkness spreads further.
 			TerrorBatNPCBestiary: These beasts stalk the cave ceilings in droves... the last thing you want to happen is to have your clothes stained by their acidic spit!
 			ThoughtfulCultistNPCBesitary: Thirsting for power, these hell-born cultists have given themselves over to the Crimson entirely.
 			CultistEyeBestiary: Somehow, the Crimson's cultists have learnt to wield Cthulhu's minions as their own...
-			LanternBatNPCBestiary: Some servants of the Crimson occult have had their mind and bodies warped, forced to serve their masters as Lantern Bats.
-			MarrowEyeNPCBestiary: Failed attempts at creating artificial Crimson Altars have resulted in the formation of these grotesque amalgmations of energy-infused flesh.
+			LanternBatNPCBestiary: The lower caste of the Crimson occult have had their mind and bodies warped, forced to serve their masters as Lantern Bats.
+			MarrowEyeNPCBestiary: Failed attempts at creating artificial Crimson Altars have resulted in these grotesque amalgmations of energy-infused flesh.
 			PusImpNPCBestiary: An unholy mixture of Crimson bile and hell energy, these hollow imitations of hell's denizens only serve as extensions of the Crimson's will.
 			StinkgrubNPCBestiary: Simple cavedwellers, engorged by the Crimson. These hardy grubs often migrate deeper underground in search of nutrients.
 		}
@@ -511,7 +511,7 @@ Mods: {
 				DisplayName: Cursed Wrath
 				Description:
 					'''
-					You are consumed with rage...
+					The flames empower you...
 					Increases damage by 50%
 					'''
 			}

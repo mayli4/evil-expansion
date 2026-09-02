@@ -241,7 +241,7 @@ Mods: {
 
 			PusSlugItem: {
 				DisplayName: Pus Slug
-				Tooltip: "It's volatile..."
+				Tooltip: It's volatile...
 			}
 
 			LavaLizardItem: {

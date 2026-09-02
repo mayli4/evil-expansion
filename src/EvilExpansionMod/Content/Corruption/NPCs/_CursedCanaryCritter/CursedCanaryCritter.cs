@@ -11,10 +11,14 @@ namespace EvilExpansionMod.Content.Corruption;
 public sealed class CursedCanaryCritter : ModNPC {
     public override string Texture => Assets.Images.Corruption.NPCs.CursedCanaryCritter.KEY;
 
-    int State { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; }
+    int State { get => (int)NPC.ai[1]; set => NPC.ai[1] = value; }
+    float Timer { get => NPC.ai[2]; set => NPC.ai[2] = value; }
+
     Player Target => Main.player[NPC.target];
 
     bool ValidTarget => Target != null && Target.active;
+
+    private int _dustTimer = 0;
 
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 17;
@@ -47,15 +51,15 @@ public sealed class CursedCanaryCritter : ModNPC {
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.2f : 0f;
     }
-    private int dustTimer = 0;
+
     public override void PostAI() {
         NPC.TargetClosest(false);
 
         var range = 440;
         var targetInRange = ValidTarget && Target.Center.DistanceSQ(NPC.Center) < (range * range);
-        Lighting.AddLight(NPC.Center, 0.77f,1f,0.56f);
-        dustTimer++;
-        if(dustTimer >= Main.rand.NextFloat(10,100)) // Spawns every x ticks
+        Lighting.AddLight(NPC.Center, 0.77f, 1f, 0.56f);
+        _dustTimer++;
+        if(_dustTimer >= Main.rand.NextFloat(10, 100)) // Spawns every x ticks
         {
             if(Main.netMode != NetmodeID.Server) {
                 int dustIndex = Dust.NewDust(
@@ -70,7 +74,7 @@ public sealed class CursedCanaryCritter : ModNPC {
                 );
                 Main.dust[dustIndex].noGravity = false;
             }
-            dustTimer = 0;
+            _dustTimer = 0;
         }
         switch(State) {
             case 0:
@@ -87,19 +91,24 @@ public sealed class CursedCanaryCritter : ModNPC {
 
                 if(targetInRange) {
                     State = 2;
+                    Timer = 0;
+
                     NPC.netUpdate = true;
                     NPC.velocity.Y -= 2f;
-                    NPC.ai[1] = 0f;
                     break;
                 }
 
-                if(NPC.ai[1] <= 0f) {
-                    NPC.ai[1] = Main.rand.NextFloat(60, 180);
+                if(Timer <= 0f) {
+                    Timer = Main.rand.Next(60, 180);
                     State = Main.rand.Next(2);
+
+                    NPC.direction = Main.rand.NextBool() ? 1 : -1;
+                    NPC.spriteDirection = NPC.direction;
+
                     NPC.netUpdate = true;
                 }
                 else {
-                    NPC.ai[1] -= 1f;
+                    Timer -= 1f;
                 }
                 break;
 
@@ -119,7 +128,7 @@ public sealed class CursedCanaryCritter : ModNPC {
                         State = Main.rand.Next(2);
                         NPC.velocity = Vector2.Zero;
                         NPC.netUpdate = true;
-                        NPC.ai[1] = 0f;
+                        Timer = 0;
                     }
                     break;
                 }
@@ -147,14 +156,14 @@ public sealed class CursedCanaryCritter : ModNPC {
         }
 
     }
+
     public override void OnKill() {
         Projectile.NewProjectile(
             NPC.GetSource_FromAI(),
             NPC.Center,
-            new Microsoft.Xna.Framework.Vector2(0f, 0f),
+            Vector2.Zero,
             ModContent.ProjectileType<SpiritContactExplosion>(),
             80,
-            //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! Compensate in equation
             0.5f,
             Main.myPlayer,
             ai0: 1,
@@ -162,11 +171,12 @@ public sealed class CursedCanaryCritter : ModNPC {
             );
         SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1f }, NPC.Center);
     }
+
     public override void FindFrame(int frameHeight) {
         NPC.frameCounter += 0.2f;
         switch(State) {
             case 0:
-                NPC.frameCounter %= 5;
+                NPC.frameCounter = Math.Max(NPC.frameCounter % 5, 5);
                 break;
             case 1:
                 NPC.frameCounter = Math.Max(5, NPC.frameCounter % 13);

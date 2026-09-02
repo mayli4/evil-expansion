@@ -103,18 +103,18 @@ internal class Renderer : ModSystem {
     }
 
     public void Flush() {
-        Device.BlendState = BlendState.AlphaBlend;
-        Device.SamplerStates[0] = SamplerState.PointWrap;
-        Device.SamplerStates[1] = SamplerState.PointWrap;
-        Device.SamplerStates[2] = SamplerState.PointWrap;
-        Device.SamplerStates[3] = SamplerState.PointWrap;
-        Device.RasterizerState = RasterizerState.CullClockwise;
-
         SpriteBatchSnapshot? spriteBatchSnapshot = null;
         if(Main.spriteBatch.beginCalled) {
             Main.spriteBatch.End(out var snapshot);
             spriteBatchSnapshot = snapshot;
         }
+
+        Device.BlendState = BlendState.AlphaBlend;
+        Device.SamplerStates[0] = SamplerState.PointWrap;
+        Device.SamplerStates[1] = SamplerState.PointWrap;
+        Device.SamplerStates[2] = SamplerState.PointWrap;
+        Device.SamplerStates[3] = SamplerState.PointWrap;
+        Device.RasterizerState = RasterizerState.CullCounterClockwise;
 
         RenderTargetUsage? cachedTargetUsage = null;
         var targets = Device.GetRenderTargets();

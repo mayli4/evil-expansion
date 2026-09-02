@@ -94,7 +94,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                 else if(Main.netMode != NetmodeID.MultiplayerClient && _timer > 120) {
                     if(Main.rand.NextBool()) {
                         _portalRotation = Main.rand.NextFloat(0, -MathF.PI);
-                        ChangeState(CultistState.EyeAttack);
+                        ChangeState(CultistState.SpearAttack);
                     }
                     else {
                         _portalRotation = Main.rand.NextFloat(0, 2 * MathF.PI);
@@ -103,11 +103,13 @@ public class ThoughtfulCultistNPC : ModNPC {
                 }
                 break;
             case CultistState.SpearAttack:
-                NPC.velocity *= 0.98f;
-                if(Target == null) {
+                NPC.velocity *= 0.95f;
+                if(Target == null || _timer > 150) {
                     ChangeState(CultistState.FlyToTarget);
+                    break;
                 }
-                else if(_timer > 60 && (int)_timer % 30 == 0) {
+
+                if(_timer > 60 && (int)_timer % 30 == 0) {
                     var position = Target.Center - 105f * _portalRotation.ToRotationVector2();
                     var direction = position.DirectionTo(Target.Center);
                     Projectile.NewProjectile(
@@ -124,9 +126,9 @@ public class ThoughtfulCultistNPC : ModNPC {
                     SoundEngine.PlaySound(SoundID.Item79, position);
                 }
 
-                if(_timer > 150) {
-                    ChangeState(CultistState.FlyToTarget);
-                }
+                var moveDirection = NPC.DirectionTo(Target.Center).RotatedBy(MathF.PI / 4f);
+                NPC.velocity += moveDirection * 0.075f;
+
                 break;
             case CultistState.EyeAttack:
                 NPC.velocity *= 0.98f;
@@ -219,21 +221,27 @@ public class ThoughtfulCultistNPC : ModNPC {
         var chainPoints = bezier.GetPoints(13).ToArray();
 
         var pendantOutlineColor = Color.Transparent;
-        switch(State) {
-            case CultistState.SpearAttack:
-                if(_timer < 60) pendantOutlineColor = Color.Lerp(
-                    pendantOutlineColor,
-                    Color.Orange,
-                    MathF.Sin(MathF.PI * _timer / 60)
-                );
-                break;
-            case CultistState.EyeAttack:
-                if(_timer < 60) pendantOutlineColor = Color.Lerp(
-                    pendantOutlineColor,
-                    Color.Red,
-                    MathF.Sin(MathF.PI * _timer / 60)
-                );
-                break;
+        var pendantPosition = chainPoints[chainPoints.Length / 2];
+
+        if(_timer < 60) {
+            var t = MathF.Sin(MathHelper.Pi * _timer / 60f);
+
+            pendantPosition += 0.75f * Main.rand.NextVector2Unit() * t;
+
+            switch(State) {
+                case CultistState.SpearAttack:
+                    pendantOutlineColor = Color.Lerp(
+                        pendantOutlineColor,
+                        Color.Orange,
+                        t);
+                    break;
+                case CultistState.EyeAttack:
+                    pendantOutlineColor = Color.Lerp(
+                        pendantOutlineColor,
+                        Color.Red,
+                        MathF.Sin(MathF.PI * _timer / 60));
+                    break;
+            }
         }
 
         Renderer.Begin(Graphics.WorldTransformMatrix)
@@ -248,7 +256,7 @@ public class ThoughtfulCultistNPC : ModNPC {
             .DrawTexture(new()
             {
                 Texture = pendantTexture,
-                Position = chainPoints[chainPoints.Length / 2],
+                Position = pendantPosition,
                 Color = drawColor,
                 Rotation = 0f,
                 Origin = pendantTexture.Size() / 2f,
@@ -256,7 +264,7 @@ public class ThoughtfulCultistNPC : ModNPC {
             .DrawTexture(new()
             {
                 Texture = pendantGlowmaskTexture,
-                Position = chainPoints[chainPoints.Length / 2],
+                Position = pendantPosition,
                 Color = pendantOutlineColor,
                 Rotation = 0f,
                 Origin = pendantGlowmaskTexture.Size() / 2f,
@@ -272,7 +280,7 @@ public class ThoughtfulCultistNPC : ModNPC {
 
         var brainFrameHeight = 78;
         var brainSource = new Rectangle(0, brainFrameHeight, brainTexture.Width, brainFrameHeight);
-        if(MathF.Abs(NPC.velocity.X) > 2f) {
+        if(MathF.Abs(NPC.velocity.X) > 1.5f) {
             brainSource.Y = NPC.velocity.X > 0 ? brainFrameHeight * 2 : 0;
         }
 

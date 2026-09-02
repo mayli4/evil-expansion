@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Content;
 using System;
+using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ModLoader;
@@ -49,6 +50,9 @@ public class PortalGore : ModProjectile {
     public override void AI() {
         Projectile.velocity.Y += 0.2f;
         Projectile.rotation += MathF.Sign(Projectile.velocity.X) * 0.1f;
+    }
+    public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) {
+        overPlayers.Add(index);
     }
 
     public override bool PreDraw(ref Color lightColor) {

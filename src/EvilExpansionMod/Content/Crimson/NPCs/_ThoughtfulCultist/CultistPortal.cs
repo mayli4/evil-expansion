@@ -5,6 +5,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -23,6 +24,7 @@ public class CultistPortal : ModProjectile {
 
     PortalType PortalType => (PortalType)Projectile.ai[0];
     bool _spawnedEye;
+    bool _playedSpearSound;
 
     public override void SetDefaults() {
         Projectile.width = 45;
@@ -49,16 +51,6 @@ public class CultistPortal : ModProjectile {
     }
 
     public override void AI() {
-        // if(Main.rand.NextBool(12)) {
-        //     Dust.NewDustPerfect(
-        //         Projectile.Center
-        //             + Main.rand.NextFloatDirection() * 20f * Projectile.velocity.RotatedBy(MathF.PI / 2f)
-        //             + Projectile.velocity * 10f,
-        //         DustID.SilverFlame,
-        //         Projectile.velocity * 1f
-        //     );
-        // }
-
         var t = Projectile.timeLeft / Projectile.ai[1];
         switch(PortalType) {
             case PortalType.Blood:
@@ -95,6 +87,12 @@ public class CultistPortal : ModProjectile {
                         20,
                         4f
                     );
+                }
+                break;
+            case PortalType.Spear:
+                if(t < 0.6f && !_playedSpearSound) {
+                    SoundEngine.PlaySound(SoundID.Item169, Projectile.Center);
+                    _playedSpearSound = true;
                 }
                 break;
         }
@@ -157,13 +155,18 @@ public class CultistPortal : ModProjectile {
                 float spearX = 0f;
 
                 if(t is < 0.6f and >= 0.5f) {
-                    spearX = (0.6f - t) / 0.1f;
+                    var progress = (0.6f - t) / 0.1f;
+                    var x = progress - 1f;
+
+                    spearX = x * x * x + 1f;
                 }
                 else if(t is < 0.5f and >= 0.3f) {
                     spearX = 1f;
                 }
                 else if(t < 0.3f) {
-                    spearX = MathF.Max(0f, (t - 0.2f) / 0.1f);
+                    var progress = MathF.Max(0f, (t - 0.2f) / 0.1f);
+                    var x = progress - 1f;
+                    spearX = -x * x + 1f;
                 }
 
                 Main.spriteBatch.Draw(

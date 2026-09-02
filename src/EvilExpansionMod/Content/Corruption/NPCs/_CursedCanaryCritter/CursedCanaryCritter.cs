@@ -8,8 +8,8 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Corruption;
 
-public sealed class CursedCanariCritter : ModNPC {
-    public override string Texture => Assets.Images.Corruption.NPCs.CursedCanariCritter.KEY;
+public sealed class CursedCanaryCritter : ModNPC {
+    public override string Texture => Assets.Images.Corruption.NPCs.CursedCanaryCritter.KEY;
 
     int State { get => (int)NPC.ai[0]; set => NPC.ai[0] = value; }
     Player Target => Main.player[NPC.target];
@@ -35,7 +35,7 @@ public sealed class CursedCanariCritter : ModNPC {
         NPC.gravity = 0.1f;
         NPC.HitSound = SoundID.NPCHit4;
         NPC.DeathSound = SoundID.NPCDeath6 with { Volume = 0.8f };
-        NPC.catchItem = ModContent.ItemType<CursedCanariItem>();
+        NPC.catchItem = ModContent.ItemType<CursedCanaryItem>();
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
 
@@ -182,8 +182,8 @@ public sealed class CursedCanariCritter : ModNPC {
     }
 }
 
-public sealed class CursedCanariItem : ModItem {
-    public override string Texture => Assets.Images.Corruption.NPCs.CursedCanariItem.KEY;
+public sealed class CursedCanaryItem : ModItem {
+    public override string Texture => Assets.Images.Corruption.NPCs.CursedCanaryItem.KEY;
 
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 5;
@@ -201,7 +201,7 @@ public sealed class CursedCanariItem : ModItem {
         Item.consumable = true;
         Item.noUseGraphic = true;
         Item.value = Item.buyPrice(0, 0, 40);
-        Item.makeNPC = (short)ModContent.NPCType<CursedCanariCritter>();
+        Item.makeNPC = (short)ModContent.NPCType<CursedCanaryCritter>();
         Item.rare = ItemRarityID.Green;
     }
 }

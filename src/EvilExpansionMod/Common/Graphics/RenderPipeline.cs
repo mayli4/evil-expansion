@@ -19,10 +19,22 @@ internal readonly struct DrawTextureOptions() {
     public BlendState BlendState { get; init; } = BlendState.AlphaBlend;
 }
 
-internal readonly struct RenderPipeline(Renderer graphics, int depth) : IDisposable {
+internal readonly struct RenderPipeline : IDisposable {
+    private readonly RenderCommandQueue _queue;
+    private readonly int _depth;
+
+    public RenderPipeline(RenderCommandQueue queue, float scale, Matrix? matrix) : this(queue, 0, scale, matrix) { }
+
+    private RenderPipeline(RenderCommandQueue queue, int depth, float scale, Matrix? matrix) {
+        _queue = queue;
+        queue.AddBegin(scale, matrix);
+
+        _depth = depth;
+    }
+
     public readonly RenderPipeline DrawTexture(DrawTextureOptions options) {
         var source = options.Source ?? new Vector4(0f, 0f, options.Texture.Width, options.Texture.Height);
-        graphics.AddDrawTexture(
+        _queue.AddDrawTexture(
             options.Texture,
             options.Position,
             options.Color,
@@ -41,12 +53,12 @@ internal readonly struct RenderPipeline(Renderer graphics, int depth) : IDisposa
 
     public readonly RenderPipeline DrawTrail(
         ReadOnlySpan<Vector2> positions,
-        Func<float, float> widthFn,
-        Func<float, Color> colorFn,
+        TrailRenderer.WidthFunction widthFn,
+        TrailRenderer.ColorFunc colorFn,
         Effect? effect = null,
         int spriteRotation = 0
     ) {
-        graphics.AddDrawTrail(
+        _queue.AddDrawTrail(
             positions,
             widthFn,
             colorFn,
@@ -72,61 +84,76 @@ internal readonly struct RenderPipeline(Renderer graphics, int depth) : IDisposa
     }
 
     public readonly RenderPipeline ApplyEffect(Effect effect) {
-        graphics.AddApplyEffect(effect);
+        _queue.AddApplyEffect(effect);
         return this;
     }
 
     public readonly RenderPipeline ApplyEffect(Effect effect, params ReadOnlySpan<(string, EffectParameterValue)> parameters) {
-        graphics.AddSetEffectParams(effect, parameters);
-        graphics.AddApplyEffect(effect);
+        _queue.AddSetEffectParams(effect, parameters);
+        _queue.AddApplyEffect(effect);
         return this;
     }
 
     public readonly RenderPipeline Clear(Color color) {
-        graphics.AddClear(color);
+        _queue.AddClear(color);
         return this;
     }
 
     public readonly RenderPipeline SetTexture(Texture2D texture) {
-        graphics.AddSetTexture(0, texture);
+        _queue.AddSetTexture(0, texture);
         return this;
     }
 
     public readonly RenderPipeline SetTexture(int index, Texture2D texture) {
-        graphics.AddSetTexture(index, texture);
+        _queue.AddSetTexture(index, texture);
+        return this;
+    }
+
+    public readonly RenderPipeline SetTexture(Texture2D texture, SamplerState samplerState) {
+        _queue.AddSetTexture(0, texture);
+        _queue.AddSetSamplerState(0, samplerState);
+        return this;
+    }
+
+    public readonly RenderPipeline SetTexture(int index, Texture2D texture, SamplerState samplerState) {
+        _queue.AddSetTexture(index, texture);
+        _queue.AddSetSamplerState(index, samplerState);
         return this;
     }
 
     public readonly RenderPipeline SetSamplerState(SamplerState samplerState) {
-        graphics.AddSetSamplerState(0, samplerState);
+        _queue.AddSetSamplerState(0, samplerState);
         return this;
     }
 
     public readonly RenderPipeline SetSamplerState(int index, SamplerState samplerState) {
-        graphics.AddSetSamplerState(index, samplerState);
+        _queue.AddSetSamplerState(index, samplerState);
         return this;
     }
 
     public readonly RenderPipeline SetEffectParams(Effect effect, params ReadOnlySpan<(string, EffectParameterValue)> parameters) {
-        graphics.AddSetEffectParams(effect, parameters);
+        _queue.AddSetEffectParams(effect, parameters);
         return this;
     }
 
     public readonly RenderPipeline SetBlendState(BlendState blendState) {
-        graphics.AddSetBlendState(blendState);
+        _queue.AddSetBlendState(blendState);
         return this;
     }
 
     public readonly RenderPipeline Begin(float scale = 1f, Matrix? matrix = null) {
-        return graphics.BeginPipeline(scale, matrix, depth + 1);
+        return new(_queue, _depth + 1, scale, matrix);
     }
 
     public readonly void End() {
-        graphics.EndPipeline();
-        if(depth == 0) graphics.Flush();
+        _queue.AddEnd();
+
+        if(_depth == 0) {
+            RenderCommandRunner.Instance.Run(_queue);
+            _queue.Clear();
+        }
     }
 
     public void Dispose() => End();
-
 }
 

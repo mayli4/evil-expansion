@@ -1,10 +1,13 @@
 ﻿using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Common.Graphics;
 
 internal class Graphics : ILoadable {
+    public static GraphicsDevice Device => Main.graphics.GraphicsDevice;
+
     static Graphics s_Instance = null!;
 
     private Matrix _worldTransformMatrix;

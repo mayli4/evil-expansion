@@ -57,7 +57,9 @@ public sealed class CursedCanaryCritter : ModNPC {
 
         var range = 440;
         var targetInRange = ValidTarget && Target.Center.DistanceSQ(NPC.Center) < (range * range);
+
         Lighting.AddLight(NPC.Center, 0.77f, 1f, 0.56f);
+
         _dustTimer++;
         if(_dustTimer >= Main.rand.NextFloat(10, 100)) // Spawns every x ticks
         {
@@ -154,7 +156,6 @@ public sealed class CursedCanaryCritter : ModNPC {
                 NPC.velocity *= 0.998f;
                 break;
         }
-
     }
 
     public override void OnKill() {

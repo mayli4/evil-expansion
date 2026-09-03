@@ -19,7 +19,7 @@ internal sealed class CurseknightsHelm : ModItem {
     public static int HelmOn;
     public static int HelmOff;
     public static bool HelmExploded;
-    
+
     public static float DifficultylessDebuff => Main.expertMode ? (Main.masterMode ? 0.4f : 0.5f) : 1f; // Expert and master mode multiply debuff time... need to counteract this
 
     public override void Load() {
@@ -48,13 +48,13 @@ internal sealed class CurseknightsHelm : ModItem {
         modPlayer.IsBelowThreshold = player.statLife < healthThreshold;
 
         if(!modPlayer.IsBelowThreshold) { // if HP >50%
-            if (HelmExploded && modPlayer.ActiveReformParticles <= 0) {
+            if(HelmExploded && modPlayer.ActiveReformParticles <= 0) {
                 //SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.8f, Pitch = -0.2f }, player.position);
 
                 Vector2 headPos = player.MountedCenter + new Vector2(0f, -player.height * 0.3f) + player.headPosition;
 
-                if (!Main.dedServ) {
-                    for (int i = 0; i <= 4; i++) {
+                if(!Main.dedServ) {
+                    for(int i = 0; i <= 4; i++) {
                         float angle = (MathHelper.TwoPi / 5f) * i + Main.rand.NextFloat(-0.3f, 0.3f);
                         float spawnDistance = Main.rand.NextFloat(80f, 120f);
                         Vector2 spawnPos = headPos + angle.ToRotationVector2() * spawnDistance;
@@ -74,11 +74,11 @@ internal sealed class CurseknightsHelm : ModItem {
                 player.AddBuff(ModContent.BuffType<CursedWrath>(), int.MaxValue, false);
             }
 
-            if (!HelmExploded) {
+            if(!HelmExploded) {
                 SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1f }, player.position);
-                
+
                 Vector2 headWorldPos = player.MountedCenter + new Vector2(0f, -player.height * 0.3f) + player.headPosition;
-                
+
                 ExplosionProjectile.New(
                     player.GetSource_FromThis(),
                     headWorldPos,
@@ -93,7 +93,7 @@ internal sealed class CurseknightsHelm : ModItem {
 
                 Vector2 behindDirection = new(-player.direction, 0f);
 
-                for (int i = 0; i <= 4; i++) {
+                for(int i = 0; i <= 4; i++) {
                     float spreadAngle = Main.rand.NextFloat(-MathHelper.Pi / 6f, MathHelper.Pi / 6f);
                     Vector2 blastVelocity = (behindDirection.RotatedBy(spreadAngle) * Main.rand.NextFloat(5f, 9f)) - new Vector2(0f, Main.rand.NextFloat(2f, 5f));
 
@@ -102,8 +102,6 @@ internal sealed class CurseknightsHelm : ModItem {
                         player.MountedCenter + new Vector2(0f, -player.height * 0.3f),
                         blastVelocity,
                         Mod.Find<ModGore>("CurseknightsHelmGore" + i).Type);
-
-                    Vector2 headWorldPos = player.MountedCenter + new Vector2(0f, -player.height * 0.3f) + player.headPosition;
 
                     var ember = GlowEmberParticle.NewParticle(
                         headWorldPos,
@@ -115,29 +113,29 @@ internal sealed class CurseknightsHelm : ModItem {
                     ember.Randomness *= 2f;
                     ember.LossPerSecond *= 2f;
                     ParticleEngine.PARTICLES.Add(ember);
-                    
+
                     var flame = DustFlameParticle.RequestNew(
-                        headWorldPos, 
-                        blastVelocity * Main.rand.NextFloat(0.8f, 1.3f), 
-                        new Color(230, 254, 6), 
-                        Color.White, 
-                        1.5f, 
+                        headWorldPos,
+                        blastVelocity * Main.rand.NextFloat(0.8f, 1.3f),
+                        new Color(230, 254, 6),
+                        Color.White,
+                        1.5f,
                         Main.rand.Next(18, 28)
                     );
 
-                    flame.LossPerFrame = 0.12f; 
-                    flame.Swirly = Main.rand.NextBool(); 
+                    flame.LossPerFrame = 0.12f;
+                    flame.Swirly = Main.rand.NextBool();
                     flame.ApplyLighting = false;
 
                     ParticleEngine.GORE_LAYER.Add(flame);
                 }
-                
+
                 var modifier = new PunchCameraModifier(
-                    player.Center, 
-                    Main.rand.NextFloat(MathHelper.TwoPi).ToRotationVector2(), 
-                    strength: 6f, 
-                    6f, 
-                    10, 
+                    player.Center,
+                    Main.rand.NextFloat(MathHelper.TwoPi).ToRotationVector2(),
+                    strength: 6f,
+                    6f,
+                    10,
                     100f)
                 {
                     UniqueIdentity = "CurseknightsHelmScreenshake",
@@ -148,12 +146,12 @@ internal sealed class CurseknightsHelm : ModItem {
             }
         }
     }
-    
+
     internal sealed class DrawLayer : PlayerDrawLayer {
         public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.Head);
 
         public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
-            if (drawInfo.drawPlayer.dead)
+            if(drawInfo.drawPlayer.dead)
                 return false;
 
             var modPlayer = drawInfo.drawPlayer.GetModPlayer<CurseknightsHelmPlayer>();
@@ -163,7 +161,7 @@ internal sealed class CurseknightsHelm : ModItem {
         protected override void Draw(ref PlayerDrawSet drawInfo) {
             var drawPlayer = drawInfo.drawPlayer;
 
-            var tex = HelmExploded 
+            var tex = HelmExploded
                 ? Assets.Images.Corruption.Items.CurseknightsHelm.CurseknightsHelmOff_HeadGlow.Asset
                 : Assets.Images.Corruption.Items.CurseknightsHelm.CurseknightsHelmOn_HeadGlow.Asset;
 
@@ -183,7 +181,8 @@ internal sealed class CurseknightsHelm : ModItem {
                 drawInfo.headVect,
                 1f,
                 drawInfo.playerEffect
-            ) {
+            )
+            {
                 shader = drawInfo.cHead,
             };
 
@@ -215,11 +214,11 @@ public class CurseknightsHelmPlayer : ModPlayer {
     public bool IsBelowThreshold;
     public int ReformTimer;
     public int ActiveReformParticles;
-    
+
     public override void PostUpdate() {
-        if (ReformTimer > 0) {
+        if(ReformTimer > 0) {
             ReformTimer--;
-            if (ReformTimer <= 0) {
+            if(ReformTimer <= 0) {
                 CurseknightsHelm.HelmExploded = false;
             }
         }
@@ -230,9 +229,9 @@ public class CurseknightsHelmPlayer : ModPlayer {
     }
 
     public override void FrameEffects() {
-        if (IsWearingHelm && !HideVisual) {
+        if(IsWearingHelm && !HideVisual) {
             Player.head = (CurseknightsHelm.HelmExploded || ActiveReformParticles > 0)
-                ? CurseknightsHelm.HelmOff 
+                ? CurseknightsHelm.HelmOff
                 : CurseknightsHelm.HelmOn;
         }
     }
@@ -285,14 +284,14 @@ public class ShardGoricle : BaseParticle<ShardGoricle> {
     }
 
     public override void Update(ref ParticleRendererSettings settings) {
-        if (!TargetPlayer.active) {
+        if(!TargetPlayer.active) {
             ShouldBeRemovedFromRenderer = true;
             return;
         }
 
         LifeTime++;
 
-        if (Alpha < 1f) {
+        if(Alpha < 1f) {
             Alpha = MathHelper.Clamp(Alpha + 0.1f, 0f, 1f);
         }
 
@@ -300,7 +299,7 @@ public class ShardGoricle : BaseParticle<ShardGoricle> {
         Vector2 directionToHead = targetPos - Position;
         float distance = directionToHead.Length();
 
-        if (distance < 16f || LifeTime >= 120) {
+        if(distance < 16f || LifeTime >= 120) {
             SoundEngine.PlaySound(SoundID.Item37 with { Volume = 0.35f, Pitch = 0.2f }, TargetPlayer.MountedCenter);
             float angle = (MathHelper.TwoPi / 5f) + Main.rand.NextFloat(-0.3f, 0.3f);
 
@@ -317,10 +316,10 @@ public class ShardGoricle : BaseParticle<ShardGoricle> {
             flame.Swirly = true;
             ParticleEngine.BEHIND_PROJECTILES.Add(flame);
 
-            if (TargetPlayer.TryGetModPlayer<CurseknightsHelmPlayer>(out var modPlayer)) {
+            if(TargetPlayer.TryGetModPlayer<CurseknightsHelmPlayer>(out var modPlayer)) {
                 modPlayer.ActiveReformParticles--;
 
-                if (modPlayer.ActiveReformParticles <= 0) {
+                if(modPlayer.ActiveReformParticles <= 0) {
                     modPlayer.ActiveReformParticles = 0;
                     CurseknightsHelm.HelmExploded = false;
 
@@ -347,7 +346,7 @@ public class ShardGoricle : BaseParticle<ShardGoricle> {
         float playerSpeed = TargetPlayer.velocity.Length();
         float baseSpeed = MathHelper.Clamp(6f - (distance * 0.01f), 3f, 7f);
         float targetSpeed = Math.Max(baseSpeed, playerSpeed + 4f);
-        
+
         float lerpFactor = MathHelper.Clamp(0.06f + (LifeTime * 0.003f), 0.06f, 0.3f);
         Velocity = Vector2.Lerp(Velocity, directionToHead * targetSpeed, lerpFactor);
 
@@ -358,7 +357,7 @@ public class ShardGoricle : BaseParticle<ShardGoricle> {
     public override void Draw(ref ParticleRendererSettings settings, SpriteBatch spriteBatch) {
         var drawPos = Position + settings.AnchorPosition;
         var origin = GoreTexture.Size() * 0.5f;
-    
+
         var color = Lighting.GetColor(Position.ToTileCoordinates()) * Alpha;
 
         spriteBatch.Draw(GoreTexture, drawPos, null, color, Rotation, origin, Scale, SpriteEffects.None, 0f);

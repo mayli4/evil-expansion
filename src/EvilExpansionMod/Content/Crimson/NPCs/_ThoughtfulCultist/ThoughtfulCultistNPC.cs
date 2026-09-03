@@ -273,8 +273,7 @@ public class ThoughtfulCultistNPC : ModNPC {
             .End();
 
         Renderer.Begin(Graphics.WorldTransformMatrix)
-            .SetTexture(robeTextureFront)
-            .SetSamplerState(0, SamplerState.PointWrap)
+            .SetTexture(robeTextureFront, SamplerState.PointWrap)
             .DrawTrail(robeTrailPositions, static _ => 88, _ => drawColor, spriteRotation: 1)
             .End();
 

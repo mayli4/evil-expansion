@@ -19,20 +19,19 @@ internal static class RenderPipelineExtensions {
                 ("uSize", Main.ScreenSize.ToVector2() * 2f));
         }
 
+        public RenderPipeline ApplyBloom(float intensity = 1.5f, float threshold = 0.5f) {
+            Vector2 screenSize = Main.ScreenSize.ToVector2() * 2f;
+            Vector2 texelSize = new Vector2(1f / screenSize.X, 1f / screenSize.Y);
 
+            return @this
+                .SetSamplerState(0, SamplerState.LinearClamp)
+                .ApplyEffect(
+                    Assets.Shaders.Pixel.Bloom.Asset.Value,
+                    ("uThreshold", threshold),
+                    ("uIntensity", intensity),
+                    ("uTexelSize", texelSize)
+                );
+        }
     }
-    
-    public static RenderPipeline ApplyBloom(this RenderPipeline @this, float intensity = 1.5f, float threshold = 0.5f) {
-        Vector2 screenSize = Main.ScreenSize.ToVector2() * 2f;
-        Vector2 texelSize = new Vector2(1f / screenSize.X, 1f / screenSize.Y);
 
-        return @this
-            .SetSamplerState(0, SamplerState.LinearClamp)
-            .ApplyEffect(
-                Assets.Shaders.Pixel.Bloom.Asset.Value,
-                ("uThreshold", threshold),
-                ("uIntensity", intensity),
-                ("uTexelSize", texelSize)
-            );
-    }
 }

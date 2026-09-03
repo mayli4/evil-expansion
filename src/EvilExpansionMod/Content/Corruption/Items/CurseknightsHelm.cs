@@ -2,10 +2,12 @@ using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Particles;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.Graphics.CameraModifiers;
+using Terraria.Graphics.Renderers;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -45,14 +47,25 @@ internal sealed class CurseknightsHelm : ModItem {
         modPlayer.IsBelowThreshold = player.statLife < healthThreshold;
 
         if(!Main.mouseLeft) { // if HP >50%
-            if(HelmExploded) { // if Helm was broken prior (Reform effects goes here)
-                SoundEngine.PlaySound(SoundID.Item52 with { Volume = 0.9f }, player.position);
+            if (HelmExploded && modPlayer.ActiveReformParticles <= 0) {
+                //SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.8f, Pitch = -0.2f }, player.position);
 
-                for(int i = 0; i < 5; i++) {
-                    //Dust.NewDust(player.position, player.width, player.height, DustID.CursedTorch, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.5f, 2f));
+                Vector2 headPos = player.MountedCenter + new Vector2(0f, -player.height * 0.3f) + player.headPosition;
+
+                if (!Main.dedServ) {
+                    for (int i = 0; i <= 4; i++) {
+                        float angle = (MathHelper.TwoPi / 5f) * i + Main.rand.NextFloat(-0.3f, 0.3f);
+                        float spawnDistance = Main.rand.NextFloat(80f, 120f);
+                        Vector2 spawnPos = headPos + angle.ToRotationVector2() * spawnDistance;
+
+                        Vector2 initialVelocity = angle.ToRotationVector2() * Main.rand.NextFloat(0.5f, 1.8f);
+
+                        var goreParticle = ShardGoricle.RequestNew(player, i, spawnPos, initialVelocity);
+                        ParticleEngine.GORE_LAYER.Add(goreParticle);
+
+                        modPlayer.ActiveReformParticles++;
+                    }
                 }
-
-                HelmExploded = false;
             }
         }
         else {
@@ -87,6 +100,21 @@ internal sealed class CurseknightsHelm : ModItem {
                     ember.Randomness *= 2f;
                     ember.LossPerSecond *= 2f;
                     ParticleEngine.PARTICLES.Add(ember);
+                    
+                    var flame = DustFlameParticle.RequestNew(
+                        headWorldPos, 
+                        blastVelocity * Main.rand.NextFloat(0.8f, 1.3f), 
+                        new Color(230, 254, 6), 
+                        Color.White, 
+                        1.5f, 
+                        Main.rand.Next(18, 28)
+                    );
+
+                    flame.LossPerFrame = 0.12f; 
+                    flame.Swirly = Main.rand.NextBool(); 
+                    flame.ApplyLighting = false;
+
+                    ParticleEngine.GORE_LAYER.Add(flame);
                 }
                 
                 var modifier = new PunchCameraModifier(
@@ -170,14 +198,25 @@ public class CurseknightsHelmPlayer : ModPlayer {
     public bool IsWearingHelm; // UpdateAccessory uses this to tell Modplayer if the helmet is in the accessory slot
     public bool HideVisual; // UpdateAccessory uses this to tell Modplayer if the accessory is hidden
     public bool IsBelowThreshold;
+    public int ReformTimer;
+    public int ActiveReformParticles;
+    
+    public override void PostUpdate() {
+        if (ReformTimer > 0) {
+            ReformTimer--;
+            if (ReformTimer <= 0) {
+                CurseknightsHelm.HelmExploded = false;
+            }
+        }
+    }
 
     public override void ResetEffects() {
         IsWearingHelm = false;
     }
 
     public override void FrameEffects() {
-        if(IsWearingHelm && !HideVisual) {
-            Player.head = CurseknightsHelm.HelmExploded 
+        if (IsWearingHelm && !HideVisual) {
+            Player.head = (CurseknightsHelm.HelmExploded || ActiveReformParticles > 0)
                 ? CurseknightsHelm.HelmOff 
                 : CurseknightsHelm.HelmOn;
         }
@@ -198,5 +237,102 @@ public class CurseknightsHelmPlayer : ModPlayer {
                 Dust.NewDust(Player.position, Player.width, Player.height, DustID.CursedTorch, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.5f, 2f));
             }
         }
+    }
+}
+
+[PoolCapacity(30)]
+public class ShardGoricle : BaseParticle<ShardGoricle> {
+    public Player TargetPlayer;
+    public Texture2D GoreTexture;
+    public Vector2 Position;
+    public Vector2 Velocity;
+    public float Rotation;
+    public float RotationalVelocity;
+    public float Scale;
+    public float Alpha;
+    public int LifeTime;
+
+    public static ShardGoricle RequestNew(Player player, int goreIndex, Vector2 spawnPosition, Vector2 initialVelocity) {
+        var particle = Pool.RequestParticle();
+        particle.TargetPlayer = player;
+        particle.Position = spawnPosition;
+        particle.Velocity = initialVelocity;
+        particle.Rotation = Main.rand.NextFloat(MathHelper.TwoPi);
+        particle.RotationalVelocity = Main.rand.NextFloat(-0.2f, 0.2f);
+        particle.Scale = 1f;
+        particle.Alpha = 0f;
+        particle.LifeTime = 0;
+
+        string path = $"EvilExpansionMod/Assets/Images/Gores/CurseknightsHelmGore{goreIndex}";
+        particle.GoreTexture = ModContent.Request<Texture2D>(path).Value;
+
+        return particle;
+    }
+
+    public override void Update(ref ParticleRendererSettings settings) {
+        if (!TargetPlayer.active) {
+            ShouldBeRemovedFromRenderer = true;
+            return;
+        }
+
+        LifeTime++;
+
+        if (Alpha < 1f) {
+            Alpha = MathHelper.Clamp(Alpha + 0.1f, 0f, 1f);
+        }
+
+        Vector2 targetPos = TargetPlayer.MountedCenter + new Vector2(0f, -TargetPlayer.height * 0.3f) + TargetPlayer.headPosition;
+        Vector2 directionToHead = targetPos - Position;
+        float distance = directionToHead.Length();
+
+        if (distance < 16f || LifeTime >= 120) {
+            SoundEngine.PlaySound(SoundID.Item37 with { Volume = 0.35f, Pitch = 0.2f }, TargetPlayer.MountedCenter);
+            float angle = (MathHelper.TwoPi / 5f) + Main.rand.NextFloat(-0.3f, 0.3f);
+
+            var flame = DustFlameParticle.RequestNew(
+                targetPos,
+                -angle.ToRotationVector2() * 1.5f,
+                new Color(230, 254, 6),
+                Color.White,
+                1.2f,
+                28
+            );
+            flame.LossPerFrame = 0.06f;
+            flame.ApplyLighting = false;
+            flame.Swirly = true;
+            ParticleEngine.BEHIND_PROJECTILES.Add(flame);
+
+            if (TargetPlayer.TryGetModPlayer<CurseknightsHelmPlayer>(out var modPlayer)) {
+                modPlayer.ActiveReformParticles--;
+
+                if (modPlayer.ActiveReformParticles <= 0) {
+                    modPlayer.ActiveReformParticles = 0;
+                    CurseknightsHelm.HelmExploded = false;
+                }
+            }
+            ShouldBeRemovedFromRenderer = true;
+            return;
+        }
+
+        directionToHead.Normalize();
+
+        float playerSpeed = TargetPlayer.velocity.Length();
+        float baseSpeed = MathHelper.Clamp(6f - (distance * 0.01f), 3f, 7f);
+        float targetSpeed = Math.Max(baseSpeed, playerSpeed + 4f);
+        
+        float lerpFactor = MathHelper.Clamp(0.06f + (LifeTime * 0.003f), 0.06f, 0.3f);
+        Velocity = Vector2.Lerp(Velocity, directionToHead * targetSpeed, lerpFactor);
+
+        Position += Velocity;
+        Rotation += RotationalVelocity;
+    }
+
+    public override void Draw(ref ParticleRendererSettings settings, SpriteBatch spriteBatch) {
+        var drawPos = Position + settings.AnchorPosition;
+        var origin = GoreTexture.Size() * 0.5f;
+    
+        var color = Lighting.GetColor(Position.ToTileCoordinates()) * Alpha;
+
+        spriteBatch.Draw(GoreTexture, drawPos, null, color, Rotation, origin, Scale, SpriteEffects.None, 0f);
     }
 }

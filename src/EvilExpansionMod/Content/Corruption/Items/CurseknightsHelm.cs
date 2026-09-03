@@ -75,6 +75,20 @@ internal sealed class CurseknightsHelm : ModItem {
 
             if (!HelmExploded) {
                 SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1f }, player.position);
+                
+                Vector2 headWorldPos = player.MountedCenter + new Vector2(0f, -player.height * 0.3f) + player.headPosition;
+                
+                ExplosionProjectile.New(
+                    player.GetSource_FromThis(),
+                    headWorldPos,
+                    0,
+                    Color.Yellow,
+                    Color.LightGoldenrodYellow,
+                    size: 100,
+                    timeLeft: 35,
+                    friendly: true,
+                    hostile: false
+                );
 
                 Vector2 behindDirection = new(-player.direction, 0f);
 
@@ -308,6 +322,19 @@ public class ShardGoricle : BaseParticle<ShardGoricle> {
                 if (modPlayer.ActiveReformParticles <= 0) {
                     modPlayer.ActiveReformParticles = 0;
                     CurseknightsHelm.HelmExploded = false;
+
+                    for(int i = 0; i < 4; i++) {
+                        var ember = GlowEmberParticle.NewParticle(
+                            targetPos,
+                            -angle.ToRotationVector2() * 1.5f,
+                            Main.rand.NextFloat(0.25f, 1.5f),
+                            new Color(230, 254, 6),
+                            Color.White);
+
+                        ember.Randomness *= 2f;
+                        ember.LossPerSecond *= 2f;
+                        ParticleEngine.PARTICLES.Add(ember);
+                    }
                 }
             }
             ShouldBeRemovedFromRenderer = true;

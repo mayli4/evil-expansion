@@ -72,27 +72,27 @@ public class ExplosionProjectile : ModProjectile {
                 var randomDirection = Main.rand.NextVector2Unit();
                 var dustPos = Projectile.Center + randomDirection * Main.rand.NextFloat(Projectile.width * 0.5f);
 
-                var newDustData = new Smoke.Data()
-                {
-                    InitialLifetime = 40,
-                    ElapsedFrames = 0,
-                    InitialOpacity = 0.8f,
-                    ColorStart = Color.Black,
-                    ColorFade = Color.Black,
-                    Spin = 0f,
-                    InitialScale = Main.rand.NextFloat(0.5f, 2f)
-                };
-
-                var newDust = Dust.NewDustPerfect(
-                    dustPos,
-                    ModContent.DustType<Smoke>(),
-                    null,
-                    0,
-                    newColor: Color.White,
-                    newDustData.InitialScale
-                );
-
-                newDust.customData = newDustData;
+                // var newDustData = new Smoke.Data()
+                // {
+                //     InitialLifetime = 40,
+                //     ElapsedFrames = 0,
+                //     InitialOpacity = 0.8f,
+                //     ColorStart = Color.Black,
+                //     ColorFade = Color.Black,
+                //     Spin = 0f,
+                //     InitialScale = Main.rand.NextFloat(0.5f, 2f)
+                // };
+                //
+                // var newDust = Dust.NewDustPerfect(
+                //     dustPos,
+                //     ModContent.DustType<Smoke>(),
+                //     null,
+                //     0,
+                //     newColor: Color.White,
+                //     newDustData.InitialScale
+                // );
+                //
+                // newDust.customData = newDustData;
             }
 
             for(int i = 0; i < 20; i++) {

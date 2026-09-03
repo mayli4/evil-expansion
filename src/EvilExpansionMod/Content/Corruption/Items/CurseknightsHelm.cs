@@ -46,7 +46,7 @@ internal sealed class CurseknightsHelm : ModItem {
         var healthThreshold = player.statLifeMax2 / 2;
         modPlayer.IsBelowThreshold = player.statLife < healthThreshold;
 
-        if(!Main.mouseLeft) { // if HP >50%
+        if(!modPlayer.IsBelowThreshold) { // if HP >50%
             if (HelmExploded && modPlayer.ActiveReformParticles <= 0) {
                 //SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.8f, Pitch = -0.2f }, player.position);
 

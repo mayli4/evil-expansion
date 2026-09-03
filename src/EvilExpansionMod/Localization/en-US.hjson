@@ -192,7 +192,7 @@ Mods: {
 
 			BoneSlicesItem: {
 				DisplayName: Bone Slices
-				Tooltip: They ooze fluids constantly
+				Tooltip: Fluids ooze out of them constantly
 			}
 
 			PusClumpItem: {
@@ -289,8 +289,13 @@ Mods: {
 			}
 
 			GulpyYoyoItem: {
-				DisplayName: Gulpy Yoyo
-				Tooltip: ""
+				DisplayName: Gulpy
+				Tooltip:
+					'''
+					The yoyo takes bites out of enemies
+					Repeated bites cause it to vomit out a spray of half-digested gore
+					'My little Gulpy...'
+					'''
 			}
 
 			CursedCanaryItem: {
@@ -305,7 +310,11 @@ Mods: {
 
 			PolypOreItem: {
 				DisplayName: Polyp Ore
-				Tooltip: ""
+				Tooltip:
+					'''
+					Its surface is wreathed in cursed energy
+					Burns you more severely when touched without special protection
+					'''
 			}
 
 			CartilageBarItem: {
@@ -315,7 +324,11 @@ Mods: {
 
 			CartilageOreItem: {
 				DisplayName: Cartilage Ore
-				Tooltip: ""
+				Tooltip:
+					'''
+					Its surface is coated in scalding ichor
+					Burns you when touched without special protection
+					'''
 			}
 
 			SpamOnAStickItem: {
@@ -424,7 +437,7 @@ Mods: {
 			FireInALanternFlame.DisplayName: Fire In A Lantern Flame
 			InflatableDevilOWarProjectile.DisplayName: Inflatable Devil O War Projectile
 			LingeringIchorProjectile.DisplayName: Lingering Ichor
-			GulpyYoyoProjectile.DisplayName: Gulpy Yoyo
+			GulpyYoyoProjectile.DisplayName: Gulpy
 			GulpyHandProjectile.DisplayName: Gulpy Hand
 			SpiritExplosion.DisplayName: Spirit Explosion
 			SpiritContactExplosion.DisplayName: Cursed Explosion

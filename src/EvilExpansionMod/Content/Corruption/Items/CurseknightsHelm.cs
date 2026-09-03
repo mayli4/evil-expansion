@@ -1,13 +1,17 @@
-using Daybreak.Common.Mathematics;
+using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Particles;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.Graphics.CameraModifiers;
 using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Corruption;
 
-public class CurseknightsHelm : ModItem {
+internal sealed class CurseknightsHelm : ModItem {
     public override string Texture => Assets.Images.Corruption.Items.CurseknightsHelm.CurseknightsHelmItem.KEY;
     public static int HelmOn;
     public static int HelmOff;
@@ -86,6 +90,48 @@ public class CurseknightsHelm : ModItem {
             }
         }
     }
+    
+    internal sealed class DrawLayer : PlayerDrawLayer {
+        public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.Head);
+
+        public override bool GetDefaultVisibility(PlayerDrawSet drawInfo) {
+            if (drawInfo.drawPlayer.dead)
+                return false;
+
+            var modPlayer = drawInfo.drawPlayer.GetModPlayer<CurseknightsHelmPlayer>();
+            return modPlayer.IsWearingHelm && !modPlayer.HideVisual;
+        }
+
+        protected override void Draw(ref PlayerDrawSet drawInfo) {
+            var drawPlayer = drawInfo.drawPlayer;
+
+            var tex = HelmExploded 
+                ? Assets.Images.Corruption.Items.CurseknightsHelm.CurseknightsHelmOff_HeadGlow.Asset
+                : Assets.Images.Corruption.Items.CurseknightsHelm.CurseknightsHelmOn_HeadGlow.Asset;
+
+            Vector2 position = new Vector2(
+                (int)(drawInfo.Position.X - Main.screenPosition.X - drawPlayer.bodyFrame.Width / 2 + drawPlayer.width / 2),
+                (int)(drawInfo.Position.Y - Main.screenPosition.Y + drawPlayer.height - drawPlayer.bodyFrame.Height + 4f)
+            ) + drawPlayer.headPosition + drawInfo.headVect;
+
+            Rectangle bodyFrame = drawPlayer.bodyFrame;
+
+            var drawData = new DrawData(
+                tex.Value,
+                position,
+                bodyFrame,
+                Color.White * ((255f - drawInfo.drawPlayer.immuneAlpha) / 255f),
+                drawPlayer.headRotation,
+                drawInfo.headVect,
+                1f,
+                drawInfo.playerEffect
+            ) {
+                shader = drawInfo.cHead,
+            };
+
+            drawInfo.DrawDataCache.Add(drawData);
+        }
+    }
 }
 
 public class CursedWrath : ModBuff {
@@ -116,12 +162,9 @@ public class CurseknightsHelmPlayer : ModPlayer {
 
     public override void FrameEffects() {
         if(IsWearingHelm && !HideVisual) {
-            if(CurseknightsHelm.HelmExploded) {
-                Player.head = CurseknightsHelm.HelmOff;
-            }
-            else {
-                Player.head = CurseknightsHelm.HelmOn;
-            }
+            Player.head = CurseknightsHelm.HelmExploded 
+                ? CurseknightsHelm.HelmOff 
+                : CurseknightsHelm.HelmOn;
         }
     }
 

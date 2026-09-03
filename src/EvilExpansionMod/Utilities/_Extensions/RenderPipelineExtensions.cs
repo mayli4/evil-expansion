@@ -27,7 +27,7 @@ internal static class RenderPipelineExtensions {
         Vector2 texelSize = new Vector2(1f / screenSize.X, 1f / screenSize.Y);
 
         return @this
-            .SetSamplerState(0, SamplerState.LinearClamp) // Crucial for bilinear sampling
+            .SetSamplerState(0, SamplerState.LinearClamp)
             .ApplyEffect(
                 Assets.Shaders.Pixel.Bloom.Asset.Value,
                 ("uThreshold", threshold),

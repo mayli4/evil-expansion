@@ -16,6 +16,7 @@ internal sealed class CurseknightsHelm : ModItem {
     public static int HelmOn;
     public static int HelmOff;
     public static bool HelmExploded;
+    
     public static float DifficultylessDebuff => Main.expertMode ? (Main.masterMode ? 0.4f : 0.5f) : 1f; // Expert and master mode multiply debuff time... need to counteract this
 
     public override void Load() {
@@ -41,19 +42,14 @@ internal sealed class CurseknightsHelm : ModItem {
         modPlayer.HideVisual = hideVisual;
 
         var healthThreshold = player.statLifeMax2 / 2;
-        if(player.statLife < healthThreshold) {
-            modPlayer.IsBelowThreshold = true;
-        }
-        else {
-            modPlayer.IsBelowThreshold = false;
-        }
+        modPlayer.IsBelowThreshold = player.statLife < healthThreshold;
 
-        if(!modPlayer.IsBelowThreshold) { // if HP >50%
+        if(!Main.mouseLeft) { // if HP >50%
             if(HelmExploded) { // if Helm was broken prior (Reform effects goes here)
                 SoundEngine.PlaySound(SoundID.Item52 with { Volume = 0.9f }, player.position);
 
                 for(int i = 0; i < 5; i++) {
-                    Dust.NewDust(player.position, player.width, player.height, DustID.CursedTorch, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.5f, 2f));
+                    //Dust.NewDust(player.position, player.width, player.height, DustID.CursedTorch, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.5f, 2f));
                 }
 
                 HelmExploded = false;
@@ -64,27 +60,46 @@ internal sealed class CurseknightsHelm : ModItem {
                 player.AddBuff(ModContent.BuffType<CursedWrath>(), int.MaxValue, false);
             }
 
-            if(!HelmExploded) { //If Helm was not broken prior (Breaking effects goes here)
-                Projectile.NewProjectile(
-                    player.GetSource_FromThis(),
-                    player.position,
-                    Vector2.Zero,
-                    ModContent.ProjectileType<SpiritContactExplosion>(),
-                    0,
-                    0.5f,
-                    player.whoAmI,
-                    ai0: 0,
-                    ai1: 0);
-
+            if (!HelmExploded) {
                 SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1f }, player.position);
 
-                for(int i = 0; i <= 4; i++) {
+                Vector2 behindDirection = new(-player.direction, 0f);
+
+                for (int i = 0; i <= 4; i++) {
+                    float spreadAngle = Main.rand.NextFloat(-MathHelper.Pi / 6f, MathHelper.Pi / 6f);
+                    Vector2 blastVelocity = (behindDirection.RotatedBy(spreadAngle) * Main.rand.NextFloat(5f, 9f)) - new Vector2(0f, Main.rand.NextFloat(2f, 5f));
+
                     Gore.NewGoreDirect(
                         Entity.GetSource_FromThis(),
-                        player.Center,
-                        -Vector2.UnitY.RotatedBy(Main.rand.NextFloatDirection() * 0.35f) * Main.rand.NextFloat(6f, 8f),
-                        Mod.Find<ModGore>("CurseknightsHelmGore" + i).Type); // Debris Blasts Off
+                        player.MountedCenter + new Vector2(0f, -player.height * 0.3f),
+                        blastVelocity,
+                        Mod.Find<ModGore>("CurseknightsHelmGore" + i).Type);
+
+                    Vector2 headWorldPos = player.MountedCenter + new Vector2(0f, -player.height * 0.3f) + player.headPosition;
+
+                    var ember = GlowEmberParticle.NewParticle(
+                        headWorldPos,
+                        blastVelocity * Main.rand.NextFloat(0.8f, 1.3f),
+                        Main.rand.NextFloat(0.25f, 1.5f),
+                        new Color(230, 254, 6),
+                        Color.White);
+
+                    ember.Randomness *= 2f;
+                    ember.LossPerSecond *= 2f;
+                    ParticleEngine.PARTICLES.Add(ember);
                 }
+                
+                var modifier = new PunchCameraModifier(
+                    player.Center, 
+                    Main.rand.NextFloat(MathHelper.TwoPi).ToRotationVector2(), 
+                    strength: 6f, 
+                    6f, 
+                    10, 
+                    100f)
+                {
+                    UniqueIdentity = "CurseknightsHelmScreenshake",
+                };
+                Main.instance.CameraModifiers.Add(modifier);
 
                 HelmExploded = true;
             }

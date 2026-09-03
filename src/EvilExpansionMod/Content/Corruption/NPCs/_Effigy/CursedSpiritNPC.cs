@@ -740,12 +740,12 @@ public sealed class CursedSpiritNPC : ModNPC {
             {
                 SpiritType.Splitter => 0,
                 SpiritType.Exploder => 44,
-                _ => 100,
+                _ => 104,
             },
             0,
             SpiritType switch
             {
-                SpiritType.Splitter => 44,
+                SpiritType.Splitter => 48,
                 SpiritType.Exploder => 54,
                 _ => 54,
             },

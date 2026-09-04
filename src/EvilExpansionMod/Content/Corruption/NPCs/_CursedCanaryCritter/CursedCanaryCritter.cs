@@ -55,7 +55,7 @@ public sealed class CursedCanaryCritter : ModNPC {
     public override void PostAI() {
         NPC.TargetClosest(false);
 
-        var range = 440;
+        var range = 340;
         var targetInRange = ValidTarget && Target.Center.DistanceSQ(NPC.Center) < (range * range);
 
         Lighting.AddLight(NPC.Center, 0.77f, 1f, 0.56f);

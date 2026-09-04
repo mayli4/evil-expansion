@@ -40,7 +40,7 @@ public sealed class StinkgrubNPC : ModNPC {
     private const int gas_interval = 60;
 
     public override void SetStaticDefaults() {
-        Main.npcFrameCount[Type] = 6;
+        Main.npcFrameCount[Type] = 12;
     }
 
     public override void SetDefaults() {
@@ -186,29 +186,68 @@ public sealed class StinkgrubNPC : ModNPC {
 
     public override void FindFrame(int frameHeight) {
         NPC.frameCounter++;
-
-        if(CurrentState == State.Moving) {
-            if(NPC.frameCounter < anim_speed) {
-                NPC.frame.Y = 0 * frameHeight;
-            }
-            else if(NPC.frameCounter < anim_speed * 2) {
-                NPC.frame.Y = 1 * frameHeight;
-            }
-            else if(NPC.frameCounter < anim_speed * 3) {
-                NPC.frame.Y = 2 * frameHeight;
-            }
-            else if(NPC.frameCounter < anim_speed * 4) {
-                NPC.frame.Y = 3 * frameHeight;
-            }
-            else if(NPC.frameCounter < anim_speed * 5) {
-                NPC.frame.Y = 4 * frameHeight;
+        if(IsPusCarrier) {
+            if(CurrentState == State.Moving) {
+                if(NPC.frameCounter < anim_speed) {
+                    NPC.frame.Y = 0 * frameHeight;
+                }
+                else if(NPC.frameCounter < anim_speed * 2) {
+                    NPC.frame.Y = 1 * frameHeight;
+                }
+                else if(NPC.frameCounter < anim_speed * 3) {
+                    NPC.frame.Y = 2 * frameHeight;
+                }
+                else if(NPC.frameCounter < anim_speed * 4) {
+                    NPC.frame.Y = 3 * frameHeight;
+                }
+                else if(NPC.frameCounter < anim_speed * 5) {
+                    NPC.frame.Y = 4 * frameHeight;
+                }
+                else {
+                    NPC.frameCounter = 0;
+                }
             }
             else {
-                NPC.frameCounter = 0;
+                NPC.frame.Y = 5 * frameHeight;
             }
         }
         else {
-            NPC.frame.Y = 5 * frameHeight;
+            if(CurrentState == State.Moving) {
+                if(NPC.frameCounter < anim_speed) {
+                    NPC.frame.Y = 6 * frameHeight;
+                }
+                else if(NPC.frameCounter < anim_speed * 7) {
+                    NPC.frame.Y = 7 * frameHeight;
+                }
+                else if(NPC.frameCounter < anim_speed * 8) {
+                    NPC.frame.Y = 8 * frameHeight;
+                }
+                else if(NPC.frameCounter < anim_speed * 9) {
+                    NPC.frame.Y = 9 * frameHeight;
+                }
+                else if(NPC.frameCounter < anim_speed * 10) {
+                    NPC.frame.Y = 9 * frameHeight;
+                }
+                else {
+                    NPC.frameCounter = 6;
+                }
+            }
+            else {
+                NPC.frame.Y = 10 * frameHeight;
+            }
         }
+
+
     }
 }
+
+
+
+
+
+
+
+
+
+
+

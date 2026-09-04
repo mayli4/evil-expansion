@@ -27,18 +27,19 @@ public class MarrowLazerProjectile : ModProjectile {
 
     float Scale {
         get {
-            var scale = 0.2f;
+            var scale = 0.025f;
             if(Projectile.timeLeft <= DisappearFrames * 2f) {
-                scale += MathF.Sin(MathF.PI * Projectile.timeLeft / (DisappearFrames * 2f)) * 0.8f;
+                scale += MathF.Sin(MathF.PI * Projectile.timeLeft / (DisappearFrames * 2f)) * 0.975f;
             }
 
             return scale;
         }
     }
-    
+
     private SlotId loopSoundSlot = SlotId.Invalid;
 
-    public static readonly SoundStyle LaserLoopSound = new(Assets.Sounds.MarrowEye.MarrowEyeLoopedLaser.KEY) {
+    public static readonly SoundStyle LaserLoopSound = new(Assets.Sounds.MarrowEye.MarrowEyeLoopedLaser.KEY)
+    {
         IsLooped = true,
         Volume = 0.8f,
         PitchVariance = 0f,
@@ -61,16 +62,17 @@ public class MarrowLazerProjectile : ModProjectile {
     public override void AI() {
         var hitPoint = Projectile.position + Projectile.velocity * 8f;
         var lightColor = secondaryColor * 0.005f * Scale;
-        
-        if (Projectile.timeLeft < DisappearFrames * 2) {
-            if (!SoundEngine.TryGetActiveSound(loopSoundSlot, out var activeSound)) {
-                if (Projectile.timeLeft > DisappearFrames) {
+
+        if(Projectile.timeLeft < DisappearFrames * 2) {
+            if(!SoundEngine.TryGetActiveSound(loopSoundSlot, out var activeSound)) {
+                if(Projectile.timeLeft > DisappearFrames) {
                     loopSoundSlot = SoundEngine.PlaySound(LaserLoopSound, Projectile.position);
                 }
-            } else {
+            }
+            else {
                 activeSound.Position = Projectile.position;
 
-                if (Projectile.timeLeft <= DisappearFrames) {
+                if(Projectile.timeLeft <= DisappearFrames) {
                     float fadeProgress = (float)Projectile.timeLeft / DisappearFrames;
                     activeSound.Volume = LaserLoopSound.Volume * fadeProgress;
                 }
@@ -108,24 +110,24 @@ public class MarrowLazerProjectile : ModProjectile {
 
         Projectile.scale = (hitPoint - Projectile.position).Length();
 
-        if (Projectile.timeLeft < DisappearFrames * 2 && Main.rand.NextBool(5)) {
-             var ember = GlowEmberParticle.NewParticle(
-                hitPoint + Main.rand.NextVector2Unit() * 5f,
-                Main.rand.NextVector2Unit() * Main.rand.NextFloat(4.2f, 7.5f),
-                Main.rand.NextFloat(0.25f, 1.5f),
-                secondaryColor,
-                highlightColor);
+        if(Projectile.timeLeft < DisappearFrames * 2 && Main.rand.NextBool(5)) {
+            var ember = GlowEmberParticle.NewParticle(
+               hitPoint + Main.rand.NextVector2Unit() * 5f,
+               Main.rand.NextVector2Unit() * Main.rand.NextFloat(4.2f, 7.5f),
+               Main.rand.NextFloat(0.25f, 1.5f),
+               secondaryColor,
+               highlightColor);
 
             ember.Randomness *= 2f;
             ember.LossPerSecond *= 2f;
             ParticleEngine.PARTICLES.Add(ember);
         }
 
-        if (hitCd > 0) hitCd--;
+        if(hitCd > 0) hitCd--;
     }
-    
+
     public override void OnKill(int timeLeft) {
-        if (SoundEngine.TryGetActiveSound(loopSoundSlot, out var activeSound)) {
+        if(SoundEngine.TryGetActiveSound(loopSoundSlot, out var activeSound)) {
             activeSound.Stop();
         }
     }

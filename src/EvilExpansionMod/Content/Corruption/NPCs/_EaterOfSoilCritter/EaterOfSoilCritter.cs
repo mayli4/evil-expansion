@@ -7,11 +7,11 @@ using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
+
 using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Corruption.NPCs.EaterOfSoil;
 
 namespace EvilExpansionMod.Content.Corruption;
 
-public sealed class EaterOfSoilCritter : ModNPC {
     // These three class showcase usage of the WormHead, WormBody and WormTail classes from Worm.cs
     internal class EaterOfSoilHead : WormHead {
         public override string Texture => Assets.Images.Corruption.NPCs.EaterOfSoil.EaterOfSoilHead.KEY;
@@ -57,15 +57,15 @@ public sealed class EaterOfSoilCritter : ModNPC {
                 BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Caverns,
 
 				// Sets the description of this NPC that is listed in the bestiary.
-				new FlavorTextBestiaryInfoElement("Mods.ExampleMod.Bestiary.EaterOfSoilHead")
+				new FlavorTextBestiaryInfoElement("Mods.EvilExpansionMod.Bestiary.EaterOfSoilHead")
             ]);
         }
 
         public override void Init() {
             // Set the segment variance
             // If you want the segment length to be constant, set these two properties to the same value
-            MinSegmentLength = 2;
-            MaxSegmentLength = 2;
+            MinSegmentLength = 4;
+            MaxSegmentLength = 4;
 
             CommonWormInit(this);
         }
@@ -175,7 +175,7 @@ public sealed class EaterOfSoilCritter : ModNPC {
             EaterOfSoilHead.CommonWormInit(this);
         }
     }
-}
+
 
 public sealed class EaterOfSoilItem : ModItem {
     public override string Texture => Assets.Images.Corruption.NPCs.EaterOfSoil.EaterOfSoilItem.KEY;
@@ -197,7 +197,7 @@ public sealed class EaterOfSoilItem : ModItem {
         Item.noUseGraphic = true;
         Item.value = Item.buyPrice(0, 0, 40);
         Item.bait = 1;
-        Item.makeNPC = (short)ModContent.NPCType<EaterOfSoilCritter>();
+        Item.makeNPC = (short)ModContent.NPCType<EaterOfSoilHead>();
         Item.rare = ItemRarityID.Green;
     }
 }

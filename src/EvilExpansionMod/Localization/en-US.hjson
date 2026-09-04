@@ -359,6 +359,11 @@ Mods: {
 					Below 50% life, increases damage massively as long as Cursed Inferno is active
 					'''
 			}
+
+			EaterOfSoilItem: {
+				DisplayName: Eater Of Soil Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -381,6 +386,10 @@ Mods: {
 			PusSlugCritter.DisplayName: Pus Slug
 			CursedCanaryCritter.DisplayName: Cursed Canary
 			LavaLizardCritter.DisplayName: Lava Lizard
+			EaterOfSoilBody.DisplayName: Eater Of Soil Body
+			EaterOfSoilHead.DisplayName: Eater Of Soil Head
+			EaterOfSoilTail.DisplayName: Eater Of Soil Tail
+			EaterOfSoilBody1.DisplayName: Eater Of Soil Body1
 		}
 
 		Projectiles: {

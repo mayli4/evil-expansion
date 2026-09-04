@@ -106,7 +106,7 @@ public class LingeringFlameProjectile : ModProjectile {
         var colorA = Color.Yellow;
         var colorB = Color.Red;
 
-        Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
+        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
             // uImage0
             .SetTexture(0, Assets.Images.Sample.Noise4.Asset.Value)
             .SetSamplerState(0, SamplerState.PointWrap)

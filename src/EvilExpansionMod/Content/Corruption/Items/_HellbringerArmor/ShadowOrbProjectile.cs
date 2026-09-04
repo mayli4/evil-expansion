@@ -159,7 +159,7 @@ public class ShadowOrbProjectile : ModProjectile {
                 * masterAlpha;
         }
 
-        Renderer.Begin()
+        Graphics.Begin()
             .DrawTexture(new()
             {
                 Texture = texture,

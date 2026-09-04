@@ -183,7 +183,7 @@ public class GulpyYoyoProjectile : ModProjectile {
         Main.spriteBatch.Draw(texture, new Rectangle(0, 0, 1, 1), Color.Red);
         Main.spriteBatch.End(out var ss);
 
-        Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
+        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
             .DrawTexture(new()
             {
                 Texture = texture,
@@ -197,7 +197,7 @@ public class GulpyYoyoProjectile : ModProjectile {
             .ApplyOutline(outlineColor)
             .End();
 
-        Renderer.Begin(Graphics.WorldTransformMatrix)
+        Graphics.Begin(Graphics.WorldTransformMatrix)
             .DrawTexture(new()
             {
                 Texture = texture,

@@ -246,7 +246,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
         var noiseTexture1 = Assets.Images.Sample.Pebbles.Asset.Value;
         var circleTexture = Assets.Images.Misc.Circle.Asset.Value;
 
-        Renderer.BeginPixelated()
+        Graphics.BeginPixelated()
             .SetTexture(0, circleTexture)
             .SetEffectParams(
                 flameShader,

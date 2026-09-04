@@ -141,7 +141,7 @@ public class MarrowLazerProjectile : ModProjectile {
         var texture1 = Assets.Images.Sample.Noise1.Asset.Value;
         var effect = Assets.Shaders.Pixel.MarrowLaser.Asset.Value;
 
-        Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
+        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
             .SetEffectParams(
                 effect,
                 ("uLength", Projectile.scale),

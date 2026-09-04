@@ -106,7 +106,7 @@ public class SpiritFireball : ModProjectile {
         Main.spriteBatch.EndBegin(snapshot);
 
         var trailEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
-        Renderer.BeginPixelated()
+        Graphics.BeginPixelated()
             .SetEffectParams(
                 trailEffect,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),

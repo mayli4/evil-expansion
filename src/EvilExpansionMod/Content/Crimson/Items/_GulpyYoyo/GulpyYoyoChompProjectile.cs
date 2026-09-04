@@ -1,12 +1,13 @@
 ﻿using EvilExpansionMod.Common.Graphics;
 using Microsoft.Xna.Framework;
 using System;
+using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Crimson.Items;
 
-internal class GulpyYoyoChompProjectile : ModProjectile {
+internal class GulpyYoyoChompProjectile : ModProjectile, IPreDrawEverything {
     public override string Texture => Assets.Images.Crimson.Items.GulpyYoyo.GulpyYoyoChomp_Top.KEY;
 
     private const int MaxTimeLeft = 20;
@@ -22,8 +23,8 @@ internal class GulpyYoyoChompProjectile : ModProjectile {
         Projectile.timeLeft = MaxTimeLeft;
     }
 
-    public override bool PreDraw(ref Color lightColor) {
-        using var pipeline = new RenderPipeline(Renderer.PostDrawNPCsQueue, 1f, Graphics.WorldTransformMatrix);
+    public void PreDrawEverything() {
+        using var pipeline = new RenderPipeline(Graphics.PostDrawNPCsQueue, 1f, Graphics.WorldTransformMatrix);
 
         var topTexture = TextureAssets.Projectile[Type].Value;
         var bottomTexture = Assets.Images.Crimson.Items.GulpyYoyo.GulpyYoyoChomp_Bottom.Asset.Value;
@@ -33,6 +34,8 @@ internal class GulpyYoyoChompProjectile : ModProjectile {
         var moveProgress = t * t * t;
         var scaleProgress = moveProgress * moveProgress;
         var alphaProgress = MathF.Sin(MathHelper.PiOver2 + MathHelper.PiOver2 * (1f - t));
+
+        var lightColor = Lighting.GetColor(Projectile.Center.ToTileCoordinates());
 
         pipeline.DrawTexture(new()
         {
@@ -57,7 +60,5 @@ internal class GulpyYoyoChompProjectile : ModProjectile {
             Scale = Vector2.One * (1f + scaleProgress),
             Color = lightColor * alphaProgress,
         });
-
-        return false;
     }
 }

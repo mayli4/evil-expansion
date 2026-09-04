@@ -1,11 +1,9 @@
-﻿using EvilExpansionMod.Common.Graphics;
-using EvilExpansionMod.Utilities;
+﻿using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.DataStructures;
-using Terraria.GameContent;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Common;
@@ -56,15 +54,16 @@ internal class RoarProjectile : ModProjectile {
         var effect = Assets.Shaders.Pixel.Scream.Asset.Value;
         var alpha = Projectile.timeLeft > 20 ? 1f : Projectile.timeLeft / 10f;
 
-        Renderer.Begin(Graphics.Graphics.WorldTransformMatrix) // ?
+        Graphics.Graphics.Begin(Graphics.Graphics.WorldTransformMatrix) // ?
             .SetSamplerState(0, SamplerState.PointWrap)
             .SetSamplerState(1, SamplerState.PointWrap)
             .SetTexture(1, Assets.Images.Sample.Noise3.Asset.Value)
-            .SetEffectParams(effect, 
+            .SetEffectParams(effect,
                 ("uTime", Main.GameUpdateCount * 0.9f),
                 ("uSize", (float)Projectile.width),
                 ("uColor", Color.Black * 0.45f * alpha))
-            .DrawTexture(new() { 
+            .DrawTexture(new()
+            {
                 Texture = Assets.Images.Sample.Noise1.Asset.Value,
                 Position = Projectile.position,
                 Size = Projectile.Size,

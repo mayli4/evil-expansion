@@ -29,7 +29,7 @@ internal class DebugRenderer : ILoadable {
 
         if(behindTiles) return;
 
-        using var pipeline = Renderer.Begin(Graphics.WorldTransformMatrix);
+        using var pipeline = Graphics.Begin(Graphics.WorldTransformMatrix);
         for(var i = 0; i < _commands.Count; i++) {
             var command = _commands[i];
             switch(command.Type) {

@@ -114,8 +114,6 @@ internal class RenderCommandRunner : ILoadable {
             Main.spriteBatch.Begin(ss);
         }
 
-        queue.Clear();
-
         if(beginCount != 0) {
             throw new InvalidOperationException($"Begin and end command count mismatch (missing {beginCount} End calls)");
         }

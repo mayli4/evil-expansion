@@ -311,7 +311,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
         var trailColor = new Color(96, 91, 206) * _outlineAlpha * 0.4f;
 
-        Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
+        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
             .DrawTrail(
                 _trailPositions.Select(p => p + Projectile.position).ToArray(),
                 static t => (1.25f - t) * 20f,
@@ -339,7 +339,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                 * MathF.Max(1f - MathF.Pow(2f * MathF.Max(_charge - MaxCharge + tintFlashFrames / 2, 0) / tintFlashFrames - 1f, 2), 0f);
         }
 
-        Renderer.Begin(Graphics.WorldTransformMatrix)
+        Graphics.Begin(Graphics.WorldTransformMatrix)
             .DrawTexture(new()
             {
                 Texture = texture,

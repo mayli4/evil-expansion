@@ -149,6 +149,7 @@ internal readonly struct RenderPipeline : IDisposable {
 
         if(_depth == 0 && _queue.Immediate) {
             RenderCommandRunner.Instance.Run(_queue);
+            _queue.Clear();
         }
     }
 

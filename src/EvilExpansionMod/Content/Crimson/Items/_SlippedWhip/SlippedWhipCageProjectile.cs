@@ -129,7 +129,7 @@ public class SlippedWhipCageProjectile : ModProjectile {
         var partTexture = Assets.Images.Crimson.Items.SlippedWhip.SlippedWhipRibcagePart.Asset.Value;
 
         var scale = Vector2.One * (1f + 2f * (1f - visualProgress) + flashAlpha * 0.3f);
-        Renderer.Begin()
+        Graphics.Begin()
             .DrawTexture(new()
             {
                 Texture = mainTexture,

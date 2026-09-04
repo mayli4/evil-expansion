@@ -205,7 +205,7 @@ public class FireInALanternFlame : ModProjectile {
         currentFlameSize *= alphaFactor;
         currentFlameSize = Math.Max(currentFlameSize, 0.0f);
 
-        Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
+        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
             .SetEffectParams(
                 flameShader,
                 ("time", 0.01f * Main.GameUpdateCount + Projectile.whoAmI + 10),
@@ -229,7 +229,7 @@ public class FireInALanternFlame : ModProjectile {
             })
             .End();
 
-        Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
+        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
             .SetEffectParams(
                 flameShader,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI + 10),

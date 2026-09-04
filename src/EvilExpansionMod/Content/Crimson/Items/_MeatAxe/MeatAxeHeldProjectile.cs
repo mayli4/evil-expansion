@@ -1,5 +1,4 @@
 ﻿using EvilExpansionMod.Common.Graphics;
-using EvilExpansionMod.Content.Crimson._MeatAxe;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -154,7 +153,7 @@ public class MeatAxeHeldProjectile : ModProjectile {
 
     public override bool PreDraw(ref Color lightColor) {
         if(Progress > 0.15f) {
-            Renderer.BeginPixelated()
+            Graphics.BeginPixelated()
                 .DrawTrail(
                     _trailPositions.Select(
                         p => Projectile.position + p * 85f + p.RotatedBy(MathF.PI / 2f) * 10f
@@ -164,7 +163,7 @@ public class MeatAxeHeldProjectile : ModProjectile {
                 )
                 .End();
 
-            Renderer.BeginPixelated()
+            Graphics.BeginPixelated()
                 .DrawTrail(
                     _trailPositions.Select(
                         p => Projectile.position + p * 65f - p.RotatedBy(MathF.PI / 2f) * 18f
@@ -269,7 +268,7 @@ public class BloodSpraySystem : ModSystem {
     }
 
     public override void PostDrawTiles() {
-        using var pipeline = Renderer.BeginPixelated(Graphics.WorldTransformMatrix);
+        using var pipeline = Graphics.BeginPixelated(Graphics.WorldTransformMatrix);
         for(var i = 0; i < _particles.Count; i++) {
             var p = _particles[i];
             var positions = CollectionsMarshal.AsSpan(_trailPositions)[p.TrailPositionsIndex..(p.TrailPositionsIndex + TrailPositionCount)];

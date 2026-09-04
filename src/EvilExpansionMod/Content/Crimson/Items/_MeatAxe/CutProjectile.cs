@@ -8,9 +8,9 @@ using Terraria;
 using Terraria.GameContent;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Content.Crimson._MeatAxe;
+namespace EvilExpansionMod.Content.Crimson;
 
-public class CutProjectile : ModProjectile {
+public class CutProjectile : ModProjectile, IPreDrawEverythingBulk<CutProjectile> {
     public override string Texture => Helper.PlaceholderTextureKey;
 
     public List<Vector2> TrailPositions = [];
@@ -58,10 +58,18 @@ public class CutProjectile : ModProjectile {
         return false;
     }
 
-    public override bool PreDraw(ref Color lightColor) {
+    public void PreDrawEverythingBulk(ReadOnlySpan<CutProjectile> entities) {
+        using var pipeline = new RenderPipeline(Graphics.PreDrawNPCsQueue, 0.5f, Graphics.WorldTransformMatrix);
+        foreach(var entity in entities) {
+            entity.Draw(pipeline);
+        }
+
+        pipeline.ApplyOutline(Color.Lerp(Color.DarkRed, Color.Black, 0.5f));
+    }
+
+    private void Draw(RenderPipeline pipeline) {
         var progress = 1f - (float)Projectile.timeLeft / MaxTimeLeft;
 
-        var pipeline = Renderer.BeginPixelated();
         pipeline.SetTexture(TextureAssets.MagicPixel.Value);
 
         var buf = new Vector2[2];
@@ -89,18 +97,12 @@ public class CutProjectile : ModProjectile {
                 axeCutEffect,
                 ("uImage0Texture", texture),
                 ("uImage0Size", texture.Size()),
-                ("uTransformMatrix", Graphics.WorldTransformMatrix)
-            )
+                ("uTransformMatrix", Graphics.WorldTransformMatrix))
             .DrawTrail(
                 positions,
                 t => MathF.Sin(t * MathHelper.Pi) * 30f * (1f + 0.2f * MathF.Sin(t * MathHelper.Pi * 6f))
                     * MathF.Pow(MathF.Sin(MathHelper.PiOver2 * (1f - progress)), 2),
                 static _ => Color.Red,
-                axeCutEffect
-            )
-            .ApplyOutline(Color.Lerp(Color.DarkRed, Color.Black, 0.5f))
-            .End();
-
-        return false;
+                axeCutEffect);
     }
 }

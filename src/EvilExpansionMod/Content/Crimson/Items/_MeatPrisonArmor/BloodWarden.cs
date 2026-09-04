@@ -228,7 +228,7 @@ public sealed class BloodWarden : ModProjectile {
         List<Vector2> chainPoints = [];
         GenerateWavyChainPoints(chainPoints, chainStart, chainEnd, 20, 5, 0.5f, 0.2f);
 
-        using var pipeline = Renderer.Begin(Graphics.WorldTransformMatrix);
+        using var pipeline = Graphics.Begin(Graphics.WorldTransformMatrix);
 
         pipeline
             .SetTexture(chainTexture)

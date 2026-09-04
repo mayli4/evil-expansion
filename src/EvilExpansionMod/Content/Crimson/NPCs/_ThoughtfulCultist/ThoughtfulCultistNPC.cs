@@ -244,7 +244,7 @@ public class ThoughtfulCultistNPC : ModNPC {
             }
         }
 
-        Renderer.Begin(Graphics.WorldTransformMatrix)
+        Graphics.Begin(Graphics.WorldTransformMatrix)
             .SetSamplerState(0, SamplerState.PointWrap)
             .SetTexture(robeTextureBack)
             .DrawTrail(robeTrailPositions, static _ => 88, _ => drawColor, spriteRotation: 1)
@@ -252,7 +252,7 @@ public class ThoughtfulCultistNPC : ModNPC {
             .DrawTrail(chainPoints, static _ => 6, _ => drawColor)
             .End();
 
-        Renderer.Begin(Graphics.WorldTransformMatrix)
+        Graphics.Begin(Graphics.WorldTransformMatrix)
             .DrawTexture(new()
             {
                 Texture = pendantTexture,
@@ -272,7 +272,7 @@ public class ThoughtfulCultistNPC : ModNPC {
             .ApplyOutline(pendantOutlineColor)
             .End();
 
-        Renderer.Begin(Graphics.WorldTransformMatrix)
+        Graphics.Begin(Graphics.WorldTransformMatrix)
             .SetTexture(robeTextureFront, SamplerState.PointWrap)
             .DrawTrail(robeTrailPositions, static _ => 88, _ => drawColor, spriteRotation: 1)
             .End();

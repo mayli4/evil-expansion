@@ -454,6 +454,8 @@ Mods: {
 			ScreamProjectile.DisplayName: Scream Projectile
 			RoarProjectile.DisplayName: Roar Projectile
 			GulpyYoyoChompProjectile.DisplayName: Gulpy Yoyo Chomp Projectile
+			MarrowEyeChainProjectile.DisplayName: Marrow Eye Chain Projectile
+			MarrowEyeRingProjectile.DisplayName: Marrow Eye Ring Projectile
 		}
 
 		Biomes: {

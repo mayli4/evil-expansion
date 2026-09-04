@@ -1,11 +1,10 @@
-﻿using Microsoft.Xna.Framework;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Terraria;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Crimson;
 
-public class RingProjectile : ModProjectile {
+public class MarrowEyeRingProjectile : ModProjectile {
     public override string Texture => Assets.Images.Crimson.NPCs.MarrowEye.Ring.KEY;
     public const int DisapearFrames = 120;
 
@@ -29,7 +28,7 @@ public class RingProjectile : ModProjectile {
     }
 
     public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) {
-        behindNPCsAndTiles.Add(index);
+        behindNPCs.Add(index);
     }
 
     // public override void OnKill(int timeLeft) {

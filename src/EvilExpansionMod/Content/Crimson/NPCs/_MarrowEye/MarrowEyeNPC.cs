@@ -44,9 +44,9 @@ public class MarrowEyeNPC : ModNPC {
     Vector2 _directionToTarget;
 
     int _ring;
-    int _tendonA;
-    int _tendonB;
-    int _tendonC = -1;
+    int _chain0;
+    int _chain1;
+    int _chain2 = -1;
 
     public override void SetDefaults() {
         NPC.width = 50;
@@ -91,101 +91,121 @@ public class MarrowEyeNPC : ModNPC {
     }
 
     public override void OnSpawn(IEntitySource source) {
-        var randomRotation = MathF.PI / 2f + Main.rand.NextFloatDirection() * MathF.PI / 6f;
-        var randomDirection = randomRotation.ToRotationVector2();
         var ringCenter = NPC.Center - new Vector2(2f, 51f);
-        var minLength = 42f;
 
-        var startA = ringCenter - randomDirection * minLength / 2f;
+        var randomRotation = MathF.PI / 2f + Main.rand.NextFloatDirection() * MathF.PI / 6f;
 
-        var foundEndA = false;
-        var endA = ringCenter - randomDirection * minLength;
+        var foundEnd0 = false;
+        var direction0 = randomRotation.ToRotationVector2();
+
+        var endPosition0 = ringCenter;
+
         for(var i = 0; i < 50; i++) {
-            if(Collision.SolidCollision(endA, 1, 1)) {
-                endA += randomDirection * 11.33f;
-                foundEndA = true;
+            if(Collision.SolidCollision(endPosition0, 1, 1)) {
+                foundEnd0 = true;
                 break;
             }
 
-            endA -= randomDirection * 22.67f;
+            endPosition0 += direction0 * 16f;
         }
 
-        if(!foundEndA) {
+        if(!foundEnd0) {
             NPC.active = false;
             return;
         }
 
-        var startB = ringCenter + randomDirection * minLength / 2f;
+        var foundEnd1 = false;
+        var direction1 = (randomRotation + MathHelper.Pi).ToRotationVector2();
 
-        var foundEndB = false;
-        var endB = ringCenter + randomDirection * minLength;
+        var endPosition1 = ringCenter;
+
         for(var i = 0; i < 50; i++) {
-            if(Collision.SolidCollision(endB, 1, 1)) {
-                endB -= randomDirection * 11.33f;
-                foundEndB = true;
+            if(Collision.SolidCollision(endPosition1, 1, 1)) {
+                foundEnd1 = true;
                 break;
             }
 
-            endB += randomDirection * 22.67f;
+            endPosition1 += direction1 * 16f;
         }
 
-        if(!foundEndB) {
+        if(!foundEnd1) {
             NPC.active = false;
             return;
         }
 
-        _tendonA = NewTendon(startA, endA);
-        _tendonB = NewTendon(startB, endB);
+        var chainProjectile0 = Projectile.NewProjectileDirect(
+            NPC.GetSource_FromThis(),
+            ringCenter,
+            Vector2.Zero,
+            ModContent.ProjectileType<MarrowEyeChainProjectile>(),
+            0,
+            0f);
 
-        randomDirection = (
-            randomRotation
+        var delta0 = endPosition0 - ringCenter;
+        var distance0 = delta0.Length();
+
+        chainProjectile0.scale = distance0;
+        chainProjectile0.rotation = (delta0 / distance0).ToRotation();
+
+        _chain0 = chainProjectile0.whoAmI;
+
+        var chainProjectile1 = Projectile.NewProjectileDirect(
+            NPC.GetSource_FromThis(),
+            ringCenter,
+            Vector2.Zero,
+            ModContent.ProjectileType<MarrowEyeChainProjectile>(),
+            0,
+            0f);
+
+        var delta1 = endPosition1 - ringCenter;
+        var distance1 = delta1.Length();
+
+        chainProjectile1.scale = distance1;
+        chainProjectile1.rotation = (delta1 / distance1).ToRotation();
+
+        _chain1 = chainProjectile1.whoAmI;
+
+        var direction2 = (randomRotation
             + (Main.rand.NextBool() ? 1 : -1)
-            * Main.rand.NextFloat(MathF.PI / 4f, MathF.PI * 3f / 4f)
-        ).ToRotationVector2();
+            * Main.rand.NextFloat(MathF.PI / 4f, MathF.PI * 3f / 4f)).ToRotationVector2();
 
-        var startC = ringCenter + randomDirection * minLength / 2f;
+        var foundEnd2 = false;
+        var endPosition2 = ringCenter;
 
-        var foundEndC = false;
-        var endC = startC + randomDirection * minLength;
         for(var i = 0; i < 50; i++) {
-            if(Collision.SolidCollision(endC, 1, 1)) {
-                foundEndC = true;
+            if(Collision.SolidCollision(endPosition2, 1, 1)) {
+                foundEnd2 = true;
                 break;
             }
 
-            endC += randomDirection * 22.67f;
+            endPosition2 += direction2 * 16f;
         }
 
-        if(foundEndC) _tendonC = NewTendon(startC, endC);
+        if(foundEnd2) {
+            var chainProjectile2 = Projectile.NewProjectileDirect(
+                NPC.GetSource_FromThis(),
+                ringCenter,
+                Vector2.Zero,
+                ModContent.ProjectileType<MarrowEyeChainProjectile>(),
+                0,
+                0f);
+
+            var delta2 = endPosition2 - ringCenter;
+            var distance2 = delta2.Length();
+
+            chainProjectile2.scale = distance2;
+            chainProjectile2.rotation = (delta2 / distance2).ToRotation();
+
+            _chain2 = chainProjectile2.whoAmI;
+        }
 
         _ring = Projectile.NewProjectile(
             NPC.GetSource_FromThis(),
             ringCenter,
             Vector2.Zero,
-            ModContent.ProjectileType<RingProjectile>(),
+            ModContent.ProjectileType<MarrowEyeRingProjectile>(),
             0,
-            0f
-        );
-    }
-
-    int NewTendon(Vector2 positionA, Vector2 positionB) {
-        var tendon = Projectile.NewProjectileDirect(
-            NPC.GetSource_FromThis(),
-            (positionA + positionB) / 2f,
-            Vector2.Zero,
-            ModContent.ProjectileType<TendonProjectile>(),
-            0,
-            0f
-        );
-
-        var positionDelta = positionB - positionA;
-        tendon.rotation = positionDelta.ToRotation();
-
-        var tendonLength = positionDelta.Length();
-        tendon.scale = tendonLength;
-        tendon.netUpdate = true;
-
-        return tendon.whoAmI;
+            0f);
     }
 
     public override void ModifyIncomingHit(ref NPC.HitModifiers modifiers) {
@@ -195,8 +215,7 @@ public class MarrowEyeNPC : ModNPC {
     }
 
     public override void AI() {
-        NPC.rotation = 0f;
-        NPC.rotation = MathF.Sin(Main.GameUpdateCount * 0.03f + NPC.whoAmI * 574f) * 0.1f;
+        NPC.rotation = MathF.Sin(Main.GameUpdateCount * 0.01f + NPC.whoAmI * 574f) * 0.05f;
 
         var origin = new Vector2(-4f, -38f);
         _eyePosition = NPC.Center + origin + _lookDirection * 7f - origin.RotatedBy(NPC.rotation) - Vector2.UnitY * 4f;
@@ -266,11 +285,10 @@ public class MarrowEyeNPC : ModNPC {
         }
 
         var disapearOffset = 240;
-        Main.projectile[_ring].timeLeft = RingProjectile.DisapearFrames + disapearOffset;
-        Main.projectile[_tendonA].timeLeft = TendonProjectile.DisapearFrames + disapearOffset;
-        Main.projectile[_tendonB].timeLeft = TendonProjectile.DisapearFrames + disapearOffset;
-
-        if(_tendonC != -1) Main.projectile[_tendonC].timeLeft = TendonProjectile.DisapearFrames + disapearOffset;
+        Main.projectile[_ring].timeLeft = MarrowEyeRingProjectile.DisapearFrames + disapearOffset;
+        Main.projectile[_chain0].timeLeft = MarrowEyeChainProjectile.DisapearFrames + disapearOffset;
+        Main.projectile[_chain1].timeLeft = MarrowEyeChainProjectile.DisapearFrames + disapearOffset;
+        if(_chain2 != -1) Main.projectile[_chain2].timeLeft = MarrowEyeChainProjectile.DisapearFrames + disapearOffset;
     }
 
     bool IsTargetValid(float distance) {

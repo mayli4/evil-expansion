@@ -1,5 +1,4 @@
 using EvilExpansionMod.Content.Biomes;
-using EvilExpansionMod.Content.Crimson;
 using EvilExpansionMod.Content.Tiles.Banners;
 using Microsoft.Xna.Framework;
 using System;
@@ -75,7 +74,7 @@ public sealed class StinkgrubNPC : ModNPC {
     }
 
     public override void OnSpawn(IEntitySource source) {
-        if (Main.rand.NextBool(4, 5)) { // 80/20
+        if(Main.rand.NextBool(4, 5)) { // 80/20
             int npcIndex = NPC.NewNPC(
                 NPC.GetSource_FromThis(),
                 (int)NPC.Center.X,
@@ -139,8 +138,8 @@ public sealed class StinkgrubNPC : ModNPC {
             float moveSpeed = 0.8f;
             float acceleration = 0.05f;
 
-            NPC.velocity.X = Math.Abs(NPC.Center.X - Target.Center.X) > NPC.width * 3 
-                ? MathHelper.Lerp(NPC.velocity.X, NPC.direction * moveSpeed, acceleration) 
+            NPC.velocity.X = Math.Abs(NPC.Center.X - Target.Center.X) > NPC.width * 3
+                ? MathHelper.Lerp(NPC.velocity.X, NPC.direction * moveSpeed, acceleration)
                 : MathHelper.Lerp(NPC.velocity.X, NPC.direction * Main.rand.NextFloat(-0.5f, 0.5f), acceleration);
 
             Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
@@ -216,38 +215,25 @@ public sealed class StinkgrubNPC : ModNPC {
                 if(NPC.frameCounter < anim_speed) {
                     NPC.frame.Y = 6 * frameHeight;
                 }
-                else if(NPC.frameCounter < anim_speed * 7) {
+                else if(NPC.frameCounter < anim_speed * 2) {
                     NPC.frame.Y = 7 * frameHeight;
                 }
-                else if(NPC.frameCounter < anim_speed * 8) {
+                else if(NPC.frameCounter < anim_speed * 3) {
                     NPC.frame.Y = 8 * frameHeight;
                 }
-                else if(NPC.frameCounter < anim_speed * 9) {
+                else if(NPC.frameCounter < anim_speed * 4) {
                     NPC.frame.Y = 9 * frameHeight;
                 }
-                else if(NPC.frameCounter < anim_speed * 10) {
-                    NPC.frame.Y = 9 * frameHeight;
+                else if(NPC.frameCounter < anim_speed * 5) {
+                    NPC.frame.Y = 10 * frameHeight;
                 }
                 else {
-                    NPC.frameCounter = 6;
+                    NPC.frameCounter = 0;
                 }
             }
             else {
                 NPC.frame.Y = 10 * frameHeight;
             }
         }
-
-
     }
 }
-
-
-
-
-
-
-
-
-
-
-

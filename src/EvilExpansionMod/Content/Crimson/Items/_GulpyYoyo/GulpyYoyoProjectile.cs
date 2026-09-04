@@ -53,8 +53,6 @@ public class GulpyYoyoProjectile : ModProjectile {
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Crimson);
         }
 
-        // NOTE: +0.45f is the rotation that the yoyo gets applied automatically.
-        // Projectile.rotation -= 0.25f + 0.1f * (1f - ChompProgress);
         Projectile.rotation = 0;
 
         var chompingFrequency = 8;

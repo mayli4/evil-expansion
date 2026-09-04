@@ -121,7 +121,7 @@ public class PusBottleNPC : ModNPC {
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(),
                 NPC.Center - new Vector2(20, 100),
-                velocity * Main.rand.NextFloat(0.75f, 1.25f* difficultyScaler),
+                velocity * Main.rand.NextFloat(0.75f, 1.25f * difficultyScaler),
                 ModContent.ProjectileType<PusGlob>(),
                 (int)(ParentNPCID != -1 && Main.npc[ParentNPCID].active ? Main.npc[ParentNPCID].damage * 0.75f : 10),
                 0.5f,
@@ -183,11 +183,13 @@ public class PusBottleNPC : ModNPC {
             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Glass, Main.rand.NextFloat(-3, 3), Main.rand.NextFloat(-3, 3), 0, default, 1.2f);
             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Ichor, Main.rand.NextFloat(-2, 2), Main.rand.NextFloat(-2, 2), 0, default, 0.8f);
         }
+
         SoundEngine.PlaySound(SoundID.Shatter, NPC.Center);
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         var texture = Assets.Images.Crimson.NPCs.Stinkgrub.PusBottle.Asset.Value;
+        var textureBack = Assets.Images.Crimson.NPCs.Stinkgrub.PusBottle_Back.Asset.Value;
         var textureInside = Assets.Images.Crimson.NPCs.Stinkgrub.PusBottle_Inside.Asset.Value;
 
         var origin = new Vector2(texture.Width / 2, 94);
@@ -196,6 +198,9 @@ public class PusBottleNPC : ModNPC {
         float easedIntensity = MathF.Pow(intensityFactor, 0.5f);
 
         var shakeOffset = Main.rand.NextVector2Circular(1 * easedIntensity, 1 * easedIntensity);
+        var drawPosition = NPC.Center - screenPos + shakeOffset;
+
+        var spriteEffects = NPC.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally;
 
         float additionalRotation = MathF.Sin(Main.GameUpdateCount * 0.8f) * 0.05f * easedIntensity;
 
@@ -203,9 +208,19 @@ public class PusBottleNPC : ModNPC {
 
         Vector2 finalScale = Vector2.One * NPC.scale;
 
-        var fluidEffect = Assets.Shaders.Pixel.DevilOWarFluid.Asset.Value;
+        spriteBatch.Draw(
+            textureBack,
+            drawPosition,
+            null,
+            drawColor,
+            finalRotation,
+            origin,
+            finalScale,
+            spriteEffects,
+            0f);
 
         if(!NPC.IsABestiaryIconDummy) {
+            var fluidEffect = Assets.Shaders.Pixel.DevilOWarFluid.Asset.Value;
             Renderer.BeginPixelated(Graphics.WorldTransformMatrix)
                 .SetEffectParams(
                     fluidEffect,
@@ -237,15 +252,14 @@ public class PusBottleNPC : ModNPC {
 
         spriteBatch.Draw(
             texture,
-            NPC.Center - screenPos + shakeOffset,
+            drawPosition,
             null,
             drawColor,
             finalRotation,
             origin,
             finalScale,
-            NPC.spriteDirection == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
-            0f
-        );
+            spriteEffects,
+            0f);
 
         return false;
     }

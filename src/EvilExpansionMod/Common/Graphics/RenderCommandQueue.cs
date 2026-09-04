@@ -7,7 +7,9 @@ using System.Runtime.InteropServices;
 namespace EvilExpansionMod.Common.Graphics;
 
 
-internal class RenderCommandQueue {
+internal class RenderCommandQueue(bool immediate = false) {
+    public bool Immediate { get; } = immediate;
+
     public List<RenderCommandTag> Tags = [];
     public List<int> Indices = [];
 

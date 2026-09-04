@@ -4,7 +4,6 @@ using System;
 
 namespace EvilExpansionMod.Common.Graphics;
 
-
 internal readonly struct DrawTextureOptions() {
     public required Texture2D Texture { get; init; }
     public required Vector2 Position { get; init; }
@@ -148,9 +147,8 @@ internal readonly struct RenderPipeline : IDisposable {
     public readonly void End() {
         _queue.AddEnd();
 
-        if(_depth == 0) {
+        if(_depth == 0 && _queue.Immediate) {
             RenderCommandRunner.Instance.Run(_queue);
-            _queue.Clear();
         }
     }
 

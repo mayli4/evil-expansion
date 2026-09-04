@@ -444,6 +444,7 @@ Mods: {
 			CherryScreamProjectile.DisplayName: Cherry Scream Projectile
 			ScreamProjectile.DisplayName: Scream Projectile
 			RoarProjectile.DisplayName: Roar Projectile
+			GulpyYoyoChompProjectile.DisplayName: Gulpy Yoyo Chomp Projectile
 		}
 
 		Biomes: {

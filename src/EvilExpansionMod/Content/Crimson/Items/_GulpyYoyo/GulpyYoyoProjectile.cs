@@ -1,5 +1,6 @@
 ﻿using Daybreak.Common.Rendering;
 using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Crimson.Items;
 using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
@@ -14,14 +15,17 @@ namespace EvilExpansionMod.Content.Crimson;
 public class GulpyYoyoProjectile : ModProjectile {
     public override string Texture => Assets.Images.Crimson.Items.GulpyYoyo.GulpyYoyoProjectile.KEY;
 
-    int Timer { get => (int)Projectile.ai[2]; set => Projectile.ai[2] = value; }
+    private int Timer { get => (int)Projectile.ai[2]; set => Projectile.ai[2] = value; }
 
-    const int MAX_CHOMP_STACKS = 3;
-    int _chompStacks = 0;
+    private const int INITIAL_WIDTH = 18;
+    private const int INITIAL_HEIGHT = 18;
 
-    float ChompProgress => (float)_chompStacks / MAX_CHOMP_STACKS;
+    private const int MAX_CHOMP_STACKS = 3;
+    private int _chompStacks = 0;
 
-    Vector2 _twitch;
+    private float ChompProgress => (float)_chompStacks / MAX_CHOMP_STACKS;
+
+    private Vector2 _twitch;
 
     public override void SetStaticDefaults() {
         ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 300f;
@@ -30,8 +34,8 @@ public class GulpyYoyoProjectile : ModProjectile {
     }
 
     public override void SetDefaults() {
-        Projectile.width = 18;
-        Projectile.height = 18;
+        Projectile.width = INITIAL_WIDTH;
+        Projectile.height = INITIAL_HEIGHT;
         Projectile.aiStyle = ProjAIStyleID.Yoyo;
         Projectile.friendly = true;
         Projectile.DamageType = DamageClass.MeleeNoSpeed;
@@ -61,7 +65,7 @@ public class GulpyYoyoProjectile : ModProjectile {
         }
         else if(Timer > 0) {
             Projectile.frame = 0;
-            if(Timer == 10 && _chompStacks == MAX_CHOMP_STACKS) {
+            if(Timer == 10 && _chompStacks >= MAX_CHOMP_STACKS) {
                 _chompStacks = 0;
                 Projectile.scale = 2.5f;
 
@@ -101,6 +105,8 @@ public class GulpyYoyoProjectile : ModProjectile {
                         Projectile.owner
                     );
 
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = Projectile.timeLeft;
                     projectile.friendly = true;
                     projectile.hostile = false;
                     projectile.penetrate = -1;
@@ -118,6 +124,8 @@ public class GulpyYoyoProjectile : ModProjectile {
                         Projectile.owner
                     );
 
+                    projectile.usesLocalNPCImmunity = true;
+                    projectile.localNPCHitCooldown = Projectile.timeLeft;
                     projectile.friendly = true;
                     projectile.hostile = false;
                     projectile.penetrate = -1;
@@ -131,6 +139,7 @@ public class GulpyYoyoProjectile : ModProjectile {
         }
 
         Projectile.scale = MathHelper.Lerp(Projectile.scale, 1f + ChompProgress * 0.55f, 0.1f);
+        Projectile.Resize((int)(INITIAL_WIDTH * Projectile.scale), (int)(INITIAL_HEIGHT * Projectile.scale));
 
         _twitch *= 0.92f;
         if(Main.rand.NextBool(7 - (int)(ChompProgress * 4))) _twitch = Main.rand.NextVector2Unit() * ChompProgress * 3f;
@@ -144,6 +153,15 @@ public class GulpyYoyoProjectile : ModProjectile {
         for(var i = 0; i < 2; i++) {
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Bone);
         }
+
+        var projectile = Projectile.NewProjectileDirect(
+            Projectile.GetSource_FromAI(),
+            Projectile.Center + Projectile.Center.DirectionTo(target.Center) * 5f,
+            Vector2.Zero,
+            ModContent.ProjectileType<GulpyYoyoChompProjectile>(),
+            0,
+            0f);
+        projectile.rotation = Main.rand.NextFloatDirection() * 0.4f;
 
         SoundEngine.PlaySound(SoundID.Zombie27, Projectile.Center);
 

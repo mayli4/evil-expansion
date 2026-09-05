@@ -100,7 +100,7 @@ public sealed class CursehoundNPC : ModNPC {
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>(), 1, 1, 2));
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 1, 2, 3));
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CurseknightsHelm>(), 10, 1, 1));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CurseknightsHelm>(), (int)12.5, 1, 1));
     }
 
     public override void HitEffect(NPC.HitInfo hit) {

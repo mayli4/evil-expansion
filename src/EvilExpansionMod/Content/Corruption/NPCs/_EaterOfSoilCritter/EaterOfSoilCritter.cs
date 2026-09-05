@@ -55,11 +55,10 @@ namespace EvilExpansionMod.Content.Corruption;
             // We can use AddRange instead of calling Add multiple times in order to add multiple items at once
             bestiaryEntry.Info.AddRange([
 				// Sets the spawning conditions of this NPC that is listed in the bestiary.
-				BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Underground,
-                BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Caverns,
-
+				//BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Underground,
+                //BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Caverns,
 				// Sets the description of this NPC that is listed in the bestiary.
-				new FlavorTextBestiaryInfoElement("Mods.EvilExpansionMod.Bestiary.EaterOfSoilHead")
+				new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.EaterOfSoilCritterBestiary.KEY),
             ]);
         }
 
@@ -198,7 +197,7 @@ public sealed class EaterOfSoilItem : ModItem {
         Item.consumable = true;
         Item.noUseGraphic = true;
         Item.value = Item.buyPrice(0, 0, 40);
-        Item.bait = 1;
+        Item.bait = 30;
         Item.makeNPC = (short)ModContent.NPCType<EaterOfSoilHead>();
         Item.rare = ItemRarityID.Green;
     }

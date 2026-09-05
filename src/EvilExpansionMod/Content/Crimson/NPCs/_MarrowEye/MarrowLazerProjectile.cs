@@ -151,6 +151,7 @@ public class MarrowLazerProjectile : ModProjectile {
         var glowTexture = Assets.Images.Sample.Glow1.Asset.Value;
         var glowBallTexture = Assets.Images.Sample.GlowBall.Asset.Value;
         var starTexture = Assets.Images.Sample.Star1.Asset.Value;
+        var starTexture2 = Assets.Images.Sample.Star3.Asset.Value;
 
         var texture0 = Assets.Images.Sample.Trail2.Asset.Value;
         var texture1 = Assets.Images.Sample.PortalNoise.Asset.Value;
@@ -241,14 +242,28 @@ public class MarrowLazerProjectile : ModProjectile {
             0f
         );
 
+        var endPosition = Projectile.position + Projectile.velocity * Projectile.scale;
+
         Main.spriteBatch.Draw(
             glowTexture,
-            Projectile.position + Projectile.velocity * Projectile.scale - Main.screenPosition,
+            endPosition - Main.screenPosition,
             null,
             highlightColor * 0.6f,
             rotation,
             glowTexture.Size() / 2f,
-            Scale * 0.1f + Main.rand.NextFloat() * 0.05f,
+            Scale * 0.2f + Main.rand.NextFloat() * 0.05f,
+            SpriteEffects.None,
+            0f
+        );
+
+        Main.spriteBatch.Draw(
+            starTexture2,
+            endPosition - Main.screenPosition,
+            null,
+            highlightColor,
+            0.52f,
+            starTexture.Size() / 2f,
+            Scale * 0.1f + Main.rand.NextFloat() * 0.25f,
             SpriteEffects.None,
             0f
         );

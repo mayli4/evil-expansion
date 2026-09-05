@@ -152,7 +152,7 @@ public class MarrowLazerProjectile : ModProjectile {
         var glowBallTexture = Assets.Images.Sample.GlowBall.Asset.Value;
         var starTexture = Assets.Images.Sample.Star1.Asset.Value;
 
-        var texture0 = Assets.Images.Sample.Trail1.Asset.Value;
+        var texture0 = Assets.Images.Sample.Trail2.Asset.Value;
         var texture1 = Assets.Images.Sample.PortalNoise.Asset.Value;
         var effect = Assets.Shaders.Pixel.MarrowLaser.Asset.Value;
 
@@ -164,9 +164,9 @@ public class MarrowLazerProjectile : ModProjectile {
                 ("uColor2", secondaryColor),
                 ("uColor3", mainColor),
                 ("uTime", Main.GameUpdateCount * 0.05f),
-                ("uStepThreshold", 0.27f + 0.05f * Scale),
-                ("uStepColor1", 0.4f),
-                ("uStepColor2", 0.06f),
+                ("uStepThreshold", 0.09f + 0.05f * Scale),
+                ("uStepColor1", 0.6f),
+                ("uStepColor2", 0.03f),
                 ("uPulseSpeed", 5f),
                 ("uPulseFreq", 2.67f),
                 ("uPulseSize", 0.08f))

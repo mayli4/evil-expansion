@@ -123,6 +123,19 @@ public class MarrowLazerProjectile : ModProjectile {
             ParticleEngine.PARTICLES.Add(ember);
         }
 
+        var ember2 = GlowEmberParticle.NewParticle(
+           Projectile.Center + Main.rand.NextVector2Unit() * 10f + Projectile.velocity * Projectile.scale * Main.rand.NextFloat(),
+           Projectile.velocity * 5f,
+           Main.rand.NextFloat(0.5f, 0.75f),
+           highlightColor,
+           highlightColor);
+
+        ember2.Randomness *= 2f;
+        ember2.LossPerSecond *= 2f;
+        ember2.Gravity = Vector2.Zero;
+
+        ParticleEngine.PARTICLES.Add(ember2);
+
         if(hitCd > 0) hitCd--;
     }
 
@@ -139,7 +152,7 @@ public class MarrowLazerProjectile : ModProjectile {
         var glowBallTexture = Assets.Images.Sample.GlowBall.Asset.Value;
         var starTexture = Assets.Images.Sample.Star1.Asset.Value;
 
-        var texture0 = Assets.Images.Sample.Laser1.Asset.Value;
+        var texture0 = Assets.Images.Sample.Trail1.Asset.Value;
         var texture1 = Assets.Images.Sample.PortalNoise.Asset.Value;
         var effect = Assets.Shaders.Pixel.MarrowLaser.Asset.Value;
 
@@ -147,13 +160,16 @@ public class MarrowLazerProjectile : ModProjectile {
             .SetEffectParams(
                 effect,
                 ("uLength", Projectile.scale),
-                ("uColor1", mainColor),
+                ("uColor1", highlightColor),
                 ("uColor2", secondaryColor),
-                ("uColor3", highlightColor),
+                ("uColor3", mainColor),
                 ("uTime", Main.GameUpdateCount * 0.05f),
-                ("uStepThreshold", 0.17f + 0.05f * Scale),
-                ("uStepColor1", 0.75f),
-                ("uStepColor2", 0.56f))
+                ("uStepThreshold", 0.27f + 0.05f * Scale),
+                ("uStepColor1", 0.4f),
+                ("uStepColor2", 0.06f),
+                ("uPulseSpeed", 5f),
+                ("uPulseFreq", 2.67f),
+                ("uPulseSize", 0.08f))
             .SetSamplerState(0, SamplerState.LinearWrap)
             .SetTexture(1, texture1, SamplerState.LinearWrap)
             .SetBlendState(BlendState.AlphaBlend)
@@ -166,7 +182,7 @@ public class MarrowLazerProjectile : ModProjectile {
                 Origin = new Vector2(0, texture0.Height / 2f),
                 Scale = new Vector2(
                     Projectile.scale / texture0.Width,
-                    Scale * 82f / texture0.Height + 0.02f * MathF.Sin(Main.GameUpdateCount * 0.2f)),
+                    Scale * 92f / texture0.Height),
                 SpriteEffects = SpriteEffects.None,
                 Effect = effect,
             })
@@ -217,7 +233,7 @@ public class MarrowLazerProjectile : ModProjectile {
             glowTexture,
             Projectile.position + Projectile.velocity * Projectile.scale / 2f - Main.screenPosition,
             null,
-            highlightColor * 0.3f,
+            highlightColor * 0.4f,
             rotation,
             glowTexture.Size() / 2f,
             new Vector2(0.6f + Projectile.scale / glowTexture.Width, Scale * 0.175f),

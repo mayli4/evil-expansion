@@ -112,5 +112,9 @@ internal class PreDrawEverythingRenderer : ILoadable {
             invoker.Invoke(entities);
             entities.Clear();
         }
+
+        foreach(var system in ModContent.GetContent<ModSystem>().OfType<IPreDrawEverything>()) {
+            system.PreDrawEverything();
+        }
     }
 }

@@ -356,12 +356,12 @@ Mods: {
 					'''
 					Taking damage sets you ablaze while above 50% life
 					Repeated hits lengthen the debuff's duration
-					Below 50% life, increases damage massively as long as Cursed Inferno is active
+					Below 50% life, increases damage and attack speed massively as long as Cursed Inferno is active
 					'''
 			}
 
 			EaterOfSoilItem: {
-				DisplayName: Eater Of Soil Item
+				DisplayName: Eater of Soil
 				Tooltip: ""
 			}
 		}
@@ -386,10 +386,10 @@ Mods: {
 			PusSlugCritter.DisplayName: Pus Slug
 			CursedCanaryCritter.DisplayName: Cursed Canary
 			LavaLizardCritter.DisplayName: Lava Lizard
-			EaterOfSoilBody.DisplayName: Eater Of Soil Body
-			EaterOfSoilHead.DisplayName: Eater Of Soil Head
-			EaterOfSoilTail.DisplayName: Eater Of Soil Tail
-			EaterOfSoilBody1.DisplayName: Eater Of Soil Body1
+			EaterOfSoilBody.DisplayName: Eater of Soil Body
+			EaterOfSoilHead.DisplayName: Eater of Soil
+			EaterOfSoilTail.DisplayName: Eater of Soil Tail
+			EaterOfSoilBody1.DisplayName: Eater of Soil Body1
 		}
 
 		Projectiles: {
@@ -538,7 +538,8 @@ Mods: {
 				Description:
 					'''
 					The flames empower you...
-					Increases damage by 50%
+					Increases damage by 20%
+					Increases attack speed by 50%
 					'''
 			}
 		}

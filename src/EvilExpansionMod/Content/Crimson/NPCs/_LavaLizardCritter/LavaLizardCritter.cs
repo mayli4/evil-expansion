@@ -26,7 +26,7 @@ public class LavaLizardItem : ModItem {
         Item.consumable = true;
         Item.noUseGraphic = true;
         Item.value = Item.buyPrice(0, 0, 40);
-        Item.bait = 1;
+        Item.bait = 30;
         Item.makeNPC = (short)ModContent.NPCType<LavaLizardCritter>();
         Item.rare = ItemRarityID.Green;
     }

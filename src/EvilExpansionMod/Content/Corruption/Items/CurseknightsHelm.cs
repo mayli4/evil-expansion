@@ -201,7 +201,8 @@ public class CursedWrath : ModBuff {
 
     public override void Update(Player player, ref int buffIndex) {
         // Apply ongoing effects while the buff is active on the player
-        player.GetDamage(DamageClass.Generic) += 0.5f;
+        player.GetDamage(DamageClass.Generic) += 0.2f;
+        player.GetAttackSpeed(DamageClass.Generic) += 0.5f;
         if(!player.HasBuff(BuffID.CursedInferno)) {
             player.ClearBuff(ModContent.BuffType<CursedWrath>());
         }

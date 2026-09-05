@@ -22,8 +22,9 @@ internal sealed class FriendlyCulstistPortal : CultistPortal {
     }
 }
 
+[AutoloadEquip(EquipType.Neck)]
 public class ThoughtfulPendantItem : ModItem {
-    public override string Texture => Assets.Images.Crimson.Items.CursedPendant.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.CursedPendant.CursedPendantitem.KEY;
 
     private int _portalCooldown;
     float _portalRotation;

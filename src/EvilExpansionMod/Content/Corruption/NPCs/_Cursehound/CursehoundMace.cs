@@ -130,10 +130,10 @@ public sealed class CursehoundMace : ModProjectile {
 
         Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(12f, 0.6f));
 
-        for(int i = 0; i < 16; i++) {
+        for(int i = 0; i < 20; i++) {
             Vector2 dustPos = Projectile.Center + Main.rand.NextVector2Circular(120f, 20f);
             Vector2 dustVelocity = -Vector2.UnitY * Main.rand.NextFloat(3f, 6f);
-            dustVelocity += Projectile.Center.DirectionTo(dustPos) * 5f;
+            dustVelocity += Projectile.Center.DirectionTo(dustPos) * 6f;
             dustPos += Vector2.UnitY * Projectile.height * 1.5f;
 
             Color dustColorStart = new Color(133, 122, 94);
@@ -147,7 +147,7 @@ public sealed class CursehoundMace : ModProjectile {
                 ColorStart = dustColorStart,
                 ColorFade = dustColorFade,
                 Spin = 0.03f,
-                InitialScale = Main.rand.NextFloat(1f, 2f)
+                InitialScale = Main.rand.NextFloat(0.75f, 1.5f)
             };
 
             var newDust = Dust.NewDustPerfect(
@@ -233,7 +233,7 @@ internal class MaceDebris : ModProjectile {
     }
 
     public override void OnSpawn(IEntitySource source) {
-        _frame = new Rectangle(22 * Main.rand.Next(3), 0, 20, 20);
+        _frame = new Rectangle(26 * Main.rand.Next(3), 0, 24, 24);
     }
 
     public override void AI() {

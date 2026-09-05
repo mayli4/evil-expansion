@@ -1,11 +1,11 @@
-#include "../Common.h"
+#include "../Common.h" 
 
 sampler uImage0 : register(s0);
 sampler uImage1 : register(s1);
-sampler uImage2 : register(s2);
 
 float uStepThreshold;
-float uStepColor;
+float uStepColor1;
+float uStepColor2;
 
 float uTime;
 float uLength;
@@ -16,22 +16,18 @@ float4 uColor2;
 float4 uColor3;
 
 float4 PS(QuadPSInput input) : COLOR0 {
-    float2 uv = input.uv;
+    float sMove = tex2D(uImage1, input.uv + float2(uTime * 0.05, 0)).r;
+    float2 uv = input.uv + float2(sMove * 0.1, 0);
 
-    float s0 = tex2D(uImage0, float2(uv.x * uLength / 1000 - uTime, uv.y));
-    float s1 = tex2D(uImage1, float2(uv.x * uLength / 1000 + uTime * 0.85, uv.y));
-
-    float s = s0 * 0.5 + s1 * 0.5;
+    float s = tex2D(uImage0, float2(uv.x * uLength / 100 - uTime, uv.y)).r;
 
     float sinY = sin(uv.y * PI);
-    float sinX = sin(uv.x * PI);
+    float alpha = step(uStepThreshold, s);
 
-    float stepValue = 1 - sinY
-        + uStepThreshold
-        + sin(uv.x * 3 + uTime * 2.4) * 0.06
-        + sin(uv.x * 7.3 + 0.3789457 + uTime * 3.65) * 0.08;
-
-    return lerp(uColor3, lerp(uColor1, uColor2, step(s - uStepColor, stepValue)), step(s - uStepColor - 0.1, stepValue)) * step(stepValue, s);
+    return lerp(
+        uColor1, 
+        lerp(uColor2, uColor3, step(uStepThreshold, s - uStepColor1)), 
+        smoothstep(uStepThreshold, uStepThreshold + 0.25, s - uStepColor2)) * alpha;
 }
 
 technique {

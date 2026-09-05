@@ -19,9 +19,9 @@ public class MarrowLazerProjectile : ModProjectile {
 
     public static readonly int DisappearFrames = 16;
 
-    Color mainColor = new(63, 28, 72);
+    Color mainColor = new(21, 8, 30);
     Color secondaryColor = new(253, 60, 179);
-    Color highlightColor = new(255, 155, 220);
+    Color highlightColor = new(255, 215, 240);
 
     int hitCd;
 
@@ -139,22 +139,23 @@ public class MarrowLazerProjectile : ModProjectile {
         var glowBallTexture = Assets.Images.Sample.GlowBall.Asset.Value;
         var starTexture = Assets.Images.Sample.Star1.Asset.Value;
 
-        var texture0 = Assets.Images.Sample.DissolveNoise.Asset.Value;
-        var texture1 = Assets.Images.Sample.Noise1.Asset.Value;
+        var texture0 = Assets.Images.Sample.Laser1.Asset.Value;
+        var texture1 = Assets.Images.Sample.PortalNoise.Asset.Value;
         var effect = Assets.Shaders.Pixel.MarrowLaser.Asset.Value;
 
-        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
+        Graphics.Begin(Graphics.WorldTransformMatrix)
             .SetEffectParams(
                 effect,
                 ("uLength", Projectile.scale),
-                ("uColor1", secondaryColor),
-                ("uColor2", mainColor),
+                ("uColor1", mainColor),
+                ("uColor2", secondaryColor),
                 ("uColor3", highlightColor),
-                ("uTime", -Main.GameUpdateCount * 0.008f),
-                ("uStepThreshold", 0.02f + 0.05f * Scale),
-                ("uStepColor", 0.16f)
-            )
-            .SetTexture(1, texture1)
+                ("uTime", Main.GameUpdateCount * 0.05f),
+                ("uStepThreshold", 0.17f + 0.05f * Scale),
+                ("uStepColor1", 0.75f),
+                ("uStepColor2", 0.56f))
+            .SetSamplerState(0, SamplerState.LinearWrap)
+            .SetTexture(1, texture1, SamplerState.LinearWrap)
             .SetBlendState(BlendState.AlphaBlend)
             .DrawTexture(new()
             {
@@ -163,11 +164,13 @@ public class MarrowLazerProjectile : ModProjectile {
                 Color = Color.White,
                 Rotation = rotation,
                 Origin = new Vector2(0, texture0.Height / 2f),
-                Scale = new Vector2(Projectile.scale / texture0.Width, Scale * 22f / texture0.Height),
+                Scale = new Vector2(
+                    Projectile.scale / texture0.Width,
+                    Scale * 82f / texture0.Height + 0.02f * MathF.Sin(Main.GameUpdateCount * 0.2f)),
                 SpriteEffects = SpriteEffects.None,
                 Effect = effect,
             })
-            .ApplyOutline(mainColor)
+            .ApplyOutline(highlightColor)
             .ApplyBloom(1.5f)
             .End();
 

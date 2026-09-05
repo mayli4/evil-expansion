@@ -356,7 +356,7 @@ Mods: {
 					'''
 					Taking damage sets you ablaze while above 50% life
 					Repeated hits lengthen the debuff's duration
-					Below 50% life, increases damage massively as long as Cursed Inferno is active
+					Below 50% life, increases damage and attack speed massively as long as Cursed Inferno is active
 					'''
 			}
 
@@ -538,7 +538,8 @@ Mods: {
 				Description:
 					'''
 					The flames empower you...
-					Increases damage by 50%
+					Increases damage by 20%
+					Increases attack speed by 50%
 					'''
 			}
 		}

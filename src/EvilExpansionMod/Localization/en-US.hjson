@@ -131,7 +131,7 @@ Mods: {
 				Damage: 1-{0} magic damage
 				Tooltip:
 					'''
-					Creates a planetoid, which becomes more dangerous as it grows
+					Creates a planetoid which slowly grows in size
 					Planetoids that grow too large explode violently
 					'Definitely DON’T use purification powder on these…'
 					'''
@@ -538,8 +538,8 @@ Mods: {
 				Description:
 					'''
 					The flames empower you...
-					Increases damage by 20%
-					Increases attack speed by 50%
+					Increases damage by 50%
+					Increases attack speed by 75%
 					'''
 			}
 		}

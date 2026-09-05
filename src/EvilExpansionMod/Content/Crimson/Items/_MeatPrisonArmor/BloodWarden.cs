@@ -38,7 +38,7 @@ public sealed class BloodWarden : ModProjectile {
     NPC? Target => TargetId != -1 ? Main.npc[(int)TargetId] : null;
     bool IsTargetValid => Target is not null && Target.active && Target.CanBeChasedBy(this) && !Target.CountsAsACritter;
 
-    const float MAX_ATTACK_RANGE = 30 * 16;
+    const float MAX_ATTACK_RANGE = 22 * 16;
     const float MAX_DISTANCE_FROM_OWNER = 30 * 16;
 
     const int IDLE_ANIMATION_SPEED = 6;
@@ -126,10 +126,10 @@ public sealed class BloodWarden : ModProjectile {
                 float distance = vectorToTarget.Length();
 
                 if(distance > 20f) {
-                    Projectile.velocity = Vector2.Lerp(Projectile.velocity, vectorToTarget / distance * 10f, 0.1f);
+                    Projectile.velocity = Vector2.Lerp(Projectile.velocity *= 1.05f, vectorToTarget / distance * 10f, 0.1f);
                 }
                 else {
-                    Projectile.velocity *= 0.9f;
+                    Projectile.velocity *= 0.95f;
                 }
 
                 if(Projectile.velocity.Length() < 0.1f) {

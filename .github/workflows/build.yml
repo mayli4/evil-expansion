@@ -40,12 +40,12 @@ jobs:
 	    id: create_release
 	    uses: softprops/action-gh-release@v2
 	    with:
-	  	tag_name: build-${{ github.run_number }}
-	  	name: ${{ env.MOD_NAME }} build ${{ github.run_number }}
-	  	files: C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\${{ env.MOD_NAME }}.tmod
-	  	prerelease: true
+	  	  tag_name: build-${{ github.run_number }}
+	  	  name: ${{ env.MOD_NAME }} build ${{ github.run_number }}
+	  	  files: C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\${{ env.MOD_NAME }}.tmod
+	  	  prerelease: true
 	    env:
-	  	GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+	  	  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
  
       - name: Deploy action across Discord
         uses: sarisia/actions-status-discord@v1  

@@ -31,6 +31,9 @@ jobs:
           </Project>
           EOF
 
+      - name: Restore mod solution
+        run: dotnet restore
+
       - name: Build mod solution
         run: dotnet build --configuration Release
         

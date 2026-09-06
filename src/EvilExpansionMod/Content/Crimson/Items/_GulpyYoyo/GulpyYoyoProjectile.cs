@@ -1,9 +1,11 @@
-﻿using Daybreak.Common.Rendering;
+﻿using EvilExpansionMod.Common;
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Crimson.Items;
 using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
@@ -26,6 +28,9 @@ public class GulpyYoyoProjectile : ModProjectile {
     private float ChompProgress => (float)_chompStacks / MAX_CHOMP_STACKS;
 
     private Vector2 _twitch;
+
+    private VerletChain _leftArmChain = null!;
+    private VerletChain _righArmChain = null!;
 
     public override void SetStaticDefaults() {
         ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 300f;
@@ -136,6 +141,16 @@ public class GulpyYoyoProjectile : ModProjectile {
             Projectile.friendly = true;
         }
 
+        var armOffset = 12f;
+        var leftArmOrigin = Projectile.Center - Vector2.UnitX * armOffset;
+        var rightArmOrigin = Projectile.Center + Vector2.UnitX * armOffset;
+
+        _leftArmChain ??= new VerletChain(leftArmOrigin, [16f, 24f]);
+        _leftArmChain.Update(leftArmOrigin, null);
+
+        _righArmChain ??= new VerletChain(leftArmOrigin, [16f, 24f]);
+        _righArmChain.Update(rightArmOrigin, null);
+
         Projectile.scale = MathHelper.Lerp(Projectile.scale, 1f + ChompProgress * 0.55f, 0.1f);
         Projectile.Resize((int)(INITIAL_WIDTH * Projectile.scale), (int)(INITIAL_HEIGHT * Projectile.scale));
 
@@ -180,8 +195,9 @@ public class GulpyYoyoProjectile : ModProjectile {
         var origin = new Vector2(source.Z, source.W) / 2f;
 
         var outlineColor = Color.Lerp(Color.Transparent, Color.Red, (Projectile.scale - 1f) * 0.55f);
-        Main.spriteBatch.Draw(texture, new Rectangle(0, 0, 1, 1), Color.Red);
-        Main.spriteBatch.End(out var ss);
+
+        DrawArm(_righArmChain.Positions);
+        DrawArm(_leftArmChain.Positions);
 
         Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
             .DrawTexture(new()
@@ -210,7 +226,45 @@ public class GulpyYoyoProjectile : ModProjectile {
             })
             .ApplyTint(Color.Lerp(Color.Transparent, Color.Red, (Projectile.scale - 1f) * 0.3f))
             .End();
+    }
 
-        Main.spriteBatch.Begin(ss);
+    private static void DrawArm(ReadOnlySpan<Vector2> positions) {
+        var armTexture = Assets.Images.Crimson.Items.GulpyYoyo.GulpyYoyoGrab.Asset.Value;
+
+        var frameHeight = armTexture.Height / 2;
+
+        var handSource = new Rectangle(0, 0, armTexture.Width, frameHeight);
+        var elbowSource = new Rectangle(0, frameHeight, armTexture.Width, frameHeight);
+
+        var elbowRotation = (positions[1] - positions[0]).ToRotation() + MathHelper.PiOver2;
+        var handRotation = (positions[2] - positions[1]).ToRotation() + MathHelper.PiOver2;
+
+        Main.spriteBatch.Draw(
+            armTexture,
+            positions[1] - Main.screenPosition,
+            elbowSource,
+            Lighting.GetColor(positions[1].ToTileCoordinates()),
+            elbowRotation,
+            elbowSource.Size() / 2f,
+            1f,
+            SpriteEffects.None,
+            0f);
+
+        Main.spriteBatch.Draw(
+            armTexture,
+            positions[2] - Main.screenPosition,
+            handSource,
+            Lighting.GetColor(positions[2].ToTileCoordinates()),
+            handRotation,
+            handSource.Size() / 2f,
+            1f,
+            SpriteEffects.None,
+            0f);
+    }
+
+    private struct DynamicArmPoint {
+        public Vector2 Position;
+        public Vector2 OldPosition;
+        public Vector2 Velocity;
     }
 }

@@ -38,16 +38,12 @@ jobs:
       - name: Build mod solution
         run: dotnet build --configuration Release
 
-      - name: Deploy .tmod release
-        id: create_release
-        uses: softprops/action-gh-release@v2
+      - name: Deploy .tmod artifact
+        id: upload_tmod
+        uses: actions/upload-artifact@v4
         with:
-          tag_name: build-${{ github.run_number }}
-          name: ${{ env.MOD_NAME }} build ${{ github.run_number }}
-          files: C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\${{ env.MOD_NAME }}.tmod
-          prerelease: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: ${{ env.MOD_NAME }}.tmod
+          path: C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\${{ env.MOD_NAME }}.tmod
 
       - name: Deploy action across Discord
         uses: sarisia/actions-status-discord@v1  
@@ -57,4 +53,4 @@ jobs:
           nocontext: true
           title: Mod build
           description: |
-            Download the build [here](${{ steps.create_release.outputs.url }}).
+            Download the build [here](${{ steps.upload_tmod.outputs.artifact-url }}).

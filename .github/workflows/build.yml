@@ -3,7 +3,7 @@ name: Build Mod
 on:
   push:
     branches:
-    	- rel
+    - rel
   
 env:
     MOD_NAME: EvilExpansionMod

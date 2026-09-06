@@ -35,18 +35,12 @@ jobs:
 
       - name: Build mod solution
         run: dotnet build --configuration Release
-        
-      - name: Locate built .tmod
-        shell: pwsh
-        run: |
-          Get-ChildItem -Path C:\ -Recurse -Filter "${{ env.MOD_NAME }}.tmod" -ErrorAction SilentlyContinue |
-            Select-Object -ExpandProperty FullName
  
       - name: Deploy .tmod artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.MOD_NAME }}.tmod
-          path: ./blah
+          path: C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\${{ env.MOD_NAME }}.tmod
 
       - name: Deploy action across Discord
         uses: sarisia/actions-status-discord@v1  

@@ -3,11 +3,10 @@ name: Build Mod
 on:
   push:
     branches:
-    - rel
+    	- rel
   
 env:
     MOD_NAME: EvilExpansionMod
-    TML_SAVE_PATH: ./bin/Saves/tModLoader
 
 jobs:
   build:
@@ -19,7 +18,7 @@ jobs:
       - name: Download & Install tModLoader
         run: |
           curl -s -L https://github.com/tModLoader/tModLoader/releases/latest/download/tModLoader.zip -o tModLoader.zip
-          unzip -q -o tModLoader.zip -d ${{ env.TML_SAVE_PATH }}
+          unzip -q -o tModLoader.zip -d ../tModLoader
           rm tModLoader.zip
 
       - name: Create tModLoader.targets file
@@ -27,7 +26,7 @@ jobs:
         run: |
           cat >> ../tModLoader.targets << EOF
           <Project ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-            <Import Project="${{ env.TML_SAVE_PATH }}\tMLMod.targets" />
+            <Import Project=".\tModLoader\tMLMod.targets" />
           </Project>
           EOF
 
@@ -41,7 +40,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.MOD_NAME }}.tmod
-          path: ${{ env.TML_SAVE_PATH }}/Mods/${{ env.MOD_NAME }}.tmod
+          path: ../tModLoader/Mods/${{ env.MOD_NAME }}.tmod
 
       - name: Deploy action across Discord
         uses: sarisia/actions-status-discord@v1  

@@ -19,7 +19,7 @@ internal enum PortalType {
 }
 
 public class CultistPortal : ModProjectile {
-    private const int AnimationSpeed = 5;
+    private const int AnimationSpeed = 4;
     public override string Texture => Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPortal.KEY;
 
     PortalType PortalType => (PortalType)Projectile.ai[0];
@@ -31,7 +31,7 @@ public class CultistPortal : ModProjectile {
         Projectile.height = 140;
         Projectile.hostile = true;
         Projectile.friendly = false;
-        Projectile.DamageType = DamageClass.Ranged;
+        Projectile.DamageType = DamageClass.Magic;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = false;
         Projectile.penetrate = -1;
@@ -65,6 +65,11 @@ public class CultistPortal : ModProjectile {
                         ModContent.NPCType<CultistEye>()
                     );
                     npc.velocity = Projectile.velocity * 12f;
+                    SoundEngine.PlaySound(SoundID.Item117 with
+                    {
+                        Pitch = Main.rand.NextFloatDirection() * 0.1f,
+                        Volume = 0.8f,
+                    }, Projectile.Center);
                 }
 
                 if(Main.rand.NextBool(2)) {
@@ -87,11 +92,17 @@ public class CultistPortal : ModProjectile {
                         20,
                         4f
                     );
+                    SoundEngine.PlaySound(SoundID.Drown with
+                    {
+                        Pitch = Main.rand.NextFloatDirection() * 0.1f,
+                        Volume = 0.8f,
+                    }, Projectile.Center);
                 }
                 break;
             case PortalType.Spear:
                 if(t < 0.6f && !_playedSpearSound) {
-                    SoundEngine.PlaySound(SoundID.Item169, Projectile.Center);
+                    SoundEngine.PlaySound(SoundID.Item71 with {
+                    Pitch = Main.rand.NextFloatDirection() * 0.1f,
                     _playedSpearSound = true;
                 }
                 break;
@@ -101,15 +112,15 @@ public class CultistPortal : ModProjectile {
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
         var t = Projectile.timeLeft / Projectile.ai[1];
 
-        if(PortalType != PortalType.Spear || t > 0.5f || t < 0.3f) return false;
+        if(PortalType != PortalType.Spear || t < 0.3f || t > 0.6f ) return false;
 
         float _ = 0;
         return Collision.CheckAABBvLineCollision(
             targetHitbox.TopLeft(),
             targetHitbox.Size(),
             Projectile.Center,
-            Projectile.Center + Projectile.velocity * 120f,
-            10,
+            Projectile.Center + Projectile.velocity * 190f,
+            15,
             ref _
         );
     }
@@ -154,19 +165,22 @@ public class CultistPortal : ModProjectile {
 
                 float spearX = 0f;
 
-                if(t is < 0.6f and >= 0.5f) {
+                if(t is < 0.6f and >= 0.57f) {
                     var progress = (0.6f - t) / 0.1f;
                     var x = progress - 1f;
 
                     spearX = x * x * x + 1f;
                 }
-                else if(t is < 0.5f and >= 0.3f) {
-                    spearX = 1f;
+                else if(t is < 0.57f and >= 0.56f) {
+                    spearX = 2f;
                 }
-                else if(t < 0.3f) {
-                    var progress = MathF.Max(0f, (t - 0.2f) / 0.1f);
-                    var x = progress - 1f;
-                    spearX = -x * x + 1f;
+                else if(t is < 0.56f and >= 0.54f) {
+                    spearX = 1.7f;
+                }
+                else if(t < 0.54f) {
+                    var progress = MathF.Max(0f, (t - 0.2f) / 0.2f);
+                    var x = progress - 1.7f;
+                    spearX = -x * x + 1.7f;
                 }
 
                 Main.spriteBatch.Draw(

@@ -25,6 +25,7 @@ enum CultistState {
 public class ThoughtfulCultistNPC : ModNPC {
     public override string Texture => Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistBrain.KEY;
     Player Target => Main.player[NPC.target];
+    static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
     CultistState State => Unsafe.BitCast<float, CultistState>(NPC.ai[0]);
 
     float _timer;
@@ -76,7 +77,6 @@ public class ThoughtfulCultistNPC : ModNPC {
 
     public override void AI() {
         NPC.TargetClosest();
-
         var directionToTarget = Vector2.Zero;
         var distanceToTarget = float.MaxValue;
         if(Target != null) {
@@ -94,7 +94,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                 else if(Main.netMode != NetmodeID.MultiplayerClient && _timer > 120) {
                     if(Main.rand.NextBool()) {
                         _portalRotation = Main.rand.NextFloat(0, -MathF.PI);
-                        ChangeState(CultistState.SpearAttack);
+                        ChangeState(CultistState.EyeAttack);
                     }
                     else {
                         _portalRotation = Main.rand.NextFloat(0, 2 * MathF.PI);
@@ -103,27 +103,34 @@ public class ThoughtfulCultistNPC : ModNPC {
                 }
                 break;
             case CultistState.SpearAttack:
-                NPC.velocity *= 0.95f;
+                NPC.velocity *= 0.98f;
                 if(Target == null || _timer > 150) {
                     ChangeState(CultistState.FlyToTarget);
                     break;
                 }
 
-                if(_timer > 60 && (int)_timer % 30 == 0) {
-                    var position = Target.Center - 105f * _portalRotation.ToRotationVector2();
-                    var direction = position.DirectionTo(Target.Center);
-                    Projectile.NewProjectile(
-                        NPC.GetSource_FromAI(),
-                        position,
-                        direction,
-                        ModContent.ProjectileType<CultistPortal>(),
-                        20,
-                        0.2f,
-                        ai0: (float)PortalType.Spear,
-                        ai1: 112);
+                if(_timer > 60 / DifficultyScaler && (int)_timer % 30 == 0) {
+                    for(int i = 0; i < (int)DifficultyScaler; i++) {
+                        var rotationOffset = Main.rand.Next(0, 20) * DifficultyScaler * DifficultyScaler;
+                        var position = Target.Center - (105f + rotationOffset) * _portalRotation.ToRotationVector2();
+                        var direction = position.DirectionTo(Target.Center);
+                        Projectile.NewProjectile(
+                            NPC.GetSource_FromAI(),
+                            position,
+                            direction,
+                            ModContent.ProjectileType<CultistPortal>(),
+                            20,
+                            0.2f,
+                            ai0: (float)PortalType.Spear,
+                            ai1: 112);
 
-                    _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
-                    SoundEngine.PlaySound(SoundID.Item79, position);
+                        _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
+                        SoundEngine.PlaySound(SoundID.AbigailSummon with
+                        {
+                            Pitch = Main.rand.NextFloatDirection() * 0.6f,
+                            Volume = 0.8f,
+                        }, position);
+                    }
                 }
 
                 var moveDirection = NPC.DirectionTo(Target.Center).RotatedBy(MathF.PI / 4f);
@@ -134,7 +141,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                 NPC.velocity *= 0.98f;
                 if(Target == null) {
                 }
-                else if(_timer > 60 && (int)_timer % 30 == 0) {
+                else if(_timer > 60 / DifficultyScaler && (int)_timer % 30 == 0) {
                     var position = Target.Center + _portalRotation.ToRotationVector2() * Main.rand.NextFloat(300, 400);
                     var direction = position.DirectionTo(Target.Center);
                     Projectile.NewProjectile(
@@ -148,8 +155,12 @@ public class ThoughtfulCultistNPC : ModNPC {
                         ai1: 336
                     );
 
-                    _portalRotation += Main.rand.NextFloat(MathF.PI / 4f, MathF.PI / 2f);
-                    SoundEngine.PlaySound(SoundID.Item79, position);
+                    _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
+                    SoundEngine.PlaySound(SoundID.AbigailSummon with
+                    {
+                        Pitch = Main.rand.NextFloatDirection() * 0.6f -1.0f,
+                        Volume = 0.8f,
+                    }, position);
                 }
 
                 if(_timer > 120) {
@@ -226,7 +237,7 @@ public class ThoughtfulCultistNPC : ModNPC {
         if(_timer < 60) {
             var t = MathF.Sin(MathHelper.Pi * _timer / 60f);
 
-            pendantPosition += 0.75f * Main.rand.NextVector2Unit() * t;
+            pendantPosition += 1f * Main.rand.NextVector2Unit() * t;
 
             switch(State) {
                 case CultistState.SpearAttack:

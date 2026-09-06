@@ -456,6 +456,7 @@ Mods: {
 			GulpyYoyoChompProjectile.DisplayName: Gulpy Yoyo Chomp Projectile
 			MarrowEyeChainProjectile.DisplayName: Marrow Eye Chain Projectile
 			MarrowEyeRingProjectile.DisplayName: Marrow Eye Ring Projectile
+			FriendlyCultistPortal.DisplayName: Friendly Cultist Portal
 		}
 
 		Biomes: {
@@ -524,12 +525,12 @@ Mods: {
 			}
 
 			CrytapeteBuff: {
-				DisplayName: Crytapete Buff
-				Description: It wont stop crying...
+				DisplayName: Crytapete
+				Description: The crytapete will try its best to protect you
 			}
 
 			RibcagedNPCDebuff: {
-				DisplayName: Ribcaged N P C Debuff
+				DisplayName: Ribcaged
 				Description: Mods.EvilExpansionMod.Buffs.RibcagedNPCDebuff.Description
 			}
 

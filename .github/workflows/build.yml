@@ -36,18 +36,17 @@ jobs:
       - name: Build mod solution
         run: dotnet build --configuration Release
         
-      - name: Resolve tmod path
-        id: resolve_path
-        shell: bash
+      - name: Locate built .tmod
+        shell: pwsh
         run: |
-          ABS_PATH="$(realpath ../tModLoader/Mods/${{ env.MOD_NAME }}.tmod)"
-          echo "tmod_path=$ABS_PATH" >> "$GITHUB_OUTPUT"
+          Get-ChildItem -Path C:\ -Recurse -Filter "${{ env.MOD_NAME }}.tmod" -ErrorAction SilentlyContinue |
+            Select-Object -ExpandProperty FullName
  
       - name: Deploy .tmod artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ env.MOD_NAME }}.tmod
-          path: ${{ steps.resolve_path.outputs.tmod_path }}
+          path: ./blah
 
       - name: Deploy action across Discord
         uses: sarisia/actions-status-discord@v1  

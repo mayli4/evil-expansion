@@ -14,7 +14,7 @@ namespace EvilExpansionMod.Content.Crimson;
 
 public class CultistEye : ModNPC {
     public override string Texture => Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistEye.KEY;
-    static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
+    static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 2.25f : 1.5f) : 1f;
     private int _dustTimer = 0;
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 3;
@@ -28,7 +28,7 @@ public class CultistEye : ModNPC {
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
-        NPC.knockBackResist = 0.5f;
+        NPC.knockBackResist = 0.8f;
         NPC.friendly = false;
         NPC.damage = 45;
 
@@ -46,10 +46,19 @@ public class CultistEye : ModNPC {
 
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
-            BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
             new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.CultistEyeBestiary.KEY),
         });
     }
+    public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
+        if(Main.expertMode) {
+            NPC.lifeMax = (int)(NPC.lifeMax * 0.75f);
+            NPC.defense = 5;
+        }
+        if(Main.masterMode) {
+            NPC.defense = 10;
+        }
+    }
+
     public bool EyeAltCostume;
     public override void OnSpawn(IEntitySource source) {
         if(Main.rand.NextBool(1, 2)) { // 50/50

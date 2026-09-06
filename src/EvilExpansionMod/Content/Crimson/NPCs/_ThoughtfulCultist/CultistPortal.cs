@@ -103,6 +103,8 @@ public class CultistPortal : ModProjectile {
                 if(t < 0.6f && !_playedSpearSound) {
                     SoundEngine.PlaySound(SoundID.Item71 with {
                     Pitch = Main.rand.NextFloatDirection() * 0.1f,
+                    Volume = 0.8f,
+                    }, Projectile.Center);
                     _playedSpearSound = true;
                 }
                 break;

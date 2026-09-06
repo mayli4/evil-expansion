@@ -37,7 +37,11 @@ internal class MarrowEyeChainProjectile : ModProjectile, IPreDrawEverything {
         var alpha = (255 - Projectile.alpha) / 255f;
 
         var hookSource = new Vector4(0, 0, texture.Width, 14);
-        var chainPartSource = new Vector4(0, 16, texture.Width, 44);
+
+        var chainY = 16;
+        var chainHeight = 44;
+
+        var chainPartSource = new Vector4(0, chainY, texture.Width, chainHeight);
 
         var originOffset = new Vector2(texture.Width / 2f, 42f);
         var direction = Projectile.rotation.ToRotationVector2();
@@ -52,7 +56,9 @@ internal class MarrowEyeChainProjectile : ModProjectile, IPreDrawEverything {
             Origin = new Vector2(hookSource.Z, hookSource.W) - originOffset,
         });
 
-        var repeatCount = (int)Projectile.scale / chainPartSource.W;
+        var repeatCountFloat = Projectile.scale / chainPartSource.W;
+        var repeatCount = (int)repeatCountFloat;
+
         for(var i = 0; i < repeatCount; i++) {
             var chainPartPosition = Projectile.position + direction * (i * chainPartSource.W + hookSource.W);
             pipeline.DrawTexture(new()
@@ -65,5 +71,23 @@ internal class MarrowEyeChainProjectile : ModProjectile, IPreDrawEverything {
                 Origin = new Vector2(chainPartSource.Z, chainPartSource.W) - originOffset,
             });
         }
+
+        var lastPosition = Projectile.position + direction * (repeatCount * chainPartSource.W + hookSource.W);
+        var lastSource = new Vector4(
+            chainPartSource.X,
+            chainY,
+            chainPartSource.Z,
+            chainPartSource.W * (repeatCountFloat - repeatCount) - 12f);
+        var lastOrigin = new Vector2(lastSource.Z, lastSource.W) - originOffset;
+
+        pipeline.DrawTexture(new()
+        {
+            Texture = texture,
+            Position = lastPosition,
+            Source = lastSource,
+            Rotation = Projectile.rotation - MathHelper.PiOver2,
+            Color = Lighting.GetColor(lastPosition.ToTileCoordinates()) * alpha,
+            Origin = new Vector2(chainPartSource.Z, chainPartSource.W) - originOffset,
+        });
     }
 }

@@ -7,6 +7,7 @@ using System.Linq;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -152,13 +153,33 @@ public class CrytapeteTear : ModProjectile {
     public override void AI() {
         Projectile.velocity.Y += Gravity;
 
-        Projectile.rotation += Projectile.velocity.Length() * 0.05f * Projectile.direction;
         Projectile.velocity = Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.02f, 0.02f));
+        Projectile.rotation = Projectile.velocity.ToRotation();
 
         if(Main.rand.NextBool(5)) {
             Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 4f, Projectile.height / 4f), ModContent.DustType<TinyCrytapeteTear>(), Vector2.Zero, 0, Color.LightBlue, 0.5f);
             Dust.NewDustPerfect(Projectile.Center + Main.rand.NextVector2Circular(Projectile.width / 4f, Projectile.height / 4f), ModContent.DustType<SmallCrytapeteTear>(), Vector2.Zero, 0, Color.LightBlue, 0.5f);
         }
+    }
+
+    public override bool PreDraw(ref Color lightColor) {
+        var texture = TextureAssets.Projectile[Type].Value;
+
+        var stretch = MathF.Min(Projectile.velocity.Length() * 0.15f, 1f) - 0.5f;
+        var strength = 0.5f;
+
+        Main.spriteBatch.Draw(
+            texture,
+            Projectile.Center - Main.screenPosition,
+            null,
+            lightColor,
+            Projectile.rotation,
+            texture.Size() / 2f,
+            new Vector2(1f + stretch * strength, 1f - stretch * strength),
+            SpriteEffects.None,
+            0f);
+
+        return false;
     }
 }
 

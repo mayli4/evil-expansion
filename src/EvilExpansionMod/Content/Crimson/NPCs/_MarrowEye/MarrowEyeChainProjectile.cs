@@ -61,7 +61,7 @@ internal class MarrowEyeChainProjectile : ModProjectile, IPreDrawEverything {
                 Position = chainPartPosition,
                 Source = chainPartSource,
                 Rotation = Projectile.rotation - MathHelper.PiOver2,
-                Color = Lighting.GetColor(Projectile.position.ToTileCoordinates()) * alpha,
+                Color = Lighting.GetColor(chainPartPosition.ToTileCoordinates()) * alpha,
                 Origin = new Vector2(chainPartSource.Z, chainPartSource.W) - originOffset,
             });
         }

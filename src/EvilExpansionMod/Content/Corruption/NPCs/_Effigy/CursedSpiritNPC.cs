@@ -15,6 +15,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -139,9 +140,9 @@ public sealed class CursedSpiritNPC : ModNPC {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 2, 1, 2));
     }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
-        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+        bestiaryEntry.Info.AddRange([
             new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.CursedSpiritNPCBestiary.KEY),
-        });
+        ]);
     }
     public override void OnSpawn(IEntitySource source) {
         _trailPositions = new Vector2[12];

@@ -17,8 +17,8 @@ internal class RenderCommandRunner : ILoadable {
     private readonly Stack<RenderState> _renderStates = [];
     private Matrix Matrix => _renderStates.Peek().Matrix;
 
-    private readonly RenderTarget2D[] _renderTargets = new RenderTarget2D[8];
-    private RenderTarget2D DrawTarget {
+    private readonly RenderTarget2D?[] _renderTargets = new RenderTarget2D[8];
+    private RenderTarget2D? DrawTarget {
         get => _renderTargets[_renderStates.Count - 1];
         set => _renderTargets[_renderStates.Count - 1] = value;
     }
@@ -47,7 +47,7 @@ internal class RenderCommandRunner : ILoadable {
             _swapTarget.Dispose();
 
             for(var i = 1; i < _renderTargets.Length; i++) {
-                _renderTargets[i].Dispose();
+                _renderTargets[i]!.Dispose();
             }
         });
     }
@@ -65,8 +65,11 @@ internal class RenderCommandRunner : ILoadable {
         if(targets.Length > 0) {
             _renderTargets[0] = (RenderTarget2D)targets[0].RenderTarget;
 
-            renderTargetUsage = _renderTargets[0].RenderTargetUsage;
-            _renderTargets[0].RenderTargetUsage = RenderTargetUsage.PreserveContents;
+            renderTargetUsage = _renderTargets[0]!.RenderTargetUsage;
+            _renderTargets[0]!.RenderTargetUsage = RenderTargetUsage.PreserveContents;
+        }
+        else {
+            _renderTargets[0] = null;
         }
 
         var beginCount = 0;
@@ -108,7 +111,9 @@ internal class RenderCommandRunner : ILoadable {
             }
         }
 
-        _renderTargets[0]?.RenderTargetUsage = renderTargetUsage!.Value;
+        if(renderTargetUsage is RenderTargetUsage rtu) {
+            _renderTargets[0]!.RenderTargetUsage = rtu;
+        }
 
         if(spriteBatchSnapshot is SpriteBatchSnapshot ss) {
             Main.spriteBatch.Begin(ss);
@@ -163,8 +168,8 @@ internal class RenderCommandRunner : ILoadable {
         Graphics.Device.SamplerStates[0] = SamplerState.PointClamp;
 
         var viewportTargetRatio = new Vector2(
-            (float)viewportWidth / oldTarget.Width,
-            (float)viewportHeight / oldTarget.Height);
+            (float)viewportWidth / oldTarget!.Width,
+            (float)viewportHeight / oldTarget!.Height);
 
         var source = new Vector4(
             0,

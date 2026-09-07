@@ -7,6 +7,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System.Runtime.CompilerServices;
 using Terraria;
 using Terraria.Audio;
+using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -81,7 +82,11 @@ public class PusImpNPC : ModNPC {
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PusClumpItem>(), 1, 1, 3));
     }
-
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.PusImpNPCBestiary.KEY),
+        });
+    }
     public override void AI() {
         NPC.TargetClosest();
         if(Target.dead || !Target.active || Vector2.Distance(NPC.Center, Target.Center) > 1500f) {

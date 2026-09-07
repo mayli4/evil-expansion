@@ -56,6 +56,11 @@ public sealed class PusSlugCritter : ModNPC {
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.6f : 0f;
     }
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.PusSlugCritterBestiary.KEY),
+        });
+    }
     public override void OnKill() {
         var amount = Main.rand.Next(3, 6) * difficultyScaler;
 

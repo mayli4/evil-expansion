@@ -2,6 +2,7 @@ using EvilExpansionMod.Content.Biomes;
 using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -61,6 +62,7 @@ public sealed class LavaLizardCritter : ModNPC {
         Main.npcCatchable[Type] = true;
         NPCID.Sets.CountsAsCritter[Type] = true;
         NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
+        NPCID.Sets.TownCritter[Type] = true;
     }
 
     public override void SetDefaults() {
@@ -92,7 +94,11 @@ public sealed class LavaLizardCritter : ModNPC {
         }
         return 0f;
     }
-
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.LavaLizardCritterBestiary.KEY),
+        });
+    }
     public override void OnSpawn(IEntitySource source) {
         CurrentState = State.Walk;
         WalkDirection = Main.rand.NextBool() ? 1 : -1;

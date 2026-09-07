@@ -17,6 +17,13 @@ public class CultistEye : ModNPC {
     static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 2.25f : 1.5f) : 1f;
     private int _dustTimer = 0;
     public override void SetStaticDefaults() {
+        var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
+        {
+            Position = new Vector2(0f, 4f),
+            PortraitPositionXOverride = 0f,
+            PortraitPositionYOverride = 2f
+        };
+        NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
         Main.npcFrameCount[Type] = 3;
     }
 

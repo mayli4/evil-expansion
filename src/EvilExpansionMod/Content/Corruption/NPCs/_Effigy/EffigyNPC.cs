@@ -23,7 +23,8 @@ public sealed class EffigyNPC : ModNPC {
     private int deadTimer;
     private int animCounter;
     private byte spawnedSprits;
-    
+    static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
+
     public const int DEATH_TIME = 5 * 60;
 
     private Color glowColor = new Color(230, 254, 6);
@@ -31,6 +32,13 @@ public sealed class EffigyNPC : ModNPC {
     private Vector2 squashStretch = Vector2.One;
 
     public override void SetStaticDefaults() {
+        var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
+        {
+            Position = new Vector2(5f, 70f),
+            PortraitPositionXOverride = 5f,
+            PortraitPositionYOverride = 90f
+        };
+        NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
         Main.npcFrameCount[Type] = 21;
         base.SetStaticDefaults();
         NPCID.Sets.NeedsExpertScaling[Type] = true;
@@ -76,7 +84,6 @@ public sealed class EffigyNPC : ModNPC {
     
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
-            BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
             new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.EffigyNPCBestiary.KEY),
         });
     }
@@ -134,12 +141,15 @@ public sealed class EffigyNPC : ModNPC {
             }
         
             if(deadTimer >= DEATH_TIME) {
+                if(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds.TryGetValue(ModContent.NPCType<EffigyNPC>(), out string bestiaryId)) { //Uhm I hope this works?????????
+                    Main.BestiaryTracker.Kills.RegisterKill(NPC);
+                }
                 NPC.life = 0;
                 NPC.active = false;
             }
         }
         
-        if(spawnedSprits >= 3) {
+        if(spawnedSprits >= 3 * DifficultyScaler) {
             dead = true;
         }
     }
@@ -171,10 +181,9 @@ public sealed class EffigyNPC : ModNPC {
             SpawnSpirit(player);
         }
     }
-
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
         if(NPC.IsABestiaryIconDummy) {
-            return false;
+            return true;
         }
             
         var texture = TextureAssets.Npc[Type].Value;

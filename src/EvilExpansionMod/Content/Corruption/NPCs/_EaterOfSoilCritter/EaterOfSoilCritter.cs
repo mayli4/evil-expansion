@@ -23,9 +23,9 @@ namespace EvilExpansionMod.Content.Corruption;
             var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
             { // Influences how the NPC looks in the Bestiary
                 CustomTexturePath = Assets.Images.Corruption.NPCs.EaterOfSoil.EaterOfSoil_Bestiary.KEY, // If the NPC is multiple parts like a worm, a custom texture for the Bestiary is encouraged.
-                Position = new Vector2(40f, 24f),
+                Position = new Vector2(4f, 2f),
                 PortraitPositionXOverride = 0f,
-                PortraitPositionYOverride = 12f
+                PortraitPositionYOverride = -5f
             };
             NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
         }

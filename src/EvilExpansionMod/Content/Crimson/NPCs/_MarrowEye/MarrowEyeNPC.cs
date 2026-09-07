@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -58,7 +59,7 @@ public class MarrowEyeNPC : ModNPC {
         NPC.noGravity = true;
         NPC.knockBackResist = 0f;
         NPC.friendly = false;
-        NPC.damage = 20;
+        NPC.damage = 200;
 
         NPC.HitSound = SoundID.NPCHit23;
         NPC.DeathSound = SoundID.NPCDeath1;
@@ -78,7 +79,11 @@ public class MarrowEyeNPC : ModNPC {
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
     }
-
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.MarrowEyeNPCBestiary.KEY),
+        });
+    }
     public override void HitEffect(NPC.HitInfo hit) {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) return;
 

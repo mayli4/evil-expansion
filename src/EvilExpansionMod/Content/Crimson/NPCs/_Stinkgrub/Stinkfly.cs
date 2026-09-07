@@ -2,6 +2,7 @@ using EvilExpansionMod.Content.Biomes;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -62,7 +63,11 @@ public class StinkflyNPC : ModNPC {
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
     }
-
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.StinkflyCritterBestiary.KEY),
+        });
+    }
     public override void PostAI() {
         NPC closestGrub = null;
         float closestDistSq = float.MaxValue;
@@ -128,4 +133,9 @@ public class StinkflyNPC : ModNPC {
 
 public class SmallStinkflyNpc : StinkflyNPC {
     public override string Texture => Assets.Images.Crimson.NPCs.Stinkgrub.SmallFly.KEY;
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.StinkflyCritterBestiary.KEY),
+        });
+    }
 }

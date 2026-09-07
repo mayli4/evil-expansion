@@ -138,7 +138,11 @@ public sealed class CursedSpiritNPC : ModNPC {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>(), 2, 1, 2));
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 2, 1, 2));
     }
-
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.CursedSpiritNPCBestiary.KEY),
+        });
+    }
     public override void OnSpawn(IEntitySource source) {
         _trailPositions = new Vector2[12];
         for(int i = 0; i < _trailPositions.Length; i++) {

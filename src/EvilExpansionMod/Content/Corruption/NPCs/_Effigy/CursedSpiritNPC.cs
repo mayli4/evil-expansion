@@ -638,7 +638,7 @@ public sealed class CursedSpiritNPC : ModNPC {
         spriteBatch.EndBegin(initialSnapshot);
 
         var trailEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
-        Graphics.BeginPixelated(spriteBatch.transformMatrix)
+        Graphics.BeginPixelated()
             .SetEffectParams(
                 trailEffect,
                 ("time", 0.025f * Main.GameUpdateCount + NPC.whoAmI * 3.432f),
@@ -656,9 +656,9 @@ public sealed class CursedSpiritNPC : ModNPC {
             {
                 Texture = Assets.Images.Misc.Circle.Asset.Value,
                 Position = NPC.Center - Main.screenPosition,
-                Color = smallGlowColor,
+                Color = GhostColor2,
                 Origin = 16f * Vector2.One,
-                Scale = Vector2.One * 0.8f,
+                Scale = Vector2.One * 0.6f,
             })
             .ApplyOutline(GhostColor1)
             .End();

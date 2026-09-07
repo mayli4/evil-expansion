@@ -123,8 +123,12 @@ public class MeatAxeHeldProjectile : ModProjectile {
         }
 
         if(Progress == 0f) {
-            var swing2 = Assets.Sounds.Item.MeatAxeSwing.Asset with { Pitch = 0.0f, PitchVariance = 0.3f };
-            SoundEngine.PlaySound(swing2, Projectile.Center);
+            //var swing2 = Assets.Sounds.Item.MeatAxeSwing.Asset with { Pitch = 0.0f, PitchVariance = 0.3f };
+            //SoundEngine.PlaySound(swing2, Projectile.Center);
+            SoundEngine.PlaySound(SoundID.Item71 with {
+                    Pitch = Main.rand.NextFloatDirection() * 0.1f - 0.7f,
+                    Volume = 0.8f,
+                    }, Projectile.Center);
         }
 
         Owner.SetCompositeArmFront(true, Player.CompositeArmStretchAmount.Full, Projectile.rotation - MathHelper.PiOver2);

@@ -30,7 +30,11 @@ public class EvilMeatloaf : ModItem {
         Item.noMelee = true;
         Item.consumable = true;
         Item.autoReuse = false;
-        Item.UseSound = SoundID.Item2;
+        Item.UseSound = SoundID.Item2 with
+        {
+            Pitch = -0.8f,
+            Volume = 1f,
+        };
         Item.buffTime = 6 * 60 * 60;
     }
     public override bool? UseItem(Player player) {

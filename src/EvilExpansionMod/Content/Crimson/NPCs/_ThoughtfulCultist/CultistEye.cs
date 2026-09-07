@@ -31,7 +31,7 @@ public class CultistEye : ModNPC {
         NPC.width = 22;
         NPC.height = 22;
         NPC.lifeMax = 100;
-        NPC.value = 250f;
+        NPC.value = 150f;
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
         NPC.noGravity = true;

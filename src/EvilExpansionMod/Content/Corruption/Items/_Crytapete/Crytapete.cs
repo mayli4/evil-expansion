@@ -65,7 +65,8 @@ public class CrytapeteItem : ModItem {
         => CreateRecipe()
             .AddIngredient(ModContent.ItemType<PolypBarItem>(), 12)
             .AddIngredient(ModContent.ItemType<RawShadowScalesItem>(), 8)
-            .AddIngredient(ModContent.ItemType<ImputedFlameItem>(), 4)
+            .AddIngredient(ModContent.ItemType<ImputedFlameItem>(), 14)
+            .AddTile(TileID.DemonAltar)
             .Register();
 }
 

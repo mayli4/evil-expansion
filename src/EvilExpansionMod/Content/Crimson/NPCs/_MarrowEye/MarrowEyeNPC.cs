@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -52,13 +53,14 @@ public class MarrowEyeNPC : ModNPC {
         NPC.width = 50;
         NPC.height = 50;
         NPC.lifeMax = 333;
-        NPC.value = 250f;
+        NPC.value = NPC.value = Item.buyPrice(silver: 18,copper: 50);
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
         NPC.knockBackResist = 0f;
         NPC.friendly = false;
-        NPC.damage = 20;
+        NPC.damage = 222;
+        NPC.defense = 2;
 
         NPC.HitSound = SoundID.NPCHit23;
         NPC.DeathSound = SoundID.NPCDeath1;
@@ -78,7 +80,19 @@ public class MarrowEyeNPC : ModNPC {
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
     }
-
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.MarrowEyeNPCBestiary.KEY),
+        });
+    }
+    public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
+        if(Main.expertMode) {
+            NPC.defense = 4;
+        }
+        if(Main.masterMode) {
+            NPC.defense = 6;
+        }
+    }
     public override void HitEffect(NPC.HitInfo hit) {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) return;
 

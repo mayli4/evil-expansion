@@ -168,7 +168,7 @@ public class FireInALanternFlame : ModProjectile {
         Projectile.alpha = 255;
 
         Projectile.usesLocalNPCImmunity = true;
-        Projectile.localNPCHitCooldown = 30;
+        Projectile.localNPCHitCooldown = 20;
     }
 
     public override void AI() {

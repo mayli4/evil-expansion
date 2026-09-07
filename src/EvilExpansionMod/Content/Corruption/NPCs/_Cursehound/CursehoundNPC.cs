@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.Shaders;
 using Terraria.Graphics.Effects;
@@ -62,16 +63,24 @@ public sealed class CursehoundNPC : ModNPC {
     private const int GROUND_TIME_FOR_ATTACK = 1 * 60;
 
     public override void SetStaticDefaults() {
+        var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
+        {
+            Position = new Vector2(50f, 50f),
+            PortraitPositionXOverride = 20f,
+            PortraitPositionYOverride = 40f,
+        };
+        NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
+        ContentSamples.NpcBestiaryRarityStars[Type] = 3;
         Main.npcFrameCount[Type] = 29;
     }
 
     public override void SetDefaults() {
         (NPC.width, NPC.height) = (150, 150);
 
-        NPC.lifeMax = 1800;
+        NPC.lifeMax = 2100;
         NPC.damage = 30;
-        NPC.defense = 10;
-        NPC.value = Item.buyPrice(gold: 5, silver: 50);
+        NPC.defense = 25;
+        NPC.value = Item.buyPrice(gold: 1, silver: 50);
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = false;
@@ -80,6 +89,7 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath2;
 
+        ItemID.Sets.KillsToBanner[BannerItem] = 25;
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
 
         NPC.buffImmune[BuffID.CursedInferno] = true;
@@ -103,6 +113,11 @@ public sealed class CursehoundNPC : ModNPC {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CurseknightsHelm>(), (int)12.5, 1, 1));
     }
 
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.CursehoundNPCBestiary.KEY),
+        });
+    }
     public override void HitEffect(NPC.HitInfo hit) {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) {
             return;
@@ -345,7 +360,7 @@ public sealed class CursehoundNPC : ModNPC {
                 120);
         }
 
-        var waterShaderData = Filters.Scene["WaterDistortion"].GetShader() as WaterShaderData;
+        var waterShaderData = Terraria.Graphics.Effects.Filters.Scene["WaterDistortion"].GetShader() as WaterShaderData;
         if(Timer is > 30 and < 90 && Timer % 10 == 0) {
             var searchRadiusTiles = 40;
             List<Point> lavaTiles = new();

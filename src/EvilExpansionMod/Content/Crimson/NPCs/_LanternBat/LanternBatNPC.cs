@@ -7,6 +7,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -40,6 +41,13 @@ public class LanternBatNPC : ModNPC {
     private ref float LanternLightIntensity => ref NPC.localAI[1];
 
     public override void SetStaticDefaults() {
+        var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
+        {
+            Position = new Vector2(20f, 0f),
+            PortraitPositionXOverride = 10f,
+            PortraitPositionYOverride = -10f
+        };
+        NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
         Main.npcFrameCount[Type] = 4;
     }
 
@@ -50,7 +58,7 @@ public class LanternBatNPC : ModNPC {
         NPC.damage = 25;
         NPC.defense = 8;
         NPC.knockBackResist = 0.2f;
-        NPC.value = 300f;
+        NPC.value = 650f;
         NPC.aiStyle = -1;
         NPC.friendly = false;
         NPC.noGravity = true;
@@ -75,7 +83,11 @@ public class LanternBatNPC : ModNPC {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FireInALanternItem>(), 50, 1, 1));
     }
-
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.LanternBatNPCBestiary.KEY),
+        });
+    }
     public override void OnSpawn(IEntitySource source) {
         LanternLightIntensity = 0f;
     }

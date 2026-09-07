@@ -59,7 +59,7 @@ public sealed class DevilOWarNPC : ModNPC {
         NPC.width = 36;
         NPC.height = 36;
         NPC.lifeMax = 780;
-        NPC.value = 255;
+        NPC.value = NPC.value = Item.buyPrice(silver: 15);
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
@@ -108,7 +108,6 @@ public sealed class DevilOWarNPC : ModNPC {
     
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
-            BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
             new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.DevilOWarNPCBestiary.KEY),
         });
     }

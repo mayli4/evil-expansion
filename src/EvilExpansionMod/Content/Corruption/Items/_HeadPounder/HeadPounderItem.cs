@@ -24,7 +24,7 @@ public class HeadPounderItem : ModItem {
         Item.useTime = Item.useAnimation = 30;
         Item.useStyle = -1;
 
-        Item.value = Item.sellPrice(gold:1, silver:20);
+        Item.value = Item.sellPrice(gold:1);
         Item.rare = ItemRarityID.LightRed;
 
         Item.noUseGraphic = true;
@@ -38,10 +38,10 @@ public class HeadPounderItem : ModItem {
         Item.useTurn = false;
     }
 
-    public override void ModifyTooltips(List<TooltipLine> tooltips) {
-        tooltips.Find(t => t.Name == "Damage").Text =
-            Mod.GetLocalization($"{LocalizationCategory}.{nameof(HeadPounderItem)}.Damage").Format(Item.damage);
-    }
+    //public override void ModifyTooltips(List<TooltipLine> tooltips) {
+    //    tooltips.Find(t => t.Name == "Damage").Text =
+    //        Mod.GetLocalization($"{LocalizationCategory}.{nameof(HeadPounderItem)}.Damage").Format(Item.damage);
+    //}
 
     public override bool CanUseItem(Player player) {
         return player.ownedProjectileCounts[Item.shoot] == 0;
@@ -50,5 +50,6 @@ public class HeadPounderItem : ModItem {
     public override void AddRecipes()
         => CreateRecipe()
             .AddIngredient(ModContent.ItemType<PolypBarItem>(), 18)
+            .AddTile(TileID.Anvils)
             .Register();
 }

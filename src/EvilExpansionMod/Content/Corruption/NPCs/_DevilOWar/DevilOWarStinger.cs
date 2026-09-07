@@ -18,7 +18,7 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
     private int _stingerDuration;
     private int _healthDrained;
     private int _healthDrainTimer;
-    private const int health_drain_interval = 30;
+    private int health_drain_interval = 30 / (int) (Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f);
     private const int health_drain_amount = 10;
     private const float health_return_percentage = 0.75f;
 
@@ -85,7 +85,7 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
                         devilOWarNPC.TotalLifeDrained += actualDrain;
                     }
 
-                    CombatText.NewText(TargetPlayer.Hitbox, CombatText.DamagedHostile, actualDrain, true, false);
+                    CombatText.NewText(TargetPlayer.Hitbox, CombatText.DamagedFriendly, actualDrain, false, false);
                     _healthDrainTimer = 0;
                     Terraria.Audio.SoundEngine.PlaySound(SoundID.Item3, Projectile.position);
                 }

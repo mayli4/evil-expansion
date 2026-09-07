@@ -90,7 +90,7 @@ public class MarrowLazerProjectile : ModProjectile {
                         {
                             SoundDisabled = true,
                             DamageSource = PlayerDeathReason.ByProjectile(player.whoAmI, Projectile.whoAmI),
-                            Damage = 5 * (int)DifficultyScaler,
+                            Damage = (int)(5 * DifficultyScaler),
                             HitDirection = MathF.Sign(player.Center.X - Projectile.position.X),
                         });
 

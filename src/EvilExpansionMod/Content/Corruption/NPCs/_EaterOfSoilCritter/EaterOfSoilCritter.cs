@@ -1,3 +1,4 @@
+using EvilExpansionMod.Content.Items.Food;
 using Microsoft.Xna.Framework;
 using System;
 using System.IO;
@@ -200,5 +201,24 @@ public sealed class EaterOfSoilItem : ModItem {
         Item.bait = 30;
         Item.makeNPC = (short)ModContent.NPCType<EaterOfSoilHead>();
         Item.rare = ItemRarityID.Green;
+        ItemID.Sets.ExtractinatorMode[Item.type] = Item.type;
+    }
+    public override void ExtractinatorUse(int extractinatorBlockType, ref int resultType, ref int resultStack) {
+        // Pick a random item type to reward
+        if(Main.rand.NextBool(5)) {
+            // 20% chance to yield Meatloaf
+            resultType = ModContent.ItemType<EvilMeatloaf>();
+            resultStack = 1;
+        }
+        else {
+            if(Main.rand.NextBool(2)) {
+                resultType = ModContent.ItemType<RawShadowScalesItem>();
+                resultStack = Main.rand.Next(1, 6);
+            }
+            else {
+                resultType = ItemID.RottenChunk;
+                resultStack = Main.rand.Next(1, 6);
+            }
+        }
     }
 }

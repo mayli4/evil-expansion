@@ -113,7 +113,11 @@ Mods: {
 
 			StinkflyItem: {
 				DisplayName: Stinkfly
-				Tooltip: Used in perfume for some reason...
+				Tooltip:
+					'''
+					Feels like it would make a tasty meal... if only you could extract the meat somehow...
+					'Used in perfume, for some reason!'
+					'''
 			}
 
 			ThoughtfulPendantItem: {
@@ -241,12 +245,16 @@ Mods: {
 
 			PusSlugItem: {
 				DisplayName: Pus Slug
-				Tooltip: It's volatile...
+				Tooltip:
+					'''
+					It's volatile
+					Feels like it would make a tasty meal... if only you could extract the meat somehow...
+					'''
 			}
 
 			LavaLizardItem: {
 				DisplayName: Lava Lizard
-				Tooltip: ""
+				Tooltip: Feels like it would make a tasty meal... if only you could extract the meat somehow...
 			}
 
 			LanternBatBannerItem: {
@@ -300,7 +308,11 @@ Mods: {
 
 			CursedCanaryItem: {
 				DisplayName: Cursed Canary
-				Tooltip: It's volatile...
+				Tooltip:
+					'''
+					It's volatile
+					Feels like it would make a tasty meal... if only you could extract the meat somehow...
+					'''
 			}
 
 			PolypBarItem: {
@@ -362,7 +374,17 @@ Mods: {
 
 			EaterOfSoilItem: {
 				DisplayName: Eater of Soil
-				Tooltip: ""
+				Tooltip: Feels like it would make a tasty meal... if only you could extract the meat somehow...
+			}
+
+			EvilMeatloaf: {
+				DisplayName: Meatloaf of Malice
+				Tooltip:
+					'''
+					Grants an assortment of powerful offensive and defensive buffs
+					Gives you food poisoning
+					'Oughh...'
+					'''
 			}
 		}
 

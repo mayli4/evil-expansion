@@ -1,3 +1,4 @@
+using EvilExpansionMod.Content.Items.Food;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -32,14 +33,23 @@ public class PlanetoidSpawnerItem : ModItem {
         Item.shoot = ModContent.ProjectileType<PlanetoidProjectile>();
         Item.shootSpeed = 1f;
         Item.value = Item.sellPrice(gold: 5);
-        Item.rare = ItemRarityID.Pink;
+        Item.rare = ItemRarityID.LightPurple;
         Item.autoReuse = false;
     }
-    public override void ModifyTooltips(List<TooltipLine> tooltips) {
-        tooltips.Find(t => t.Name == "Damage").Text =
-            Mod.GetLocalization($"{LocalizationCategory}.{nameof(PlanetoidSpawnerItem)}.Damage").Format(Item.damage);
+    //public override void ModifyTooltips(List<TooltipLine> tooltips) {
+    //    tooltips.Find(t => t.Name == "Damage").Text =
+    //        Mod.GetLocalization($"{LocalizationCategory}.{nameof(PlanetoidSpawnerItem)}.Damage").Format(Item.damage);
+    //}
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient(ModContent.ItemType<EvilMeatloaf>(), 1)
+            .AddIngredient(ModContent.ItemType<RawShadowScalesItem>(), 9)
+            .AddIngredient(ModContent.ItemType<ImputedFlameItem>(), 15)
+            .AddIngredient(ItemID.RottenChunk, 5)
+            .AddIngredient(ItemID.HallowedBar, 2)
+            .AddTile(TileID.MythrilAnvil)
+            .Register();
     }
-
     public override bool CanUseItem(Player player) {
         return player.ownedProjectileCounts[ModContent.ProjectileType<PlanetoidProjectile>()] < 1
                && player.ownedProjectileCounts[ModContent.ProjectileType<PlanetoidLauncherHeldProjectile>()] < 1;

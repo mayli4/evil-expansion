@@ -1,4 +1,5 @@
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Items.Food;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -31,6 +32,18 @@ public class StinkflyItem : ModItem {
         Item.bait = 40;
         Item.makeNPC = (short)ModContent.NPCType<StinkflyNPC>();
         Item.rare = ItemRarityID.Green;
+        ItemID.Sets.ExtractinatorMode[Item.type] = Item.type;
+    }
+    public override void ExtractinatorUse(int extractinatorBlockType, ref int resultType, ref int resultStack) {
+        // Pick a random item type to reward
+        if(Main.rand.NextBool(10)) {
+            // 10% chance to yield Meatloaf
+            resultType = ModContent.ItemType<EvilMeatloaf>();
+            resultStack = 1;
+        }
+        else {
+            return;
+        }
     }
 }
 

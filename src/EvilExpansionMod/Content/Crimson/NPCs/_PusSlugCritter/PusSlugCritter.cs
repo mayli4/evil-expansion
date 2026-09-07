@@ -10,6 +10,7 @@ using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
+using EvilExpansionMod.Content.Items.Food;
 
 namespace EvilExpansionMod.Content.Crimson;
 
@@ -112,5 +113,25 @@ public class PusSlugItem : ModItem {
         Item.bait = 15;
         Item.makeNPC = (short)ModContent.NPCType<PusSlugCritter>();
         Item.rare = ItemRarityID.Green;
+        ItemID.Sets.ExtractinatorMode[Item.type] = Item.type;
+    }
+
+    public override void ExtractinatorUse(int extractinatorBlockType, ref int resultType, ref int resultStack) {
+        // Pick a random item type to reward
+        if(Main.rand.NextBool(5)) {
+            // 20% chance to yield Meatloaf
+            resultType = ModContent.ItemType<EvilMeatloaf>();
+            resultStack = 1;
+        }
+        else {
+            if(Main.rand.NextBool(2)) {
+                resultType = ModContent.ItemType<PusClumpItem>();
+                resultStack = Main.rand.Next(1, 6);
+            }
+            else {
+                resultType = ItemID.Vertebrae;
+                resultStack = Main.rand.Next(1, 6);
+            }
+        }
     }
 }

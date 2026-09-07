@@ -54,7 +54,7 @@ public sealed class StinkgrubNPC : ModNPC {
         NPC.width = 32;
         NPC.height = 20;
         NPC.lifeMax = 780;
-        NPC.value = 100f;
+        NPC.value = Item.buyPrice(silver: 10);
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = false;

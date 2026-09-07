@@ -110,7 +110,7 @@ public sealed class CursedSpiritNPC : ModNPC {
         NPC.height = 38;
         NPC.lifeMax = MaxLife;
         NPC.defense = 28;
-        NPC.value = 150;
+        NPC.value = 450;
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
         NPC.noGravity = true;

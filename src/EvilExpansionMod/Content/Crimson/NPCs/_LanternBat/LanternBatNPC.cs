@@ -58,7 +58,7 @@ public class LanternBatNPC : ModNPC {
         NPC.damage = 25;
         NPC.defense = 8;
         NPC.knockBackResist = 0.2f;
-        NPC.value = 300f;
+        NPC.value = 650f;
         NPC.aiStyle = -1;
         NPC.friendly = false;
         NPC.noGravity = true;

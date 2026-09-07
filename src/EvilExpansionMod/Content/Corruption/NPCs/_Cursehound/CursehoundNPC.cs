@@ -70,6 +70,7 @@ public sealed class CursehoundNPC : ModNPC {
             PortraitPositionYOverride = 40f,
         };
         NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
+        ContentSamples.NpcBestiaryRarityStars[Type] = 3;
         Main.npcFrameCount[Type] = 29;
     }
 
@@ -78,8 +79,8 @@ public sealed class CursehoundNPC : ModNPC {
 
         NPC.lifeMax = 2100;
         NPC.damage = 30;
-        NPC.defense = 10;
-        NPC.value = Item.buyPrice(gold: 5, silver: 50);
+        NPC.defense = 25;
+        NPC.value = Item.buyPrice(gold: 1, silver: 50);
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = false;

@@ -43,7 +43,7 @@ public class ThoughtfulCultistNPC : ModNPC {
         NPC.width = 38;
         NPC.height = 38;
         NPC.lifeMax = 970;
-        NPC.value = 250f;
+        NPC.value = Item.buyPrice(gold: 1, silver: 50);
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
@@ -72,6 +72,7 @@ public class ThoughtfulCultistNPC : ModNPC {
             PortraitPositionYOverride = 40f
         };
         NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
+        ContentSamples.NpcBestiaryRarityStars[Type] = 3;
     }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {

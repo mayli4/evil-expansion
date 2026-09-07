@@ -16,7 +16,7 @@ namespace EvilExpansionMod.Content.Crimson;
 
 public class MarrowLazerProjectile : ModProjectile {
     public override string Texture => Assets.Images.Crimson.NPCs.MarrowEye.MarrowEyeNPC.KEY;
-
+    static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
     public static readonly int DisappearFrames = 16;
 
     Color mainColor = new(21, 8, 30);
@@ -90,11 +90,11 @@ public class MarrowLazerProjectile : ModProjectile {
                         {
                             SoundDisabled = true,
                             DamageSource = PlayerDeathReason.ByProjectile(player.whoAmI, Projectile.whoAmI),
-                            Damage = 5,
+                            Damage = 5 * (int)DifficultyScaler,
                             HitDirection = MathF.Sign(player.Center.X - Projectile.position.X),
                         });
 
-                        hitCd = 50;
+                        hitCd = 1;
                     }
 
                     foundPlayerCollision = true;

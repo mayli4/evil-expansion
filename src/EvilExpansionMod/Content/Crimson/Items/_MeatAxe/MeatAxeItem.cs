@@ -23,7 +23,7 @@ public class MeatAxeItem : ModItem {
         Item.useTime = Item.useAnimation = 26;
         Item.useStyle = -1;
 
-        Item.value = Item.sellPrice(gold: 1, silver: 20);
+        Item.value = Item.sellPrice(gold: 1);
         Item.rare = ItemRarityID.LightRed;
 
         Item.noUseGraphic = true;

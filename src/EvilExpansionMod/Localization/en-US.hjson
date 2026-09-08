@@ -364,6 +364,26 @@ Mods: {
 				DisplayName: Eater of Soil
 				Tooltip: ""
 			}
+
+			CoarseBrickItem: {
+				DisplayName: Coarse Brick Item
+				Tooltip: ""
+			}
+
+			MatteBrickItem: {
+				DisplayName: Matte Brick Item
+				Tooltip: ""
+			}
+
+			CoarsebrickwallItem: {
+				DisplayName: Coarsebrickwall Item
+				Tooltip: ""
+			}
+
+			MattebrickwallItem: {
+				DisplayName: Mattebrickwall Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {

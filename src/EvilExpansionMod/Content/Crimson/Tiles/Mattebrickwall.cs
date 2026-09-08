@@ -12,11 +12,6 @@ namespace EvilExpansionMod.Content.Crimson.Tiles;
 
 internal class Mattebrickwall : ModWall {
     public override string Texture => Assets.Images.Crimson.Tiles.MatteBrickWall.KEY;
-
-    public override void SetStaticDefaults() {
-        Main.tileBlockLight[Type] = true;
-
-    }
 }
 
 internal sealed class MattebrickwallItem : ModItem {
@@ -33,6 +28,7 @@ internal sealed class MattebrickwallItem : ModItem {
         Item.autoReuse = true;
         Item.useAnimation = 15;
         Item.useTime = 10;
+        Item.ResearchUnlockCount = 400;
     }
 
     public override void AddRecipes() {

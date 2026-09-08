@@ -32,12 +32,6 @@ public class CoarseBrick : ModTile {
 
         AddMapEntry(new Color(100, 37, 62));
     }
-
-    public override bool IsTileBiomeSightable(int i, int j, ref Color sightColor) {
-        sightColor = Color.Yellow;
-        return true;
-    }
-
 }
 public class CoarseBrickItem : ModItem {
     public override string Texture => Assets.Images.Corruption.Tiles.CoarseBrickItem.KEY;
@@ -47,12 +41,12 @@ public class CoarseBrickItem : ModItem {
         Item.width = 16;
         Item.height = 16;
         Item.value = 5;
-
         Item.useStyle = ItemUseStyleID.Swing;
         Item.useTurn = true;
         Item.autoReuse = true;
         Item.useAnimation = 15;
         Item.useTime = 10;
+        Item.ResearchUnlockCount = 100;
     }
     public override void AddRecipes() {
         CreateRecipe()

@@ -10,6 +10,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -41,8 +42,8 @@ public class ThoughtfulCultistNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 38;
         NPC.height = 38;
-        NPC.lifeMax = 700;
-        NPC.value = 250f;
+        NPC.lifeMax = 970;
+        NPC.value = Item.buyPrice(gold: 1, silver: 50);
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
@@ -52,6 +53,7 @@ public class ThoughtfulCultistNPC : ModNPC {
 
         NPC.HitSound = SoundID.NPCHit23;
 
+        ItemID.Sets.KillsToBanner[BannerItem] = 25;
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
 
         NPC.buffImmune[BuffID.CursedInferno] = true;
@@ -61,16 +63,31 @@ public class ThoughtfulCultistNPC : ModNPC {
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<ThoughtfulCultistBannerItem>();
     }
+    public override void SetStaticDefaults() {
+        var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
+        {
+            CustomTexturePath = Assets.Images.Crimson.NPCs.ThoughtfulCultist.ThoughtfulCultist_Bestiary.KEY, //Custom texture for the Bestiary
+            Position = new Vector2(30f, 50f),
+            PortraitPositionXOverride = 0f,
+            PortraitPositionYOverride = 40f
+        };
+        NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
+        ContentSamples.NpcBestiaryRarityStars[Type] = 3;
+    }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-        return spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.05f : 0;
+        return spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.1f : 0;
     }
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ThoughtfulPendantItem>(), 50, 1, 1));
     }
-
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.ThoughtfulCultistNPCBestiary.KEY),
+        });
+    }
     public override void OnSpawn(IEntitySource source) {
         ChangeState(CultistState.FlyToTarget);
     }

@@ -46,8 +46,6 @@ public sealed class BloodWarden : ModProjectile {
 
     const int RETARGET_DELAY = 4 * 60;
 
-    const float HITBOX_OFFSET = 30;
-
     public override void SetStaticDefaults() {
         Main.projFrames[Type] = 13;
         Main.projPet[Projectile.type] = true;

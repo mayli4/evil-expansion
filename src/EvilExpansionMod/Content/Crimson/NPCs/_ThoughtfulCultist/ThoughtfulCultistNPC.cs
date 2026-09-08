@@ -75,9 +75,7 @@ public class ThoughtfulCultistNPC : ModNPC {
         ContentSamples.NpcBestiaryRarityStars[Type] = 3;
     }
 
-    public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-        return spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.1f : 0;
-    }
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) => Main.hardMode && spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.1f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
@@ -175,7 +173,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                     _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
                     SoundEngine.PlaySound(SoundID.AbigailSummon with
                     {
-                        Pitch = Main.rand.NextFloatDirection() * 0.6f -1.0f,
+                        Pitch = Main.rand.NextFloatDirection() * 0.6f - 1.0f,
                         Volume = 0.8f,
                     }, position);
                 }

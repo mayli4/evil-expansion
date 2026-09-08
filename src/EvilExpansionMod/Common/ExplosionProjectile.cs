@@ -1,7 +1,6 @@
 ﻿using Daybreak.Common.Rendering;
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.CameraModifiers;
-using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -98,6 +97,8 @@ public class ExplosionProjectile : ModProjectile {
             for(int i = 0; i < 20; i++) {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.TreasureSparkle);
             }
+
+            Lighting.AddLight(Projectile.Center, _startColor.ToVector3() * 0.05f * Projectile.width);
         }
     }
 
@@ -164,7 +165,7 @@ public class ExplosionProjectile : ModProjectile {
 
         Main.spriteBatch.End(out var ss);
         Main.spriteBatch.Begin(ss with { BlendState = BlendState.Additive });
-       
+
         Main.spriteBatch.Draw(
             glowTexture,
             Projectile.Center - Main.screenPosition,

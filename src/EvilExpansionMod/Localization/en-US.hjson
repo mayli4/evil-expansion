@@ -386,6 +386,26 @@ Mods: {
 					'Oughh...'
 					'''
 			}
+
+			CoarseBrickItem: {
+				DisplayName: Coarse Brick Item
+				Tooltip: ""
+			}
+
+			MatteBrickItem: {
+				DisplayName: Matte Brick Item
+				Tooltip: ""
+			}
+
+			CoarsebrickwallItem: {
+				DisplayName: Coarsebrickwall Item
+				Tooltip: ""
+			}
+
+			MattebrickwallItem: {
+				DisplayName: Mattebrickwall Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {

@@ -57,6 +57,9 @@ public class EvilMeatloafDebuff : ModBuff {
         Main.buffNoSave[Type] = false; //THE MOST IMPORTANT PROPERTY for this debuff
         Main.buffNoTimeDisplay[Type] = false;
     }
+    public override void Update(Terraria.Player player, ref int buffIndex) {
+        player.GetModPlayer<EvilMeatloafDebuffPlayer>().bellyHurty = true;
+    }
     public override void Update(NPC npc, ref int buffIndex) {
         // Optional: Apply damage over time or effects to NPCs if it affects them
         npc.lifeRegen -= 60; // Deals 30 damage per second (value is halved per second)
@@ -69,15 +72,11 @@ public class EvilMeatloafDebuffPlayer : ModPlayer {
         bellyHurty = false;
     }
     public override void UpdateBadLifeRegen() {
-        // Optional: Check if your custom buff is active on the player
-        if(Player.HasBuff(ModContent.BuffType<EvilMeatloafDebuff>())) {
-            bellyHurty = true;
-
-            // Optional: Add poison-like damage over time
+        if(bellyHurty) {
             if(Player.lifeRegen > 0) {
                 Player.lifeRegen = 0;
-                Player.lifeRegenTime = 0;
             }
+            Player.lifeRegenTime = 0;
             Player.lifeRegen -= 2;
         }
     }

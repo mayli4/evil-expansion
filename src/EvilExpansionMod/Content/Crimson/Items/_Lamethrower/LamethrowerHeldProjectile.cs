@@ -29,6 +29,11 @@ public class LamethrowerHeldProjectile : ModProjectile {
     Vector2[] _trailPositions;
 
     public override string Texture => Assets.Images.Crimson.Items.Lamethrower.LamethrowerHeldSprite.KEY;
+    
+    public override void SetStaticDefaults() {
+        Main.projFrames[Type] = 15;
+    }
+    
     public override void SetDefaults() {
         Projectile.width = 0;
         Projectile.height = 0;
@@ -89,6 +94,16 @@ public class LamethrowerHeldProjectile : ModProjectile {
     }
 
     public override void AI() {
+        Projectile.frameCounter++;
+        if (Projectile.frameCounter >= 8) {
+            Projectile.frameCounter = 0;
+        
+            Projectile.frame++;
+            if (Projectile.frame >= 7) {
+                Projectile.frame = 0;
+            }
+        }
+        
         Owner.heldProj = Projectile.whoAmI;
 
         var mouseDirection = Projectile.Center.DirectionTo(Main.MouseWorld);
@@ -155,7 +170,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
             }
         }
 
-        if(_trailPositions != null && _trailPositions.Length > 1) {
+        if(_trailPositions is { Length: > 1 }) {
             // Define how many total light points to plant down the beam. 
             // 24 to 32 points provides perfect grid blending for a 450px line.
             int denseLightPoints = 28;
@@ -270,11 +285,14 @@ public class LamethrowerHeldProjectile : ModProjectile {
             .End();
 
         var texture = TextureAssets.Projectile[Type].Value;
+        int frameHeight = texture.Height / Main.projFrames[Type];
+        Rectangle sourceRectangle = new Rectangle(0, frameHeight * Projectile.frame, texture.Width, frameHeight);
+
         var origin = new Vector2(-8, 18);
         Main.spriteBatch.Draw(
             texture,
             Projectile.position - Main.screenPosition,
-            null,
+            sourceRectangle,
             lightColor,
             Projectile.rotation - (Owner.direction == -1 ? MathF.PI : 0f),
             Owner.direction == -1 ? new Vector2(texture.Width - origin.X, origin.Y) : origin,

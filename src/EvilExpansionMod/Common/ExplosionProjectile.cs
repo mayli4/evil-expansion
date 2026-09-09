@@ -97,7 +97,9 @@ public class ExplosionProjectile : ModProjectile {
             for(int i = 0; i < 20; i++) {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.TreasureSparkle);
             }
+        }
 
+        if(_maxTimeLeft == -1 || Projectile.timeLeft > _maxTimeLeft - 3) {
             Lighting.AddLight(Projectile.Center, _startColor.ToVector3() * 0.05f * Projectile.width);
         }
     }

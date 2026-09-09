@@ -637,16 +637,15 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         spriteBatch.EndBegin(initialSnapshot);
 
-        var trailEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
-        Graphics.BeginPixelated()
+        var trailEffect = Assets.Shaders.Pixel.CursedSpiritFire.Asset.Value;
+        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
+            .SetTexture(0, Assets.Images.Sample.Pebbles.Asset.Value)
+            .SetTexture(1, Assets.Images.Sample.Noise2.Asset.Value)
             .SetEffectParams(
                 trailEffect,
-                ("time", 0.025f * Main.GameUpdateCount + NPC.whoAmI * 3.432f),
-                ("mat", Graphics.WorldTransformMatrix),
-                ("stepY", 0.25f),
-                ("scale", 0.8f),
-                ("texture1", Assets.Images.Sample.Pebbles.Asset.Value),
-                ("texture2", Assets.Images.Sample.Noise2.Asset.Value))
+                ("uTime", 0.025f * Main.GameUpdateCount + NPC.whoAmI * 3.432f),
+                ("uStepY", 0.25f),
+                ("uScale", 0.8f))
             .DrawTrail(
                 _trailPositions,
                 static _ => 40,
@@ -655,10 +654,10 @@ public sealed class CursedSpiritNPC : ModNPC {
             .DrawTexture(new()
             {
                 Texture = Assets.Images.Misc.Circle.Asset.Value,
-                Position = NPC.Center - Main.screenPosition,
+                Position = NPC.Center,
                 Color = GhostColor2,
                 Origin = 16f * Vector2.One,
-                Scale = Vector2.One * 0.6f,
+                Scale = Vector2.One * 0.725f,
             })
             .ApplyOutline(GhostColor1)
             .End();

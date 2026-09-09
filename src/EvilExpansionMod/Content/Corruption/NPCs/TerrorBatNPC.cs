@@ -359,7 +359,7 @@ public class TerrorBatNPC : ModNPC {
                 NPC.Center,
                 shootDirection * 8f,
                 ModContent.ProjectileType<TerrorBatSpit>(),
-                (int) (NPC.damage * 0.125f / difficultyScaler),
+                (int)(NPC.damage * 0.125f / difficultyScaler),
                 //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! To compensate, it is divided by 8 instead of 4.
                 0.5f,
                 Main.myPlayer
@@ -536,17 +536,15 @@ public class TerrorBatSpit : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var cursedFireEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
-        Graphics.BeginPixelated()
+        var cursedFireEffect = Assets.Shaders.Pixel.CursedSpiritFire.Asset.Value;
+        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
+            .SetTexture(0, Assets.Images.Sample.Pebbles.Asset.Value)
+            .SetTexture(1, Assets.Images.Sample.Noise2.Asset.Value)
             .SetEffectParams(
                 cursedFireEffect,
-                ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 3.432f),
-                ("mat", Graphics.WorldTransformMatrix),
-                ("stepY", 0.25f),
-                ("scale", 0.8f),
-                ("texture1", Assets.Images.Sample.Pebbles.Asset.Value),
-                ("texture2", Assets.Images.Sample.Noise2.Asset.Value)
-            )
+                ("uTime", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 3.432f),
+                ("uStepY", 0.25f),
+                ("uScale", 0.8f))
             .DrawTrail(
                 positionCache.Positions,
                 _ => TRAIL_SIZE * Scale,

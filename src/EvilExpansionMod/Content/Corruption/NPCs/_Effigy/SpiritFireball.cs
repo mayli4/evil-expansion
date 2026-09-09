@@ -19,7 +19,7 @@ public class SpiritFireball : ModProjectile {
     public static readonly int MaxTimeLeft = 130;
 
     float Scale => 1f - MathF.Pow((float)(MaxTimeLeft - Projectile.timeLeft) / MaxTimeLeft, 2);
-    
+
     public readonly static Color GhostColor1 = new(214, 237, 5);
     public readonly static Color GhostColor2 = new(181, 200, 4);
 
@@ -47,7 +47,7 @@ public class SpiritFireball : ModProjectile {
 
         Projectile.velocity.Y += Gravity;
 
-        if(Main.rand.NextBool(10)) { 
+        if(Main.rand.NextBool(10)) {
             Dust.NewDust(
                 Projectile.position,
                 Projectile.width,
@@ -56,28 +56,28 @@ public class SpiritFireball : ModProjectile {
                 newColor: Main.rand.NextFromList(CursedSpiritNPC.GhostColor1, CursedSpiritNPC.GhostColor2)
             );
 
-            var dir = Projectile.velocity != Vector2.Zero 
-                ? -Vector2.Normalize(Projectile.velocity) 
+            var dir = Projectile.velocity != Vector2.Zero
+                ? -Vector2.Normalize(Projectile.velocity)
                 : -Vector2.UnitY;
 
-            float coneAngle = Main.rand.NextFloat(-0.3f, 0.3f); 
+            float coneAngle = Main.rand.NextFloat(-0.3f, 0.3f);
             float backwardSpeed = Main.rand.NextFloat(0.5f, 2f);
 
-            var spawnPosition = Projectile.Center 
-                                    - (Projectile.velocity * 0.5f) 
+            var spawnPosition = Projectile.Center
+                                    - (Projectile.velocity * 0.5f)
                                     + Main.rand.NextVector2Circular(4f, 4f);
 
             var flame = DustFlameParticle.RequestNew(
-                spawnPosition, 
-                dir.RotatedBy(coneAngle) * backwardSpeed, 
-                GhostColor1, 
-                GhostColor1, 
-                Main.rand.NextFloat(0.8f, 1.4f), 
+                spawnPosition,
+                dir.RotatedBy(coneAngle) * backwardSpeed,
+                GhostColor1,
+                GhostColor1,
+                Main.rand.NextFloat(0.8f, 1.4f),
                 Main.rand.Next(18, 28)
             );
 
-            flame.LossPerFrame = 0.12f; 
-            flame.Swirly = false; 
+            flame.LossPerFrame = 0.12f;
+            flame.Swirly = false;
             flame.ApplyLighting = false;
 
             ParticleEngine.PARTICLES.Add(flame);
@@ -105,17 +105,15 @@ public class SpiritFireball : ModProjectile {
         );
         Main.spriteBatch.EndBegin(snapshot);
 
-        var trailEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
-        Graphics.BeginPixelated()
+        var trailEffect = Assets.Shaders.Pixel.CursedSpiritFire.Asset.Value;
+        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
+            .SetTexture(0, Assets.Images.Sample.Pebbles.Asset.Value)
+            .SetTexture(1, Assets.Images.Sample.Noise3.Asset.Value)
             .SetEffectParams(
                 trailEffect,
-                ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
-                ("mat", Graphics.WorldTransformMatrix),
-                ("stepY", 0.25f),
-                ("scale", 0.25f),
-                ("texture1", Assets.Images.Sample.Pebbles.Asset.Value),
-                ("texture2", Assets.Images.Sample.Noise3.Asset.Value)
-            )
+                ("uTime", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
+                ("uStepY", 0.25f),
+                ("uScale", 0.25f))
             .DrawTrail(
                 _trailPositions,
                 static _ => 18f,
@@ -125,7 +123,7 @@ public class SpiritFireball : ModProjectile {
             .DrawTexture(new()
             {
                 Texture = Assets.Images.Misc.Circle.Asset.Value,
-                Position = Projectile.Center - Main.screenPosition,
+                Position = Projectile.Center,
                 Color = smallGlowColor,
                 Origin = 16f * Vector2.One,
                 Scale = Vector2.One * 0.3f,

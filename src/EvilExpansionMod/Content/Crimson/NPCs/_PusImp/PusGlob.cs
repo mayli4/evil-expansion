@@ -1,6 +1,6 @@
 using EvilExpansionMod.Common.Graphics;
-using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Content.Dusts;
+using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -101,7 +101,7 @@ public sealed class PusGlob : ModProjectile {
                 );
             }
         }
-        else { 
+        else {
             Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { Volume = 0.4f, Pitch = Main.rand.NextFloat(-0.8f, 0.1f) }, Projectile.position);
         }
     }
@@ -144,34 +144,31 @@ public sealed class PusGlob : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var trailEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
+        var trailEffect = Assets.Shaders.Pixel.CursedSpiritFire.Asset.Value;
 
         var color = new Color(98, 90, 40).MultiplyRGB(lightColor);
         var outlineColor = new Color(161, 131, 78).MultiplyRGB(lightColor);
 
         Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
+            .SetTexture(0, Assets.Images.Sample.Pebbles.Asset.Value)
+            .SetTexture(1, Assets.Images.Sample.Pebbles.Asset.Value)
             .SetEffectParams(
                 trailEffect,
-                ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
-                ("mat", Graphics.WorldTransformMatrix),
-                ("stepY", 0.15f),
-                ("scale", 0.5f),
-                ("texture1", Assets.Images.Sample.Pebbles.Asset.Value),
-                ("texture2", Assets.Images.Sample.Pebbles.Asset.Value)
-            )
+                ("uTime", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
+                ("uStepY", 0.15f),
+                ("uScale", 0.5f))
             .DrawTrail(
                 _trailPositions,
-                static _ => 20f,
+                static _ => 15f,
                 _ => color,
-                trailEffect
-            )
+                trailEffect)
             .DrawTexture(new()
             {
                 Texture = Assets.Images.Misc.Circle.Asset.Value,
                 Position = Projectile.Center,
                 Color = color,
                 Origin = 16f * Vector2.One,
-                Scale = Vector2.One * 0.5f,
+                Scale = Vector2.One * 0.3f,
             })
             .ApplyOutline(outlineColor)
             .End();

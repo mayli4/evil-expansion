@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Enums;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -11,6 +10,7 @@ namespace EvilExpansionMod.Content.Corruption;
 
 public class PolypBarItem : ModItem {
     public override string Texture => Assets.Images.Corruption.Items.PolypBarItem.KEY;
+
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 25;
         ItemID.Sets.SortingPriorityMaterials[Item.type] = 59;
@@ -26,14 +26,16 @@ public class PolypBarItem : ModItem {
 
         Item.rare = ItemRarityID.Orange;
     }
+
     public override void PostUpdate() {
         Lighting.AddLight(Item.Center, Color.YellowGreen.ToVector3() * 0.5f * Main.essScale);
     }
+
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient<PolypOreItem>(3)
             .AddIngredient<RawShadowScalesItem>()
-            .AddTile(TileID.Furnaces)
+            .AddTile(TileID.Hellforge)
             .Register();
     }
 }
@@ -53,7 +55,7 @@ internal sealed class PolypBarTile : ModTile {
         TileObjectData.newTile.LavaDeath = false;
         TileObjectData.newTile.LavaPlacement = LiquidPlacement.Allowed;
         TileObjectData.addTile(Type);
-        
+
         DustType = DustID.PurpleTorch;
 
         AddMapEntry(new Color(149, 59, 185), Language.GetText("MapObject.MetalBar"));

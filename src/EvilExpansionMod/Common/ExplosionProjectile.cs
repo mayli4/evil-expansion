@@ -1,7 +1,6 @@
 ﻿using Daybreak.Common.Rendering;
 using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.CameraModifiers;
-using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -99,6 +98,10 @@ public class ExplosionProjectile : ModProjectile {
                 Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.TreasureSparkle);
             }
         }
+
+        if(_maxTimeLeft == -1 || Projectile.timeLeft > _maxTimeLeft - 3) {
+            Lighting.AddLight(Projectile.Center, _startColor.ToVector3() * 0.05f * Projectile.width);
+        }
     }
 
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
@@ -164,7 +167,7 @@ public class ExplosionProjectile : ModProjectile {
 
         Main.spriteBatch.End(out var ss);
         Main.spriteBatch.Begin(ss with { BlendState = BlendState.Additive });
-       
+
         Main.spriteBatch.Draw(
             glowTexture,
             Projectile.Center - Main.screenPosition,

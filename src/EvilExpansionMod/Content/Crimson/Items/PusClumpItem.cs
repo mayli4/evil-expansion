@@ -6,7 +6,7 @@ namespace EvilExpansionMod.Content.Crimson;
 public class PusClumpItem : ModItem {
     public override string Texture => Assets.Images.Crimson.Items.PusClump.KEY;
     public override void SetStaticDefaults() {
-        Item.ResearchUnlockCount = 25;
+        Item.ResearchUnlockCount = 75;
     }
     public override void SetDefaults() {
         (Item.width, Item.height) = (20, 20);

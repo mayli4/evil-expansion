@@ -10,6 +10,7 @@ using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
+using EvilExpansionMod.Content.Items.Food;
 
 namespace EvilExpansionMod.Content.Crimson;
 
@@ -55,6 +56,11 @@ public sealed class PusSlugCritter : ModNPC {
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.6f : 0f;
+    }
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.PusSlugCritterBestiary.KEY),
+        });
     }
     public override void OnKill() {
         var amount = Main.rand.Next(3, 6) * difficultyScaler;
@@ -107,5 +113,25 @@ public class PusSlugItem : ModItem {
         Item.bait = 15;
         Item.makeNPC = (short)ModContent.NPCType<PusSlugCritter>();
         Item.rare = ItemRarityID.Green;
+        ItemID.Sets.ExtractinatorMode[Item.type] = Item.type;
+    }
+
+    public override void ExtractinatorUse(int extractinatorBlockType, ref int resultType, ref int resultStack) {
+        // Pick a random item type to reward
+        if(Main.rand.NextBool(5)) {
+            // 20% chance to yield Meatloaf
+            resultType = ModContent.ItemType<EvilMeatloaf>();
+            resultStack = 1;
+        }
+        else {
+            if(Main.rand.NextBool(2)) {
+                resultType = ModContent.ItemType<PusClumpItem>();
+                resultStack = Main.rand.Next(1, 6);
+            }
+            else {
+                resultType = ItemID.Vertebrae;
+                resultStack = Main.rand.Next(1, 6);
+            }
+        }
     }
 }

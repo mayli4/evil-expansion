@@ -30,7 +30,7 @@ public class SpamonAStickItem : ModItem {
         Item.damage = 50;
         Item.knockBack = 8;
         Item.crit = 4;
-        Item.value = Item.sellPrice(gold: 1, silver: 2);
+        Item.value = Item.sellPrice(gold: 1, silver: 10);
         Item.rare = ItemRarityID.Pink;
     }
 
@@ -45,7 +45,7 @@ public class SpamonAStickItem : ModItem {
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient(ModContent.ItemType<PolypBarItem>(), 12)
-            .AddIngredient(ItemID.RottenChunk, 8)
+            .AddIngredient(ItemID.RottenChunk, 12)
             .AddIngredient(ItemID.Terrarium)
             .AddTile(TileID.MythrilAnvil)
             .Register();

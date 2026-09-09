@@ -8,7 +8,7 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Crimson;
 
-internal sealed class FriendlyCulstistPortal : CultistPortal {
+internal sealed class FriendlyCultistPortal : CultistPortal {
     public override void SetDefaults() {
         base.SetDefaults();
         Projectile.hostile = false;
@@ -43,25 +43,30 @@ public class ThoughtfulPendantItem : ModItem {
         }
 
         if(player.controlUseItem && player.itemAnimation > 0 && _portalCooldown <= 0 && Main.rand.NextBool(30)) {
-            Vector2 summonPosition = Main.MouseWorld;
+            for(int i = 0; i < (int)Main.rand.Next(1, 3); i++) {
+                Vector2 summonPosition = Main.MouseWorld;
 
-            var position = summonPosition - 105f * _portalRotation.ToRotationVector2();
-            var direction = position.DirectionTo(summonPosition);
+                var position = summonPosition - 105f * _portalRotation.ToRotationVector2();
+                var direction = position.DirectionTo(summonPosition);
 
-            Projectile.NewProjectile(
-                player.GetSource_Accessory(Item),
-                position,
-                direction,
-                ModContent.ProjectileType<FriendlyCulstistPortal>(),
-                (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(30),
-                0.2f,
-                ai0: (float)PortalType.Spear,
-                ai1: 120
-            );
+                Projectile.NewProjectile(
+                    player.GetSource_Accessory(Item),
+                    position,
+                    direction,
+                    ModContent.ProjectileType<FriendlyCultistPortal>(),
+                    (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(35),
+                    0.2f,
+                    ai0: (float)PortalType.Spear,
+                    ai1: 120
+                );
 
-            _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
-            SoundEngine.PlaySound(SoundID.Item79, position);
-
+                _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
+                SoundEngine.PlaySound(SoundID.AbigailSummon with
+                {
+                    Pitch = Main.rand.NextFloatDirection() * 0.6f,
+                    Volume = 0.6f,
+                }, position);
+            }
             _portalCooldown = player.itemAnimationMax;
         }
     }

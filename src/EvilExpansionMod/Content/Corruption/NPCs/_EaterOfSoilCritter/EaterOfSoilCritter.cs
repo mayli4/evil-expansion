@@ -1,3 +1,4 @@
+using EvilExpansionMod.Content.Items.Food;
 using Microsoft.Xna.Framework;
 using System;
 using System.IO;
@@ -23,9 +24,9 @@ namespace EvilExpansionMod.Content.Corruption;
             var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
             { // Influences how the NPC looks in the Bestiary
                 CustomTexturePath = Assets.Images.Corruption.NPCs.EaterOfSoil.EaterOfSoil_Bestiary.KEY, // If the NPC is multiple parts like a worm, a custom texture for the Bestiary is encouraged.
-                Position = new Vector2(40f, 24f),
+                Position = new Vector2(4f, 2f),
                 PortraitPositionXOverride = 0f,
-                PortraitPositionYOverride = 12f
+                PortraitPositionYOverride = -5f
             };
             NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
         }
@@ -200,5 +201,24 @@ public sealed class EaterOfSoilItem : ModItem {
         Item.bait = 30;
         Item.makeNPC = (short)ModContent.NPCType<EaterOfSoilHead>();
         Item.rare = ItemRarityID.Green;
+        ItemID.Sets.ExtractinatorMode[Item.type] = Item.type;
+    }
+    public override void ExtractinatorUse(int extractinatorBlockType, ref int resultType, ref int resultStack) {
+        // Pick a random item type to reward
+        if(Main.rand.NextBool(5)) {
+            // 20% chance to yield Meatloaf
+            resultType = ModContent.ItemType<EvilMeatloaf>();
+            resultStack = 1;
+        }
+        else {
+            if(Main.rand.NextBool(2)) {
+                resultType = ModContent.ItemType<RawShadowScalesItem>();
+                resultStack = Main.rand.Next(1, 6);
+            }
+            else {
+                resultType = ItemID.RottenChunk;
+                resultStack = Main.rand.Next(1, 6);
+            }
+        }
     }
 }

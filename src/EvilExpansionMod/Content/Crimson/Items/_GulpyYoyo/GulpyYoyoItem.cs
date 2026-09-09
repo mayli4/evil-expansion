@@ -1,4 +1,6 @@
-﻿using Terraria;
+﻿using EvilExpansionMod.Content.Corruption;
+using EvilExpansionMod.Content.Items.Food;
+using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -28,10 +30,20 @@ public class GulpyYoyoItem : ModItem {
         Item.knockBack = 2.5f;
         Item.crit = 8;
         Item.channel = true;
-        Item.rare = ItemRarityID.LightRed;
-        Item.value = Item.buyPrice(gold: 1);
+        Item.rare = ItemRarityID.LightPurple;
+        Item.value = Item.buyPrice(gold: 5);
 
         Item.shoot = ModContent.ProjectileType<GulpyYoyoProjectile>();
         Item.shootSpeed = 16f;
+    }
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient(ModContent.ItemType<EvilMeatloaf>(), 1)
+            .AddIngredient(ModContent.ItemType<PusClumpItem>(), 10)
+            .AddIngredient(ModContent.ItemType<BoneSlicesItem>(), 15)
+            .AddIngredient(ItemID.Vertebrae, 5)
+            .AddIngredient(ItemID.HallowedBar, 2)
+            .AddTile(TileID.MythrilAnvil)
+            .Register();
     }
 }

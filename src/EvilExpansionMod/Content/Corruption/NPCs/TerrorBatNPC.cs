@@ -63,6 +63,13 @@ public class TerrorBatNPC : ModNPC {
     private int _currentSleepDustIndex;
 
     public override void SetStaticDefaults() {
+        var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
+        {
+            Position = new Vector2(0f, 0f),
+            PortraitPositionXOverride = 0f,
+            PortraitPositionYOverride = -10f,
+        };
+        NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
         Main.npcFrameCount[Type] = 10;
     }
 
@@ -97,7 +104,6 @@ public class TerrorBatNPC : ModNPC {
 
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
-            BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
             new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.TerrorBatNPCBestiary.KEY),
         });
     }

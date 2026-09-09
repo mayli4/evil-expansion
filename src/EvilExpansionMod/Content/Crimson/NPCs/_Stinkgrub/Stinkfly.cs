@@ -1,7 +1,9 @@
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Items.Food;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
+using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -30,6 +32,18 @@ public class StinkflyItem : ModItem {
         Item.bait = 40;
         Item.makeNPC = (short)ModContent.NPCType<StinkflyNPC>();
         Item.rare = ItemRarityID.Green;
+        ItemID.Sets.ExtractinatorMode[Item.type] = Item.type;
+    }
+    public override void ExtractinatorUse(int extractinatorBlockType, ref int resultType, ref int resultStack) {
+        // Pick a random item type to reward
+        if(Main.rand.NextBool(10)) {
+            // 10% chance to yield Meatloaf
+            resultType = ModContent.ItemType<EvilMeatloaf>();
+            resultStack = 1;
+        }
+        else {
+            return;
+        }
     }
 }
 
@@ -62,7 +76,11 @@ public class StinkflyNPC : ModNPC {
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
     }
-
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.StinkflyCritterBestiary.KEY),
+        });
+    }
     public override void PostAI() {
         NPC closestGrub = null;
         float closestDistSq = float.MaxValue;
@@ -128,4 +146,9 @@ public class StinkflyNPC : ModNPC {
 
 public class SmallStinkflyNpc : StinkflyNPC {
     public override string Texture => Assets.Images.Crimson.NPCs.Stinkgrub.SmallFly.KEY;
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.StinkflyCritterBestiary.KEY),
+        });
+    }
 }

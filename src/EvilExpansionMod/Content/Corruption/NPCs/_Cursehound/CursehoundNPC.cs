@@ -9,11 +9,12 @@ using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.Shaders;
-using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Filters = Terraria.Graphics.Effects.Filters;
 
 namespace EvilExpansionMod.Content.Corruption;
 
@@ -62,16 +63,24 @@ public sealed class CursehoundNPC : ModNPC {
     private const int GROUND_TIME_FOR_ATTACK = 1 * 60;
 
     public override void SetStaticDefaults() {
+        var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
+        {
+            Position = new Vector2(50f, 50f),
+            PortraitPositionXOverride = 20f,
+            PortraitPositionYOverride = 40f,
+        };
+        NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
+        ContentSamples.NpcBestiaryRarityStars[Type] = 3;
         Main.npcFrameCount[Type] = 29;
     }
 
     public override void SetDefaults() {
         (NPC.width, NPC.height) = (150, 150);
 
-        NPC.lifeMax = 1800;
+        NPC.lifeMax = 2100;
         NPC.damage = 30;
-        NPC.defense = 10;
-        NPC.value = Item.buyPrice(gold: 5, silver: 50);
+        NPC.defense = 25;
+        NPC.value = Item.buyPrice(gold: 1, silver: 50);
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = false;
@@ -80,6 +89,7 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath2;
 
+        ItemID.Sets.KillsToBanner[BannerItem] = 25;
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
 
         NPC.buffImmune[BuffID.CursedInferno] = true;
@@ -95,7 +105,7 @@ public sealed class CursehoundNPC : ModNPC {
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/CursehoundGore" + j);
     }
 
-    public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.1f : 0;
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) => Main.hardMode && spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.1f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>(), 1, 1, 2));
@@ -103,6 +113,11 @@ public sealed class CursehoundNPC : ModNPC {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CurseknightsHelm>(), (int)12.5, 1, 1));
     }
 
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.CursehoundNPCBestiary.KEY),
+        });
+    }
     public override void HitEffect(NPC.HitInfo hit) {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) {
             return;
@@ -180,6 +195,8 @@ public sealed class CursehoundNPC : ModNPC {
                 HandleRoarDowntime();
                 break;
         }
+
+        CurrentState = State.Roaring;
     }
 
     private void Movement(float distanceToTarget, float distanceToPlayerX, bool broadLineOfSight) {
@@ -194,8 +211,8 @@ public sealed class CursehoundNPC : ModNPC {
 
         float verticalDifference = NPC.Center.Y - Target.Center.Y;
         float dynamicJumpVelocity = MathHelper.Clamp(
-            -(baseJumpPower + Math.Max(0, verticalDifference) * jumpScaleFactor), 
-            -maxJumpPower, 
+            -(baseJumpPower + Math.Max(0, verticalDifference) * jumpScaleFactor),
+            -maxJumpPower,
             -baseJumpPower);
 
         if(NPC.velocity.Y == 0 && _timeGrounded >= GROUND_TIME_FOR_ATTACK && RoarAttackCooldown <= 0 && broadLineOfSight && distanceToTarget >= roarAttackMinRange && distanceToTarget <= roarAttackMaxRange) {
@@ -234,13 +251,13 @@ public sealed class CursehoundNPC : ModNPC {
             NPC.velocity.X *= 0.85f;
         }
 
-        if (NPC.collideX && NPC.velocity.Y == 0) {
+        if(NPC.collideX && NPC.velocity.Y == 0) {
             NPC.velocity.Y = dynamicJumpVelocity;
             _timeGrounded = 0;
             NPC.noTileCollide = true;
         }
 
-        if (NPC.velocity.Y == 0 && Target.Top.Y < NPC.Bottom.Y && Helper.HoleAtPosition(NPC, NPC.Center.X + NPC.velocity.X)) {
+        if(NPC.velocity.Y == 0 && Target.Top.Y < NPC.Bottom.Y && Helper.HoleAtPosition(NPC, NPC.Center.X + NPC.velocity.X)) {
             NPC.velocity.Y = dynamicJumpVelocity;
             _timeGrounded = 0;
             NPC.noTileCollide = true;
@@ -344,10 +361,9 @@ public sealed class CursehoundNPC : ModNPC {
                 1800,
                 120);
         }
-
-        var waterShaderData = Filters.Scene["WaterDistortion"].GetShader() as WaterShaderData;
-        if(Timer is > 30 and < 90 && Timer % 10 == 0) {
-            var searchRadiusTiles = 40;
+        
+        if (Timer == 20) {
+            int searchRadiusTiles = 40;
             List<Point> lavaTiles = new();
 
             int startTileX = (int)((Target.Center.X - searchRadiusTiles * 16) / 16f);
@@ -355,24 +371,38 @@ public sealed class CursehoundNPC : ModNPC {
             int startTileY = (int)((Target.Bottom.Y + 10) / 16f);
             int endTileY = (int)((Target.Bottom.Y + 10 + searchRadiusTiles / 2 * 16) / 16f);
 
-            for(int x = startTileX; x < endTileX; x++) {
-                for(int y = startTileY; y < endTileY; y++) {
-                    if(WorldGen.InWorld(x, y)) {
-                        var tile = Main.tile[x, y];
-                        if(tile is { LiquidType: LiquidID.Lava, LiquidAmount: > 0 }) {
+            for (int x = startTileX; x < endTileX; x++) {
+                for (int y = startTileY; y < endTileY; y++) {
+                    if (WorldGen.InWorld(x, y)) {
+                        Tile tile = Main.tile[x, y];
+                        if (tile is { LiquidType: LiquidID.Lava, LiquidAmount: > 0 } && Main.tile[x, y - 1].LiquidAmount == 0 && !Main.tile[x, y - 1].HasTile) {
                             lavaTiles.Add(new Point(x, y));
                         }
                     }
                 }
             }
 
-            if(lavaTiles.Count > 0) {
-                var randomLavaTile = lavaTiles[Main.rand.Next(lavaTiles.Count)];
-                var spawnPos = randomLavaTile.ToWorldCoordinates();
-                var velocity = new Vector2(0, Helper.InitialVelocityRequiredToHitPosition(spawnPos, Target.position - new Vector2(0, 40), 0.4f, 16f).Y);
-                Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, velocity, ModContent.ProjectileType<SpiritFireball>(), NPC.damage / 2, 0f, Main.myPlayer);
+            int totalTelegraphs = 4;
+            int telegraphDuration = 45;
 
-                waterShaderData?.QueueRipple(spawnPos, 30f, RippleShape.Circle, MathHelper.PiOver4);
+            for (int i = 0; i < totalTelegraphs && lavaTiles.Count > 0; i++) {
+                int index = Main.rand.Next(lavaTiles.Count);
+                Point lavaTile = lavaTiles[index];
+                lavaTiles.RemoveAt(index);
+
+                Vector2 spawnPos = lavaTile.ToWorldCoordinates();
+
+                Projectile.NewProjectile(
+                    NPC.GetSource_FromAI(),
+                    spawnPos,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<LavaTelegraphProjectile>(),
+                    0,
+                    0f,
+                    Main.myPlayer,
+                    ai0: telegraphDuration,
+                    ai2: NPC.damage / 2
+                );
             }
         }
 
@@ -430,7 +460,7 @@ public sealed class CursehoundNPC : ModNPC {
 
         LookAtTarget();
     }
- 
+
     private void LookAtTarget() {
         NPC.direction = (Target.Center.X < NPC.Center.X) ? -1 : 1;
         NPC.spriteDirection = NPC.direction;
@@ -560,5 +590,102 @@ public sealed class CursehoundNPC : ModNPC {
                 NPC.frame.Y = (int)NPC.frameCounter * frameHeight;
                 break;
         }
+    }
+}
+
+internal sealed class LavaTelegraphProjectile : ModProjectile {
+    public override string Texture => Assets.Images.Corruption.NPCs.Cursehound.LavaTelegraph.KEY;
+
+    public ref float MaxTime => ref Projectile.ai[0];
+    public ref float Damage => ref Projectile.ai[1];
+
+    private bool hasSpawnedProjectile;
+
+    public override void SetDefaults() {
+        Projectile.width = 16;
+        Projectile.height = 16;
+        Projectile.tileCollide = false;
+        Projectile.ignoreWater = true;
+        Projectile.hostile = false;
+        Projectile.friendly = false;
+        Projectile.penetrate = -1;
+        Projectile.timeLeft = 60;
+    }
+
+    public override void AI() {
+        if (MaxTime == 0) {
+            MaxTime = Projectile.timeLeft;
+        }
+
+        float progress = 1f - (Projectile.timeLeft / MaxTime);
+        float lightAlpha = MathHelper.Clamp((float)Math.Sin(progress * MathHelper.Pi), 0f, 1f);
+        Lighting.AddLight(Projectile.Center, new Color(214, 237, 5).ToVector3() * lightAlpha * 0.8f);
+
+        float spawnThreshold = 0.7f;
+        if (progress >= spawnThreshold && !hasSpawnedProjectile) {
+            hasSpawnedProjectile = true;
+
+            if (Main.myPlayer == Projectile.owner) {
+                Vector2 upwardVelocity = new Vector2(Main.rand.NextFloat(-1.5f, 1.5f), Main.rand.NextFloat(-16f, -12f));
+
+                Projectile.NewProjectile(
+                    Projectile.GetSource_FromAI(),
+                    Projectile.Bottom,
+                    upwardVelocity,
+                    ModContent.ProjectileType<SpiritFireball>(),
+                    (int)Damage,
+                    0f,
+                    Projectile.owner
+                );
+            }
+
+            var waterShaderData = Filters.Scene["WaterDistortion"]?.GetShader() as WaterShaderData;
+            waterShaderData?.QueueRipple(Projectile.Bottom, 10f, RippleShape.Circle, MathHelper.PiOver4);
+        }
+    }
+
+    public override bool PreDraw(ref Color lightColor) {
+        var texture = ModContent.Request<Texture2D>(Texture).Value;
+
+        float progress = 1f - (Projectile.timeLeft / MaxTime);
+        float maxTelegraphHeight = 150f;
+
+        float growthProgress = MathHelper.Clamp(progress / 0.3f, 0f, 1f);
+        float currentHeight = MathHelper.SmoothStep(0f, maxTelegraphHeight, growthProgress);
+
+        float scaleX = progress < 0.3f ? MathHelper.Lerp(0.2f, 1.3f, progress / 0.3f) :
+            MathHelper.Lerp(1.3f, 0.8f, (progress - 0.3f) / 0.7f);
+
+        float alpha;
+        if (progress < 0.2f) {
+            alpha = progress / 0.2f;
+        }
+        else if (progress > 0.6f) {
+            alpha = 1f - ((progress - 0.6f) / 0.4f);
+        }
+        else {
+            alpha = 1f;
+        }
+
+        Vector2 drawPos = Projectile.Bottom - Main.screenPosition;
+        Vector2 origin = new Vector2(texture.Width / 2f, texture.Height);
+
+        Color drawColor = new Color(214, 237, 5) * alpha * 0.85f;
+        drawColor.A = 0;
+
+        Vector2 scale = new Vector2(scaleX, currentHeight / texture.Height);
+
+        Main.EntitySpriteDraw(
+            texture,
+            drawPos,
+            null,
+            drawColor,
+            0f,
+            origin,
+            scale,
+            SpriteEffects.None
+        );
+
+        return false;
     }
 }

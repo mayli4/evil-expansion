@@ -1,8 +1,10 @@
+using EvilExpansionMod.Content.Items.Food;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -51,7 +53,11 @@ public sealed class CursedCanaryCritter : ModNPC {
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.2f : 0f;
     }
-
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.CursedCanaryCritterBestiary.KEY),
+        });
+    }
     public override void PostAI() {
         NPC.TargetClosest(false);
 
@@ -214,5 +220,24 @@ public sealed class CursedCanaryItem : ModItem {
         Item.value = Item.buyPrice(0, 0, 40);
         Item.makeNPC = (short)ModContent.NPCType<CursedCanaryCritter>();
         Item.rare = ItemRarityID.Green;
+        ItemID.Sets.ExtractinatorMode[Item.type] = Item.type;
+    }
+    public override void ExtractinatorUse(int extractinatorBlockType, ref int resultType, ref int resultStack) {
+        // Pick a random item type to reward
+        if(Main.rand.NextBool(5)) {
+            // 20% chance to yield Meatloaf
+            resultType = ModContent.ItemType<EvilMeatloaf>();
+            resultStack = 1;
+        }
+        else {
+            if(Main.rand.NextBool(2)) {
+                resultType = ModContent.ItemType<RawShadowScalesItem>();
+                resultStack = Main.rand.Next(1, 6);
+            }
+            else {
+                resultType = ItemID.RottenChunk;
+                resultStack = Main.rand.Next(1, 6);
+            }
+        }
     }
 }

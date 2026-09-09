@@ -196,8 +196,8 @@ public class GulpyYoyoProjectile : ModProjectile {
 
         var outlineColor = Color.Lerp(Color.Transparent, Color.Red, (Projectile.scale - 1f) * 0.55f);
 
-        DrawArm(_righArmChain.Positions);
-        DrawArm(_leftArmChain.Positions);
+        DrawArm(_righArmChain.Positions, SpriteEffects.None);
+        DrawArm(_leftArmChain.Positions, SpriteEffects.FlipHorizontally);
 
         Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
             .DrawTexture(new()
@@ -228,7 +228,7 @@ public class GulpyYoyoProjectile : ModProjectile {
             .End();
     }
 
-    private static void DrawArm(ReadOnlySpan<Vector2> positions) {
+    private static void DrawArm(ReadOnlySpan<Vector2> positions, SpriteEffects spriteEffects) {
         var armTexture = Assets.Images.Crimson.Items.GulpyYoyo.GulpyYoyoGrab.Asset.Value;
 
         var frameHeight = armTexture.Height / 2;
@@ -247,7 +247,7 @@ public class GulpyYoyoProjectile : ModProjectile {
             elbowRotation,
             elbowSource.Size() / 2f,
             1f,
-            SpriteEffects.None,
+            spriteEffects,
             0f);
 
         Main.spriteBatch.Draw(
@@ -258,7 +258,7 @@ public class GulpyYoyoProjectile : ModProjectile {
             handRotation,
             handSource.Size() / 2f,
             1f,
-            SpriteEffects.None,
+            spriteEffects,
             0f);
     }
 

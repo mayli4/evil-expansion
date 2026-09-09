@@ -639,12 +639,16 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         spriteBatch.EndBegin(initialSnapshot);
 
-        if(NPC.IsABestiaryIconDummy) {
+        var effectMatrix = Graphics.WorldTransformMatrix;
+        var trailPositions = _trailPositions;
 
+        if(NPC.IsABestiaryIconDummy) {
+            effectMatrix = Graphics.ScreenTransformMatrix; // ?? idk
+            trailPositions = [NPC.Center, NPC.Center - Vector2.UnitY * 46f];
         }
 
         var trailEffect = Assets.Shaders.Pixel.CursedSpiritFire.Asset.Value;
-        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
+        Graphics.BeginPixelated(effectMatrix)
             .SetTexture(0, Assets.Images.Sample.Pebbles.Asset.Value)
             .SetTexture(1, Assets.Images.Sample.Noise2.Asset.Value)
             .SetEffectParams(
@@ -653,7 +657,7 @@ public sealed class CursedSpiritNPC : ModNPC {
                 ("uStepY", 0.25f),
                 ("uScale", 0.8f))
             .DrawTrail(
-                _trailPositions,
+                trailPositions,
                 static _ => 40,
                 static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f),
                 trailEffect)
@@ -764,11 +768,11 @@ public sealed class CursedSpiritNPC : ModNPC {
             44
         );
 
-        var originOffset = spiritType switch
+        var maskOrigin = spiritType switch
         {
-            SpiritType.Splitter => Vector2.UnitY * -2,
-            SpiritType.Exploder => Vector2.UnitY * 3,
-            _ => Vector2.Zero,
+            SpiritType.Splitter => new Vector2(26f, 18f),
+            SpiritType.Exploder => new Vector2(28f, 26f),
+            _ => new Vector2(28, 26),
         };
 
         if(spiritType != SpiritType.Splitter || _data.Splitter.Depth == 0) {
@@ -778,7 +782,7 @@ public sealed class CursedSpiritNPC : ModNPC {
                 maskSource,
                 drawColor,
                 maskRotation,
-                maskSource.Size() / 2f + originOffset,
+                maskOrigin,
                 NPC.scale * new Vector2(1f - _lookOffset * 0.175f, 1) * maskScale,
                 NPC.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
             );

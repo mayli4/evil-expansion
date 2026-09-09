@@ -12,7 +12,6 @@ using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.Shaders;
-using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Filters = Terraria.Graphics.Effects.Filters;
@@ -106,7 +105,7 @@ public sealed class CursehoundNPC : ModNPC {
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/CursehoundGore" + j);
     }
 
-    public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.1f : 0;
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) => Main.hardMode && spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.1f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>(), 1, 1, 2));
@@ -212,8 +211,8 @@ public sealed class CursehoundNPC : ModNPC {
 
         float verticalDifference = NPC.Center.Y - Target.Center.Y;
         float dynamicJumpVelocity = MathHelper.Clamp(
-            -(baseJumpPower + Math.Max(0, verticalDifference) * jumpScaleFactor), 
-            -maxJumpPower, 
+            -(baseJumpPower + Math.Max(0, verticalDifference) * jumpScaleFactor),
+            -maxJumpPower,
             -baseJumpPower);
 
         if(NPC.velocity.Y == 0 && _timeGrounded >= GROUND_TIME_FOR_ATTACK && RoarAttackCooldown <= 0 && broadLineOfSight && distanceToTarget >= roarAttackMinRange && distanceToTarget <= roarAttackMaxRange) {
@@ -252,13 +251,13 @@ public sealed class CursehoundNPC : ModNPC {
             NPC.velocity.X *= 0.85f;
         }
 
-        if (NPC.collideX && NPC.velocity.Y == 0) {
+        if(NPC.collideX && NPC.velocity.Y == 0) {
             NPC.velocity.Y = dynamicJumpVelocity;
             _timeGrounded = 0;
             NPC.noTileCollide = true;
         }
 
-        if (NPC.velocity.Y == 0 && Target.Top.Y < NPC.Bottom.Y && Helper.HoleAtPosition(NPC, NPC.Center.X + NPC.velocity.X)) {
+        if(NPC.velocity.Y == 0 && Target.Top.Y < NPC.Bottom.Y && Helper.HoleAtPosition(NPC, NPC.Center.X + NPC.velocity.X)) {
             NPC.velocity.Y = dynamicJumpVelocity;
             _timeGrounded = 0;
             NPC.noTileCollide = true;
@@ -461,7 +460,7 @@ public sealed class CursehoundNPC : ModNPC {
 
         LookAtTarget();
     }
- 
+
     private void LookAtTarget() {
         NPC.direction = (Target.Center.X < NPC.Center.X) ? -1 : 1;
         NPC.spriteDirection = NPC.direction;

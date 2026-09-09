@@ -27,12 +27,13 @@ internal sealed class CoarsebrickwallItem : ModItem {
         Item.width = 16;
         Item.height = 16;
         Item.value = 5;
-
         Item.useStyle = ItemUseStyleID.Swing;
         Item.useTurn = true;
         Item.autoReuse = true;
         Item.useAnimation = 15;
         Item.useTime = 10;
+
+        Item.ResearchUnlockCount = 400;
     }
     public override void AddRecipes() {
         CreateRecipe(4)

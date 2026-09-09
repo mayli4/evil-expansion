@@ -15,6 +15,7 @@ using Terraria.GameContent.Shaders;
 using Terraria.Graphics.Effects;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Filters = Terraria.Graphics.Effects.Filters;
 
 namespace EvilExpansionMod.Content.Corruption;
 
@@ -195,6 +196,8 @@ public sealed class CursehoundNPC : ModNPC {
                 HandleRoarDowntime();
                 break;
         }
+
+        CurrentState = State.Roaring;
     }
 
     private void Movement(float distanceToTarget, float distanceToPlayerX, bool broadLineOfSight) {
@@ -359,10 +362,9 @@ public sealed class CursehoundNPC : ModNPC {
                 1800,
                 120);
         }
-
-        var waterShaderData = Terraria.Graphics.Effects.Filters.Scene["WaterDistortion"].GetShader() as WaterShaderData;
-        if(Timer is > 30 and < 90 && Timer % 10 == 0) {
-            var searchRadiusTiles = 40;
+        
+        if (Timer == 20) {
+            int searchRadiusTiles = 40;
             List<Point> lavaTiles = new();
 
             int startTileX = (int)((Target.Center.X - searchRadiusTiles * 16) / 16f);
@@ -370,24 +372,38 @@ public sealed class CursehoundNPC : ModNPC {
             int startTileY = (int)((Target.Bottom.Y + 10) / 16f);
             int endTileY = (int)((Target.Bottom.Y + 10 + searchRadiusTiles / 2 * 16) / 16f);
 
-            for(int x = startTileX; x < endTileX; x++) {
-                for(int y = startTileY; y < endTileY; y++) {
-                    if(WorldGen.InWorld(x, y)) {
-                        var tile = Main.tile[x, y];
-                        if(tile is { LiquidType: LiquidID.Lava, LiquidAmount: > 0 }) {
+            for (int x = startTileX; x < endTileX; x++) {
+                for (int y = startTileY; y < endTileY; y++) {
+                    if (WorldGen.InWorld(x, y)) {
+                        Tile tile = Main.tile[x, y];
+                        if (tile is { LiquidType: LiquidID.Lava, LiquidAmount: > 0 } && Main.tile[x, y - 1].LiquidAmount == 0 && !Main.tile[x, y - 1].HasTile) {
                             lavaTiles.Add(new Point(x, y));
                         }
                     }
                 }
             }
 
-            if(lavaTiles.Count > 0) {
-                var randomLavaTile = lavaTiles[Main.rand.Next(lavaTiles.Count)];
-                var spawnPos = randomLavaTile.ToWorldCoordinates();
-                var velocity = new Vector2(0, Helper.InitialVelocityRequiredToHitPosition(spawnPos, Target.position - new Vector2(0, 40), 0.4f, 16f).Y);
-                Projectile.NewProjectile(NPC.GetSource_FromAI(), spawnPos, velocity, ModContent.ProjectileType<SpiritFireball>(), NPC.damage / 2, 0f, Main.myPlayer);
+            int totalTelegraphs = 4;
+            int telegraphDuration = 45;
 
-                waterShaderData?.QueueRipple(spawnPos, 30f, RippleShape.Circle, MathHelper.PiOver4);
+            for (int i = 0; i < totalTelegraphs && lavaTiles.Count > 0; i++) {
+                int index = Main.rand.Next(lavaTiles.Count);
+                Point lavaTile = lavaTiles[index];
+                lavaTiles.RemoveAt(index);
+
+                Vector2 spawnPos = lavaTile.ToWorldCoordinates();
+
+                Projectile.NewProjectile(
+                    NPC.GetSource_FromAI(),
+                    spawnPos,
+                    Vector2.Zero,
+                    ModContent.ProjectileType<LavaTelegraphProjectile>(),
+                    0,
+                    0f,
+                    Main.myPlayer,
+                    ai0: telegraphDuration,
+                    ai2: NPC.damage / 2
+                );
             }
         }
 
@@ -575,5 +591,102 @@ public sealed class CursehoundNPC : ModNPC {
                 NPC.frame.Y = (int)NPC.frameCounter * frameHeight;
                 break;
         }
+    }
+}
+
+internal sealed class LavaTelegraphProjectile : ModProjectile {
+    public override string Texture => Assets.Images.Corruption.NPCs.Cursehound.LavaTelegraph.KEY;
+
+    public ref float MaxTime => ref Projectile.ai[0];
+    public ref float Damage => ref Projectile.ai[1];
+
+    private bool hasSpawnedProjectile;
+
+    public override void SetDefaults() {
+        Projectile.width = 16;
+        Projectile.height = 16;
+        Projectile.tileCollide = false;
+        Projectile.ignoreWater = true;
+        Projectile.hostile = false;
+        Projectile.friendly = false;
+        Projectile.penetrate = -1;
+        Projectile.timeLeft = 60;
+    }
+
+    public override void AI() {
+        if (MaxTime == 0) {
+            MaxTime = Projectile.timeLeft;
+        }
+
+        float progress = 1f - (Projectile.timeLeft / MaxTime);
+        float lightAlpha = MathHelper.Clamp((float)Math.Sin(progress * MathHelper.Pi), 0f, 1f);
+        Lighting.AddLight(Projectile.Center, new Color(214, 237, 5).ToVector3() * lightAlpha * 0.8f);
+
+        float spawnThreshold = 0.7f;
+        if (progress >= spawnThreshold && !hasSpawnedProjectile) {
+            hasSpawnedProjectile = true;
+
+            if (Main.myPlayer == Projectile.owner) {
+                Vector2 upwardVelocity = new Vector2(Main.rand.NextFloat(-1.5f, 1.5f), Main.rand.NextFloat(-16f, -12f));
+
+                Projectile.NewProjectile(
+                    Projectile.GetSource_FromAI(),
+                    Projectile.Bottom,
+                    upwardVelocity,
+                    ModContent.ProjectileType<SpiritFireball>(),
+                    (int)Damage,
+                    0f,
+                    Projectile.owner
+                );
+            }
+
+            var waterShaderData = Filters.Scene["WaterDistortion"]?.GetShader() as WaterShaderData;
+            waterShaderData?.QueueRipple(Projectile.Bottom, 10f, RippleShape.Circle, MathHelper.PiOver4);
+        }
+    }
+
+    public override bool PreDraw(ref Color lightColor) {
+        var texture = ModContent.Request<Texture2D>(Texture).Value;
+
+        float progress = 1f - (Projectile.timeLeft / MaxTime);
+        float maxTelegraphHeight = 150f;
+
+        float growthProgress = MathHelper.Clamp(progress / 0.3f, 0f, 1f);
+        float currentHeight = MathHelper.SmoothStep(0f, maxTelegraphHeight, growthProgress);
+
+        float scaleX = progress < 0.3f ? MathHelper.Lerp(0.2f, 1.3f, progress / 0.3f) :
+            MathHelper.Lerp(1.3f, 0.8f, (progress - 0.3f) / 0.7f);
+
+        float alpha;
+        if (progress < 0.2f) {
+            alpha = progress / 0.2f;
+        }
+        else if (progress > 0.6f) {
+            alpha = 1f - ((progress - 0.6f) / 0.4f);
+        }
+        else {
+            alpha = 1f;
+        }
+
+        Vector2 drawPos = Projectile.Bottom - Main.screenPosition;
+        Vector2 origin = new Vector2(texture.Width / 2f, texture.Height);
+
+        Color drawColor = new Color(214, 237, 5) * alpha * 0.85f;
+        drawColor.A = 0;
+
+        Vector2 scale = new Vector2(scaleX, currentHeight / texture.Height);
+
+        Main.EntitySpriteDraw(
+            texture,
+            drawPos,
+            null,
+            drawColor,
+            0f,
+            origin,
+            scale,
+            SpriteEffects.None
+        );
+
+        return false;
     }
 }

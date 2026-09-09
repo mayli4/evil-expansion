@@ -499,6 +499,7 @@ Mods: {
 			MarrowEyeChainProjectile.DisplayName: Marrow Eye Chain Projectile
 			MarrowEyeRingProjectile.DisplayName: Marrow Eye Ring Projectile
 			FriendlyCultistPortal.DisplayName: Friendly Cultist Portal
+			LavaTelegraphProjectile.DisplayName: Lava Telegraph Projectile
 		}
 
 		Biomes: {

@@ -606,7 +606,9 @@ public sealed class CursedSpiritNPC : ModNPC {
         var glowScale = 1f;
         var maskScale = 1f;
 
-        switch(SpiritType) {
+        var spiritType = NPC.IsABestiaryIconDummy ? (SpiritType)((int)(Main.GameUpdateCount / 60f) % 3) : SpiritType;
+
+        switch(spiritType) {
             case SpiritType.Splitter:
                 glowScale /= 1f + _data.Splitter.Depth;
                 break;
@@ -637,6 +639,10 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         spriteBatch.EndBegin(initialSnapshot);
 
+        if(NPC.IsABestiaryIconDummy) {
+
+        }
+
         var trailEffect = Assets.Shaders.Pixel.CursedSpiritFire.Asset.Value;
         Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
             .SetTexture(0, Assets.Images.Sample.Pebbles.Asset.Value)
@@ -663,8 +669,11 @@ public sealed class CursedSpiritNPC : ModNPC {
             .End();
 
         var maskShake = 0f;
+
         var maskRotation = NPC.direction == 1 ? NPC.rotation : NPC.rotation + MathF.PI;
-        switch(SpiritType) {
+        if(NPC.IsABestiaryIconDummy) maskRotation = 0f;
+
+        switch(spiritType) {
             case SpiritType.Ram:
                 if(State<RamState>() == RamState.Charge) maskShake += Timer * 0.04f;
                 break;
@@ -684,7 +693,7 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         var maskPositionOffset = _lookDirection * _lookOffset * 10f + Main.rand.NextVector2Unit() * maskShake;
 
-        if(SpiritType == SpiritType.Ram && State<RamState>() == RamState.Dash) {
+        if(spiritType == SpiritType.Ram && State<RamState>() == RamState.Dash) {
             var starTex = TextureAssets.Extra[ExtrasID.FallingStar].Value;
             float dashRotation = _data.Ram.DashDirection.ToRotation() + MathHelper.PiOver2;
 
@@ -737,15 +746,16 @@ public sealed class CursedSpiritNPC : ModNPC {
         }
 
         var maskTexture = TextureAssets.Npc[Type].Value;
+
         var maskSource = new Rectangle(
-            SpiritType switch
+            spiritType switch
             {
                 SpiritType.Splitter => 0,
                 SpiritType.Exploder => 48,
                 _ => 104,
             },
             0,
-            SpiritType switch
+            spiritType switch
             {
                 SpiritType.Splitter => 48,
                 SpiritType.Exploder => 54,
@@ -754,14 +764,14 @@ public sealed class CursedSpiritNPC : ModNPC {
             44
         );
 
-        var originOffset = SpiritType switch
+        var originOffset = spiritType switch
         {
             SpiritType.Splitter => Vector2.UnitY * -2,
             SpiritType.Exploder => Vector2.UnitY * 3,
             _ => Vector2.Zero,
         };
 
-        if(SpiritType != SpiritType.Splitter || _data.Splitter.Depth == 0) {
+        if(spiritType != SpiritType.Splitter || _data.Splitter.Depth == 0) {
             Main.EntitySpriteDraw(
                 maskTexture,
                 NPC.Center - screenPos + maskPositionOffset,
@@ -774,7 +784,7 @@ public sealed class CursedSpiritNPC : ModNPC {
             );
         }
 
-        switch(SpiritType) {
+        switch(spiritType) {
             case SpiritType.Splitter:
             case SpiritType.Ram:
                 spriteBatch.EndBegin(new() { BlendState = BlendState.Additive });

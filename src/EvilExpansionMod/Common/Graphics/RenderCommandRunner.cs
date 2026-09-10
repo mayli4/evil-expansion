@@ -274,7 +274,7 @@ internal class RenderCommandRunner : ILoadable {
         SurfaceFormat.Color,
         DepthFormat.None,
         0,
-        RenderTargetUsage.PreserveContents
+        RenderTargetUsage.DiscardContents
     );
 
     private class RenderState {

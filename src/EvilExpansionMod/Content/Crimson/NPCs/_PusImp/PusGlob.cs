@@ -156,11 +156,14 @@ public sealed class PusGlob : ModProjectile {
                 trailEffect,
                 ("uTime", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
                 ("uStepY", 0.15f),
-                ("uScale", 0.5f))
+                ("uColor1", color),
+                ("uColor2", color),
+                ("uStepColor", 0.05f),
+                ("uScale", 0.65f))
             .DrawTrail(
                 _trailPositions,
-                static _ => 15f,
-                _ => color,
+                15f,
+                Color.White,
                 trailEffect)
             .DrawTexture(new()
             {

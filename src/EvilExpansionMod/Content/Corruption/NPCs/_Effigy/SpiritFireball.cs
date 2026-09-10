@@ -113,6 +113,9 @@ public class SpiritFireball : ModProjectile {
                 trailEffect,
                 ("uTime", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
                 ("uStepY", 0.25f),
+                ("uColor1", GhostColor1),
+                ("uColor2", GhostColor2),
+                ("uStepColor", 0.05f),
                 ("uScale", 0.25f))
             .DrawTrail(
                 _trailPositions,

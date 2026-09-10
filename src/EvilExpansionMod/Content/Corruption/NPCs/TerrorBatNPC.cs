@@ -544,13 +544,15 @@ public class TerrorBatSpit : ModProjectile {
                 cursedFireEffect,
                 ("uTime", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 3.432f),
                 ("uStepY", 0.25f),
-                ("uScale", 0.8f))
+                ("uColor1", GhostColor1),
+                ("uColor2", GhostColor2),
+                ("uStepColor", 0.05f),
+                ("uScale", 0.65f))
             .DrawTrail(
                 positionCache.Positions,
-                _ => TRAIL_SIZE * Scale,
-                static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f),
-                cursedFireEffect
-            )
+                TRAIL_SIZE * Scale,
+                Color.White,
+                cursedFireEffect)
             .ApplyOutline(GhostColor1)
             .End();
 

@@ -54,6 +54,8 @@ public sealed class CursehoundNPC : ModNPC {
     private const int MACE_DURATION = (int)(2.5f * 60);
     private const int MACE_RETRACT_DURATION = 1 * 60;
 
+    static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
+
     public override string Texture => Assets.Images.Corruption.NPCs.Cursehound.CursehoundNPC.KEY;
 
     public Player Target => Main.player[NPC.target];
@@ -84,7 +86,7 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = false;
-        NPC.knockBackResist = 0.01f;
+        NPC.knockBackResist = 0f;
         NPC.friendly = false;
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath2;
@@ -99,7 +101,11 @@ public sealed class CursehoundNPC : ModNPC {
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<CursehoundBannerItem>();
     }
-
+    public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
+        if(Main.expertMode) {
+            NPC.defense = 28;
+        }
+    }
     public override void Load() {
         for(int j = 1; j <= 8; j++)
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/CursehoundGore" + j);
@@ -196,7 +202,7 @@ public sealed class CursehoundNPC : ModNPC {
                 break;
         }
 
-        CurrentState = State.Roaring;
+        //CurrentState = State.Roaring;
     }
 
     private void Movement(float distanceToTarget, float distanceToPlayerX, bool broadLineOfSight) {
@@ -234,8 +240,8 @@ public sealed class CursehoundNPC : ModNPC {
         bool shouldRun = distanceToTarget > runThreshold;
         CurrentState = shouldRun ? State.Running : State.Walking;
 
-        float maxSpeed = shouldRun ? 8f : 4f;
-        float acceleration = shouldRun ? 0.08f : 0.04f;
+        float maxSpeed = shouldRun ? (int)(8f * (Math.Sqrt(DifficultyScaler))) : 4f;
+        float acceleration = shouldRun ? (int)(0.08f * (Math.Sqrt(DifficultyScaler))) : 0.04f;
 
         if(Math.Abs(NPC.velocity.X) > maxSpeed && NPC.velocity.Y != 0) {
             maxSpeed = MathHelper.Lerp(Math.Abs(NPC.velocity.X), maxSpeed, 0.1f);
@@ -368,7 +374,7 @@ public sealed class CursehoundNPC : ModNPC {
 
             int startTileX = (int)((Target.Center.X - searchRadiusTiles * 16) / 16f);
             int endTileX = (int)((Target.Center.X + searchRadiusTiles * 16) / 16f);
-            int startTileY = (int)((Target.Bottom.Y + 10) / 16f);
+            int startTileY = (int)((Target.Bottom.Y - 1) / 16f);
             int endTileY = (int)((Target.Bottom.Y + 10 + searchRadiusTiles / 2 * 16) / 16f);
 
             for (int x = startTileX; x < endTileX; x++) {
@@ -382,7 +388,7 @@ public sealed class CursehoundNPC : ModNPC {
                 }
             }
 
-            int totalTelegraphs = 4;
+            int totalTelegraphs = (int) (4 * (Math.Sqrt(DifficultyScaler)));
             int telegraphDuration = 45;
 
             for (int i = 0; i < totalTelegraphs && lavaTiles.Count > 0; i++) {
@@ -407,8 +413,8 @@ public sealed class CursehoundNPC : ModNPC {
         }
 
         if(Timer is > 40 and < ROAR_DURATION - 30 && Timer % 20 == 0) {
-            int numberOfStalactites = Main.rand.Next(2, 4);
-            float spawnAreaWidth = 300f;
+            int numberOfStalactites = (int) (Main.rand.Next(2, 4) * (Math.Sqrt (DifficultyScaler)));
+            float spawnAreaWidth = (int) (450f * (Math.Sqrt(DifficultyScaler)));
 
             for(int i = 0; i < numberOfStalactites; i++) {
                 float spawnX = Target.Center.X + Main.rand.NextFloat(-spawnAreaWidth / 2f, spawnAreaWidth / 2f);

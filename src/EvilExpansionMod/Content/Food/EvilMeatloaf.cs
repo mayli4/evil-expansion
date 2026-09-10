@@ -41,11 +41,11 @@ public class EvilMeatloaf : ModItem {
     public override bool? UseItem(Terraria.Player player) {
         int Bufftime = 6 * 60 * 60;
         // Write your custom code here
-        player.AddBuff(ModContent.BuffType<EvilMeatloafDebuff>(), Bufftime);
         player.AddBuff(BuffID.Wrath, Bufftime);
         player.AddBuff(BuffID.Rage, Bufftime);
         player.AddBuff(BuffID.Thorns, Bufftime);
-        player.AddBuff(BuffID.Heartreach, Bufftime); // Example: Give player a buff
+        player.AddBuff(BuffID.Heartreach, Bufftime);
+        player.AddBuff(ModContent.BuffType<EvilMeatloafDebuff>(), Bufftime);
         return true; // Return true if the item did something
     }
 }

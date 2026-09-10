@@ -115,7 +115,7 @@ Mods: {
 				DisplayName: Stinkfly
 				Tooltip:
 					'''
-					Feels like it would make a tasty meal... if only you could extract the meat somehow...
+					Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
 					'Used in perfume, for some reason!'
 					'''
 			}
@@ -248,13 +248,13 @@ Mods: {
 				Tooltip:
 					'''
 					It's volatile
-					Feels like it would make a tasty meal... if only you could extract the meat somehow...
+					Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
 					'''
 			}
 
 			LavaLizardItem: {
 				DisplayName: Lava Lizard
-				Tooltip: Feels like it would make a tasty meal... if only you could extract the meat somehow...
+				Tooltip: Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
 			}
 
 			LanternBatBannerItem: {
@@ -311,7 +311,7 @@ Mods: {
 				Tooltip:
 					'''
 					It's volatile
-					Feels like it would make a tasty meal... if only you could extract the meat somehow...
+					Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
 					'''
 			}
 
@@ -374,7 +374,7 @@ Mods: {
 
 			EaterOfSoilItem: {
 				DisplayName: Eater of Soil
-				Tooltip: Feels like it would make a tasty meal... if only you could extract the meat somehow...
+				Tooltip: Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
 			}
 
 			EvilMeatloaf: {
@@ -388,22 +388,22 @@ Mods: {
 			}
 
 			CoarseBrickItem: {
-				DisplayName: Coarse Brick Item
+				DisplayName: Coarse Brick
 				Tooltip: ""
 			}
 
 			MatteBrickItem: {
-				DisplayName: Matte Brick Item
+				DisplayName: Matte Brick
 				Tooltip: ""
 			}
 
 			CoarsebrickwallItem: {
-				DisplayName: Coarsebrickwall Item
+				DisplayName: Coarse Brick Wall
 				Tooltip: ""
 			}
 
 			MattebrickwallItem: {
-				DisplayName: Mattebrickwall Item
+				DisplayName: Matte Brick Wall
 				Tooltip: ""
 			}
 		}
@@ -585,6 +585,11 @@ Mods: {
 					Increases damage by 50%
 					Increases attack speed by 75%
 					'''
+			}
+
+			EvilMeatloafDebuff: {
+				DisplayName: Meatloaf Poisoning
+				Description: Losing life... ever so slowly...
 			}
 		}
 

@@ -141,6 +141,8 @@ public class LanternBatNPC : ModNPC {
                     Vector2 dashTarget = Target.Center + Target.velocity * 0.5f - Vector2.UnitY * 80;
                     storedDashDirection = NPC.DirectionTo(dashTarget);
 
+                    NPC.spriteDirection = NPC.direction = storedDashDirection.X > 0 ? 1 : -1;
+
                     CurrentState = State.DashTelegraph;
                 }
 

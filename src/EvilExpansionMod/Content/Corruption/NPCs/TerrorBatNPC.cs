@@ -63,6 +63,13 @@ public class TerrorBatNPC : ModNPC {
     private int _currentSleepDustIndex;
 
     public override void SetStaticDefaults() {
+        var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
+        {
+            Position = new Vector2(0f, 0f),
+            PortraitPositionXOverride = 0f,
+            PortraitPositionYOverride = -10f,
+        };
+        NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
         Main.npcFrameCount[Type] = 10;
     }
 
@@ -97,7 +104,6 @@ public class TerrorBatNPC : ModNPC {
 
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
-            BestiaryDatabaseNPCsPopulator.CommonTags.SpawnConditions.Biomes.Surface,
             new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.TerrorBatNPCBestiary.KEY),
         });
     }
@@ -353,7 +359,7 @@ public class TerrorBatNPC : ModNPC {
                 NPC.Center,
                 shootDirection * 8f,
                 ModContent.ProjectileType<TerrorBatSpit>(),
-                (int) (NPC.damage * 0.125f / difficultyScaler),
+                (int)(NPC.damage * 0.125f / difficultyScaler),
                 //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! To compensate, it is divided by 8 instead of 4.
                 0.5f,
                 Main.myPlayer
@@ -530,23 +536,23 @@ public class TerrorBatSpit : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var cursedFireEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
-        Graphics.BeginPixelated()
+        var cursedFireEffect = Assets.Shaders.Pixel.CursedSpiritFire.Asset.Value;
+        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
+            .SetTexture(0, Assets.Images.Sample.Pebbles.Asset.Value)
+            .SetTexture(1, Assets.Images.Sample.Noise2.Asset.Value)
             .SetEffectParams(
                 cursedFireEffect,
-                ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 3.432f),
-                ("mat", Graphics.WorldTransformMatrix),
-                ("stepY", 0.25f),
-                ("scale", 0.8f),
-                ("texture1", Assets.Images.Sample.Pebbles.Asset.Value),
-                ("texture2", Assets.Images.Sample.Noise2.Asset.Value)
-            )
+                ("uTime", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 3.432f),
+                ("uStepY", 0.25f),
+                ("uColor1", GhostColor1),
+                ("uColor2", GhostColor2),
+                ("uStepColor", 0.05f),
+                ("uScale", 0.65f))
             .DrawTrail(
                 positionCache.Positions,
-                _ => TRAIL_SIZE * Scale,
-                static t => Color.Lerp(GhostColor1, GhostColor2, t + 0.7f),
-                cursedFireEffect
-            )
+                TRAIL_SIZE * Scale,
+                Color.White,
+                cursedFireEffect)
             .ApplyOutline(GhostColor1)
             .End();
 

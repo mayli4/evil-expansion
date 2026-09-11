@@ -1,6 +1,6 @@
 using EvilExpansionMod.Common.Graphics;
-using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Content.Dusts;
+using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -21,8 +22,8 @@ public sealed class PusGlob : ModProjectile {
     public ref float SpawnedByGrub => ref Projectile.ai[1];
 
     public override void SetDefaults() {
-        Projectile.width = 16;
-        Projectile.height = 16;
+        Projectile.width = 12;
+        Projectile.height = 12;
         Projectile.aiStyle = -1;
         Projectile.friendly = false;
         Projectile.hostile = true;
@@ -31,6 +32,13 @@ public sealed class PusGlob : ModProjectile {
         Projectile.ignoreWater = false;
         Projectile.timeLeft = 1180;
         Projectile.alpha = 0;
+    }
+
+    public override void OnSpawn(IEntitySource source) {
+        Projectile.scale = Main.rand.NextFloat(1f, Projectile.ai[2]);
+        Projectile.Resize((int)(Projectile.width * Projectile.scale), (int)(Projectile.height * Projectile.scale));
+
+        Projectile.netUpdate = true;
     }
 
     public override void AI() {
@@ -43,7 +51,7 @@ public sealed class PusGlob : ModProjectile {
             Projectile.alpha = (int)MathHelper.Lerp(0, 255, (30f - Projectile.timeLeft) / 30f);
         }
 
-        _trailPositions ??= [.. Enumerable.Repeat(Projectile.Center, 17)];
+        _trailPositions ??= [.. Enumerable.Repeat(Projectile.Center, Main.rand.Next(9, 13))];
         var i = _trailPositions.Length - 1;
         while(i > 0) {
             _trailPositions[i] = _trailPositions[i - 1];
@@ -58,7 +66,7 @@ public sealed class PusGlob : ModProjectile {
     }
     public override void OnKill(int timeLeft) {
         if(Projectile.lavaWet) {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.LiquidsWaterLava with { PitchVariance = 0.5f }, Projectile.position);
+            SoundEngine.PlaySound(SoundID.LiquidsWaterLava with { PitchVariance = 0.5f }, Projectile.position);
             for(int i = 0; i < 4; i++) {
                 var dustPos = Projectile.position + Main.rand.NextVector2Circular(10f, 60f) + new Vector2(0f, -5f);
                 var dustVelocity = -Vector2.UnitY * Main.rand.NextFloat(30f, 600f)
@@ -101,8 +109,8 @@ public sealed class PusGlob : ModProjectile {
                 );
             }
         }
-        else { 
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { Volume = 0.4f, Pitch = Main.rand.NextFloat(-0.8f, 0.1f) }, Projectile.position);
+        else {
+            SoundEngine.PlaySound(SoundID.NPCHit18 with { Volume = 0.4f, Pitch = Main.rand.NextFloat(-0.8f, 0.1f) }, Projectile.position);
         }
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
@@ -144,34 +152,36 @@ public sealed class PusGlob : ModProjectile {
     }
 
     public override bool PreDraw(ref Color lightColor) {
-        var trailEffect = Assets.Shaders.Trail.CursedSpiritFire.Asset.Value;
+        var trailEffect = Assets.Shaders.Pixel.CursedSpiritFire.Asset.Value;
 
         var color = new Color(98, 90, 40).MultiplyRGB(lightColor);
         var outlineColor = new Color(161, 131, 78).MultiplyRGB(lightColor);
 
+        var middleColor = Color.Lerp(color, Color.Black, 0.3f);
+
         Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
+            .SetTexture(0, Assets.Images.Sample.Noise2.Asset.Value)
+            .SetTexture(1, Assets.Images.Sample.Noise2.Asset.Value)
             .SetEffectParams(
                 trailEffect,
-                ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
-                ("mat", Graphics.WorldTransformMatrix),
-                ("stepY", 0.15f),
-                ("scale", 0.5f),
-                ("texture1", Assets.Images.Sample.Pebbles.Asset.Value),
-                ("texture2", Assets.Images.Sample.Pebbles.Asset.Value)
-            )
+                ("uTime", 0.0075f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
+                ("uStepY", 0.176f),
+                ("uColor1", middleColor),
+                ("uColor2", color),
+                ("uStepColor", 0.07f),
+                ("uScale", 0.5f))
             .DrawTrail(
                 _trailPositions,
-                static _ => 20f,
-                _ => color,
-                trailEffect
-            )
+                10f * Projectile.scale,
+                Color.White,
+                trailEffect)
             .DrawTexture(new()
             {
                 Texture = Assets.Images.Misc.Circle.Asset.Value,
                 Position = Projectile.Center,
                 Color = color,
                 Origin = 16f * Vector2.One,
-                Scale = Vector2.One * 0.5f,
+                Scale = Vector2.One * 0.185f * Projectile.scale,
             })
             .ApplyOutline(outlineColor)
             .End();

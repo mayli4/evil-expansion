@@ -1,7 +1,6 @@
 ﻿using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.Enums;
-using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
@@ -11,6 +10,7 @@ namespace EvilExpansionMod.Content.Crimson;
 
 public class CartilageBarItem : ModItem {
     public override string Texture => Assets.Images.Crimson.Items.CartilageBarItem.KEY;
+
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 25;
         ItemID.Sets.SortingPriorityMaterials[Item.type] = 59;
@@ -26,14 +26,16 @@ public class CartilageBarItem : ModItem {
 
         Item.rare = ItemRarityID.Orange;
     }
+
     public override void PostUpdate() {
         Lighting.AddLight(Item.Center, Color.Red.ToVector3() * 0.3f * Main.essScale);
     }
+
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient<CartilageOreItem>(3)
             .AddIngredient<PusClumpItem>()
-            .AddTile(TileID.Furnaces)
+            .AddTile(TileID.Hellforge)
             .Register();
     }
 }
@@ -53,7 +55,7 @@ internal sealed class CartilageBarTile : ModTile {
         TileObjectData.newTile.LavaDeath = false;
         TileObjectData.newTile.LavaPlacement = LiquidPlacement.Allowed;
         TileObjectData.addTile(Type);
-        
+
         DustType = DustID.IchorTorch;
 
         AddMapEntry(new Color(203, 10, 26), Language.GetText("MapObject.MetalBar"));

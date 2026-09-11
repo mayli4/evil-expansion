@@ -22,7 +22,7 @@ public class Lime : ModItem {
     public override void SetDefaults() {
         Item.width = 26;
         Item.height = 32;
-        Item.rare = ItemRarityID.Blue;
+        Item.rare = ItemRarityID.Green;
         Item.maxStack = Item.CommonMaxStack;
         Item.value = Item.sellPrice(0, 0, 5, 0);
         Item.noUseGraphic = false;
@@ -33,6 +33,6 @@ public class Lime : ModItem {
         Item.autoReuse = false;
         Item.UseSound = SoundID.Item2;
         Item.buffTime = 5 * 60 * 60;
-        Item.buffType = BuffID.WellFed;
+        Item.buffType = BuffID.WellFed2;
     }
 }

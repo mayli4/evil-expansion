@@ -1,10 +1,7 @@
 using EvilExpansionMod.Content.Biomes;
-using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Dusts;
-using EvilExpansionMod.Utilities;
+using EvilExpansionMod.Content.Items.Food;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
@@ -56,6 +53,11 @@ public sealed class PusSlugCritter : ModNPC {
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.6f : 0f;
     }
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.PusSlugCritterBestiary.KEY),
+        });
+    }
     public override void OnKill() {
         var amount = Main.rand.Next(3, 6) * difficultyScaler;
 
@@ -70,7 +72,8 @@ public sealed class PusSlugCritter : ModNPC {
                 ModContent.ProjectileType<PusGlob>(),
                 50 / (int)difficultyScaler,
                 0.5f,
-                Main.myPlayer
+                Main.myPlayer,
+                ai2: 1.1f
             );
         }
         for(int i = 0; i < Main.rand.NextFloat(1f, 3f); i++) {
@@ -107,5 +110,25 @@ public class PusSlugItem : ModItem {
         Item.bait = 15;
         Item.makeNPC = (short)ModContent.NPCType<PusSlugCritter>();
         Item.rare = ItemRarityID.Green;
+        ItemID.Sets.ExtractinatorMode[Item.type] = Item.type;
+    }
+
+    public override void ExtractinatorUse(int extractinatorBlockType, ref int resultType, ref int resultStack) {
+        // Pick a random item type to reward
+        if(Main.rand.NextBool(5)) {
+            // 20% chance to yield Meatloaf
+            resultType = ModContent.ItemType<EvilMeatloaf>();
+            resultStack = 1;
+        }
+        else {
+            if(Main.rand.NextBool(2)) {
+                resultType = ModContent.ItemType<PusClumpItem>();
+                resultStack = Main.rand.Next(1, 6);
+            }
+            else {
+                resultType = ItemID.Vertebrae;
+                resultStack = Main.rand.Next(1, 6);
+            }
+        }
     }
 }

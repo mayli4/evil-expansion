@@ -1,4 +1,6 @@
 ﻿using Terraria.ID;
+using Terraria;
+using Terraria.GameContent.Creative;
 using Terraria.Localization;
 using Terraria.ModLoader;
 
@@ -19,6 +21,7 @@ public class SlippedWhipItem : ModItem {
         Item.DamageType = DamageClass.SummonMeleeSpeed;
         Item.damage = 43;
         Item.knockBack = 2;
+        Item.value = Item.sellPrice(gold: 1, silver: 40);
         Item.rare = ItemRarityID.LightRed;
 
         Item.shoot = ModContent.ProjectileType<SlippedWhipProjectile>();
@@ -38,10 +41,10 @@ public class SlippedWhipItem : ModItem {
 
     public override void AddRecipes() {
         CreateRecipe()
-            .AddIngredient(ModContent.ItemType<CartilageBarItem>(), 18)
+            .AddIngredient(ModContent.ItemType<CartilageBarItem>(), 12)
             .AddIngredient(ModContent.ItemType<PusClumpItem>(), 8)
-            .AddIngredient(ModContent.ItemType<BoneSlicesItem>(), 4)
-            .AddTile(TileID.Anvils)
+            .AddIngredient(ModContent.ItemType<BoneSlicesItem>(), 14)
+            .AddTile(TileID.DemonAltar)
             .Register();
     }
 }

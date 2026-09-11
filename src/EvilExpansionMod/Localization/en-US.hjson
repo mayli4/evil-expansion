@@ -113,7 +113,11 @@ Mods: {
 
 			StinkflyItem: {
 				DisplayName: Stinkfly
-				Tooltip: Used in perfume for some reason...
+				Tooltip:
+					'''
+					Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
+					'Used in perfume, for some reason!'
+					'''
 			}
 
 			ThoughtfulPendantItem: {
@@ -241,12 +245,16 @@ Mods: {
 
 			PusSlugItem: {
 				DisplayName: Pus Slug
-				Tooltip: It's volatile...
+				Tooltip:
+					'''
+					It's volatile
+					Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
+					'''
 			}
 
 			LavaLizardItem: {
 				DisplayName: Lava Lizard
-				Tooltip: ""
+				Tooltip: Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
 			}
 
 			LanternBatBannerItem: {
@@ -300,7 +308,11 @@ Mods: {
 
 			CursedCanaryItem: {
 				DisplayName: Cursed Canary
-				Tooltip: It's volatile...
+				Tooltip:
+					'''
+					It's volatile
+					Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
+					'''
 			}
 
 			PolypBarItem: {
@@ -362,6 +374,36 @@ Mods: {
 
 			EaterOfSoilItem: {
 				DisplayName: Eater of Soil
+				Tooltip: Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
+			}
+
+			EvilMeatloaf: {
+				DisplayName: Meatloaf of Malice
+				Tooltip:
+					'''
+					Grants an assortment of powerful offensive and defensive buffs
+					Gives you food poisoning
+					'Oughh...'
+					'''
+			}
+
+			CoarseBrickItem: {
+				DisplayName: Coarse Brick
+				Tooltip: ""
+			}
+
+			MatteBrickItem: {
+				DisplayName: Matte Brick
+				Tooltip: ""
+			}
+
+			CoarsebrickwallItem: {
+				DisplayName: Coarse Brick Wall
+				Tooltip: ""
+			}
+
+			MattebrickwallItem: {
+				DisplayName: Matte Brick Wall
 				Tooltip: ""
 			}
 		}
@@ -456,6 +498,8 @@ Mods: {
 			GulpyYoyoChompProjectile.DisplayName: Gulpy Yoyo Chomp Projectile
 			MarrowEyeChainProjectile.DisplayName: Marrow Eye Chain Projectile
 			MarrowEyeRingProjectile.DisplayName: Marrow Eye Ring Projectile
+			FriendlyCultistPortal.DisplayName: Friendly Cultist Portal
+			LavaTelegraphProjectile.DisplayName: Lava Telegraph Projectile
 		}
 
 		Biomes: {
@@ -494,7 +538,7 @@ Mods: {
 		}
 
 		Bestiary: {
-			StinkFlyCritterBestiary: Flies that make themselves at home in the warm, nutrition-rich environment of the Crimson-infested underworld.
+			StinkflyCritterBestiary: Flies that make themselves at home in the warm, nutrition-rich environment of the Crimson-infested underworld.
 			PusSlugCritterBestiary: Slow and dumb, these slugs defend themselves by secreting acidic mucus... stay away!
 			CursedCanaryCritterBestiary: Lower concentrations of Imputed Flame can sometimes manifest as these docile critters. Cute, but mind the heat!
 			EaterOfSoilCritterBestiary: Newly birthed, these juvenile worms of the Corruption are far too small to pose a legitimate threat to anybody.
@@ -504,8 +548,8 @@ Mods: {
 			DevilOWarNPCBestiary: Marine life in the underworld??? This organism uses hot gases to float in the air, and a sharp stinger to feed off its prey!
 			EffigyNPCBestiary: Poor souls, overcome by the Corruption. Their twisted bodies now serve as cancerous hives, through which the darkness spreads further.
 			TerrorBatNPCBestiary: These beasts stalk the cave ceilings in droves... the last thing you want to happen is to have your clothes stained by their acidic spit!
-			ThoughtfulCultistNPCBesitary: Thirsting for power, these hell-born cultists have given themselves over to the Crimson entirely.
-			CultistEyeBestiary: Somehow, the Crimson's cultists have learnt to wield Cthulhu's minions as their own...
+			ThoughtfulCultistNPCBestiary: Thirsting for power, these cultists of the underworld have given themselves over to the Crimson entirely.
+			CultistEyeBestiary: Somehow, the Crimson's cultists have gained the ability to wield Cthulhu's minions as their own... these empowered Demon Eyes pursue their victims relentlessly.
 			LanternBatNPCBestiary: The lower caste of the Crimson occult have had their mind and bodies warped, forced to serve their masters as Lantern Bats.
 			MarrowEyeNPCBestiary: Failed attempts at creating artificial Crimson Altars have resulted in these grotesque amalgmations of energy-infused flesh.
 			PusImpNPCBestiary: An unholy mixture of Crimson bile and hell energy, these hollow imitations of hell's denizens only serve as extensions of the Crimson's will.
@@ -524,12 +568,12 @@ Mods: {
 			}
 
 			CrytapeteBuff: {
-				DisplayName: Crytapete Buff
-				Description: It wont stop crying...
+				DisplayName: Crytapete
+				Description: The crytapete will try its best to protect you
 			}
 
 			RibcagedNPCDebuff: {
-				DisplayName: Ribcaged N P C Debuff
+				DisplayName: Ribcaged
 				Description: Mods.EvilExpansionMod.Buffs.RibcagedNPCDebuff.Description
 			}
 
@@ -541,6 +585,11 @@ Mods: {
 					Increases damage by 50%
 					Increases attack speed by 75%
 					'''
+			}
+
+			EvilMeatloafDebuff: {
+				DisplayName: Meatloaf Poisoning
+				Description: Losing life... ever so slowly...
 			}
 		}
 

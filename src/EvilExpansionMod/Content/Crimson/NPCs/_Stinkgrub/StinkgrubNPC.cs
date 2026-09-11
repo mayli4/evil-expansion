@@ -5,6 +5,7 @@ using System;
 using System.Runtime.CompilerServices;
 using Terraria;
 using Terraria.DataStructures;
+using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -30,6 +31,7 @@ public sealed class StinkgrubNPC : ModNPC {
     private ref float StateTimer => ref NPC.ai[1];
     private ref float GasTimer => ref NPC.ai[2];
     private ref float PusBottleNPCID => ref NPC.ai[3];
+    private float _flySpawnTimer;
 
     public bool IsPusCarrier => PusBottleNPCID >= 0;
 
@@ -39,6 +41,13 @@ public sealed class StinkgrubNPC : ModNPC {
     private const int gas_interval = 60;
 
     public override void SetStaticDefaults() {
+        var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
+        {
+            Position = new Vector2(30f, 0f),
+            PortraitPositionXOverride = 0f,
+            PortraitPositionYOverride = 0f
+        };
+        NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
         Main.npcFrameCount[Type] = 12;
     }
 
@@ -46,7 +55,7 @@ public sealed class StinkgrubNPC : ModNPC {
         NPC.width = 32;
         NPC.height = 20;
         NPC.lifeMax = 780;
-        NPC.value = 100f;
+        NPC.value = Item.buyPrice(silver: 10);
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = false;
@@ -72,7 +81,11 @@ public sealed class StinkgrubNPC : ModNPC {
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PusClumpItem>(), 1, 3, 6));
     }
-
+    public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
+        bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
+            new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.StinkgrubNPCBestiary.KEY),
+        });
+    }
     public override void OnSpawn(IEntitySource source) {
         if(Main.rand.NextBool(4, 5)) { // 80/20
             int npcIndex = NPC.NewNPC(
@@ -158,6 +171,16 @@ public sealed class StinkgrubNPC : ModNPC {
         GasTimer++;
         if(GasTimer >= gas_interval) {
             GasTimer = 0;
+        }
+
+        if(_flySpawnTimer <= 0) {
+            _flySpawnTimer = Main.rand.Next(480, 620);
+
+            var spawnPosition = NPC.Center - Vector2.UnitY.RotatedBy(Main.rand.NextFloatDirection() * 0.7f) * 56f;
+            NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<StinkflyNPC>());
+        }
+        else {
+            _flySpawnTimer--;
         }
     }
 

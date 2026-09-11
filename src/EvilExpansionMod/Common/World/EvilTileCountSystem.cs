@@ -11,8 +11,8 @@ public sealed class EvilTileCountSystem : ModSystem {
     private int _corruptCount;
     private int _crimsonCount;
 
-    public static bool InUnderworldCorruption => ModContent.GetInstance<EvilTileCountSystem>()._corruptCount >= 200;
-    public static bool InUnderworldCrimson => ModContent.GetInstance<EvilTileCountSystem>()._crimsonCount >= 200;
+    public static bool InUnderworldCorruption => ModContent.GetInstance<EvilTileCountSystem>()._corruptCount >= 666;
+    public static bool InUnderworldCrimson => ModContent.GetInstance<EvilTileCountSystem>()._crimsonCount >= 666;
 
     public override void SetStaticDefaults() {
         CorruptTypes = [ModContent.TileType<CorruptAsh>(), ModContent.TileType<OvergrownCorruptAsh>()];

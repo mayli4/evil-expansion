@@ -151,6 +151,8 @@ public class LanternBatNPC : ModNPC {
                 NPC.velocity -= storedDashDirection * 0.065f;
                 NPC.velocity *= 0.95f;
 
+                LanternLightIntensity = MathHelper.Lerp(LanternLightIntensity, 1f, 0.05f);
+
                 StateTimer++;
                 if(StateTimer >= 35) {
                     NPC.velocity = storedDashDirection * 2f;

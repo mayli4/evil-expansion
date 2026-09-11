@@ -31,6 +31,7 @@ public sealed class StinkgrubNPC : ModNPC {
     private ref float StateTimer => ref NPC.ai[1];
     private ref float GasTimer => ref NPC.ai[2];
     private ref float PusBottleNPCID => ref NPC.ai[3];
+    private float _flySpawnTimer;
 
     public bool IsPusCarrier => PusBottleNPCID >= 0;
 
@@ -170,6 +171,16 @@ public sealed class StinkgrubNPC : ModNPC {
         GasTimer++;
         if(GasTimer >= gas_interval) {
             GasTimer = 0;
+        }
+
+        if(_flySpawnTimer <= 0) {
+            _flySpawnTimer = Main.rand.Next(480, 620);
+
+            var spawnPosition = NPC.Center - Vector2.UnitY.RotatedBy(Main.rand.NextFloatDirection() * 0.7f) * 56f;
+            NPC.NewNPC(NPC.GetSource_FromAI(), (int)spawnPosition.X, (int)spawnPosition.Y, ModContent.NPCType<StinkflyNPC>());
+        }
+        else {
+            _flySpawnTimer--;
         }
     }
 

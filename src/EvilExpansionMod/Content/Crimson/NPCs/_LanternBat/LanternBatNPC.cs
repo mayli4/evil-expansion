@@ -151,6 +151,7 @@ public class LanternBatNPC : ModNPC {
 
                 StateTimer++;
                 if(StateTimer >= 35) {
+                    NPC.velocity = storedDashDirection * 2f;
                     CurrentState = State.Dashing;
 
                     Projectile.NewProjectile(
@@ -170,7 +171,7 @@ public class LanternBatNPC : ModNPC {
 
                 break;
             case State.Dashing:
-                NPC.velocity += storedDashDirection * 0.65f;
+                NPC.velocity += storedDashDirection * 0.45f;
 
                 NPC.noTileCollide = true;
                 NPC.noGravity = true;

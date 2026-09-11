@@ -115,23 +115,25 @@ public class PusBottleNPC : ModNPC {
 
         SquishTimer = _maxSquishTime;
 
+        var shootPosition = NPC.Center - new Vector2(16 * NPC.direction, 110);
         for(int i = 0; i < amount; i++) {
-            float speed = Main.rand.NextFloat(4f, 7f);
+            float speed = Main.rand.NextFloat(4f, 6f);
             Vector2 velocity = new Vector2(Main.rand.NextFloat(-0.8f, 0.8f), -1f).SafeNormalize(Vector2.UnitY) * speed;
 
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(),
-                NPC.Center - new Vector2(20, 100),
+                shootPosition,
                 velocity * Main.rand.NextFloat(0.75f, 1.25f * difficultyScaler),
                 ModContent.ProjectileType<PusGlob>(),
                 (int)(ParentNPCID != -1 && Main.npc[ParentNPCID].active ? Main.npc[ParentNPCID].damage * 0.75f : 10),
                 0.5f,
-                Main.myPlayer
+                Main.myPlayer,
+                ai2: 2f
             );
         }
         for(int i = 0; i < Main.rand.NextFloat(2f, 4f); i++) {
             Dust.NewDustPerfect(
-                NPC.Center - new Vector2(20, 100) + Main.rand.NextVector2Circular(20f, 20f),
+                shootPosition + Main.rand.NextVector2Circular(30f, 30f),
                 ModContent.DustType<PusGas>(),
                 Vector2.Zero,
                 100,
@@ -158,7 +160,8 @@ public class PusBottleNPC : ModNPC {
                 0.5f,
                 0,
                 0f,
-                1f
+                1f,
+                ai2: 2f
             );
         }
     }

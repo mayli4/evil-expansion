@@ -1,5 +1,4 @@
 using EvilExpansionMod.Content.Biomes;
-using EvilExpansionMod.Content.Crimson;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
@@ -119,21 +118,26 @@ public class PusImpNPC : ModNPC {
 
         if(Timer == spit_time / 2) {
             var numberOfGlobs = Main.rand.Next(1, 4);
+            var mouthPosition = NPC.Center + new Vector2(NPC.direction * 10, -5);
 
             for(int i = 0; i < numberOfGlobs; i++) {
-                var vel = Helper.InitialVelocityRequiredToHitPosition(NPC.Center, Target.Center, 1f, 10f);
+                var vel = Helper.InitialVelocityRequiredToHitPosition(NPC.Center, Target.Center, 1f, 10f) * Main.rand.NextFloat(0.9f, 1.1f);
                 vel = vel.RotatedBy(Main.rand.NextFloat(-MathHelper.Pi / 10, MathHelper.Pi / 10));
-                //vel.Y *= 1.2f;
 
                 Projectile.NewProjectile(
                     NPC.GetSource_FromAI(),
-                    NPC.Center + new Vector2(NPC.direction * 10, -5),
+                    mouthPosition,
                     vel,
                     ModContent.ProjectileType<PusGlob>(),
                     12,
                     3f,
-                    Main.myPlayer
+                    Main.myPlayer,
+                    ai2: 1.3f
                 );
+
+                for(var j = 0; j < 3; j++) {
+                    Dust.NewDustPerfect(mouthPosition + Main.rand.NextVector2Unit() * 5f, DustID.LavaMoss, vel * Main.rand.NextFloat(0.2f, 1.9f));
+                }
             }
             SoundEngine.PlaySound(SoundID.NPCDeath13 with { Pitch = Main.rand.NextFloat(0.5f, 0.8f) }, NPC.Center);
         }
@@ -176,7 +180,7 @@ public class PusImpNPC : ModNPC {
             ChangeState(State.Reappearing);
         }
     }
- 
+
     private void Unmelt() {
         Timer++;
         NPC.velocity.X = 0;
@@ -202,11 +206,10 @@ public class PusImpNPC : ModNPC {
             var tileY = (int)(teleportY / 16f);
 
             for(int i = 0; i < 20; i++) {
-                if(WorldGen.InWorld(tileX, tileY + i) 
-                   && Main.tile[tileX, tileY + i].HasTile 
-                   && Main.tileSolid[Main.tile[tileX, tileY + i].TileType] 
-                   && Main.tile[tileX, tileY + i].LiquidAmount == 0) 
-                {
+                if(WorldGen.InWorld(tileX, tileY + i)
+                   && Main.tile[tileX, tileY + i].HasTile
+                   && Main.tileSolid[Main.tile[tileX, tileY + i].TileType]
+                   && Main.tile[tileX, tileY + i].LiquidAmount == 0) {
                     teleportPosition = new Vector2(tileX * 16f + NPC.width / 2, (tileY + i) * 16f - NPC.height);
 
                     foundSpot = true;
@@ -214,7 +217,7 @@ public class PusImpNPC : ModNPC {
                 }
             }
         }
-    
+
         if(foundSpot) {
             NPC.position = teleportPosition;
         }

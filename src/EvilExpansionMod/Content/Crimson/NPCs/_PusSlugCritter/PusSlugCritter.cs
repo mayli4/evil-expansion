@@ -1,16 +1,12 @@
 using EvilExpansionMod.Content.Biomes;
-using EvilExpansionMod.Common.Graphics;
 using EvilExpansionMod.Content.Dusts;
-using EvilExpansionMod.Utilities;
+using EvilExpansionMod.Content.Items.Food;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Graphics;
-using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.GameContent.Bestiary;
 using Terraria.ID;
 using Terraria.ModLoader;
-using EvilExpansionMod.Content.Items.Food;
 
 namespace EvilExpansionMod.Content.Crimson;
 
@@ -76,7 +72,8 @@ public sealed class PusSlugCritter : ModNPC {
                 ModContent.ProjectileType<PusGlob>(),
                 50 / (int)difficultyScaler,
                 0.5f,
-                Main.myPlayer
+                Main.myPlayer,
+                ai2: 1.1f
             );
         }
         for(int i = 0; i < Main.rand.NextFloat(1f, 3f); i++) {

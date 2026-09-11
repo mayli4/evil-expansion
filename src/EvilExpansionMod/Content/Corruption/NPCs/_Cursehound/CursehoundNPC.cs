@@ -280,7 +280,7 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.spriteDirection = NPC.direction;
 
         NPC.spriteDirection = NPC.direction;
-        NPC.rotation = -NPC.velocity.Y * 0.06f * -NPC.direction;
+        NPC.rotation = Utils.AngleLerp(NPC.rotation, -NPC.velocity.Y * 0.06f * -NPC.direction, 0.1f);
         NPC.rotation = Math.Clamp(NPC.rotation, -0.2f, 0.2f);
     }
 
@@ -367,8 +367,8 @@ public sealed class CursehoundNPC : ModNPC {
                 1800,
                 120);
         }
-        
-        if (Timer == 20) {
+
+        if(Timer == 20) {
             int searchRadiusTiles = 40;
             List<Point> lavaTiles = new();
 
@@ -377,21 +377,21 @@ public sealed class CursehoundNPC : ModNPC {
             int startTileY = (int)((Target.Bottom.Y - 1) / 16f);
             int endTileY = (int)((Target.Bottom.Y + 10 + searchRadiusTiles / 2 * 16) / 16f);
 
-            for (int x = startTileX; x < endTileX; x++) {
-                for (int y = startTileY; y < endTileY; y++) {
-                    if (WorldGen.InWorld(x, y)) {
+            for(int x = startTileX; x < endTileX; x++) {
+                for(int y = startTileY; y < endTileY; y++) {
+                    if(WorldGen.InWorld(x, y)) {
                         Tile tile = Main.tile[x, y];
-                        if (tile is { LiquidType: LiquidID.Lava, LiquidAmount: > 0 } && Main.tile[x, y - 1].LiquidAmount == 0 && !Main.tile[x, y - 1].HasTile) {
+                        if(tile is { LiquidType: LiquidID.Lava, LiquidAmount: > 0 } && Main.tile[x, y - 1].LiquidAmount == 0 && !Main.tile[x, y - 1].HasTile) {
                             lavaTiles.Add(new Point(x, y));
                         }
                     }
                 }
             }
 
-            int totalTelegraphs = (int) (4 * (Math.Sqrt(DifficultyScaler)));
+            int totalTelegraphs = (int)(4 * (Math.Sqrt(DifficultyScaler)));
             int telegraphDuration = 45;
 
-            for (int i = 0; i < totalTelegraphs && lavaTiles.Count > 0; i++) {
+            for(int i = 0; i < totalTelegraphs && lavaTiles.Count > 0; i++) {
                 int index = Main.rand.Next(lavaTiles.Count);
                 Point lavaTile = lavaTiles[index];
                 lavaTiles.RemoveAt(index);
@@ -413,8 +413,8 @@ public sealed class CursehoundNPC : ModNPC {
         }
 
         if(Timer is > 40 and < ROAR_DURATION - 30 && Timer % 20 == 0) {
-            int numberOfStalactites = (int) (Main.rand.Next(2, 4) * (Math.Sqrt (DifficultyScaler)));
-            float spawnAreaWidth = (int) (450f * (Math.Sqrt(DifficultyScaler)));
+            int numberOfStalactites = (int)(Main.rand.Next(2, 4) * (Math.Sqrt(DifficultyScaler)));
+            float spawnAreaWidth = (int)(450f * (Math.Sqrt(DifficultyScaler)));
 
             for(int i = 0; i < numberOfStalactites; i++) {
                 float spawnX = Target.Center.X + Main.rand.NextFloat(-spawnAreaWidth / 2f, spawnAreaWidth / 2f);
@@ -619,7 +619,7 @@ internal sealed class LavaTelegraphProjectile : ModProjectile {
     }
 
     public override void AI() {
-        if (MaxTime == 0) {
+        if(MaxTime == 0) {
             MaxTime = Projectile.timeLeft;
         }
 
@@ -628,10 +628,10 @@ internal sealed class LavaTelegraphProjectile : ModProjectile {
         Lighting.AddLight(Projectile.Center, new Color(214, 237, 5).ToVector3() * lightAlpha * 0.8f);
 
         float spawnThreshold = 0.7f;
-        if (progress >= spawnThreshold && !hasSpawnedProjectile) {
+        if(progress >= spawnThreshold && !hasSpawnedProjectile) {
             hasSpawnedProjectile = true;
 
-            if (Main.myPlayer == Projectile.owner) {
+            if(Main.myPlayer == Projectile.owner) {
                 Vector2 upwardVelocity = new Vector2(Main.rand.NextFloat(-1.5f, 1.5f), Main.rand.NextFloat(-16f, -12f));
 
                 Projectile.NewProjectile(
@@ -663,10 +663,10 @@ internal sealed class LavaTelegraphProjectile : ModProjectile {
             MathHelper.Lerp(1.3f, 0.8f, (progress - 0.3f) / 0.7f);
 
         float alpha;
-        if (progress < 0.2f) {
+        if(progress < 0.2f) {
             alpha = progress / 0.2f;
         }
-        else if (progress > 0.6f) {
+        else if(progress > 0.6f) {
             alpha = 1f - ((progress - 0.6f) / 0.4f);
         }
         else {

@@ -151,8 +151,7 @@ public sealed class CursedSpiritNPC : ModNPC {
             _trailPositions[i] = NPC.Center;
         }
 
-        // SpiritType = (SpiritType)Main.rand.Next(0, 3);
-        SpiritType = SpiritType.Splitter;
+        SpiritType = (SpiritType)Main.rand.Next(0, 3);
         switch(SpiritType) {
             case SpiritType.Splitter:
                 _data.Splitter = new()
@@ -648,7 +647,7 @@ public sealed class CursedSpiritNPC : ModNPC {
 
         if(NPC.IsABestiaryIconDummy) {
             effectMatrix = Graphics.ScreenTransformMatrix; // ?? idk
-            trailPositions = [NPC.Center, NPC.Center - Vector2.UnitY * 46f];
+            trailPositions = [NPC.Center, NPC.Center - Vector2.UnitY * 38f];
         }
 
         var irisPosition = NPC.Center + moveDirection * 2.5f + 0.5f * new Vector2(

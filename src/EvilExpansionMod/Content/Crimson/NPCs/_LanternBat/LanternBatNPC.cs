@@ -17,6 +17,7 @@ namespace EvilExpansionMod.Content.Crimson;
 public class LanternBatNPC : ModNPC {
     public enum State {
         IdleFlight,
+        DashTelegraph,
         Dashing,
         PostDashCooldown
     }
@@ -134,10 +135,22 @@ public class LanternBatNPC : ModNPC {
                 LanternLightIntensity = Math.Min(LanternLightIntensity, 2.5f);
                 LanternLightIntensity = Math.Max(0.2f, LanternLightIntensity);
 
+                UpdateDirection();
+
                 if(NPC.Distance(Target.Center) < dashRange && StateTimer > Main.rand.Next(minIdleTime, maxIdleTime)) {
                     Vector2 dashTarget = Target.Center + Target.velocity * 0.5f - Vector2.UnitY * 80;
                     storedDashDirection = NPC.DirectionTo(dashTarget);
 
+                    CurrentState = State.DashTelegraph;
+                }
+
+                break;
+            case State.DashTelegraph:
+                NPC.velocity -= storedDashDirection * 0.065f;
+                NPC.velocity *= 0.95f;
+
+                StateTimer++;
+                if(StateTimer >= 35) {
                     CurrentState = State.Dashing;
 
                     Projectile.NewProjectile(
@@ -152,12 +165,12 @@ public class LanternBatNPC : ModNPC {
                         storedDashDirection.X > 0 ? 1 : -1
                     );
 
-                    SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Pitch = 0.1f * Main.rand.NextFloatDirection()}, NPC.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Pitch = 0.1f * Main.rand.NextFloatDirection() }, NPC.Center);
                 }
 
                 break;
             case State.Dashing:
-                NPC.velocity += storedDashDirection * 0.5f;
+                NPC.velocity += storedDashDirection * 0.65f;
 
                 NPC.noTileCollide = true;
                 NPC.noGravity = true;
@@ -171,6 +184,7 @@ public class LanternBatNPC : ModNPC {
                     NPC.noGravity = true;
                     NPC.velocity *= 0.5f;
                 }
+
                 break;
 
             case State.PostDashCooldown:
@@ -180,22 +194,28 @@ public class LanternBatNPC : ModNPC {
                 LanternLightIntensity = Math.Max(0f, 1.5f * (1f - StateTimer / (float)(60 * 2)));
                 LanternLightIntensity = Math.Max(0.2f, LanternLightIntensity);
 
+                UpdateDirection();
+
                 if(StateTimer >= 60 * 2) {
                     CurrentState = State.IdleFlight;
                 }
+
                 break;
         }
 
-        if (StateTimer % 30 == 0) {
-            SoundEngine.PlaySound(SoundID.DD2_SkyDragonsFurySwing with { Pitch = 0.1f * Main.rand.NextFloatDirection()}, NPC.Center);
+        if(StateTimer % 30 == 0) {
+            SoundEngine.PlaySound(SoundID.DD2_SkyDragonsFurySwing with { Pitch = 0.1f * Main.rand.NextFloatDirection() }, NPC.Center);
         }
 
-        NPC.spriteDirection = NPC.direction = (NPC.velocity.X > 0) ? 1 : -1;
-        NPC.rotation = Math.Clamp(NPC.velocity.X * 0.15f, -0.8f, 0.8f);
+        NPC.rotation = Utils.AngleLerp(NPC.rotation, Math.Clamp(NPC.velocity.X * 0.15f, -0.65f, 0.65f), 0.1f);
 
         if(NPC.velocity.Length() < 0.1f && CurrentState != State.Dashing) {
             NPC.velocity = Main.rand.NextVector2Circular(0.5f, 0.5f);
         }
+    }
+
+    private void UpdateDirection() {
+        NPC.spriteDirection = NPC.direction = (NPC.velocity.X > 0) ? 1 : -1;
     }
 
     public override void FindFrame(int frameHeight) {
@@ -207,32 +227,31 @@ public class LanternBatNPC : ModNPC {
     }
 
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {
-        Vector2 lanternOffsetVector = new Vector2(-8, 24);
-
+        var lanternOffsetVector = new Vector2(-8, 24);
         if(NPC.spriteDirection == -1) {
             lanternOffsetVector.X *= -1;
         }
 
-        Vector2 lanternDrawPosition = NPC.Center + lanternOffsetVector;
+        var rotationVector = (NPC.rotation + MathHelper.PiOver2).ToRotationVector2();
+        var batClawPosition = NPC.Center + rotationVector * 24f;
 
-        Lighting.AddLight(lanternDrawPosition, Color.Orange.ToVector3() * LanternLightIntensity);
+        Lighting.AddLight(batClawPosition + rotationVector * 12f, Color.Orange.ToVector3() * LanternLightIntensity);
 
-        float lanternRotation = NPC.velocity.X * 0.05f + MathF.Sin(Main.GameUpdateCount * 0.1f) * 0.1f;
+        var lanternTex = Assets.Images.Crimson.NPCs.LanternBat.LanternBat_Lantern.Asset.Value;
+        var lanternInside = Assets.Images.Crimson.NPCs.LanternBat.LanternBat_LanternFlame.Asset.Value;
+        var lanternOrigin = new Vector2(lanternTex.Width / 2, 0);
 
-        Texture2D lanternTex = Assets.Images.Crimson.NPCs.LanternBat.LanternBat_Lantern.Asset.Value;
-        Texture2D lanternInside = Assets.Images.Crimson.NPCs.LanternBat.LanternBat_LanternFlame.Asset.Value;
-        Vector2 lanternOrigin = new Vector2(lanternTex.Width / 2, 0);
-
-        SpriteEffects lanternEffects = SpriteEffects.None;
+        var lanternEffects = SpriteEffects.None;
         if(NPC.spriteDirection == -1) {
             lanternEffects = SpriteEffects.FlipHorizontally;
         }
 
-        Color lightEffectColor = Color.Orange * LanternLightIntensity;
+        var lightEffectColor = Color.Orange * LanternLightIntensity;
+        var lanternRotation = NPC.rotation * 0.75f + 0.2f * MathF.Sin(Main.GameUpdateCount * 0.1f + NPC.whoAmI * 7238.27f);
 
         Main.EntitySpriteDraw(
             lanternInside,
-            lanternDrawPosition - screenPos,
+            batClawPosition - screenPos,
             null,
             lightEffectColor,
             lanternRotation,
@@ -243,7 +262,7 @@ public class LanternBatNPC : ModNPC {
 
         Main.EntitySpriteDraw(
             lanternTex,
-            lanternDrawPosition - screenPos,
+            batClawPosition - screenPos,
             null,
             NPC.GetAlpha(drawColor),
             lanternRotation,
@@ -252,11 +271,11 @@ public class LanternBatNPC : ModNPC {
             lanternEffects
         );
 
-        Texture2D batTex = TextureAssets.Npc[NPC.type].Value;
-        Vector2 batOrigin = NPC.frame.Size() / 2f;
+        var batTexture = TextureAssets.Npc[NPC.type].Value;
+        var batOrigin = NPC.frame.Size() / 2f;
 
         Main.EntitySpriteDraw(
-            batTex,
+            batTexture,
             NPC.Center - screenPos,
             NPC.frame,
             NPC.GetAlpha(drawColor),

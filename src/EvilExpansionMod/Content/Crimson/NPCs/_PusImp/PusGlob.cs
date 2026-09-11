@@ -102,7 +102,7 @@ public sealed class PusGlob : ModProjectile {
             }
         }
         else {
-            Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCHit18 with { Volume = 0.4f, Pitch = Main.rand.NextFloat(-0.8f, 0.1f) }, Projectile.position);
+            SoundEngine.PlaySound(SoundID.NPCHit18 with { Volume = 0.4f, Pitch = Main.rand.NextFloat(-0.8f, 0.1f) }, Projectile.position);
         }
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {

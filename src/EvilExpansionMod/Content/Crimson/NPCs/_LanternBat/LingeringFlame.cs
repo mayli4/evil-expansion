@@ -47,7 +47,7 @@ public class LingeringFlameProjectile : ModProjectile {
     public override void AI() {
         Projectile.direction = (int)Projectile.ai[1];
         if(_freePositionCount < _trailVelocities.Length) {
-            Projectile.Center = ParentNPC.Center + Vector2.UnitY * 30f;
+            Projectile.Center = ParentNPC.Center + (ParentNPC.rotation + MathHelper.PiOver2).ToRotationVector2() * 22f - ParentNPC.velocity;
 
             _trailPositions ??= [.. Enumerable.Repeat(Projectile.Center, _trailVelocities.Length)];
             if(_freePositionCount == 0 || Projectile.timeLeft % 8 == 0) {

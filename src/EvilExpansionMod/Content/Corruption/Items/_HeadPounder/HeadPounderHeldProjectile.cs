@@ -4,7 +4,6 @@ using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
-using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
 using ReLogic.Utilities;
 using System;
@@ -35,6 +34,8 @@ public class HeadPounderHeldProjectile : ModProjectile {
     Vector2[] _trailPositions;
 
     SlotId _Hitsound = SlotId.Invalid;
+
+    private static RenderCommandQueue _queue = new();
 
     public override string Texture => Assets.Images.Corruption.Items.HeadPounder.HeadPounderItem.KEY;
     public override void SetDefaults() {
@@ -122,7 +123,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
             Projectile.rotation = -3.5f * MathF.PI / 4f * (1f - MathF.Pow(progress / progressHit, 2));
             if(progress >= progressHit) {
                 if(charged && !_hitCheck) {
-                    if(_hitCheck == true);
+                    if(_hitCheck == true) ;
 
                     _hitCheck = true;
 
@@ -216,7 +217,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                     if(!SoundEngine.TryGetActiveSound(_Hitsound, out var sound) || !sound.IsPlaying) {
                         _Hitsound = SoundEngine.PlaySound(SoundID.NPCHit52 with { Volume = 1f });
                     }
-                   
+
                 }
 
                 Projectile.rotation = _hit ? 0
@@ -311,7 +312,9 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
         var trailColor = new Color(96, 91, 206) * _outlineAlpha * 0.4f;
 
-        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
+        var pixelatedPipeline = new RenderPipeline(_queue, 0.5f, Graphics.WorldTransformMatrix);
+
+        pixelatedPipeline
             .DrawTrail(
                 _trailPositions.Select(p => p + Projectile.position).ToArray(),
                 static t => (1.25f - t) * 20f,
@@ -339,7 +342,9 @@ public class HeadPounderHeldProjectile : ModProjectile {
                 * MathF.Max(1f - MathF.Pow(2f * MathF.Max(_charge - MaxCharge + tintFlashFrames / 2, 0) / tintFlashFrames - 1f, 2), 0f);
         }
 
-        Graphics.Begin(Graphics.WorldTransformMatrix)
+        var pipeline = new RenderPipeline(_queue, 2f, Graphics.WorldTransformMatrix);
+
+        pipeline
             .DrawTexture(new()
             {
                 Texture = texture,
@@ -352,6 +357,13 @@ public class HeadPounderHeldProjectile : ModProjectile {
             })
             .ApplyTint(tintColor)
             .End();
+
+        var size = 360;
+        var centerScreen = Owner.Center - Main.screenPosition;
+        var drawBounds = new Rectangle((int)centerScreen.X - size / 2, (int)centerScreen.Y - size / 2, size, size);
+
+        RenderCommandRunner.Instance.Run(_queue, drawBounds);
+        _queue.Clear();
 
         return false;
     }

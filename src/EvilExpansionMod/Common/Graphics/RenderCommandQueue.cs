@@ -97,7 +97,9 @@ internal class RenderCommandQueue(bool immediate = false) {
         var topRight = bottomRight + upScaled;
 
         var positionDataIndex = Positions.Count;
-        Positions.AddRange([bottomRight, topRight, bottomLeft, topLeft]);
+
+        ReadOnlySpan<Vector2> positions = [bottomRight, topRight, bottomLeft, topLeft];
+        Positions.AddRange(positions);
 
         var sourceNormalized = new Vector4(
             source.X / texture.Width,

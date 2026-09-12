@@ -10,7 +10,6 @@ inline bool opaque(float2 coords)
 }
 
 float4 PixelShaderFunction(float2 coords : TEXCOORD0) : COLOR0 {
-
     float2 fragCoord = coords * uSize;
 
     const float2 right = float2(1, 0);

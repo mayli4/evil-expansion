@@ -93,11 +93,10 @@ public class CutProjectile : ModProjectile, IPreDrawEverythingBulk<CutProjectile
         var texture = Assets.Images.Crimson.Items.MeatAxe.CutTexture.Asset.Value;
 
         pipeline
+            .SetTexture(0, texture)
             .SetEffectParams(
                 axeCutEffect,
-                ("uImage0Texture", texture),
-                ("uImage0Size", texture.Size()),
-                ("uTransformMatrix", Graphics.WorldTransformMatrix))
+                ("uImage0Size", texture.Size()))
             .DrawTrail(
                 positions,
                 t => MathF.Sin(t * MathHelper.Pi) * 30f * (1f + 0.2f * MathF.Sin(t * MathHelper.Pi * 6f))

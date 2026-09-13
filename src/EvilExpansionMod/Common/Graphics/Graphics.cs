@@ -8,8 +8,12 @@ namespace EvilExpansionMod.Common.Graphics;
 
 internal class Graphics : ILoadable {
     public static GraphicsDevice Device => Main.graphics.GraphicsDevice;
-    public static Matrix WorldTransformMatrix => s_Instance._worldTransformMatrix;
+
     public static Matrix ScreenTransformMatrix => s_Instance._screenTransformMatrix;
+    public static Matrix WorldTransformMatrix => s_Instance._worldTransformMatrix;
+
+    public static Matrix ScreenNDCTransformMatrix => s_Instance._screenNDCTransformMatrix;
+    public static Matrix WorldNDCTransformMatrix => s_Instance._worldNDCTransformMatrix;
 
     public static RenderCommandQueue ImmediateQueue => s_Instance._immediateQueue;
 
@@ -19,8 +23,11 @@ internal class Graphics : ILoadable {
 
     private static Graphics s_Instance = null!;
 
-    private Matrix _worldTransformMatrix;
     private Matrix _screenTransformMatrix;
+    private Matrix _worldTransformMatrix;
+
+    private Matrix _screenNDCTransformMatrix;
+    private Matrix _worldNDCTransformMatrix;
 
     private readonly RenderCommandQueue _immediateQueue = new(true);
 
@@ -55,11 +62,20 @@ internal class Graphics : ILoadable {
         => new(ImmediateQueue, scale, matrix ?? ScreenTransformMatrix);
 
     private void PreDrawEverything() {
-        _screenTransformMatrix = Main.GameViewMatrix.TransformationMatrix *
-            Matrix.CreateOrthographicOffCenter(0, Main.screenWidth, Main.screenHeight, 0, -1, 1);
-
-        _worldTransformMatrix = Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f) *
+        _screenTransformMatrix = Main.GameViewMatrix.TransformationMatrix;
+        _worldTransformMatrix =
+            Matrix.CreateTranslation(-Main.screenPosition.X, -Main.screenPosition.Y, 0f) *
             _screenTransformMatrix;
+
+        var ndcMatrix = Matrix.CreateOrthographicOffCenter(
+            0f,
+            Main.screenWidth,
+            Main.screenHeight,
+            0f,
+            -1f,
+            1f);
+        _screenNDCTransformMatrix = _screenTransformMatrix * ndcMatrix;
+        _worldNDCTransformMatrix = _worldTransformMatrix * ndcMatrix;
 
         _immediateQueue.Clear(); // just in case..
 

@@ -1,10 +1,5 @@
 sampler uImage0 : register(s0);
 
-texture tex1;
-sampler2D sampler1 = sampler_state {
-    texture = <tex1>;
-};
-
 float time;
 float2 size;
 
@@ -17,28 +12,7 @@ float flameSize;
 
 float flameStretchY;
 
-matrix uTransformMatrix;
-
-struct VSInput {
-    float4 position : POSITION;
-    float2 uv : TEXCOORD;
-    float4 color : COLOR;
-};
-
-struct VSOutput {
-    float4 position : POSITION;
-    float2 uv : TEXCOORD;
-};
-
-VSOutput vert(VSInput input) {
-    VSOutput output;
-    output.position = mul(input.position, uTransformMatrix);
-    output.uv = input.uv;
-    
-    return output;
-}
-
-float4 frag(float2 uv : TEXCOORD0) : COLOR0 {
+float4 PS(float2 uv : TEXCOORD0) : COLOR0 {
     uv = float2(uv.y, uv.x);
 	// uv.y = 1.0 - uv.y;
 
@@ -55,7 +29,7 @@ float4 frag(float2 uv : TEXCOORD0) : COLOR0 {
     
     float2 noiseUv = uv * noiseScale; 
     noiseUv.y -= time * 0.5;
-    float noiseAmount = tex2D(sampler1, noiseUv).r;
+    float noiseAmount = tex2D(uImage0, noiseUv).r;
     
     float uvintensity = pow(saturate(1.0 - scaledUv.y * 8.0), 2.2);
     noiseAmount *= uvintensity; 
@@ -81,9 +55,8 @@ float4 frag(float2 uv : TEXCOORD0) : COLOR0 {
     return finalColor;
 }
 
-technique Technique1 {
-    pass FragPass {
-        VertexShader = compile vs_2_0 vert();
-        PixelShader = compile ps_3_0 frag();
+technique {
+    pass {
+        PixelShader = compile ps_3_0 PS();
     }
 };

@@ -10,7 +10,6 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static EvilExpansionMod.Core.LocalizationReferences.Mods.EvilExpansionMod.Projectiles;
 
 namespace EvilExpansionMod.Content.Crimson;
 
@@ -29,11 +28,11 @@ public class LamethrowerHeldProjectile : ModProjectile {
     Vector2[] _trailPositions;
 
     public override string Texture => Assets.Images.Crimson.Items.Lamethrower.LamethrowerHeldSprite.KEY;
-    
+
     public override void SetStaticDefaults() {
         Main.projFrames[Type] = 15;
     }
-    
+
     public override void SetDefaults() {
         Projectile.width = 0;
         Projectile.height = 0;
@@ -95,15 +94,15 @@ public class LamethrowerHeldProjectile : ModProjectile {
 
     public override void AI() {
         Projectile.frameCounter++;
-        if (Projectile.frameCounter >= 8) {
+        if(Projectile.frameCounter >= 8) {
             Projectile.frameCounter = 0;
-        
+
             Projectile.frame++;
-            if (Projectile.frame >= 7) {
+            if(Projectile.frame >= 7) {
                 Projectile.frame = 0;
             }
         }
-        
+
         Owner.heldProj = Projectile.whoAmI;
 
         var mouseDirection = Projectile.Center.DirectionTo(Main.MouseWorld);
@@ -135,7 +134,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
             FlameWidth * FlameScale
         );
 
-        foreach (var tile in tiles[..count]) {
+        foreach(var tile in tiles[..count]) {
             Tile surface = Main.tile[tile.X, tile.Y];
             Tile airAbove = Main.tile[tile.X, tile.Y - 1];
             if(
@@ -148,24 +147,24 @@ public class LamethrowerHeldProjectile : ModProjectile {
                 Vector2 spawnPos = tile.ToVector2() * 16f + Vector2.UnitX * 8f;
 
                 bool alreadyExists = false;
-                for (int i = 0; i < Main.maxProjectiles; i++) {
+                for(int i = 0; i < Main.maxProjectiles; i++) {
                     Projectile p = Main.projectile[i];
 
-                    if (p.active && p.type == ModContent.ProjectileType<LingeringIchorProjectile>() && Vector2.DistanceSquared(p.position, spawnPos) < 16f * 16f) {
+                    if(p.active && p.type == ModContent.ProjectileType<LingeringIchorProjectile>() && Vector2.DistanceSquared(p.position, spawnPos) < 16f * 16f) {
                         alreadyExists = true;
                         break;
-                        }
                     }
+                }
 
-                    if (!alreadyExists) {
-                        Projectile.NewProjectile(
-                            Projectile.GetSource_FromAI(),
-                            spawnPos,
-                            Vector2.Zero,
-                            ModContent.ProjectileType<LingeringIchorProjectile>(),
-                            Projectile.damage,
-                            0f
-                    );
+                if(!alreadyExists) {
+                    Projectile.NewProjectile(
+                        Projectile.GetSource_FromAI(),
+                        spawnPos,
+                        Vector2.Zero,
+                        ModContent.ProjectileType<LingeringIchorProjectile>(),
+                        Projectile.damage,
+                        0f
+                );
                 }
             }
         }
@@ -197,7 +196,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
             }
         }
 
-        if (Main.rand.NextBool(8)) {
+        if(Main.rand.NextBool(8)) {
             var particle = SmokeParticle.Pool.RequestParticle();
             particle.Spawn(
                 _trailOrigin + Main.rand.NextVector2Unit() * Main.rand.NextFloat(24) - _rotationVector * 5f - Vector2.UnitY * 16f,
@@ -257,12 +256,12 @@ public class LamethrowerHeldProjectile : ModProjectile {
         );
         Main.spriteBatch.EndBegin(snapshot);
 
-        var flameShader = Assets.Shaders.Trail.LingeringFlame.Asset.Value;
+        var flameShader = Assets.Shaders.Pixel.Lamethrower.Asset.Value;
         var noiseTexture1 = Assets.Images.Sample.Pebbles.Asset.Value;
         var circleTexture = Assets.Images.Misc.Circle.Asset.Value;
 
-        Graphics.BeginPixelated()
-            .SetTexture(0, circleTexture)
+        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
+            .SetTexture(0, noiseTexture1)
             .SetEffectParams(
                 flameShader,
                 ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI + 10),
@@ -271,9 +270,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
                 ("outerCoreColor", flameColor.ToVector4()),
                 ("flameColor", outlineColor.ToVector4()),
                 ("noiseScale", 0.5f),
-                ("flameSize", FlameScale),
-                ("tex1", noiseTexture1),
-                ("uTransformMatrix", Graphics.WorldTransformMatrix))
+                ("flameSize", FlameScale))
             .DrawTrail(
                 _trailPositions.Select(p => p + _trailOrigin).ToArray(),
                 static _ => FlameWidth,

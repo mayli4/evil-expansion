@@ -44,8 +44,7 @@ internal readonly struct RenderPipeline : IDisposable {
                 new Vector2(source.Z, source.W) * options.Scale,
             options.Origin * options.Scale,
             options.SpriteEffects,
-            options.Effect
-        );
+            options.Effect);
 
         return this;
     }
@@ -82,15 +81,18 @@ internal readonly struct RenderPipeline : IDisposable {
             spriteRotation);
     }
 
-    public readonly RenderPipeline ApplyEffect(Effect effect) {
-        _queue.AddApplyEffect(effect);
+    public readonly RenderPipeline ApplyEffect(Effect effect, int padding = 0) {
+        _queue.AddApplyEffect(effect, padding);
         return this;
     }
 
+    public readonly RenderPipeline ApplyEffect(Effect effect, int padding, params ReadOnlySpan<(string, EffectParameterValue)> parameters) {
+        SetEffectParams(effect, parameters);
+        return ApplyEffect(effect, padding);
+    }
+
     public readonly RenderPipeline ApplyEffect(Effect effect, params ReadOnlySpan<(string, EffectParameterValue)> parameters) {
-        _queue.AddSetEffectParams(effect, parameters);
-        _queue.AddApplyEffect(effect);
-        return this;
+        return ApplyEffect(effect, 0, parameters);
     }
 
     public readonly RenderPipeline Clear(Color color) {

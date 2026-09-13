@@ -14,10 +14,15 @@ internal class RenderCommandRunner : ILoadable {
     public static RenderCommandRunner Instance { get; private set; } = null!;
 
     private readonly static Vector2[] FullScreenQuadPositions = [new(1, 1), new(1, -1), new(-1, 1), new(-1, -1)];
+    private static readonly RasterizerState ScissorCullCCW = new()
+    {
+        ScissorTestEnable = true,
+        CullMode = CullMode.CullCounterClockwiseFace,
+    };
 
     private RenderTarget2D? _oldTarget;
     private Viewport _oldViewport;
-    private RasterizerState _oldRasterizerState;
+    private RasterizerState _oldRasterizerState = null!;
 
     private RenderTarget2D _drawTarget = null!;
     private RenderTarget2D _swapTarget = null!;
@@ -46,7 +51,7 @@ internal class RenderCommandRunner : ILoadable {
         });
     }
 
-    public void Run(RenderCommandQueue queue, Rectangle? drawBounds = null) {
+    public void Run(RenderCommandQueue queue) {
         _queue = queue;
 
         SpriteBatchSnapshot? spriteBatchSnapshot = null;
@@ -71,15 +76,13 @@ internal class RenderCommandRunner : ILoadable {
         _oldRasterizerState = Graphics.Device.RasterizerState;
         _oldViewport = Graphics.Device.Viewport;
 
-        _drawBounds = drawBounds ?? new(_oldViewport.X, _oldViewport.Y, _oldViewport.Width, _oldViewport.Height);
-
         var beginCount = 0;
         for(var i = 0; i < queue.Tags.Count; i++) {
             var dataIndex = queue.Indices[i];
             switch(queue.Tags[i]) {
                 case RenderCommandTag.Begin:
                     beginCount++;
-                    RunBegin(queue.BeginData[dataIndex]);
+                    RunBegin(queue.BeginData[dataIndex], i);
                     break;
                 case RenderCommandTag.End:
                     beginCount--;
@@ -92,7 +95,7 @@ internal class RenderCommandRunner : ILoadable {
                     RunDrawTrail(queue.DrawTrailData[dataIndex]);
                     break;
                 case RenderCommandTag.ApplyEffect:
-                    RunApplyEffect(queue.Effects[dataIndex]);
+                    RunApplyEffect(queue.ApplyEffectData[dataIndex]);
                     break;
                 case RenderCommandTag.Clear:
                     RunClear(queue.Colors[dataIndex]);
@@ -125,22 +128,79 @@ internal class RenderCommandRunner : ILoadable {
         }
     }
 
-    void RunBegin(BeginData data) {
+    private static Rectangle CalculateDrawBounds(RenderCommandQueue queue, int startIndex, float scale, Matrix matrix) {
+        var minPosition = new Vector2(float.MaxValue, float.MaxValue);
+        var maxPosition = new Vector2(float.MinValue, float.MinValue);
+
+        var foundEnd = false;
+        for(var i = startIndex; i < queue.Tags.Count && !foundEnd; i++) {
+            var dataIndex = queue.Indices[i];
+            switch(queue.Tags[i]) {
+                case RenderCommandTag.End:
+                    foundEnd = true;
+                    break;
+                case RenderCommandTag.DrawTexture:
+                    var dtData = queue.DrawTextureData[dataIndex];
+                    var quadPositions = CollectionsMarshal.AsSpan(queue.Positions)[dtData.PositionDataIndex..(dtData.PositionDataIndex + 4)];
+                    foreach(var position in quadPositions) {
+                        minPosition = Vector2.Min(minPosition, position);
+                        maxPosition = Vector2.Max(maxPosition, position);
+                    }
+                    break;
+                case RenderCommandTag.DrawTrail:
+                    var tData = queue.DrawTrailData[dataIndex];
+                    var trailPositions = CollectionsMarshal.AsSpan(queue.Positions)[tData.PositionsIndex..(tData.PositionsIndex + tData.PositionCount)];
+
+                    for(var j = 0; j < trailPositions.Length; j++) {
+                        var progress = j / (trailPositions.Length - 1f);
+
+                        var currentPosition = trailPositions[j];
+                        var offset = TrailRenderer.GetTrailPositionOffsetAt(
+                            currentPosition,
+                            trailPositions[j == trailPositions.Length - 1 ? j - 1 : j + 1],
+                            tData.WidthFn(progress));
+
+                        var positionA = currentPosition + offset;
+                        var positionB = currentPosition - offset;
+
+                        minPosition = Vector2.Min(minPosition, positionA);
+                        minPosition = Vector2.Min(minPosition, positionB);
+
+                        maxPosition = Vector2.Max(maxPosition, positionA);
+                        maxPosition = Vector2.Max(maxPosition, positionB);
+                    }
+                    break;
+                case RenderCommandTag.ApplyEffect:
+                    var aeData = queue.ApplyEffectData[dataIndex];
+                    minPosition -= Vector2.One * aeData.Padding / scale;
+                    maxPosition += Vector2.One * aeData.Padding / scale;
+                    break;
+            }
+        }
+
+        var minPositionTransformed = Vector2.Transform(minPosition, matrix);
+        var maxPositionTransformed = Vector2.Transform(maxPosition, matrix);
+
+        return new(
+            (int)MathF.Floor(minPositionTransformed.X),
+            (int)MathF.Floor(minPositionTransformed.Y),
+            (int)MathF.Ceiling(maxPositionTransformed.X - minPositionTransformed.X),
+            (int)MathF.Ceiling(maxPositionTransformed.Y - minPositionTransformed.Y));
+    }
+
+    private void RunBegin(BeginData data, int index) {
+        var toScreenMatrix = _queue.Matrices[data.MatrixIndex];
+        _drawBounds = CalculateDrawBounds(_queue, index + 1, data.Scale, toScreenMatrix);
+
+        var screenToNDC = Matrix.CreateOrthographicOffCenter(
+            _drawBounds.X, _drawBounds.X + _drawBounds.Width,
+            _drawBounds.Y + _drawBounds.Height,
+            _drawBounds.Y,
+            -1,
+            1);
+
+        _matrix = toScreenMatrix * screenToNDC;
         _scale = data.Scale;
-
-        var sx = (float)_oldViewport.Width / _drawBounds.Width;
-        var sy = (float)_oldViewport.Height / _drawBounds.Height;
-
-        var tx = sx - 1f - 2f * _drawBounds.X / _drawBounds.Width;
-        var ty = 1f - sy + 2f * _drawBounds.Y / _drawBounds.Height;
-
-        var cropMatrix = new Matrix(
-            sx, 0, 0, 0,
-            0, sy, 0, 0,
-            0, 0, 1, 0,
-            tx, ty, 0, 1);
-
-        _matrix = _queue.Matrices[data.MatrixIndex] * cropMatrix;
 
         Graphics.Device.SetRenderTarget(_drawTarget);
 
@@ -149,7 +209,7 @@ internal class RenderCommandRunner : ILoadable {
         Graphics.Device.Viewport = new(0, 0, viewportWidth, viewportHeight);
 
         Graphics.Device.ScissorRectangle = new(0, 0, viewportWidth, viewportHeight);
-        Graphics.Device.RasterizerState = new() { ScissorTestEnable = true, CullMode = CullMode.CullCounterClockwiseFace };
+        Graphics.Device.RasterizerState = ScissorCullCCW;
         Graphics.Device.Clear(Color.Transparent);
 
         Graphics.Device.BlendState = BlendState.AlphaBlend;
@@ -160,7 +220,7 @@ internal class RenderCommandRunner : ILoadable {
         Graphics.Device.SamplerStates[3] = SamplerState.PointWrap;
     }
 
-    void RunEnd() {
+    private void RunEnd() {
         var currentViewport = Graphics.Device.Viewport;
 
         Graphics.Device.SetRenderTarget(_oldTarget);
@@ -202,26 +262,28 @@ internal class RenderCommandRunner : ILoadable {
             null);
     }
 
-    void RunDrawTexture(DrawTextureData data) {
+    private void RunDrawTexture(DrawTextureData data) {
         var positions = CollectionsMarshal.AsSpan(_queue.Positions)[data.PositionDataIndex..(data.PositionDataIndex + 4)];
         QuadRenderer.Instance.Draw(data.Texture, positions, data.Source, data.Color, _matrix, data.Effect);
     }
 
-    void RunDrawTrail(DrawTrailData data) {
+    private void RunDrawTrail(DrawTrailData data) {
         var positions = CollectionsMarshal.AsSpan(_queue.Positions)[data.PositionsIndex..(data.PositionsIndex + data.PositionCount)];
         TrailRenderer.Instance.Draw(positions, data.WidthFn, data.ColorFn, _matrix, data.SpriteRotation, data.Effect);
     }
 
-    void RunApplyEffect(Effect effect) {
+    private void RunApplyEffect(ApplyEffectData data) {
         var currentViewport = Graphics.Device.Viewport;
         var currentBlendState = Graphics.Device.BlendState;
 
         (_swapTarget, _drawTarget) = (_drawTarget, _swapTarget);
         Graphics.Device.SetRenderTarget(_drawTarget);
+
+        Graphics.Device.ScissorRectangle = new(0, 0, currentViewport.Width, currentViewport.Height);
+        Graphics.Device.RasterizerState = ScissorCullCCW;
         Graphics.Device.Viewport = currentViewport;
 
         Graphics.Device.Clear(Color.Transparent);
-
         Graphics.Device.BlendState = BlendState.AlphaBlend;
 
         var source = new Vector4(
@@ -229,6 +291,8 @@ internal class RenderCommandRunner : ILoadable {
             0,
             (float)currentViewport.Width / _drawTarget.Width,
             (float)currentViewport.Height / _drawTarget.Height);
+
+        var effect = _queue.Effects[data.EffectIndex];
 
         QuadRenderer.Instance.Draw(
             _swapTarget,

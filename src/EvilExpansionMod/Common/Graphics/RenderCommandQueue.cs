@@ -16,6 +16,7 @@ internal class RenderCommandQueue(bool immediate = false) {
     public List<BeginData> BeginData = [];
     public List<DrawTextureData> DrawTextureData = [];
     public List<DrawTrailData> DrawTrailData = [];
+    public List<ApplyEffectData> ApplyEffectData = [];
     public List<SetEffectParamsData> SetEffectParamsData = [];
     public List<SetTextureData> SetTextureData = [];
     public List<SetSamplerState> SetSamplerStateData = [];
@@ -36,6 +37,7 @@ internal class RenderCommandQueue(bool immediate = false) {
         BeginData.Clear();
         DrawTextureData.Clear();
         DrawTrailData.Clear();
+        ApplyEffectData.Clear();
         SetEffectParamsData.Clear();
         SetTextureData.Clear();
         SetSamplerStateData.Clear();
@@ -160,11 +162,18 @@ internal class RenderCommandQueue(bool immediate = false) {
         Indices.Add(index);
     }
 
-    public void AddApplyEffect(Effect effect) {
+    public void AddApplyEffect(Effect effect, int padding) {
         Tags.Add(RenderCommandTag.ApplyEffect);
 
-        var index = Effects.Count;
+        var effectIndex = Effects.Count;
         Effects.Add(effect);
+
+        var index = ApplyEffectData.Count;
+        ApplyEffectData.Add(new()
+        {
+            EffectIndex = effectIndex,
+            Padding = padding,
+        });
 
         Indices.Add(index);
     }
@@ -267,6 +276,10 @@ internal record struct DrawTrailData(
     TrailRenderer.ColorFunc ColorFn,
     Effect? Effect,
     int SpriteRotation);
+
+internal record struct ApplyEffectData(
+    int EffectIndex,
+    int Padding);
 
 internal record struct SetTextureData(
     int Index,

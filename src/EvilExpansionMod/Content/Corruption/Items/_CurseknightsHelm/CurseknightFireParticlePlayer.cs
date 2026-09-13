@@ -19,8 +19,8 @@ internal class CurseknightFireParticlePlayer : ModPlayer {
                 continue;
             }
 
-            particle.Velocity.Y -= 0.125f;
-            particle.Velocity *= 0.97f;
+            particle.Velocity.Y -= 0.135f;
+            particle.Velocity *= 0.96f;
 
             particle.Position += particle.Velocity;
             Particles[i] = particle;
@@ -30,10 +30,9 @@ internal class CurseknightFireParticlePlayer : ModPlayer {
             for(var i = 0; i < 2; i++) {
                 Particles.Add(new()
                 {
-                    Position = Player.Center + Player.velocity * 0.5f - Vector2.UnitY * 10f
-                        + Main.rand.NextVector2Unit() * Main.rand.NextFloat(14f),
+                    Position = Player.Center - Vector2.UnitY * 11f + Main.rand.NextVector2Unit() * 7.5f,
                     Velocity = Player.velocity * 0.5f,
-                    Scale = Main.rand.NextFloat(0.5f, 1.5f),
+                    Scale = Main.rand.NextFloat(0.75f, 1.5f),
                     Alpha = Main.rand.NextFloat(0.4f, 0.6f),
                     Rotation = Main.rand.NextFloat(MathHelper.Pi),
                     TimeLeft = CurseknightFireParticle.MaxTimeLeft,
@@ -44,7 +43,7 @@ internal class CurseknightFireParticlePlayer : ModPlayer {
 }
 
 public struct CurseknightFireParticle {
-    public const int MaxTimeLeft = 55;
+    public const int MaxTimeLeft = 35;
 
     public Vector2 Position;
     public Vector2 Velocity;

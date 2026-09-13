@@ -57,32 +57,32 @@ internal class CurseknightsHelmDrawLayer : PlayerDrawLayer {
 
             foreach(var particle in fireParticlePlayer.Particles) {
                 var progress = (float)particle.TimeLeft / CurseknightFireParticle.MaxTimeLeft;
-                var progressSin = MathF.Sin(MathHelper.PiOver2 * progress);
+                var color = Color.Lerp(fireColor, new Color(0.2f, 0.2f, 0.2f, 0f), MathF.Max(0f, 1f - particle.Alpha * progress * immuneAlphaMultiplier));
 
                 pipeline.DrawTexture(new()
                 {
                     Texture = fireTexture,
                     Position = particle.Position - Main.screenPosition,
-                    Scale = new Vector2(1f, 0.65f) * (0.3f + progressSin * 0.25f) * particle.Scale,
+                    Scale = new Vector2(1f, 0.65f) * (0.2f + progress * 0.25f) * particle.Scale,
                     Origin = fireTexture.Size() / 2f,
                     Rotation = particle.Rotation,
-                    Color = fireColor * particle.Alpha * progress * immuneAlphaMultiplier,
+                    Color = color,
                 });
             }
 
-            foreach(var particle in fireParticlePlayer.Particles) {
-                var progress = (float)particle.TimeLeft / CurseknightFireParticle.MaxTimeLeft;
-                pipeline.DrawTexture(new()
-                {
-                    Texture = glowTexture,
-                    Position = particle.Position - Main.screenPosition,
-                    Scale = Vector2.One * progress * 0.25f,
-                    Origin = glowTexture.Size() / 2f,
-                    Color = fireColor * 0.1f * immuneAlphaMultiplier,
-                });
-            }
+            // foreach(var particle in fireParticlePlayer.Particles) {
+            //     var progress = (float)particle.TimeLeft / CurseknightFireParticle.MaxTimeLeft;
+            //     pipeline.DrawTexture(new()
+            //     {
+            //         Texture = glowTexture,
+            //         Position = particle.Position - Main.screenPosition,
+            //         Scale = Vector2.One * progress * 0.25f,
+            //         Origin = glowTexture.Size() / 2f,
+            //         Color = fireColor * 0.1f * immuneAlphaMultiplier,
+            //     });
+            // }
 
-            pipeline.ApplyBloom();
+            pipeline.ApplyBloom(0.5f);
         }
 
         drawInfo.DrawDataCache.Add(new(

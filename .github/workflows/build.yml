@@ -53,7 +53,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: build-${{ github.run_number }}
-          name: ${{ env.MOD_NAME }} build ${{ github.run_number }}
+          name: Build ${{ github.run_number }}
           files: C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\${{ env.MOD_NAME }}.tmod
           prerelease: true
         env:

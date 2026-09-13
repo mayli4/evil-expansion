@@ -44,9 +44,13 @@ jobs:
 
       - name: Restore mod solution
         run: dotnet restore
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build mod solution
         run: dotnet build --configuration Release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy .tmod release
         id: create_release

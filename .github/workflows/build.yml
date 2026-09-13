@@ -70,4 +70,4 @@ jobs:
             Changes:
             ${{ steps.commits.outputs.list }}
 
-            Download the build [here](${{ steps.create_release.outputs.url }}).
+            Download the build [here](${{ steps.create_release.outputs.url }}/${{ env.MOD_NAME }}.tmod).

@@ -4,16 +4,28 @@ on:
   push:
     branches:
     - rel
-  
+
 env:
     MOD_NAME: EvilExpansionMod
 
 jobs:
   build:
     runs-on: windows-latest
-    
+    permissions:
+      contents: write
+
     steps:
       - uses: actions/checkout@v4
+
+      - name: Collect commit messages
+        id: commits
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const commits = context.payload.commits
+              .map(c => `- ${c.message.split('\n')[0]}`)
+              .join('\n');
+            core.setOutput('list', commits);
 
       - name: Download & Install tModLoader
         run: |
@@ -36,12 +48,16 @@ jobs:
       - name: Build mod solution
         run: dotnet build --configuration Release
 
-      - name: Deploy .tmod artifact
-        id: upload_tmod
-        uses: actions/upload-artifact@v4
+      - name: Deploy .tmod release
+        id: create_release
+        uses: softprops/action-gh-release@v2
         with:
-          name: ${{ env.MOD_NAME }}.tmod
-          path: C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\${{ env.MOD_NAME }}.tmod
+          tag_name: build-${{ github.run_number }}
+          name: ${{ env.MOD_NAME }} build ${{ github.run_number }}
+          files: C:\Users\runneradmin\Documents\My Games\Terraria\tModLoader\Mods\${{ env.MOD_NAME }}.tmod
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Deploy action across Discord
         uses: sarisia/actions-status-discord@v1  
@@ -51,4 +67,7 @@ jobs:
           nocontext: true
           title: Mod build
           description: |
-            Download the build [here](${{ steps.upload_tmod.outputs.artifact-url }}).
+            Changes:
+            ${{ steps.commits.outputs.list }}
+
+            Download the build [here](${{ steps.create_release.outputs.url }}).

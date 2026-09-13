@@ -71,7 +71,7 @@ jobs:
           nocontext: true
           title: Mod build
           description: |
-            Changes:
+            ## Changes
             ${{ steps.commits.outputs.list }}
 
             Download the build [here](${{ steps.create_release.outputs.url }}/${{ env.MOD_NAME }}.tmod).

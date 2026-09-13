@@ -88,6 +88,14 @@ internal class TrailRenderer : ILoadable {
         TrailEffect.CurrentTechnique.Passes[0].Apply();
 
         if(effect is not null) {
+            if(effect.Parameters["uMatrix"] is EffectParameter matrixParam) {
+                matrixParam.SetValue(matrix);
+            }
+
+            if(effect.Parameters["uSpriteRotation"] is EffectParameter spriteRotationParam) {
+                spriteRotationParam.SetValue(spriteRotation);
+            }
+
             foreach(var pass in effect.CurrentTechnique.Passes) {
                 pass.Apply();
 
@@ -114,29 +122,19 @@ internal class TrailRenderer : ILoadable {
         );
     }
 
-    private void PrepareVerticesAndIndices(
-        ReadOnlySpan<Vector2> positions,
-        WidthFunction widthFn,
-        ColorFunc colorFn) {
+    private void PrepareVerticesAndIndices(ReadOnlySpan<Vector2> positions, WidthFunction widthFn, ColorFunc colorFn) {
         var color = colorFn(0f);
 
-        var vertexOffset = positions[0]
-            .DirectionTo(positions[1])
-            .RotatedBy(MathHelper.PiOver2) * widthFn(0f) * 0.5f;
-
+        var vertexOffset = GetTrailPositionOffsetAt(positions[0], positions[1], widthFn(0f));
         _trailVertices[0] = new VertexPositionColorTexture((positions[0] - vertexOffset).ToVector3(), color, Vector2.Zero);
         _trailVertices[1] = new VertexPositionColorTexture((positions[0] + vertexOffset).ToVector3(), color, Vector2.UnitY);
 
         for(var j = 1; j < positions.Length; j++) {
             var factor = j / (positions.Length - 1f);
-
             color = colorFn(factor);
 
             var currentPosition = positions[j];
-            var previousPosition = positions[j - 1];
-
-            vertexOffset =
-                previousPosition.DirectionTo(currentPosition).RotatedBy(MathHelper.PiOver2) * widthFn(factor) * 0.5f;
+            vertexOffset = GetTrailPositionOffsetAt(positions[j - 1], currentPosition, widthFn(factor));
 
             _trailVertices[j * 2] = new VertexPositionColorTexture(
                 (currentPosition - vertexOffset).ToVector3(),
@@ -162,5 +160,14 @@ internal class TrailRenderer : ILoadable {
 
         _trailIndexBuffer.SetData(_trailIndices);
         Graphics.Device.Indices = _trailIndexBuffer;
+    }
+
+    public static Vector2 GetTrailPositionOffsetAt(Vector2 positionA, Vector2 positionB, float width) {
+        var delta = positionB - positionA;
+
+        var length = delta.Length();
+        if(length == 0f) return Vector2.Zero;
+
+        return (delta / length).RotatedBy(MathHelper.PiOver2) * width * 0.5f;
     }
 }

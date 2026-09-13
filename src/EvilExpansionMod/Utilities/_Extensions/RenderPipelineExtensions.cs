@@ -14,6 +14,7 @@ internal static class RenderPipelineExtensions {
         public RenderPipeline ApplyOutline(Color color, float threshold = 0.001f) {
             return @this.ApplyEffect(
                 Assets.Shaders.Pixel.Outline.Asset.Value,
+                1,
                 ("uColor", color),
                 ("uThreshold", threshold),
                 ("uSize", Main.ScreenSize.ToVector2() * 2f));
@@ -29,8 +30,7 @@ internal static class RenderPipelineExtensions {
                     Assets.Shaders.Pixel.Bloom.Asset.Value,
                     ("uThreshold", threshold),
                     ("uIntensity", intensity),
-                    ("uTexelSize", texelSize)
-                );
+                    ("uTexelSize", texelSize));
         }
     }
 

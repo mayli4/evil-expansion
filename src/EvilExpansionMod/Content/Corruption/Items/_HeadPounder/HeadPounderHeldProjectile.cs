@@ -35,8 +35,6 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
     SlotId _Hitsound = SlotId.Invalid;
 
-    private static RenderCommandQueue _queue = new();
-
     public override string Texture => Assets.Images.Corruption.Items.HeadPounder.HeadPounderItem.KEY;
     public override void SetDefaults() {
         Projectile.width = 0;
@@ -312,9 +310,8 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
         var trailColor = new Color(96, 91, 206) * _outlineAlpha * 0.4f;
 
-        var pixelatedPipeline = new RenderPipeline(_queue, 0.5f, Graphics.WorldTransformMatrix);
-
-        pixelatedPipeline
+        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
+            .SetTexture(TextureAssets.MagicPixel.Value)
             .DrawTrail(
                 _trailPositions.Select(p => p + Projectile.position).ToArray(),
                 static t => (1.25f - t) * 20f,
@@ -342,9 +339,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                 * MathF.Max(1f - MathF.Pow(2f * MathF.Max(_charge - MaxCharge + tintFlashFrames / 2, 0) / tintFlashFrames - 1f, 2), 0f);
         }
 
-        var pipeline = new RenderPipeline(_queue, 2f, Graphics.WorldTransformMatrix);
-
-        pipeline
+        Graphics.Begin(Graphics.WorldTransformMatrix)
             .DrawTexture(new()
             {
                 Texture = texture,
@@ -357,13 +352,6 @@ public class HeadPounderHeldProjectile : ModProjectile {
             })
             .ApplyTint(tintColor)
             .End();
-
-        var size = 360;
-        var centerScreen = Owner.Center - Main.screenPosition;
-        var drawBounds = new Rectangle((int)centerScreen.X - size / 2, (int)centerScreen.Y - size / 2, size, size);
-
-        RenderCommandRunner.Instance.Run(_queue, drawBounds);
-        _queue.Clear();
 
         return false;
     }

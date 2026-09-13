@@ -1,13 +1,6 @@
-texture uImage0Texture;
-sampler uImage0 = sampler_state
-{
-    texture = <uImage0Texture>;
-    Filter = MIN_MAG_MIP_POINT;
-    AddressU = wrap;
-    AddressV = wrap;
-};
+sampler uImage0 : register(s0);
 
-float4x4 uTransformMatrix;
+matrix uMatrix;
 float2 uImage0Size;
 
 struct VSInput
@@ -28,7 +21,7 @@ PSInput VertexShaderFunction(VSInput input)
 {
     PSInput output;
     output.color = input.color;
-    output.position = mul(input.position, uTransformMatrix);
+    output.position = mul(input.position, uMatrix);
     output.uv = input.position.xy / uImage0Size;
     
     return output;

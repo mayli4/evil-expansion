@@ -52,7 +52,7 @@ internal class CurseknightsHelmDrawLayer : PlayerDrawLayer {
         var fireColor = new Color(0.901f, 1f, 0);
 
         using(var scope = _targetLease.Scope(true, Color.Transparent)) {
-            using var pipeline = Graphics.BeginPixelated();
+            using var pipeline = Graphics.Begin(0.5f * Main.GameViewMatrix.Zoom.X, Matrix.Identity);
             pipeline.SetBlendState(BlendState.Additive);
 
             foreach(var particle in fireParticlePlayer.Particles) {

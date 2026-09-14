@@ -695,7 +695,7 @@ public sealed class CursedSpiritNPC : ModNPC {
                 Origin = 16f * Vector2.One,
                 Scale = Vector2.One * 0.325f,
             })
-            .ApplyOutline(GhostColor1)
+            .ApplyOutline(GhostColor1 * 0.5f)
             .End();
 
         var maskShake = 0f;

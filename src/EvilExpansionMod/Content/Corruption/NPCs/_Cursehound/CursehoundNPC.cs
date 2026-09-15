@@ -1,6 +1,5 @@
 ﻿using EvilExpansionMod.Common;
 using EvilExpansionMod.Content.CameraModifiers;
-using EvilExpansionMod.Content.Corruption.Items._CurseknightsHelm;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;

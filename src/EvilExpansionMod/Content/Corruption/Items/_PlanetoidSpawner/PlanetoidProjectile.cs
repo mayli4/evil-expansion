@@ -289,6 +289,8 @@ public class PlanetoidProjectile : ModProjectile {
             {
                 0 => "PlanetoidGoreSmall",
                 1 => "PlanetoidGoreMedium",
+                2 => "PlanetoidGoreBig",
+                3 => "PlanetoidGore",
                 _ => throw new ArgumentOutOfRangeException(CurrentTextureIndex.ToString()),
             };
 
@@ -296,6 +298,8 @@ public class PlanetoidProjectile : ModProjectile {
             {
                 0 => 12,
                 1 => 24,
+                2 => 32,
+                3 => 42,
                 _ => throw new ArgumentOutOfRangeException(CurrentTextureIndex.ToString()),
             };
 
@@ -303,6 +307,8 @@ public class PlanetoidProjectile : ModProjectile {
             {
                 0 => 3,
                 1 => 4,
+                2 => 4,
+                3 => 5,
                 _ => throw new ArgumentOutOfRangeException(CurrentTextureIndex.ToString()),
             };
 
@@ -316,7 +322,7 @@ public class PlanetoidProjectile : ModProjectile {
                 Gore.NewGorePerfect(
                     Projectile.GetSource_Death(),
                     Projectile.Center + direction * (Main.rand.NextFloat(0.5f) + 0.5f) * maxRadius - size / 2f,
-                    direction * Main.rand.NextFloat(1f, 2f),
+                    direction * Main.rand.NextFloat(2f, 3f),
                     gore.Type
                 );
 

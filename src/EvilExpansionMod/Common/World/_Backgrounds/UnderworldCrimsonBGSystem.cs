@@ -16,7 +16,7 @@ namespace EvilExpansionMod.Common.World;
 //this is still pretty bad, and most of it is adapted vanilla code, but its workable
 
 public class UnderworldCrimsonBGSystem : ModSystem {
-    public Asset<Texture2D>[] BackgroundTextures = new Asset<Texture2D>[4];
+    public Asset<Texture2D>[] BackgroundTextures = new Asset<Texture2D>[5];
 
     private static float _fadeOpacity;
     private const float fade_speed = 0.05f;
@@ -48,7 +48,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
     public override void PostUpdateEverything() {
         var inBiome = Main.LocalPlayer.InModBiome<UnderworldCrimsonBiome>();
 
-        if (inBiome) {
+        if(inBiome) {
             _fadeOpacity = Math.Min(_fadeOpacity + fade_speed, 1f);
         }
         else {
@@ -85,7 +85,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
     }
 
     protected void DrawCrimsonUnderworldBackground(bool flat) {
-        if (_fadeOpacity <= 0f)
+        if(_fadeOpacity <= 0f)
             return;
 
         if(!(Main.screenPosition.Y + Main.screenHeight < (Main.maxTilesY - 220) * 16f)) {
@@ -99,19 +99,22 @@ public class UnderworldCrimsonBGSystem : ModSystem {
 
             DrawCrimsonUnderworldLayer(flat, screenOffset, pushUp, 0);
 
-            for(int layerTextureIndex = 4; layerTextureIndex >= 0; layerTextureIndex--) {
+            for(int layerTextureIndex = 5; layerTextureIndex >= 0; layerTextureIndex--) {
                 int customTextureIndex;
                 switch(layerTextureIndex) {
-                    case 4:
+                    case 5:
                         customTextureIndex = 1;
                         break;
-                    case 3:
+                    case 4:
                         customTextureIndex = 2;
                         break;
+                    case 3:
                     case 2:
                     case 1:
-                    case 0:
                         customTextureIndex = 3;
+                        break;
+                    case 0:
+                        customTextureIndex = 4;
                         break;
                     default:
                         continue;
@@ -147,13 +150,16 @@ public class UnderworldCrimsonBGSystem : ModSystem {
         else {
             switch(textureArrayIndex) {
                 case 1:
-                    num7 = 9f;
+                    num7 = 12f;
                     break;
                 case 2:
-                    num7 = 6f;
+                    num7 = 9f;
                     break;
                 case 3:
-                    num7 = 3f;
+                    num7 = 6f;
+                    break;
+                case 4:
+                    num7 = 2f;
                     break;
                 default:
                     num7 = 5f;
@@ -167,7 +173,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
         Vector2 vector = new(1f / num7);
         float num8 = 0.5f;
         Vector2 zero = Vector2.Zero;
-    
+
         float defaultScaleForLayer2 = 0.5f;
         float newScaleFactorForLayer2 = 0.8f;
         float heightChange = value.Height * (newScaleFactorForLayer2 - defaultScaleForLayer2);
@@ -186,7 +192,10 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                 num8 = newScaleFactorForLayer2;
                 break;
             case 3:
-                zero.Y += 70f;
+                zero.Y -= 32f;
+                break;
+            case 4:
+                zero.Y += 958f;
                 break;
         }
 
@@ -229,10 +238,10 @@ public class UnderworldCrimsonBGSystem : ModSystem {
 
         for(int i = startTileX - 2; i <= startTileX + 4 + numTilesToDraw; i++) {
             Color drawColor = Color.White * _fadeOpacity;
-        
+
             Main.spriteBatch.End(out var ss);
             Main.spriteBatch.Begin(ss with { BlendState = BlendState.AlphaBlend });
-            
+
             Main.spriteBatch.Draw(
                 value,
                 drawPos,
@@ -244,7 +253,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                 SpriteEffects.None,
                 0f
             );
-            
+
             Main.spriteBatch.Restart(ss);
 
             if(isGradient || textureArrayIndex == 1) {

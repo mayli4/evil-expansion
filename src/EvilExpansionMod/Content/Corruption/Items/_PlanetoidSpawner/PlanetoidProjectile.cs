@@ -7,6 +7,7 @@ using System;
 using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -32,14 +33,14 @@ public class PlanetoidProjectile : ModProjectile {
     public ref float GrowthTimer => ref Projectile.ai[0];
     public ref float State => ref Projectile.ai[1];
 
-    private ref float _currentTextureIndex => ref Projectile.localAI[0];
-    private ref float _hasHitGround => ref Projectile.localAI[1];
-    private ref float _preExplosionDelayTimer => ref Projectile.localAI[2];
+    private ref float CurrentTextureIndex => ref Projectile.localAI[0];
+    private ref float HasHitGround => ref Projectile.localAI[1];
+    private ref float PreExplosionDelayTimer => ref Projectile.localAI[2];
 
     private bool _canExplode;
     private float _shake;
 
-    private const float growth_time = 60 * 5;
+    private const float GROWTH_TIME = 60 * 5;
 
     private float _rot;
 
@@ -65,16 +66,17 @@ public class PlanetoidProjectile : ModProjectile {
     public override void OnSpawn(IEntitySource source) {
         GrowthTimer = 0;
         Projectile.scale = 0.0f;
-        _currentTextureIndex = 0;
+        CurrentTextureIndex = 0;
         _rot = Main.rand.NextFloat(-0.03f, 0.03f);
         State = 0f;
-        _hasHitGround = 0f;
+        HasHitGround = 0f;
     }
 
     public override void AI() {
         Player player = Main.player[Projectile.owner];
 
         var shake = 0.1f;
+        var directionToMouse = (Main.MouseWorld - Projectile.Center).SafeNormalize(Vector2.Zero);
 
         if(State == 0f) {
             if(!player.channel || !player.active || player.dead) {
@@ -90,8 +92,8 @@ public class PlanetoidProjectile : ModProjectile {
             else {
                 Projectile.timeLeft = 2;
 
-                Vector2 targetPos = Main.MouseWorld;
-                Projectile.Center = Vector2.Lerp(Projectile.Center, targetPos, 0.05f + 0.1f * Projectile.scale);
+                Projectile.velocity += directionToMouse * 0.8f;
+                Projectile.velocity *= 0.89f;
 
                 //shake = MathHelper.Lerp(0f, 0f, Projectile.scale);
             }
@@ -100,24 +102,24 @@ public class PlanetoidProjectile : ModProjectile {
 
             GrowthTimer++;
 
-            Projectile.scale = MathHelper.Clamp(GrowthTimer / growth_time, 0f, 1f);
+            Projectile.scale = MathHelper.Clamp(GrowthTimer / GROWTH_TIME, 0f, 1f);
 
             float powerFactor = Projectile.scale;
             Projectile.damage = (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(50 * powerFactor);
             Projectile.knockBack = player.GetTotalKnockback(DamageClass.Magic).ApplyTo(10f * powerFactor);
 
-            if(GrowthTimer >= growth_time) {
+            if(GrowthTimer >= GROWTH_TIME) {
                 _canExplode = true;
                 State = 2f;
                 Projectile.netUpdate = true;
-                _preExplosionDelayTimer = 0;
+                PreExplosionDelayTimer = 0;
             }
         }
         else if(State == 1f) {
             Projectile.velocity.Y += 0.2f;
             if(Projectile.velocity.Y > 16f) Projectile.velocity.Y = 16f;
 
-            if(_hasHitGround == 1f) {
+            if(HasHitGround == 1f) {
                 Projectile.velocity.X *= 0.98f;
 
                 if(Math.Abs(Projectile.velocity.X) < 0.3f) {
@@ -130,14 +132,15 @@ public class PlanetoidProjectile : ModProjectile {
         }
         else if(State == 2f) {
             Projectile.rotation += _rot;
-            Vector2 targetPos = Main.MouseWorld;
-            Projectile.Center = Vector2.Lerp(Projectile.Center, targetPos, 0.05f);
 
-            Projectile.timeLeft = (int)(20f - _preExplosionDelayTimer + 5);
+            Projectile.velocity += directionToMouse * 0.8f;
+            Projectile.velocity *= 0.89f;
+
+            Projectile.timeLeft = (int)(20f - PreExplosionDelayTimer + 5);
             shake = 6;
-            _preExplosionDelayTimer++;
+            PreExplosionDelayTimer++;
 
-            if(_preExplosionDelayTimer >= 20f) {
+            if(PreExplosionDelayTimer >= 20f) {
                 Projectile.Kill();
                 SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode, Projectile.Center);
             }
@@ -153,7 +156,7 @@ public class PlanetoidProjectile : ModProjectile {
         var player = Main.player[Projectile.owner];
 
         if(State == 1f) {
-            if(_hasHitGround == 0f && oldVelocity.Y > 0) {
+            if(HasHitGround == 0f && oldVelocity.Y > 0) {
                 SoundEngine.PlaySound(SoundID.Dig, Projectile.Center);
                 SoundEngine.PlaySound(SoundID.DD2_SonicBoomBladeSlash, Projectile.Center);
 
@@ -190,10 +193,10 @@ public class PlanetoidProjectile : ModProjectile {
                     Dust.NewDustPerfect(dustPos, DustID.Corruption);
                     Dust.NewDustPerfect(dustPos, DustID.Dirt);
                 }
-                _hasHitGround = 1f;
+                HasHitGround = 1f;
                 Projectile.timeLeft = Math.Min(Projectile.timeLeft, 60 * 5);
             }
-            else if(_hasHitGround == 1f) {
+            else if(HasHitGround == 1f) {
                 if(Projectile.velocity.X != oldVelocity.X) {
                     Projectile.velocity.X = -oldVelocity.X * 0.7f;
                 }
@@ -230,11 +233,15 @@ public class PlanetoidProjectile : ModProjectile {
             var rotation = Main.rand.NextFloat();
             for(var i = 0; i < 7; i++) {
                 var direction = rotation.ToRotationVector2();
-                Gore.NewGoreDirect(
+
+                var gore = Mod.Find<ModGore>("PlanetoidGore" + i);
+                var size = TextureAssets.Gore[gore.Type].Size();
+
+                Gore.NewGorePerfect(
                     Projectile.GetSource_Death(),
-                    Projectile.Center + direction * 10f - new Vector2(8, 8),
-                    direction * Main.rand.NextFloat(3f, 5f),
-                    Mod.Find<ModGore>("PlanetoidGore" + i).Type
+                    Projectile.Center + direction * (Main.rand.NextFloat(0.5f) + 0.5f) * 42 - size / 2f,
+                    direction * Main.rand.NextFloat(5f, 10f),
+                    gore.Type
                 );
 
                 rotation += MathF.PI * 2f / 3f + Main.rand.NextFloatDirection() * 0.2f;
@@ -246,7 +253,8 @@ public class PlanetoidProjectile : ModProjectile {
             }
         }
 
-        if(_hasHitGround == 1f) {
+
+        if(HasHitGround == 1f) {
             for(int i = 0; i < 8; i++) {
                 var randomDirection = Main.rand.NextVector2Unit();
                 var dustPos = Projectile.Center + randomDirection * Main.rand.NextFloat(Projectile.width * 0.5f);
@@ -276,6 +284,50 @@ public class PlanetoidProjectile : ModProjectile {
                 Dust.NewDustPerfect(dustPos, DustID.Corruption);
                 Dust.NewDustPerfect(dustPos, DustID.Dirt);
             }
+
+            var gorePrefix = CurrentTextureIndex switch
+            {
+                0 => "PlanetoidGoreSmall",
+                1 => "PlanetoidGoreMedium",
+                2 => "PlanetoidGoreBig",
+                3 => "PlanetoidGore",
+                _ => throw new ArgumentOutOfRangeException(CurrentTextureIndex.ToString()),
+            };
+
+            var maxRadius = CurrentTextureIndex switch
+            {
+                0 => 12,
+                1 => 24,
+                2 => 32,
+                3 => 42,
+                _ => throw new ArgumentOutOfRangeException(CurrentTextureIndex.ToString()),
+            };
+
+            var goreCount = CurrentTextureIndex switch
+            {
+                0 => 3,
+                1 => 4,
+                2 => 4,
+                3 => 5,
+                _ => throw new ArgumentOutOfRangeException(CurrentTextureIndex.ToString()),
+            };
+
+            var rotation = Main.rand.NextFloat();
+            for(var i = 1; i < goreCount + 1; i++) {
+                var direction = rotation.ToRotationVector2();
+
+                var gore = Mod.Find<ModGore>(gorePrefix + i);
+                var size = TextureAssets.Gore[gore.Type].Size();
+
+                Gore.NewGorePerfect(
+                    Projectile.GetSource_Death(),
+                    Projectile.Center + direction * (Main.rand.NextFloat(0.5f) + 0.5f) * maxRadius - size / 2f,
+                    direction * Main.rand.NextFloat(2f, 3f),
+                    gore.Type
+                );
+
+                rotation += MathF.PI * 2f / goreCount + Main.rand.NextFloatDirection() * 0.2f;
+            }
         }
     }
 
@@ -304,7 +356,7 @@ public class PlanetoidProjectile : ModProjectile {
         }
 
         //this shouldnt be here but idc
-        if(newTextureIndex != _currentTextureIndex && GrowthTimer > 1) {
+        if(newTextureIndex != CurrentTextureIndex && GrowthTimer > 1) {
             for(int i = 0; i < 8; i++) {
                 var randomDirection = Main.rand.NextVector2Unit();
                 var dustPos =
@@ -335,7 +387,8 @@ public class PlanetoidProjectile : ModProjectile {
                 Dust.NewDustPerfect(dustPos, DustID.Corruption);
                 Dust.NewDustPerfect(dustPos, DustID.Dirt);
             }
-            _currentTextureIndex = newTextureIndex;
+
+            CurrentTextureIndex = newTextureIndex;
             _shake = 1f;
 
             SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot, Projectile.Center);
@@ -364,7 +417,7 @@ public class PlanetoidProjectile : ModProjectile {
             SpriteEffects.None
         );
 
-        float crackProgress = _preExplosionDelayTimer / 20f;
+        float crackProgress = PreExplosionDelayTimer / 20f;
         if(State == 2f && crackProgress > 0f) {
             float easedCrackProgress = MathF.Pow(crackProgress, 2f);
             var crackShader = Assets.Shaders.Pixel.PlanetoidCracks.Asset.Value;

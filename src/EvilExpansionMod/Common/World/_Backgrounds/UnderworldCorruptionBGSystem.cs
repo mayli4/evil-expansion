@@ -1,4 +1,3 @@
-using EvilExpansionMod.Content.Biomes;
 using EvilExpansionMod.Content.Corruption;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -15,7 +14,7 @@ namespace EvilExpansionMod.Common.World;
 //this is still pretty bad, and most of it is adapted vanilla code, but its workable
 
 internal sealed class UnderworldCorruptionBgSystem : ModSystem {
-    public Asset<Texture2D>[] BackgroundTextures = new Asset<Texture2D>[5];
+    public Asset<Texture2D>[] BackgroundTextures = new Asset<Texture2D>[6];
 
     private static float fadeOpacity;
     private const float fade_speed = 0.05f;
@@ -92,28 +91,33 @@ internal sealed class UnderworldCorruptionBgSystem : ModSystem {
             SkyManager.Instance.ResetDepthTracker();
 
             DrawCorruptionUnderworldLayer(flat, screenOffset, pushUp, 0);
-            DrawCorruptionUnderworldLayer(flat, screenOffset, pushUp, 4);
 
-            for(int layerTextureIndex = 4; layerTextureIndex >= 0; layerTextureIndex--) {
+            for(int layerTextureIndex = 6; layerTextureIndex >= 0; layerTextureIndex--) {
                 int customTextureIndex;
                 switch(layerTextureIndex) {
-                    case 4:
+                    case 6:
                         customTextureIndex = 1;
                         break;
-                    case 3:
+                    case 5:
                         customTextureIndex = 2;
                         break;
+                    case 4:
+                    case 3:
                     case 2:
-                    case 1:
-                    case 0:
                         customTextureIndex = 3;
+                        break;
+                    case 1:
+                        customTextureIndex = 4;
+                        break;
+                    case 0:
+                        customTextureIndex = 5;
                         break;
                     default:
                         continue;
                 }
 
                 DrawCorruptionUnderworldLayer(flat, screenOffset, pushUp, customTextureIndex);
-            } 
+            }
 
             if(!Main.mapFullscreen) {
                 SkyManager.Instance.DrawRemainingDepth(Main.spriteBatch);
@@ -143,13 +147,16 @@ internal sealed class UnderworldCorruptionBgSystem : ModSystem {
         else {
             switch(textureArrayIndex) {
                 case 1:
-                    num7 = 9f;
+                    num7 = 12f;
                     break;
                 case 2:
-                    num7 = 6f;
+                    num7 = 9f;
                     break;
                 case 3:
-                    num7 = 3f;
+                    num7 = 6f;
+                    break;
+                case 5:
+                    num7 = 2f;
                     break;
                 default:
                     num7 = 5f;
@@ -180,6 +187,9 @@ internal sealed class UnderworldCorruptionBgSystem : ModSystem {
                 break;
             case 4:
                 zero.Y += 150f;
+                break;
+            case 5:
+                zero.Y += 1120f;
                 break;
         }
 

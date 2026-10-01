@@ -1,5 +1,4 @@
-﻿using EvilExpansionMod.Utilities;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
@@ -69,7 +68,6 @@ internal class RoarProjectile : ModProjectile {
                 Size = Projectile.Size,
                 Effect = effect,
             })
-            .ApplyBloom(2f)
             .End();
         return false;
     }

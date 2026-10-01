@@ -53,7 +53,7 @@ public class MarrowEyeNPC : ModNPC {
         NPC.width = 50;
         NPC.height = 50;
         NPC.lifeMax = 333;
-        NPC.value = NPC.value = Item.buyPrice(silver: 18,copper: 50);
+        NPC.value = NPC.value = Item.buyPrice(silver: 18, copper: 50);
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
@@ -229,7 +229,7 @@ public class MarrowEyeNPC : ModNPC {
     }
 
     public override void AI() {
-        NPC.rotation = MathF.Sin(Main.GameUpdateCount * 0.01f + NPC.whoAmI * 574f) * 0.05f;
+        NPC.rotation = MathF.Sin(Main.GameUpdateCount * 0.025f + NPC.whoAmI * 574f) * 0.06f;
 
         var origin = new Vector2(-4f, -38f);
         _eyePosition = NPC.Center + origin + _lookDirection * 7f - origin.RotatedBy(NPC.rotation) - Vector2.UnitY * 4f;

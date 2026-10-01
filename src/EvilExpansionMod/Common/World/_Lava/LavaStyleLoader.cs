@@ -75,7 +75,7 @@ public class LavaStyleLoader : ModSystem {
         IL_LiquidRenderer.InternalPrepareDraw += ChangeLavaBubbleDust_LiquidRenderer;
 
         // buff changes
-        IL_Player.Update += PlayerLavaDebuff;
+        //IL_Player.Update += PlayerLavaDebuff;
     }
 
     private void ChangeLavaBubbleDust_LiquidRenderer(ILContext il) {

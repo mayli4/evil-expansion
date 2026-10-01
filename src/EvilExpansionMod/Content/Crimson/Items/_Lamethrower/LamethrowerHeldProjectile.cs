@@ -108,7 +108,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
         var mouseDirection = Projectile.Center.DirectionTo(Main.MouseWorld);
         _rotationVector = Vector2.Lerp(mouseDirection, _rotationVector, 0.2f);
 
-        _trailOrigin = Projectile.position + _rotationVector * 60f + _rotationVector.RotatedBy(MathHelper.PiOver2 * Owner.direction) * 8f;
+        _trailOrigin = Projectile.position + _rotationVector * 62f;
         _trailOrigin += Owner.velocity;
 
         Projectile.rotation = _rotationVector.ToRotation();

@@ -99,7 +99,7 @@ public class TerrorBatNPC : ModNPC {
     }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-        return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.5f : 0;
+        return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.25f : 0;
     }
 
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {

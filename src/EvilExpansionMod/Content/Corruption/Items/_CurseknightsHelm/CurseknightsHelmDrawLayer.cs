@@ -103,7 +103,7 @@ internal class CurseknightsHelmDrawLayer : PlayerDrawLayer {
                         Origin = glowTexture.Size() / 2f,
                         Scale = Vector2.One * 0.15f,
                     })
-                    .ApplyBloom(0.2f);
+                    .ApplyBloom(0.1f);
             }
         }
 

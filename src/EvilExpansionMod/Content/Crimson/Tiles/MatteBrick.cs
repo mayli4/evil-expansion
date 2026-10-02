@@ -33,12 +33,6 @@ public class MatteBrick : ModTile {
 
         AddMapEntry(new Color(100, 37, 62));
     }
-
-    public override bool IsTileBiomeSightable(int i, int j, ref Color sightColor) {
-        sightColor = Color.Yellow;
-        return true;
-    }
-
 }
 public class MatteBrickItem : ModItem {
     public override string Texture => Assets.Images.Crimson.Tiles.MatteBrickItem.KEY;

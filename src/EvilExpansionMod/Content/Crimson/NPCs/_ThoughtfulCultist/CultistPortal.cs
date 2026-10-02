@@ -24,7 +24,6 @@ public class CultistPortal : ModProjectile {
 
     PortalType PortalType => (PortalType)Projectile.ai[0];
     bool _spawnedEye;
-    bool _playedSpearSound;
 
     public override void SetDefaults() {
         Projectile.width = 45;
@@ -51,6 +50,29 @@ public class CultistPortal : ModProjectile {
     }
 
     public override void AI() {
+        if(Projectile.timeLeft == (int)Projectile.ai[1]) {
+            SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistPortalOpenLayer1.Asset with
+            {
+                Pitch = Main.rand.NextFloatDirection() * 0.4f,
+                MaxInstances = 3,
+            }, Projectile.Center);
+
+            SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistPortalOpenLayer2.Asset with
+            {
+                Pitch = Main.rand.NextFloatDirection() * 0.4f,
+                MaxInstances = 3,
+            }, Projectile.Center);
+        }
+        else if(Projectile.timeLeft == (int)Projectile.ai[1] - 16) {
+            if(PortalType == PortalType.Spear) {
+                SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistSpearThrustMaybe.Asset with
+                {
+                    Pitch = Main.rand.NextFloatDirection() * 0.1f,
+                    MaxInstances = 3,
+                }, Projectile.Center);
+            }
+        }
+
         var t = Projectile.timeLeft / Projectile.ai[1];
         switch(PortalType) {
             case PortalType.Blood:
@@ -65,10 +87,17 @@ public class CultistPortal : ModProjectile {
                         ModContent.NPCType<CultistEye>()
                     );
                     npc.velocity = Projectile.velocity * 12f;
-                    SoundEngine.PlaySound(SoundID.Item117 with
+
+                    SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistGoreFlingLowLayer.Asset with
                     {
                         Pitch = Main.rand.NextFloatDirection() * 0.1f,
-                        Volume = 0.8f,
+                        MaxInstances = 3,
+                    }, Projectile.Center);
+
+                    SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistGoreFlingSquelch.Asset with
+                    {
+                        Pitch = Main.rand.NextFloatDirection() * 0.1f,
+                        MaxInstances = 3,
                     }, Projectile.Center);
                 }
 
@@ -92,21 +121,21 @@ public class CultistPortal : ModProjectile {
                         20,
                         4f
                     );
-                    SoundEngine.PlaySound(SoundID.Drown with
+
+                    SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistGoreFlingLowLayer.Asset with
                     {
                         Pitch = Main.rand.NextFloatDirection() * 0.1f,
-                        Volume = 0.8f,
+                        MaxInstances = 3,
+                    }, Projectile.Center);
+
+                    SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistGoreFlingSquelch.Asset with
+                    {
+                        Pitch = Main.rand.NextFloatDirection() * 0.1f,
+                        MaxInstances = 3,
                     }, Projectile.Center);
                 }
                 break;
             case PortalType.Spear:
-                if(t < 0.6f && !_playedSpearSound) {
-                    SoundEngine.PlaySound(SoundID.Item71 with {
-                    Pitch = Main.rand.NextFloatDirection() * 0.1f,
-                    Volume = 0.8f,
-                    }, Projectile.Center);
-                    _playedSpearSound = true;
-                }
                 break;
         }
     }
@@ -114,7 +143,7 @@ public class CultistPortal : ModProjectile {
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
         var t = Projectile.timeLeft / Projectile.ai[1];
 
-        if(PortalType != PortalType.Spear || t < 0.3f || t > 0.6f ) return false;
+        if(PortalType != PortalType.Spear || t < 0.3f || t > 0.6f) return false;
 
         float _ = 0;
         return Collision.CheckAABBvLineCollision(

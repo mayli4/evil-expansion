@@ -115,6 +115,11 @@ public class ThoughtfulCultistNPC : ModNPC {
                         _portalRotation = Main.rand.NextFloat(0, 2 * MathF.PI);
                         ChangeState(CultistState.SpearAttack);
                     }
+
+                    SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistPendantActivate.Asset with
+                    {
+                        Pitch = Main.rand.NextFloatDirection() * 0.5f,
+                    }, NPC.Center);
                 }
                 break;
             case CultistState.SpearAttack:
@@ -140,11 +145,6 @@ public class ThoughtfulCultistNPC : ModNPC {
                             ai1: 112);
 
                         _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
-                        SoundEngine.PlaySound(SoundID.AbigailSummon with
-                        {
-                            Pitch = Main.rand.NextFloatDirection() * 0.6f,
-                            Volume = 0.8f,
-                        }, position);
                     }
                 }
 
@@ -154,9 +154,8 @@ public class ThoughtfulCultistNPC : ModNPC {
                 break;
             case CultistState.EyeAttack:
                 NPC.velocity *= 0.98f;
-                if(Target == null) {
-                }
-                else if(_timer > 60 / DifficultyScaler && (int)_timer % 30 == 0) {
+
+                if(_timer > 60 / DifficultyScaler && (int)_timer % 30 == 0) {
                     var position = Target.Center + _portalRotation.ToRotationVector2() * Main.rand.NextFloat(300, 400);
                     var direction = position.DirectionTo(Target.Center);
                     Projectile.NewProjectile(
@@ -171,11 +170,6 @@ public class ThoughtfulCultistNPC : ModNPC {
                     );
 
                     _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
-                    SoundEngine.PlaySound(SoundID.AbigailSummon with
-                    {
-                        Pitch = Main.rand.NextFloatDirection() * 0.6f - 1.0f,
-                        Volume = 0.8f,
-                    }, position);
                 }
 
                 if(_timer > 120) {

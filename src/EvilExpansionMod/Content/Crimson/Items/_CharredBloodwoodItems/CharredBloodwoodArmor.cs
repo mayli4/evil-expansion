@@ -136,7 +136,7 @@ public sealed class CharredBloodwoodPlayer : ModPlayer {
                     Player.GetSource_FromThis(),
                     Player.Center,
                     velocity,
-                    ModContent.ProjectileType<EvilWoodSpike>(),
+                    ModContent.ProjectileType<BloodWoodSpike>(),
                     damage,
                     knockback,
                     Main.myPlayer,

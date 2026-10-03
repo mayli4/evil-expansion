@@ -47,7 +47,7 @@ public class CharredBloodwoodSword : ModItem{
                 player.GetSource_FromThis(),
                 target.Center,
                 velocity,
-                ModContent.ProjectileType<EvilWoodSpike>(),
+                ModContent.ProjectileType<BloodWoodSpike>(),
                 damageDone/2, // Half the damage of the sword
                 Item.knockBack/2, // Half the knockback of the sword
                 Main.myPlayer,

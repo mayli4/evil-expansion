@@ -46,7 +46,7 @@ public class CurseknightsHelmPlayer : ModPlayer {
         }
     }
 
-    public override void OnHitByNPC(NPC npc, Player.HurtInfo hurtInfo) { // Inflictng +8s Cursed Inferno when above HP threshold
+    public override void OnHurt(Player.HurtInfo hurtInfo) { // Inflictng +8s Cursed Inferno when above HP threshold
         if(IsWearingHelm && !IsBelowThreshold) {
             int buffIndex = Player.FindBuffIndex(BuffID.CursedInferno);
             if(buffIndex != -1) {

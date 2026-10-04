@@ -6,14 +6,13 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Corruption;
-public class CorruptAshwoodBow : ModItem
-{
+public class CorruptAshwoodBow : ModItem{
     public override string Texture => Assets.Images.Corruption.Items.CorruptAshwoodBow.KEY;
     public override void SetDefaults() {
         // Modders can use Item.DefaultToRangedWeapon to quickly set many common properties, such as: useTime, useAnimation, useStyle, autoReuse, DamageType, shoot, shootSpeed, useAmmo, and noMelee. These are all shown individually here for teaching purposes.
 
         // Common Properties
-        Item.width = 40; // Hitbox width of the item.
+        Item.width = 16; // Hitbox width of the item.
         Item.height = 40; // Hitbox height of the item.
         //Item.scale = 0.75f;
         Item.rare = ItemRarityID.Blue; // The color that the item's name will be in-game.

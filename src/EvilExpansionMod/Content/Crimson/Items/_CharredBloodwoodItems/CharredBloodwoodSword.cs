@@ -5,11 +5,11 @@ using Terraria.ModLoader;
 using Terraria.Audio;
 
 namespace EvilExpansionMod.Content.Crimson;
-public class CharredBloodwoodSword : ModItem{
+public class CharredBloodwoodSword : ModItem {
     public override string Texture => Assets.Images.Crimson.Items.CharredBloodwoodSword.KEY;
     public override void SetDefaults() {
-        Item.width = 40; // The item texture's width.
-        Item.height = 40; // The item texture's height.
+        Item.width = 48; // The item texture's width.
+        Item.height = 48; // The item texture's height.
 
         Item.useStyle = ItemUseStyleID.Swing; // The useStyle of the Item.
         Item.useTime = 17; // The time span of using the weapon. Remember in terraria, 60 frames is a second.

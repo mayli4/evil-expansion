@@ -13,8 +13,8 @@ public class CharredBloodwoodBow : ModItem
         // Modders can use Item.DefaultToRangedWeapon to quickly set many common properties, such as: useTime, useAnimation, useStyle, autoReuse, DamageType, shoot, shootSpeed, useAmmo, and noMelee. These are all shown individually here for teaching purposes.
 
         // Common Properties
-        Item.width = 40; // Hitbox width of the item.
-        Item.height = 40; // Hitbox height of the item.
+        Item.width = 16; // Hitbox width of the item.
+        Item.height = 34; // Hitbox height of the item.
         //Item.scale = 0.75f;
         Item.rare = ItemRarityID.Blue; // The color that the item's name will be in-game.
 

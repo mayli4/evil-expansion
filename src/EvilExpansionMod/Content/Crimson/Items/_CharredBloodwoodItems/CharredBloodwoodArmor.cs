@@ -152,6 +152,7 @@ public sealed class CharredBloodwoodPlayer : ModPlayer {
 }
 public sealed class BloodWoodSpike : ModProjectile {
     Texture2D texture = null!;
+    public override string Texture => Assets.Images.Crimson.Items.CharredBloodwoodArmor.CharredBloodwoodSpike.KEY;
     public override void SetDefaults() {
         Projectile.width = 10;
         Projectile.height = 10;

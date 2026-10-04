@@ -406,6 +406,101 @@ Mods: {
 				DisplayName: Matte Brick Wall
 				Tooltip: ""
 			}
+
+			CorruptAshwoodBody: {
+				DisplayName: Corrupt Ashwood Body
+				Tooltip: ""
+			}
+
+			CorruptAshwoodBow: {
+				DisplayName: Corrupt Ashwood Bow
+				Tooltip: ""
+			}
+
+			CorruptAshwoodHead: {
+				DisplayName: Corrupt Ashwood Head
+				Tooltip: ""
+			}
+
+			CorruptAshwoodLegs: {
+				DisplayName: Corrupt Ashwood Legs
+				Tooltip: ""
+			}
+
+			CorruptAshwoodSword: {
+				DisplayName: Corrupt Ashwood Sword
+				Tooltip: ""
+			}
+
+			CharredBloodwoodBody: {
+				DisplayName: Charred Bloodwood Body
+				Tooltip: ""
+			}
+
+			CharredBloodwoodBow: {
+				DisplayName: Charred Bloodwood Bow
+				Tooltip: ""
+			}
+
+			CharredBloodwoodHead: {
+				DisplayName: Charred Bloodwood Head
+				Tooltip: ""
+			}
+
+			CharredBloodwoodLegs: {
+				DisplayName: Charred Bloodwood Legs
+				Tooltip: ""
+			}
+
+			CharredBloodwoodSword: {
+				DisplayName: Charred Bloodwood Sword
+				Tooltip: ""
+			}
+
+			SucsGoodman: {
+				DisplayName: Sucs Goodman
+				Tooltip: ""
+			}
+
+			CorruptAshwoodHamaxe: {
+				DisplayName: Corrupt Ashwood Hamaxe
+				Tooltip: ""
+			}
+
+			DevouringPotionItem: {
+				DisplayName: Devouring Potion Item
+				Tooltip: ""
+			}
+
+			DevouringPotionStarPickup: {
+				DisplayName: Devouring Potion Star Pickup
+				Tooltip: ""
+			}
+
+			MaliciousFeederfishItem: {
+				DisplayName: Malicious Feederfish Item
+				Tooltip: ""
+			}
+
+			CharredBloodwoodHamaxe: {
+				DisplayName: Charred Bloodwood Hamaxe
+				Tooltip: ""
+			}
+
+			MarrowanaItem: {
+				DisplayName: Marrowana Item
+				Tooltip: ""
+			}
+
+			SplicingPotionHeartPickup: {
+				DisplayName: Splicing Potion Heart Pickup
+				Tooltip: ""
+			}
+
+			SplicingPotionItem: {
+				DisplayName: Splicing Potion Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -500,6 +595,8 @@ Mods: {
 			MarrowEyeRingProjectile.DisplayName: Marrow Eye Ring Projectile
 			FriendlyCultistPortal.DisplayName: Friendly Cultist Portal
 			LavaTelegraphProjectile.DisplayName: Lava Telegraph Projectile
+			EvilWoodSpike.DisplayName: Evil Wood Spike
+			BloodWoodSpike.DisplayName: Blood Wood Spike
 		}
 
 		Biomes: {
@@ -535,6 +632,7 @@ Mods: {
 			HellShadetree.MapEntry: Hell Shadetree
 			PolypOreTile.MapEntry: Polyp Ore
 			CartilageOreTile.MapEntry: Cartilage Ore
+			SucsGoodmanTile.MapEntry: Sucs Goodman Tile
 		}
 
 		Bestiary: {
@@ -590,6 +688,16 @@ Mods: {
 			EvilMeatloafDebuff: {
 				DisplayName: Meatloaf Poisoning
 				Description: Losing life... ever so slowly...
+			}
+
+			DevouringPotionBuff: {
+				DisplayName: Devouring Potion Buff
+				Description: Mods.EvilExpansionMod.Buffs.DevouringPotionBuff.Description
+			}
+
+			SplicingPotionBuff: {
+				DisplayName: Splicing Potion Buff
+				Description: Mods.EvilExpansionMod.Buffs.SplicingPotionBuff.Description
 			}
 		}
 

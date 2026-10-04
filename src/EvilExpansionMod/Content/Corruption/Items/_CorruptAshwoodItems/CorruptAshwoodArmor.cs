@@ -152,6 +152,8 @@ public sealed class CorruptAshwoodPlayer : ModPlayer {
 }
 public sealed class EvilWoodSpike : ModProjectile {
     Texture2D texture = null!;
+
+    public override string Texture => Assets.Images.Corruption.Items.CorruptAshwoodArmor.CorruptAshwoodSpike.KEY;
     public override void SetDefaults() {
         Projectile.width = 10;
         Projectile.height = 10;

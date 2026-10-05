@@ -42,7 +42,7 @@ public class CorruptAshwoodHead : ModItem {
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient<CorruptAshwoodItem>(20)
-            .AddIngredient(ItemID.SoulofNight,3)
+            .AddIngredient(ItemID.SoulofNight,1)
             .AddTile(TileID.WorkBenches)
             .Register();
     }
@@ -110,7 +110,7 @@ public class CorruptAshwoodLegs : ModItem {
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient<CorruptAshwoodItem>(25)
-            .AddIngredient(ItemID.SoulofNight,3)
+            .AddIngredient(ItemID.SoulofNight,2)
             .AddTile(TileID.WorkBenches)
             .Register();
     }
@@ -127,8 +127,8 @@ public sealed class CorruptAshwoodPlayer : ModPlayer {
             float knockback = 0.5f;
             var numberofspikes = Main.rand.NextFloat(8f, 17f); // Spew 8-16 projectiles
             for(int i = 0; i < numberofspikes; i++) { // Counting the number of spikes to spew
-                float speed = 10f * Main.rand.NextFloat(0.5f, 2f); // Initial velocity magnitude
-                float angle = MathHelper.PiOver2 * Main.rand.NextFloat(0.5f, 2f); // 90 degrees in radians w/ variation
+                float speed = 20f * Main.rand.NextFloat(0.5f, 2f); // Initial velocity magnitude
+                float angle = 3/2 * MathHelper.Pi * Main.rand.NextFloat(0.5f, 2f); // 90 degrees in radians w/ variation
 
                 Vector2 velocity = Vector2.UnitX.RotatedBy(angle) * speed;
 
@@ -145,7 +145,7 @@ public sealed class CorruptAshwoodPlayer : ModPlayer {
                 SoundEngine.PlaySound(SoundID.Item110 with { Volume = 1.5f } with { PitchRange = (0f, 0.5f) }, Player.Center);
             }
             for(int i = 0; i < 5; i++) { //On-hit VFX goes here
-                Dust.NewDust(Player.position, Player.width, Player.height, DustID.CorruptGibs, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.5f, 2f));
+                Dust.NewDust(Player.position, Player.width, Player.height, DustID.Clay, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.5f, 2f));
             }
         }
     }
@@ -167,30 +167,7 @@ public sealed class EvilWoodSpike : ModProjectile {
         Projectile.tileCollide = true;
         Projectile.ignoreWater = true;
     }
-    public override bool PreDraw(ref Color lightColor){
-    if(Projectile.ai[0] == 1) {
-            texture = ModContent.Request<Texture2D>(Assets.Images.Corruption.Items.CorruptAshwoodArmor.CorruptAshwoodSpike.KEY).Value;
-        }
-        else {
-            texture = ModContent.Request<Texture2D>(Assets.Images.Corruption.Items.CorruptAshwoodArmor.CorruptAshwoodSpike.KEY).Value;
-        }
-    Vector2 drawPos = Projectile.Center - Main.screenPosition + new Vector2(0f, Projectile.gfxOffY);
-    Rectangle? sourceRectangle = null; // Or specify a frame rectangle
-    Vector2 origin = texture.Size() / 2f;
-
-    Main.EntitySpriteDraw(
-        texture, 
-        drawPos, 
-        sourceRectangle, 
-        Projectile.GetAlpha(lightColor), 
-        Projectile.rotation, 
-        origin, 
-        Projectile.scale, 
-        SpriteEffects.None
-    );
-
-    return false; // Return false to stop vanilla drawing if you are fully custom-drawing
-    }
+    
     public override void AI() {
         Projectile.rotation += 0.3f * (Projectile.velocity.X > 0 ? 1 : -1);
     }

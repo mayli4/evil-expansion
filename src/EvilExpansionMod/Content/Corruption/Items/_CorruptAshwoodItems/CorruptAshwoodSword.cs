@@ -29,7 +29,7 @@ public class CorruptAshwoodSword : ModItem{
     public override void MeleeEffects(Player player, Rectangle hitbox) {
         if (Main.rand.NextBool(3)) {
             // Emit dusts when the sword is swung
-            Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, DustID.CorruptGibs);
+            Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, DustID.Clay);
         }
     }
 
@@ -38,8 +38,8 @@ public class CorruptAshwoodSword : ModItem{
         // 60 frames = 1 second
         var numberofspikes = Main.rand.NextFloat(2f, 6f); // Spew 2-5 projectiles
             for(int i = 0; i < numberofspikes; i++) { // Counting the number of spikes to spew
-            float speed = 10f * Main.rand.NextFloat(0.5f, 2f); // Initial velocity magnitude
-            float angle = MathHelper.PiOver2 * Main.rand.NextFloat(0.5f, 2f); // 90 degrees in radians w/ variation
+            float speed = 20f * Main.rand.NextFloat(0.5f, 2f); // Initial velocity magnitude
+            float angle = 3/2 * MathHelper.Pi * Main.rand.NextFloat(0.5f, 2f); // 90 degrees in radians w/ variation
 
             Vector2 velocity = Vector2.UnitX.RotatedBy(angle) * speed;
 
@@ -64,6 +64,7 @@ public class CorruptAshwoodSword : ModItem{
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient<CorruptAshwoodItem>(7)
+            .AddIngredient(ItemID.SoulofNight,2)
             .AddTile(TileID.WorkBenches)
             .Register();
     }

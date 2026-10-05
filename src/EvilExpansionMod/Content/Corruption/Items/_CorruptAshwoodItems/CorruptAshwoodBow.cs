@@ -46,13 +46,9 @@ public class CorruptAshwoodBow : ModItem{
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient<CorruptAshwoodItem>(10)
+            .AddIngredient(ItemID.SoulofNight,1)
             .AddTile(TileID.WorkBenches)
             .Register();
-    }
-
-    // This method lets you adjust position of the gun in the player's hands. Play with these values until it looks good with your graphics.
-    public override Vector2? HoldoutOffset() {
-        return new Vector2(-2f, 0f);
     }
 
     // Arrow conversion

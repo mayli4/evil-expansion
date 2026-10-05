@@ -30,10 +30,10 @@ public class SplicingPotionItem : ModItem {
         Item.UseSound = SoundID.Item3;
         Item.maxStack = Item.CommonMaxStack;
         Item.consumable = true;
-        Item.rare = ItemRarityID.Orange;
-        Item.value = Item.buyPrice(gold: 1);
+        Item.rare = ItemRarityID.Blue;
+        Item.value = Item.buyPrice(silver: 2);
         Item.buffType = ModContent.BuffType<SplicingPotionBuff>(); // Specify an existing buff to be applied when used.
-        Item.buffTime = 8 * 60; // The amount of time the buff declared in Item.buffType will last in ticks. 5400 / 60 is 90, so this buff will last 90 seconds.
+        Item.buffTime = 8 * 60 * 60; // The amount of time the buff declared in Item.buffType will last in ticks. 5400 / 60 is 90, so this buff will last 90 seconds.
     }
     public override void AddRecipes() {
         CreateRecipe()

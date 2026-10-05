@@ -25,7 +25,7 @@ public class CorruptAshwoodHamaxe : ModItem{
         Item.rare = ItemRarityID.Blue;
         Item.UseSound = SoundID.Item1; // The sound when the weapon is being used.
 
-        Item.axe = 60; // How much axe power the weapon has, note that the axe power displayed in-game is this value multiplied by 5
+        Item.axe = 12; // How much axe power the weapon has, note that the axe power displayed in-game is this value multiplied by 5
 		Item.hammer = 60; // How much hammer power the weapon has
 		Item.attackSpeedOnlyAffectsWeaponAnimation = true; // Melee speed affects how fast the tool swings for damage purposes, but not how fast it can dig
     }

@@ -12,7 +12,7 @@ Mods: {
 			}
 
 			DevilOWarHeartPickup: {
-				DisplayName: Heart
+				DisplayName: Fluid-filled Heart
 				Tooltip: ""
 			}
 
@@ -408,53 +408,55 @@ Mods: {
 			}
 
 			CorruptAshwoodBody: {
-				DisplayName: Corrupt Ashwood Body
+				DisplayName: Corrupt Ashwood Breastplate
 				Tooltip: ""
 			}
 
 			CorruptAshwoodBow: {
 				DisplayName: Corrupt Ashwood Bow
-				Tooltip: ""
+				Tooltip: "Wreaths wooden arrows in cursed flames"
 			}
 
 			CorruptAshwoodHead: {
-				DisplayName: Corrupt Ashwood Head
+				DisplayName: Corrupt Ashwood Helmet
 				Tooltip: ""
+				SetBonus: Bloody spines shoot out of your body when you are hurt
 			}
 
 			CorruptAshwoodLegs: {
-				DisplayName: Corrupt Ashwood Legs
+				DisplayName: Corrupt Ashwood Greaves
 				Tooltip: ""
 			}
 
 			CorruptAshwoodSword: {
 				DisplayName: Corrupt Ashwood Sword
-				Tooltip: ""
+				Tooltip: "Direct hits cause bony spines to shoot out of the target's body"
 			}
 
 			CharredBloodwoodBody: {
-				DisplayName: Charred Bloodwood Body
+				DisplayName: Charred Bloodwood Breastplate
 				Tooltip: ""
 			}
 
 			CharredBloodwoodBow: {
 				DisplayName: Charred Bloodwood Bow
-				Tooltip: ""
+				Tooltip: "Coats wooden arrows with ichor"
 			}
 
 			CharredBloodwoodHead: {
-				DisplayName: Charred Bloodwood Head
+				DisplayName: Charred Bloodwood Helmet
 				Tooltip: ""
+				SetBonus: Bony spines shoot out of your body when you are hurt
 			}
 
 			CharredBloodwoodLegs: {
-				DisplayName: Charred Bloodwood Legs
+				DisplayName: Charred Bloodwood Greaves
 				Tooltip: ""
 			}
 
 			CharredBloodwoodSword: {
 				DisplayName: Charred Bloodwood Sword
-				Tooltip: ""
+				Tooltip: "Direct hits cause bloody spines to shoot out of the target's body"
 			}
 
 			SucsGoodman: {
@@ -468,17 +470,21 @@ Mods: {
 			}
 
 			DevouringPotionItem: {
-				DisplayName: Devouring Potion Item
-				Tooltip: ""
+				DisplayName: Devouring Potion
+				Tooltip:
+				'''
+				Critical hits have a 30% chance to release small mana stars
+				'Souuul sucker!'
+				'''
 			}
 
 			DevouringPotionStarPickup: {
-				DisplayName: Devouring Potion Star Pickup
+				DisplayName: Small Star
 				Tooltip: ""
 			}
 
 			MaliciousFeederfishItem: {
-				DisplayName: Malicious Feederfish Item
+				DisplayName: Malicious Feederfish
 				Tooltip: ""
 			}
 
@@ -488,18 +494,22 @@ Mods: {
 			}
 
 			MarrowanaItem: {
-				DisplayName: Marrowana Item
+				DisplayName: Marrowana
 				Tooltip: ""
 			}
 
 			SplicingPotionHeartPickup: {
-				DisplayName: Splicing Potion Heart Pickup
+				DisplayName: Small Heart
 				Tooltip: ""
 			}
 
 			SplicingPotionItem: {
-				DisplayName: Splicing Potion Item
-				Tooltip: ""
+				DisplayName: Splicing Potion
+				Tooltip:
+				'''
+				Critical hits have a 30% chance to release small life hearts
+				'...blood is fuel...'
+				'''
 			}
 		}
 
@@ -632,7 +642,7 @@ Mods: {
 			HellShadetree.MapEntry: Hell Shadetree
 			PolypOreTile.MapEntry: Polyp Ore
 			CartilageOreTile.MapEntry: Cartilage Ore
-			SucsGoodmanTile.MapEntry: Sucs Goodman Tile
+			SucsGoodmanTile.MapEntry: Sucs Goodman
 		}
 
 		Bestiary: {
@@ -691,13 +701,13 @@ Mods: {
 			}
 
 			DevouringPotionBuff: {
-				DisplayName: Devouring Potion Buff
-				Description: Mods.EvilExpansionMod.Buffs.DevouringPotionBuff.Description
+				DisplayName: Devouring
+				Description: 30% chance to create small mana stars on crit
 			}
 
 			SplicingPotionBuff: {
-				DisplayName: Splicing Potion Buff
-				Description: Mods.EvilExpansionMod.Buffs.SplicingPotionBuff.Description
+				DisplayName: Splicing
+				Description: 30% chance to create small life hearts on crit
 			}
 		}
 

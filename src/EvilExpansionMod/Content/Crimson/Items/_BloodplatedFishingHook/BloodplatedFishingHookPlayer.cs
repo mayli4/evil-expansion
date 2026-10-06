@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -11,19 +12,17 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class BloodplatedFishingHookPlayer : ModPlayer {
-    public static bool hasBloodplatedFishingAccessory = false; // UpdateAccessory uses this to tell Modplayer if the helmet is in the accessory slot
-    public static bool hasActiveShield = false; // True if the player is actively fishing and the shield is not broken
+    public bool HasBloodplatedFishingAccessory = false; // UpdateAccessory uses this to tell Modplayer if the helmet is in the accessory slot
+    public bool HasActiveShield = false; // True if the player is actively fishing and the shield is not broken
 
     public override void ResetEffects(){
-        hasBloodplatedFishingAccessory = false;
-        hasActiveShield = false;
+        HasBloodplatedFishingAccessory = false;
+        HasActiveShield = false;
     }
     public int _plateTier = 0; // How broken the shield is (descending from 3 to 0)
     public bool IsActivelyFishing(Player player){ // Check if the player is actively fishing
-        var modPlayer = player.GetModPlayer<MyFishingPlayer>();
-
         // Check if accessory is equipped
-        if (!modPlayer.hasBloodplatedFishingAccessory)
+        if (!HasBloodplatedFishingAccessory)
             return false;
 
         // Check if the currently held item is a fishing rod
@@ -37,9 +36,9 @@ public class BloodplatedFishingHookPlayer : ModPlayer {
             Projectile proj = Main.projectile[i];
             if (proj.active && proj.owner == player.whoAmI && proj.bobber)
             {
-                if (hasActiveShield = false){
+                if (HasActiveShield == false){
                     Projectile.NewProjectile(
-                        player,
+                        player.GetSource_Accessory(heldItem),
                         player.Center,
                         new Microsoft.Xna.Framework.Vector2(0f, 0f),
                         ModContent.ProjectileType<BloodplatedFishingHookShield>(),
@@ -48,7 +47,7 @@ public class BloodplatedFishingHookPlayer : ModPlayer {
                         0.5f,
                         Main.myPlayer
                         );
-                    SoundEngine.PlaySound(Item8 with { Volume = 1f }, player.Center);
+                    SoundEngine.PlaySound(SoundID.Item8 with { Volume = 1f }, player.Center);
                 }
                 return true; // Found an active fishing bobber!
             }
@@ -56,27 +55,27 @@ public class BloodplatedFishingHookPlayer : ModPlayer {
         return false;
     }
     public override void OnHurt(Player.HurtInfo hurtInfo) { // Break the shield progressively and then shatter it
-        if(hasBloodplatedFishingAccessory && hasActiveShield) {
+        if(HasBloodplatedFishingAccessory && HasActiveShield) {
             if(_plateTier == 3) {
                 _plateTier--;
-                player.ClearBuff(ModContent.BuffType<BloodPlatedHealthy>());
-                player.AddBuff(ModContent.BuffType<BloodPlatedDamaged1>(), int.MaxValue);
+                Player.ClearBuff(ModContent.BuffType<BloodPlatedHealthy>());
+                Player.AddBuff(ModContent.BuffType<BloodPlatedDamaged1>(), int.MaxValue);
             }
             else if(_plateTier == 2) {
                 _plateTier--;
-                player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged1>());
-                player.AddBuff(ModContent.BuffType<BloodPlatedDamaged2>(), int.MaxValue);
+                Player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged1>());
+                Player.AddBuff(ModContent.BuffType<BloodPlatedDamaged2>(), int.MaxValue);
             }
             else if(_plateTier == 1) {
                 _plateTier--;
-                player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged2>());
-                player.AddBuff(ModContent.BuffType<BloodPlatedBroken>(), 45 * 60);
+                Player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged2>());
+                Player.AddBuff(ModContent.BuffType<BloodPlatedBroken>(), 45 * 60);
             }
         }
         else{
-            player.ClearBuff(ModContent.BuffType<BloodPlatedHealthy>());
-            player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged1>());
-            player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged2>());
+            Player.ClearBuff(ModContent.BuffType<BloodPlatedHealthy>());
+            Player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged1>());
+            Player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged2>());
         }
     }
 }

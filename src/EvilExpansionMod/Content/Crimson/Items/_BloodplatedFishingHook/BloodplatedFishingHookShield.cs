@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Crimson;
 
-public class BloodPlatedFishingHookShield : ModProjectile {
+public class BloodplatedFishingHookShield : ModProjectile {
     public override string Texture => Assets.Images.Crimson.Items.BloodplatedFishingHook.BloodplatedFishingHookShield.KEY;
 
     public override void SetDefaults() {
@@ -37,13 +37,13 @@ public class BloodPlatedFishingHookShield : ModProjectile {
         Projectile.Center = player.Center; //I not certain if this makes the corner of the graphic the "center"(??) Check later
         if (modPlayer.IsActivelyFishing(player) && modPlayer._plateTier > 0) {
             Projectile.timeLeft = 2; //Keep the projectile alive while the player is actively fishing
-            modPlayer.hasActiveShield = true;
+            modPlayer.HasActiveShield = true;
             if (modPlayer._plateTier == 3) Projectile.frame = 0;
             else if (modPlayer._plateTier == 2) Projectile.frame = 1;
             else if (modPlayer._plateTier == 1) Projectile.frame = 2;
         }
         else {
-            modPlayer.hasActiveShield = false;
+            modPlayer.HasActiveShield = false;
             Projectile.Kill(); //Kill the projectile if the player is not actively fishing
         }
     }

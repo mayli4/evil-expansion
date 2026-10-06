@@ -24,7 +24,7 @@ public class BloodplatedFishingHookItem : ModItem {
     }
 
     public override void UpdateAccessory(Player player, bool hideVisual) {
-        player.GetModPlayer<BloodplatedFishingHookPlayer>().hasBloodplatedFishingAccessory = true;
+        player.GetModPlayer<BloodplatedFishingHookPlayer>().HasBloodplatedFishingAccessory = true;
     }
 }
 
@@ -42,7 +42,7 @@ public class BloodPlatedHealthy : ModBuff {
     }
 }
 public class BloodPlatedDamaged1 : ModBuff {
-    public override string Texture => Assets.Images.Crimson.Items.BloodplatedFishingHook.BloodplatedFishingHookBuffDamaged1.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.BloodplatedFishingHook.BloodplatedFishingHookBuffDamage1.KEY;
     public override void SetStaticDefaults() {
         Main.buffNoTimeDisplay[Type] = true;
         Main.buffNoSave[Type] = false;
@@ -55,7 +55,7 @@ public class BloodPlatedDamaged1 : ModBuff {
     }
 }
 public class BloodPlatedDamaged2 : ModBuff {
-    public override string Texture => Assets.Images.Crimson.Items.BloodplatedFishingHook.BloodplatedFishingHookBuffDamaged2.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.BloodplatedFishingHook.BloodplatedFishingHookBuffDamage2.KEY;
     public override void SetStaticDefaults() {
         Main.buffNoTimeDisplay[Type] = true;
         Main.buffNoSave[Type] = false;

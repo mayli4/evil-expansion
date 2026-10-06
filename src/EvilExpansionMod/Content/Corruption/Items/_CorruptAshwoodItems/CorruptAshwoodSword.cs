@@ -38,7 +38,7 @@ public class CorruptAshwoodSword : ModItem{
         // 60 frames = 1 second
         var numberofspikes = Main.rand.NextFloat(2f, 6f); // Spew 2-5 projectiles
             for(int i = 0; i < numberofspikes; i++) { // Counting the number of spikes to spew
-            float speed = 20f * Main.rand.NextFloat(0.5f, 2f); // Initial velocity magnitude
+            float speed = 25f * Main.rand.NextFloat(0.5f, 2f); // Initial velocity magnitude
             float angle = 3/2 * MathHelper.Pi * Main.rand.NextFloat(0.5f, 2f); // 90 degrees in radians w/ variation
 
             Vector2 velocity = Vector2.UnitX.RotatedBy(angle) * speed;
@@ -55,8 +55,8 @@ public class CorruptAshwoodSword : ModItem{
             SoundEngine.PlaySound(SoundID.Item127 with { Volume = 1f } with { PitchRange = (-1.0f, -0.5f) }, target.Center);
             SoundEngine.PlaySound(SoundID.Item110 with { Volume = 1.5f } with { PitchRange = (0f, 0.5f) }, target.Center);
         }
-        for(int i = 0; i < 5; i++) { //On-hit VFX goes here
-            Dust.NewDust(target.Center, target.width, target.height, DustID.CorruptGibs, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.5f, 2f));
+        for(int i = 0; i < 8; i++) { //On-hit VFX goes here
+            Dust.NewDust(target.Center, target.width, target.height, DustID.Clay, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.75f, 1.5f));
         }
     }
 

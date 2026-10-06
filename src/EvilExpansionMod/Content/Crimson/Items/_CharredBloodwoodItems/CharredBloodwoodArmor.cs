@@ -127,7 +127,7 @@ public sealed class CharredBloodwoodPlayer : ModPlayer {
             float knockback = 0.5f;
             var numberofspikes = Main.rand.NextFloat(8f, 17f); // Spew 8-16 projectiles
             for(int i = 0; i < numberofspikes; i++) { // Counting the number of spikes to spew
-                float speed = 20f * Main.rand.NextFloat(0.5f, 2f); // Initial velocity magnitude
+                float speed = 25f * Main.rand.NextFloat(0.5f, 2f); // Initial velocity magnitude
                 float angle = 3/2 * MathHelper.Pi * Main.rand.NextFloat(0.5f, 2f); // 90 degrees in radians w/ variation
 
                 Vector2 velocity = Vector2.UnitX.RotatedBy(angle) * speed;
@@ -144,7 +144,7 @@ public sealed class CharredBloodwoodPlayer : ModPlayer {
                 SoundEngine.PlaySound(SoundID.Item127 with { Volume = 1f } with { PitchRange = (-1.0f, -0.5f) }, Player.Center);
                 SoundEngine.PlaySound(SoundID.Item110 with { Volume = 1.5f } with { PitchRange = (0f, 0.5f) }, Player.Center);
             }
-            for(int i = 0; i < 5; i++) { //On-hit VFX goes here
+            for(int i = 0; i < 12; i++) { //On-hit VFX goes here
                 Dust.NewDust(Player.position, Player.width, Player.height, DustID.Blood, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.5f, 2f));
             }
         }
@@ -168,6 +168,12 @@ public sealed class BloodWoodSpike : ModProjectile {
     }
 
     public override void AI() {
-        Projectile.rotation += 0.3f * (Projectile.velocity.X > 0 ? 1 : -1);
+        Projectile.velocity.Y += 0.2f;
+        Projectile.rotation = Projectile.velocity.ToRotation();
+    }
+    public override void OnKill(int timeLeft) {
+        for(int i = 0; i < 5; i++) { //On-hit VFX goes here
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Blood, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.75f, 1.5f));
+            }
     }
 }

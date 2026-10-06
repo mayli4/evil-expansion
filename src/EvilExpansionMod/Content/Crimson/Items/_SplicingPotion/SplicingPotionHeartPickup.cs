@@ -18,8 +18,23 @@ public class SplicingPotionHeartPickup : ModItem {
 
         Item.maxStack = 1;
         Item.noGrabDelay = 0;
+        ItemID.Sets.ItemIconPulse[Item.type] = true;
+    }
+    // 1. SEMI-TRANSPARENT & GLOWING EFFECT
+    public override Color? GetAlpha(Color lightColor)
+    {
+        // Ignores cave shadows. 180 out of 255 creates the semi-translucency
+        return new Color(255, 255, 255, 180);
     }
 
+    // 2. EMIT LIGHT & GROUND PULSE LOGIC
+    // PostUpdate runs every frame while the item exists as a physical world drop
+    public override void PostUpdate()
+    {
+        // Emit a soft red/pink light around the item's world position
+        Lighting.AddLight(Item.Center, 1.0f, 0.2f, 0.6f);
+    }
+    
     public override void GrabRange(Player player, ref int grabRange) {
         if(player.lifeMagnet)
             grabRange += Item.lifeGrabRange;

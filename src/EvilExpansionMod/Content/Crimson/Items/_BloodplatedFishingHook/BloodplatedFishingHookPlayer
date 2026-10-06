@@ -1,0 +1,82 @@
+using EvilExpansionMod.Common.Graphics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using Terraria;
+using Terraria.DataStructures;
+using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
+
+namespace EvilExpansionMod.Content.Crimson;
+
+public class BloodplatedFishingHookPlayer : ModPlayer {
+    public static bool hasBloodplatedFishingAccessory = false; // UpdateAccessory uses this to tell Modplayer if the helmet is in the accessory slot
+    public static bool hasActiveShield = false; // True if the player is actively fishing and the shield is not broken
+
+    public override void ResetEffects(){
+        hasBloodplatedFishingAccessory = false;
+        hasActiveShield = false;
+    }
+    public int _plateTier = 0; // How broken the shield is (descending from 3 to 0)
+    public bool IsActivelyFishing(Player player){ // Check if the player is actively fishing
+        var modPlayer = player.GetModPlayer<MyFishingPlayer>();
+
+        // Check if accessory is equipped
+        if (!modPlayer.hasBloodplatedFishingAccessory)
+            return false;
+
+        // Check if the currently held item is a fishing rod
+        Item heldItem = player.HeldItem;
+        if (heldItem == null || heldItem.fishingPole <= 0)
+            return false;
+
+        // Check if the player has an active bobber projectile spawned
+        for (int i = 0; i < Main.maxProjectiles; i++)
+        {
+            Projectile proj = Main.projectile[i];
+            if (proj.active && proj.owner == player.whoAmI && proj.bobber)
+            {
+                if (hasActiveShield = false){
+                    Projectile.NewProjectile(
+                        player,
+                        player.Center,
+                        new Microsoft.Xna.Framework.Vector2(0f, 0f),
+                        ModContent.ProjectileType<BloodplatedFishingHookShield>(),
+                        50,
+                        //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! Compensate in equation
+                        0.5f,
+                        Main.myPlayer
+                        );
+                    SoundEngine.PlaySound(Item8 with { Volume = 1f }, player.Center);
+                }
+                return true; // Found an active fishing bobber!
+            }
+        }
+        return false;
+    }
+    public override void OnHurt(Player.HurtInfo hurtInfo) { // Break the shield progressively and then shatter it
+        if(hasBloodplatedFishingAccessory && hasActiveShield) {
+            if(_plateTier == 3) {
+                _plateTier--;
+                player.ClearBuff(ModContent.BuffType<BloodPlatedHealthy>());
+                player.AddBuff(ModContent.BuffType<BloodPlatedDamaged1>(), int.MaxValue);
+            }
+            else if(_plateTier == 2) {
+                _plateTier--;
+                player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged1>());
+                player.AddBuff(ModContent.BuffType<BloodPlatedDamaged2>(), int.MaxValue);
+            }
+            else if(_plateTier == 1) {
+                _plateTier--;
+                player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged2>());
+                player.AddBuff(ModContent.BuffType<BloodPlatedBroken>(), 45 * 60);
+            }
+        }
+        else{
+            player.ClearBuff(ModContent.BuffType<BloodPlatedHealthy>());
+            player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged1>());
+            player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged2>());
+        }
+    }
+}

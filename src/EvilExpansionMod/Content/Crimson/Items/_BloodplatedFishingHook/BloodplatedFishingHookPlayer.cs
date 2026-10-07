@@ -34,20 +34,21 @@ public class BloodplatedFishingHookPlayer : ModPlayer {
         for (int i = 0; i < Main.maxProjectiles; i++)
         {
             Projectile proj = Main.projectile[i];
-            if (proj.active && proj.owner == player.whoAmI && proj.bobber)
-            {
-                if (HasActiveShield == false){
-                    Projectile.NewProjectile(
-                        player.GetSource_Accessory(heldItem),
-                        player.Center,
-                        new Microsoft.Xna.Framework.Vector2(0f, 0f),
-                        ModContent.ProjectileType<BloodplatedFishingHookShield>(),
-                        50,
-                        //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! Compensate in equation
-                        0.5f,
-                        Main.myPlayer
-                        );
-                    SoundEngine.PlaySound(SoundID.Item8 with { Volume = 1f }, player.Center);
+            if (proj.active && proj.owner == player.whoAmI && proj.bobber){
+                int buffIndex = Player.FindBuffIndex(ModContent.BuffType<BloodPlatedBroken>());
+                if(buffIndex == -1) {
+                    if (HasActiveShield == false){
+                        Projectile.NewProjectile(
+                            player.GetSource_Accessory(heldItem),
+                            player.Center,
+                            new Microsoft.Xna.Framework.Vector2(0f, 0f),
+                            ModContent.ProjectileType<BloodplatedFishingHookShield>(),
+                            50,
+                            0.5f,
+                            Main.myPlayer
+                            );
+                        SoundEngine.PlaySound(SoundID.Item8 with { Volume = 1f }, player.Center);
+                    }
                 }
                 return true; // Found an active fishing bobber!
             }
@@ -57,19 +58,19 @@ public class BloodplatedFishingHookPlayer : ModPlayer {
     public override void OnHurt(Player.HurtInfo hurtInfo) { // Break the shield progressively and then shatter it
         if(HasBloodplatedFishingAccessory && HasActiveShield) {
             if(_plateTier == 3) {
-                _plateTier--;
                 Player.ClearBuff(ModContent.BuffType<BloodPlatedHealthy>());
                 Player.AddBuff(ModContent.BuffType<BloodPlatedDamaged1>(), int.MaxValue);
+                _plateTier--;
             }
             else if(_plateTier == 2) {
-                _plateTier--;
                 Player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged1>());
                 Player.AddBuff(ModContent.BuffType<BloodPlatedDamaged2>(), int.MaxValue);
+                _plateTier--;
             }
             else if(_plateTier == 1) {
-                _plateTier--;
                 Player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged2>());
                 Player.AddBuff(ModContent.BuffType<BloodPlatedBroken>(), 45 * 60);
+                _plateTier--;
             }
         }
         else{

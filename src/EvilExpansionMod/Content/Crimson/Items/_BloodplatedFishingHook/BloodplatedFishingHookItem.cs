@@ -24,7 +24,13 @@ public class BloodplatedFishingHookItem : ModItem {
     }
 
     public override void UpdateAccessory(Player player, bool hideVisual) {
-        player.GetModPlayer<BloodplatedFishingHookPlayer>().HasBloodplatedFishingAccessory = true;
+        var modPlayer = player.GetModPlayer<BloodplatedFishingHookPlayer>();
+        modPlayer.HasBloodplatedFishingAccessory = true;
+        if (!modPlayer.IsActivelyFishing(player)){
+            player.ClearBuff(ModContent.BuffType<BloodPlatedHealthy>());
+            player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged1>());
+            player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged2>());
+        }
     }
 }
 
@@ -73,5 +79,13 @@ public class BloodPlatedBroken : ModBuff {
         Main.buffNoTimeDisplay[Type] = false;
         Main.buffNoSave[Type] = false;
         Main.debuff[Type] = true; // Set to true if it is a negative effect
+    }
+    public override void Update(Player player, ref int buffIndex){
+            var modPlayer = player.GetModPlayer<BloodplatedFishingHookPlayer>();
+
+            // Check if this is the very last frame of the debuff
+            if (player.buffTime[buffIndex] == 1){
+                modPlayer._plateTier = 3;
+            }
     }
 }

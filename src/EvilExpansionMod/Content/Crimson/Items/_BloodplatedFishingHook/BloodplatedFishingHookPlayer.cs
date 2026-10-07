@@ -19,7 +19,7 @@ public class BloodplatedFishingHookPlayer : ModPlayer {
         HasBloodplatedFishingAccessory = false;
         HasActiveShield = false;
     }
-    public int _plateTier = 0; // How broken the shield is (descending from 3 to 0)
+    public int _plateTier = 3; // How broken the shield is (descending from 3 to 0)
     public bool IsActivelyFishing(Player player){ // Check if the player is actively fishing
         // Check if accessory is equipped
         if (!HasBloodplatedFishingAccessory)

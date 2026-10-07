@@ -47,6 +47,9 @@ public class BloodplatedFishingHookPlayer : ModPlayer {
                             0.5f,
                             Main.myPlayer
                             );
+                        if (_plateTier == 3) Player.AddBuff(ModContent.BuffType<BloodPlatedHealthy>(), int.MaxValue);
+                        else if (_plateTier == 2) Player.AddBuff(ModContent.BuffType<BloodPlatedDamaged1>(), int.MaxValue);
+                        else if (_plateTier == 1) Player.AddBuff(ModContent.BuffType<BloodPlatedDamaged2>(), int.MaxValue);
                         SoundEngine.PlaySound(SoundID.Item8 with { Volume = 1f }, player.Center);
                     }
                 }

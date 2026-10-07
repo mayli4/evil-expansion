@@ -47,7 +47,6 @@ public class BloodplatedFishingHookShield : ModProjectile {
             Projectile.Kill(); //Kill the projectile if the player is not actively fishing or shield durability is 0
         }
     }
-    private const int FrameCount = 7;
     public override bool? CanCutTiles() => false;
     
     public override bool PreDraw(ref Color lightColor) {

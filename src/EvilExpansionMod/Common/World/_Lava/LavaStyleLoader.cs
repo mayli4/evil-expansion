@@ -75,7 +75,7 @@ public class LavaStyleLoader : ModSystem {
         IL_LiquidRenderer.InternalPrepareDraw += ChangeLavaBubbleDust_LiquidRenderer;
 
         // buff changes
-        //IL_Player.Update += PlayerLavaDebuff;
+        IL_Player.Update += PlayerLavaDebuff;
     }
 
     private void ChangeLavaBubbleDust_LiquidRenderer(ILContext il) {
@@ -349,20 +349,38 @@ public class LavaStyleLoader : ModSystem {
 
     private void PlayerLavaDebuff(ILContext il) {
         ILCursor c = new ILCursor(il);
-        c.GotoNext(MoveType.Before, i => i.MatchLdarg0(), i => i.MatchLdcI4(24), i => i.MatchLdloc(161), i => i.MatchLdcI4(1), i => i.MatchLdcI4(0), i => i.MatchCall<Player>("AddBuff"));
+        
+        int onFireTimeIndex = -1;
+        if(!c.TryGotoNext(MoveType.Before,
+            i => i.MatchLdarg0(),
+            i => i.MatchLdcI4(BuffID.OnFire),
+            i => i.MatchLdloc(out onFireTimeIndex),
+            i => i.MatchLdcI4(1),
+            i => i.MatchLdcI4(0),
+            i => i.MatchCall<Player>("AddBuff"))) {
+            return;
+        }
+        
         c.EmitLdarg0();
-        c.EmitLdloc(161);
-        c.EmitDelegate((Player player, int onFiretime) =>
+        c.EmitLdloc(onFireTimeIndex);
+        c.EmitDelegate((Player player, int onFireTime) =>
         {
-            if(_cachedModLavaStyle != default) {
-                player.AddBuff(_cachedModLavaStyle.DebuffType(), onFiretime);
+            if(_cachedModLavaStyle != null) {
+                player.AddBuff(_cachedModLavaStyle.DebuffType(), onFireTime);
             }
         });
-
-        c.GotoNext(MoveType.Before, i => i.MatchLdloc(161), i => i.MatchLdcI4(1), i => i.MatchLdcI4(0), i => i.MatchCall<Player>("AddBuff"));
+        
+        if(!c.TryGotoNext(MoveType.Before,
+            i => i.MatchLdloc(onFireTimeIndex),
+            i => i.MatchLdcI4(1),
+            i => i.MatchLdcI4(0),
+            i => i.MatchCall<Player>("AddBuff"))) {
+            return;
+        }
+        c.Index++;
         c.EmitDelegate<Func<int, int>>((vanillaOnFireTime) =>
         {
-            if(_cachedModLavaStyle != default) {
+            if(_cachedModLavaStyle != null) {
                 return _cachedModLavaStyle.KeepVanillaOnFire() ? vanillaOnFireTime : 0;
             }
             return vanillaOnFireTime;

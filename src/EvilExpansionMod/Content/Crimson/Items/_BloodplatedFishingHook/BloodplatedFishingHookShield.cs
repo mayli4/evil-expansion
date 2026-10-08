@@ -35,7 +35,7 @@ public class BloodplatedFishingHookShield : ModProjectile {
         Player player = Main.player[Projectile.owner];
         var modPlayer = player.GetModPlayer<BloodplatedFishingHookPlayer>();
         Projectile.Center = player.Center; //I not certain if this makes the corner of the graphic the "center"(??) Check later
-        if (modPlayer.IsActivelyFishing(player) && modPlayer._plateTier > 0) {
+        if (modPlayer.IsActivelyFishingWithBloodplated(player) && modPlayer._plateTier > 0) {
             Projectile.timeLeft = 2; //Keep the projectile alive while the player is actively fishing & shield durability above 0
             modPlayer.HasActiveShield = true;
             if (modPlayer._plateTier == 3) Projectile.frame = 0;
@@ -44,6 +44,7 @@ public class BloodplatedFishingHookShield : ModProjectile {
         }
         else {
             modPlayer.HasActiveShield = false;
+            player.AddBuff(ModContent.BuffType<BloodPlatedBroken>(), 45 * 60);
             Projectile.Kill(); //Kill the projectile if the player is not actively fishing or shield durability is 0
         }
     }

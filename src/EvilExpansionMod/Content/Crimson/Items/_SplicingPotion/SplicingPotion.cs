@@ -1,9 +1,11 @@
 using EvilExpansionMod.Common;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
+using EvilExpansionMod.Content.Misc;
 
 namespace EvilExpansionMod.Content.Crimson;
 
@@ -68,6 +70,27 @@ public class SplicingPotionBuffPlayer : ModPlayer {
         if (critHeart && hit.Crit && (Main.myPlayer == Player.whoAmI)) {
             if (Main.rand.NextFloat() <= 0.3f) {
                 Item.NewItem(Player.GetSource_OnHit(target), target.getRect(), ModContent.ItemType<SplicingPotionHeartPickup>(), 1, false, 0, true, false); 
+            
+                // Calculate direction pointing from the player to the NPC
+                Vector2 directionAway = target.Center - Player.Center;
+                // Normalize it and give it an incredibly small speed so it doesn't move, but still contain direction
+                Vector2 customVelocity = directionAway.SafeNormalize(Vector2.UnitX) * 0.001f;
+                Projectile.NewProjectile(
+                        target.GetSource_FromAI(),
+                        target.Center + new Vector2(
+                            Main.rand.NextFloat(-8f, 8f), 
+                            Main.rand.NextFloat(-8f, 8f)
+                        ),
+                        customVelocity,
+                        ModContent.ProjectileType<EvilSplatter>(),
+                        0,
+                        0,
+                        Main.myPlayer,
+                        ai0: 0,
+                        ai1: 1
+                        );
+                    SoundEngine.PlaySound(SoundID.Item4 with { Volume = 0.15f , PitchRange = (1.1f, 1.6f) }, target.Center);
+                    SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.2f , PitchRange = (0.6f, 1.0f) }, target.Center);
             }
         }
     }

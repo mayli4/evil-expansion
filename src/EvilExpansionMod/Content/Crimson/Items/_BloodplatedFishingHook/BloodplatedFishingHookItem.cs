@@ -26,7 +26,7 @@ public class BloodplatedFishingHookItem : ModItem {
     public override void UpdateAccessory(Player player, bool hideVisual) {
         var modPlayer = player.GetModPlayer<BloodplatedFishingHookPlayer>();
         modPlayer.HasBloodplatedFishingAccessory = true;
-        if (!modPlayer.IsActivelyFishing(player)){
+        if (!modPlayer.IsActivelyFishingWithBloodplated(player)){
             player.ClearBuff(ModContent.BuffType<BloodPlatedHealthy>());
             player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged1>());
             player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged2>());

@@ -12,7 +12,7 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class BloodplatedFishingHookPlayer : ModPlayer {
-    public bool HasBloodplatedFishingAccessory = false; // UpdateAccessory uses this to tell Modplayer if the helmet is in the accessory slot
+    public bool HasBloodplatedFishingAccessory = false; // UpdateAccessory uses this to tell Modplayer if equipped
     public bool HasActiveShield = false; // True if the player is actively fishing and the shield is not broken
 
     public override void ResetEffects(){
@@ -20,7 +20,7 @@ public class BloodplatedFishingHookPlayer : ModPlayer {
         HasActiveShield = false;
     }
     public int _plateTier = 3; // How broken the shield is (descending from 3 to 0)
-    public bool IsActivelyFishing(Player player){ // Check if the player is actively fishing
+    public bool IsActivelyFishingWithBloodplated(Player player){ // Check if the player is actively fishing
         // Check if accessory is equipped
         if (!HasBloodplatedFishingAccessory)
             return false;
@@ -31,8 +31,7 @@ public class BloodplatedFishingHookPlayer : ModPlayer {
             return false;
 
         // Check if the player has an active bobber projectile spawned
-        for (int i = 0; i < Main.maxProjectiles; i++)
-        {
+        for (int i = 0; i < Main.maxProjectiles; i++){
             Projectile proj = Main.projectile[i];
             if (proj.active && proj.owner == player.whoAmI && proj.bobber){
                 int buffIndex = Player.FindBuffIndex(ModContent.BuffType<BloodPlatedBroken>());

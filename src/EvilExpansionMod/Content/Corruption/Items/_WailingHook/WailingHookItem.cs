@@ -10,10 +10,10 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Corruption;
 
-public class SoulsuckerFishingHookItem : ModItem {
-    public override string Texture => Assets.Images.Crimson.Items.BloodplatedFishingHook.BloodplatedFishingHookItem.KEY;
+public class WailingHookItem : ModItem {
+    public override string Texture => Assets.Images.Corruption.Items.WailingHookItem.KEY;
 
-    private int _projectileID = -1;
+    private int _projectileID = -1; 
 
     public override void SetDefaults() {
         Item.width = 30;
@@ -24,7 +24,7 @@ public class SoulsuckerFishingHookItem : ModItem {
     }
 
     public override void UpdateAccessory(Player player, bool hideVisual) {
-        var modPlayer = player.GetModPlayer<SoulsuckingFishingHookPlayer>();
+        var modPlayer = player.GetModPlayer<WailingHookPlayer>();
         modPlayer.HasSoulsuckingFishingAccessory = true;
 
         // Max range limit here (8 pixels = 1 tiles)
@@ -46,7 +46,7 @@ public class SoulsuckerFishingHookItem : ModItem {
                     }
                 }
             }
-            player.GetModPlayer<SoulsuckingFishingHookPlayer>().nearbyEnemyCount = count;
+            player.GetModPlayer<WailingHookPlayer>().nearbyEnemyCount = count;
         }
     }
 }

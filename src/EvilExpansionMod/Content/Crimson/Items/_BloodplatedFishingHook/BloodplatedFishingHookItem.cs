@@ -10,10 +10,10 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Crimson;
 
-public class BloodplatedFishingHookItem : ModItem {
-    public override string Texture => Assets.Images.Crimson.Items.BloodplatedFishingHook.BloodplatedFishingHookItem.KEY;
+public class BloodplateHookItem : ModItem {
+    public override string Texture => Assets.Images.Crimson.Items.BloodplateHook.BloodplateHookItem.KEY;
 
-    private int _projectileID = -1;
+    private int _projectileID = -1; 
 
     public override void SetDefaults() {
         Item.width = 30;
@@ -24,7 +24,7 @@ public class BloodplatedFishingHookItem : ModItem {
     }
 
     public override void UpdateAccessory(Player player, bool hideVisual) {
-        var modPlayer = player.GetModPlayer<BloodplatedFishingHookPlayer>();
+        var modPlayer = player.GetModPlayer<BloodplateHookPlayer>();
         modPlayer.HasBloodplatedFishingAccessory = true;
         if (!modPlayer.IsActivelyFishingWithBloodplated(player)){
             player.ClearBuff(ModContent.BuffType<BloodPlatedHealthy>());
@@ -35,7 +35,7 @@ public class BloodplatedFishingHookItem : ModItem {
 }
 
 public class BloodPlatedHealthy : ModBuff {
-    public override string Texture => Assets.Images.Crimson.Items.BloodplatedFishingHook.BloodplatedFishingHookBuff.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.BloodplateHook.BloodplateHookBuff.KEY;
     public override void SetStaticDefaults() {
         Main.buffNoTimeDisplay[Type] = true;
         Main.buffNoSave[Type] = false;
@@ -44,11 +44,11 @@ public class BloodPlatedHealthy : ModBuff {
 
     public override void Update(Player player, ref int buffIndex) {
         // Apply ongoing effects while the buff is active on the player
-        player.endurance *= 0.1f;
+        player.endurance *= 0.9f;
     }
 }
 public class BloodPlatedDamaged1 : ModBuff {
-    public override string Texture => Assets.Images.Crimson.Items.BloodplatedFishingHook.BloodplatedFishingHookBuffDamage1.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.BloodplateHook.BloodplateHookBuffDamage1.KEY;
     public override void SetStaticDefaults() {
         Main.buffNoTimeDisplay[Type] = true;
         Main.buffNoSave[Type] = false;
@@ -57,11 +57,11 @@ public class BloodPlatedDamaged1 : ModBuff {
 
     public override void Update(Player player, ref int buffIndex) {
         // Apply ongoing effects while the buff is active on the player
-        player.endurance *= 0.4f;
+        player.endurance *= 0.6f;
     }
 }
 public class BloodPlatedDamaged2 : ModBuff {
-    public override string Texture => Assets.Images.Crimson.Items.BloodplatedFishingHook.BloodplatedFishingHookBuffDamage2.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.BloodplateHook.BloodplateHookBuffDamage2.KEY;
     public override void SetStaticDefaults() {
         Main.buffNoTimeDisplay[Type] = true;
         Main.buffNoSave[Type] = false;
@@ -70,18 +70,18 @@ public class BloodPlatedDamaged2 : ModBuff {
 
     public override void Update(Player player, ref int buffIndex) {
         // Apply ongoing effects while the buff is active on the player
-        player.endurance *= 0.7f;
+        player.endurance *= 0.3f;
     }
 }
 public class BloodPlatedBroken : ModBuff {
-    public override string Texture => Assets.Images.Crimson.Items.BloodplatedFishingHook.BloodplatedFishingHookDebuff.KEY;
+    public override string Texture => Assets.Images.Crimson.Items.BloodplateHook.BloodplateHookDebuff.KEY;
     public override void SetStaticDefaults() {
         Main.buffNoTimeDisplay[Type] = false;
         Main.buffNoSave[Type] = false;
         Main.debuff[Type] = true; // Set to true if it is a negative effect
     }
     public override void Update(Player player, ref int buffIndex){
-            var modPlayer = player.GetModPlayer<BloodplatedFishingHookPlayer>();
+            var modPlayer = player.GetModPlayer<BloodplateHookPlayer>();
 
             // Check if this is the very last frame of the debuff
             if (player.buffTime[buffIndex] == 1){

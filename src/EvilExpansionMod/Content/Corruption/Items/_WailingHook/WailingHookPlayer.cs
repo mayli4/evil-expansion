@@ -10,7 +10,7 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Corruption;
 
-public class SoulsuckingFishingHookPlayer : ModPlayer {
+public class WailingHookPlayer : ModPlayer {
     public bool HasSoulsuckingFishingAccessory = false; // UpdateAccessory uses this to tell Modplayer if equipped
     public int nearbyEnemyCount = 0; // UpdateAccessory uses this to track the # of nearby enemies
     private float _spawnTimer = 0; // Internal timer for spawning ghosts
@@ -47,7 +47,7 @@ public class SoulsuckingFishingHookPlayer : ModPlayer {
             }
 
             // Increment the timer, with the amount scaling with enemy count
-            float enemyBonus = (float)Math.Log(1 + nearbyEnemyCount) * 3.0f;
+            float enemyBonus = (float)Math.Log(1 + nearbyEnemyCount) * 10.0f;
             _spawnTimer += 1 + enemyBonus;
             if (_spawnTimer < 120)
                 return;

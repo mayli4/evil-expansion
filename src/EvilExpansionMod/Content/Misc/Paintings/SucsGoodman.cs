@@ -119,10 +119,13 @@ public class SucsGoodmanTile : ModTile {
 }
 
 
-    internal class SucsGoodman : ModItem {
+    internal class SucsGoodmanItem : ModItem {
     public override string Texture => Assets.Images.Paintings.SucsGoodman.KEY;
     public override void SetDefaults() {
-            Item.CloneDefaults(ItemID.FireflyinaBottle);
-            Item.createTile = ModContent.TileType<SucsGoodmanTile>();
+        (Item.width, Item.height) = (34, 52);
+        Item.sellPrice(0,2,0,0);
+        Item.maxStack = Terraria.Item.CommonMaxStack;
+        Item.rare = ItemRarityID.Blue;
+        Item.createTile = ModContent.TileType<SucsGoodmanTile>();
         }
     }

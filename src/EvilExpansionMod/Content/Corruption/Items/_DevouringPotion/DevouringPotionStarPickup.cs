@@ -24,7 +24,7 @@ public class DevouringPotionStarPickup : ModItem {
     public override Color? GetAlpha(Color lightColor)
     {
         // Ignores cave shadows. 180 out of 255 creates the semi-translucency
-        return new Color(255, 255, 255, 180);
+        return new Color(255, 255, 255, 225);
     }
 
     // 2. EMIT LIGHT & GROUND PULSE LOGIC

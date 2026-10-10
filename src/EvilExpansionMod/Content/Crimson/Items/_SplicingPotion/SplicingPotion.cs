@@ -89,8 +89,8 @@ public class SplicingPotionBuffPlayer : ModPlayer {
                         ai0: 0,
                         ai1: 1
                         );
-                    SoundEngine.PlaySound(SoundID.Item4 with { Volume = 0.15f , PitchRange = (1.1f, 1.6f) }, target.Center);
-                    SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.2f , PitchRange = (0.6f, 1.0f) }, target.Center);
+                    SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.2f , PitchRange = (1.1f, 1.6f) }, target.Center);
+                    SoundEngine.PlaySound(SoundID.NPCHit29 with { Volume = 0.3f , PitchRange = (0.3f, 0.8f) }, target.Center);
             }
         }
     }

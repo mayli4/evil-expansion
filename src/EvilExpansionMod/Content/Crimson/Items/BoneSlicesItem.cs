@@ -11,7 +11,7 @@ public class BoneSlicesItem : ModItem {
     }
     public override void SetDefaults() {
         (Item.width, Item.height) = (20, 20);
-        Item.value = 3500;
+        Item.value = Item.sellPrice(0,0,7,0);
         Item.maxStack = Terraria.Item.CommonMaxStack;
 
         Item.rare = ItemRarityID.Orange;

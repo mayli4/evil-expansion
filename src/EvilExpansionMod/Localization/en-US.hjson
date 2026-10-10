@@ -420,7 +420,11 @@ Mods: {
 			CorruptAshwoodHead: {
 				DisplayName: Corrupt Ashwood Helmet
 				Tooltip: ""
-				SetBonus: Bloody spines shoot out of your body when you are hurt
+				SetBonus:
+					'''
+					2 defense
+					Bony spines shoot out of your body when you are hurt
+					'''
 			}
 
 			CorruptAshwoodLegs: {
@@ -446,7 +450,11 @@ Mods: {
 			CharredBloodwoodHead: {
 				DisplayName: Charred Bloodwood Helmet
 				Tooltip: ""
-				SetBonus: Bony spines shoot out of your body when you are hurt
+				SetBonus:
+					'''
+					2 defense
+					Bloody spines shoot out of your body when you are hurt
+					'''
 			}
 
 			CharredBloodwoodLegs: {
@@ -459,9 +467,28 @@ Mods: {
 				Tooltip: "Direct hits cause bloody spines to shoot out of the target's body"
 			}
 
-			SucsGoodman: {
+			SucsGoodmanItem: {
 				DisplayName: Sucs Goodman
-				Tooltip: ""
+				Tooltip:
+				'''
+				'T. Whan Wauff'
+				'''
+			}
+
+			VictorySignItem: {
+				DisplayName: Victory Sign
+				Tooltip:
+				'''
+				'T. Whan Wauff'
+				'''
+			}
+
+			SydneyWithTheHeadOfTobiasItem: {
+				DisplayName: Sydney with the Head of Tobias
+				Tooltip:
+				'''
+				'T. Whan Wauff'
+				'''
 			}
 
 			CorruptAshwoodHamaxe: {
@@ -509,6 +536,25 @@ Mods: {
 				'''
 				Critical hits have a 30% chance to release small life hearts
 				'...blood is fuel...'
+				'''
+			}
+
+			BloodplateHookItem: {
+				DisplayName: Bloodplate Hook
+				Tooltip:
+				'''
+				Forms a blood shield around the owner while fishing which impales enemies and absorbs incoming damage
+				Getting hurt damages the shield
+				The shield will need time to regenerate after being broken
+				'''
+			}
+
+			WailingHookItem: {
+				DisplayName: Wailing Hook
+				Tooltip:
+				'''
+				While fishing, releases cursed ghosts from the water that chase after enemies
+				The hook reacts to danger, releasing more ghosts when you are threatened
 				'''
 			}
 		}
@@ -708,6 +754,38 @@ Mods: {
 			SplicingPotionBuff: {
 				DisplayName: Splicing
 				Description: 30% chance to create small life hearts on crit
+			}
+
+			BloodPlatedHealthy: {
+				DisplayName: Blood Plated
+				Description:
+					'''
+					The Bloodplate Shield protects you
+					Reduces the next instance of damage by 90%
+					'''
+			}
+
+			BloodPlatedDamaged1: {
+				DisplayName: Blood Plated
+				Description:
+					'''
+					The Bloodplate Shield is mildly worn
+					Reduces the next instance of damage by 60%
+					'''
+			}
+
+			BloodPlatedDamaged2: {
+				DisplayName: Blood Plated
+				Description:
+					'''
+					The Bloodplate Shield is breaking apart
+					Reduces the next instance of damage by 30%
+					'''
+			}
+
+			BloodPlatedBroken: {
+				DisplayName: Bloodplate Shield Cooldown
+				Description: The Bloodplate Shield has been broken!
 			}
 		}
 

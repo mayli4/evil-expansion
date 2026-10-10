@@ -20,7 +20,7 @@ public class EvilSplatter : ModProjectile {
         Projectile.knockBack = 0f;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
-        Projectile.timeLeft = 40;
+        Projectile.timeLeft = 35;
         Projectile.penetrate = -1;
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
@@ -69,9 +69,9 @@ public class EvilSplatter : ModProjectile {
 
         // Standard AI movement/rotation logic goes here
         Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
-        if (Projectile.timeLeft < 20){
+        if (Projectile.timeLeft < 17){
         // Increase alpha from 0 (opaque) to 255 (fully transparent) smoothly
-            Projectile.alpha += 13; // 13 * 20 = 260 (caps at 255 automatically or clamp it)
+            Projectile.alpha += 15; // 15 * 17 = 255 (caps at 255 automatically or clamp it)
             
             if (Projectile.alpha > 255){
                 Projectile.alpha = 255;

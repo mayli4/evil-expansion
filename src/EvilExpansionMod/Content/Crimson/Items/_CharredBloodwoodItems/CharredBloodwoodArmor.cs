@@ -123,19 +123,19 @@ public sealed class CharredBloodwoodPlayer : ModPlayer {
 
     public override void OnHurt(Player.HurtInfo hurtInfo) { // Spew projectiles when hit while wearing the full set
         if(SetBonusActive && (Player.whoAmI == Main.myPlayer)) {
-            int damage = 20; // Set this to your desired baseline damage value
+            int damage = 30; // Set this to your desired baseline damage value
             float knockback = 0.5f;
             var numberofspikes = Main.rand.NextFloat(8f, 17f); // Spew 8-16 projectiles
             for(int i = 0; i < numberofspikes; i++) { // Counting the number of spikes to spew
-                float speed = 25f * Main.rand.NextFloat(0.5f, 2f); // Initial velocity magnitude
-                float angle = 3/2 * MathHelper.Pi * Main.rand.NextFloat(0.5f, 2f); // 90 degrees in radians w/ variation
+                Vector2 baseSpeed = new Vector2 (20f * Main.rand.NextFloat(0.66f, 1.5f), 0f);
+                float randomAngle = Main.rand.NextFloat(MathHelper. ToRadians(-150f), MathHelper. ToRadians(-30f));
 
-                Vector2 velocity = Vector2.UnitX.RotatedBy(angle) * speed;
+                Vector2 projVelocity = baseSpeed.RotatedBy(randomAngle);
 
                 Projectile.NewProjectile(
                     Player.GetSource_FromThis(),
                     Player.Center,
-                    velocity,
+                    projVelocity,
                     ModContent.ProjectileType<BloodWoodSpike>(),
                     damage,
                     knockback,
@@ -161,14 +161,14 @@ public sealed class BloodWoodSpike : ModProjectile {
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
         Projectile.DamageType = DamageClass.Summon;
-        Projectile.timeLeft = 60;
+        Projectile.timeLeft = 600;
         Projectile.knockBack = 0f;
         Projectile.tileCollide = true;
         Projectile.ignoreWater = true;
     }
 
     public override void AI() {
-        Projectile.velocity.Y += 0.2f;
+        Projectile.velocity.Y += 1f;
         Projectile.rotation = Projectile.velocity.ToRotation();
     }
     public override void OnKill(int timeLeft) {

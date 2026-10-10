@@ -38,15 +38,15 @@ public class CharredBloodwoodSword : ModItem {
         // 60 frames = 1 second
         var numberofspikes = Main.rand.NextFloat(2f, 6f); // Spew 2-5 projectiles
             for(int i = 0; i < numberofspikes; i++) { // Counting the number of spikes to spew
-            float speed = 25f * Main.rand.NextFloat(0.5f, 2f); // Initial velocity magnitude
-            float angle = 3/2 * MathHelper.Pi * Main.rand.NextFloat(0.5f, 2f); // 90 degrees in radians w/ variation
+            Vector2 baseSpeed = new Vector2 (20f * Main.rand.NextFloat(0.66f, 1.5f), 0f);
+            float randomAngle = Main.rand.NextFloat(MathHelper. ToRadians(-150f), MathHelper. ToRadians(-30f));
 
-            Vector2 velocity = Vector2.UnitX.RotatedBy(angle) * speed;
+            Vector2 projVelocity = baseSpeed.RotatedBy(randomAngle);
 
             Projectile.NewProjectile(
                 player.GetSource_FromThis(),
                 target.Center,
-                velocity,
+                projVelocity,
                 ModContent.ProjectileType<BloodWoodSpike>(),
                 damageDone/2, // Half the damage of the sword
                 Item.knockBack/2, // Half the knockback of the sword

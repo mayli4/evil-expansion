@@ -9,6 +9,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent.Bestiary;
+using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -76,14 +77,14 @@ public class TerrorBatNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 40;
         NPC.height = 30;
-        NPC.lifeMax = 180;
+        NPC.lifeMax = 152;
         NPC.damage = 40;
         NPC.defense = 10;
         NPC.value = 100 * 2;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
-        NPC.knockBackResist = 0.5f;
+        NPC.knockBackResist = 0.7f;
         NPC.friendly = false;
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath2;
@@ -101,7 +102,10 @@ public class TerrorBatNPC : ModNPC {
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.25f : 0;
     }
-
+    public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>(), 4, 1, 1));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 4, 1, 1));
+    }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
             new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.TerrorBatNPCBestiary.KEY),

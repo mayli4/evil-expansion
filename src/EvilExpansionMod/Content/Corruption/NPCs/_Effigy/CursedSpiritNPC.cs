@@ -138,7 +138,7 @@ public sealed class CursedSpiritNPC : ModNPC {
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>(), 2, 1, 2));
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 2, 1, 2));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 1, 1, 2));
     }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange([
@@ -370,7 +370,15 @@ public sealed class CursedSpiritNPC : ModNPC {
 
                 NPC.velocity *= 0.98f;
 
-                Dust.NewDust(NPC.Center + Main.rand.NextVector2Circular(15, 15) + Main.rand.NextVector2Circular(15, 15), 2, 2, DustID.CursedTorch, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-3f, 3f), 0, new Color(207, 255, 0));
+                Dust.NewDust(
+                    NPC.Center + Main.rand.NextVector2Circular(15, 15) + Main.rand.NextVector2Circular(15, 15),
+                    2,
+                    2,
+                    DustID.CursedTorch,
+                    Main.rand.NextFloat(-3f, 3f),
+                    Main.rand.NextFloat(-3f, 3f),
+                    0,
+                    new Color(207, 255, 0));
                 var particle = SmokeParticle.Pool.RequestParticle();
 
                 Vector2 randomVelocity = new Vector2(

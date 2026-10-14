@@ -75,11 +75,11 @@ public class ThoughtfulCultistNPC : ModNPC {
         ContentSamples.NpcBestiaryRarityStars[Type] = 3;
     }
 
-    public override float SpawnChance(NPCSpawnInfo spawnInfo) => Main.hardMode && spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.1f : 0;
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) => Main.hardMode && spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.05f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ThoughtfulPendantItem>(), 50, 1, 1));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 3, 5));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ThoughtfulPendantItem>(), 10, 1, 1));
     }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {

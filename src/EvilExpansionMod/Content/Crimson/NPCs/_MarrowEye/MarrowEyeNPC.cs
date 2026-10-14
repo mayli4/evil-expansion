@@ -78,7 +78,7 @@ public class MarrowEyeNPC : ModNPC {
     public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.2f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 1, 4));
     }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
@@ -92,6 +92,9 @@ public class MarrowEyeNPC : ModNPC {
         if(Main.masterMode) {
             NPC.defense = 6;
         }
+    }
+    public override bool CanHitPlayer(Player target, ref int cooldownSlot) {
+        return false; // Prevents the NPC from dealing any contact damage to players
     }
     public override void HitEffect(NPC.HitInfo hit) {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) return;

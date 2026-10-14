@@ -18,7 +18,7 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
     private int _stingerDuration;
     private int _healthDrained;
     private int _healthDrainTimer;
-    private int health_drain_interval = 30 / (int) (Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f);
+    private int health_drain_interval = 30 / (int) (Main.expertMode ? (Main.masterMode ? 2.25f : 1.5f) : 1f);
     private const int health_drain_amount = 10;
     private const float health_return_percentage = 0.75f;
 

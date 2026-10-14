@@ -37,7 +37,27 @@ internal sealed class CurseknightsHelm : ModItem {
         HelmOff = EquipLoader.GetEquipSlot(Mod, "OffCurseknightsHelm", EquipType.Head);
         HelmExploded = false;
     }
+    public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
+        // Change this path to your separate larger inventory texture or use the main texture
+        Texture2D texture = ModContent.Request<Texture2D>("EvilExpansionMod/Assets/Images/Corruption/Items/CurseknightsHelm/CurseknightsHelmItem").Value;
 
+        // Multiply the scale factor (e.g., 1.5f for 50% larger)
+        float customScale = scale * 1.25f;
+
+        spriteBatch.Draw(
+            texture,
+            position,
+            null,
+            drawColor,
+            0f,
+            origin,
+            customScale,
+            SpriteEffects.None,
+            0f
+        );
+
+        return false; // Return false to stop the default engine drawing
+    }
     public override void UpdateAccessory(Player player, bool hideVisual) {
         var modPlayer = player.GetModPlayer<CurseknightsHelmPlayer>();
         modPlayer.IsWearingHelm = true; // this keeps setting the accessory being equipped... a little inefficient, oh well

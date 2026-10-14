@@ -414,7 +414,7 @@ Mods: {
 
 			CorruptAshwoodBow: {
 				DisplayName: Corrupt Ashwood Bow
-				Tooltip: "Wreaths wooden arrows in cursed flames"
+				Tooltip: Wreaths wooden arrows in cursed flames
 			}
 
 			CorruptAshwoodHead: {
@@ -434,7 +434,7 @@ Mods: {
 
 			CorruptAshwoodSword: {
 				DisplayName: Corrupt Ashwood Sword
-				Tooltip: "Direct hits cause bony spines to shoot out of the target's body"
+				Tooltip: Direct hits cause bony spines to shoot out of the target's body
 			}
 
 			CharredBloodwoodBody: {
@@ -444,7 +444,7 @@ Mods: {
 
 			CharredBloodwoodBow: {
 				DisplayName: Charred Bloodwood Bow
-				Tooltip: "Coats wooden arrows with ichor"
+				Tooltip: Coats wooden arrows with ichor
 			}
 
 			CharredBloodwoodHead: {
@@ -464,31 +464,22 @@ Mods: {
 
 			CharredBloodwoodSword: {
 				DisplayName: Charred Bloodwood Sword
-				Tooltip: "Direct hits cause bloody spines to shoot out of the target's body"
+				Tooltip: Direct hits cause bloody spines to shoot out of the target's body
 			}
 
 			SucsGoodmanItem: {
 				DisplayName: Sucs Goodman
-				Tooltip:
-				'''
-				'T. Whan Wauff'
-				'''
+				Tooltip: "'T. Whan Wauff'"
 			}
 
 			VictorySignItem: {
 				DisplayName: Victory Sign
-				Tooltip:
-				'''
-				'T. Whan Wauff'
-				'''
+				Tooltip: "'T. Whan Wauff'"
 			}
 
 			SydneyWithTheHeadOfTobiasItem: {
 				DisplayName: Sydney with the Head of Tobias
-				Tooltip:
-				'''
-				'T. Whan Wauff'
-				'''
+				Tooltip: "'T. Whan Wauff'"
 			}
 
 			CorruptAshwoodHamaxe: {
@@ -499,10 +490,10 @@ Mods: {
 			DevouringPotionItem: {
 				DisplayName: Devouring Potion
 				Tooltip:
-				'''
-				Critical hits have a 30% chance to release small mana stars
-				'Souuul sucker!'
-				'''
+					'''
+					Critical hits have a 30% chance to release small mana stars
+					'Souuul sucker!'
+					'''
 			}
 
 			DevouringPotionStarPickup: {
@@ -533,29 +524,29 @@ Mods: {
 			SplicingPotionItem: {
 				DisplayName: Splicing Potion
 				Tooltip:
-				'''
-				Critical hits have a 30% chance to release small life hearts
-				'...blood is fuel...'
-				'''
+					'''
+					Critical hits have a 30% chance to release small life hearts
+					'...blood is fuel...'
+					'''
 			}
 
 			BloodplateHookItem: {
 				DisplayName: Bloodplate Hook
 				Tooltip:
-				'''
-				Forms a blood shield around the owner while fishing which impales enemies and absorbs incoming damage
-				Getting hurt damages the shield
-				The shield will need time to regenerate after being broken
-				'''
+					'''
+					Forms a blood shield around the owner while fishing which impales enemies and absorbs incoming damage
+					Getting hurt damages the shield
+					The shield will need time to regenerate after being broken
+					'''
 			}
 
 			WailingHookItem: {
 				DisplayName: Wailing Hook
 				Tooltip:
-				'''
-				While fishing, releases cursed ghosts from the water that chase after enemies
-				The hook reacts to danger, releasing more ghosts when you are threatened
-				'''
+					'''
+					While fishing, releases cursed ghosts from the water that chase after enemies
+					The hook reacts to danger, releasing more ghosts when you are threatened
+					'''
 			}
 		}
 
@@ -653,6 +644,9 @@ Mods: {
 			LavaTelegraphProjectile.DisplayName: Lava Telegraph Projectile
 			EvilWoodSpike.DisplayName: Evil Wood Spike
 			BloodWoodSpike.DisplayName: Blood Wood Spike
+			BloodplateHookShield.DisplayName: Bloodplate Hook Shield
+			EvilSplatter.DisplayName: Evil Splatter
+			BloodExplosion.DisplayName: Blood Explosion
 		}
 
 		Biomes: {
@@ -689,6 +683,8 @@ Mods: {
 			PolypOreTile.MapEntry: Polyp Ore
 			CartilageOreTile.MapEntry: Cartilage Ore
 			SucsGoodmanTile.MapEntry: Sucs Goodman
+			SydneyWithTheHeadOfTobiasTile.MapEntry: Sydney With The Head Of Tobias Tile
+			VictorySignTile.MapEntry: Victory Sign Tile
 		}
 
 		Bestiary: {

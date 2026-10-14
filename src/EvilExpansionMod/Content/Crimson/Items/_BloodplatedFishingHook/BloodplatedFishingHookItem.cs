@@ -44,7 +44,7 @@ public class BloodPlatedHealthy : ModBuff {
 
     public override void Update(Player player, ref int buffIndex) {
         // Apply ongoing effects while the buff is active on the player
-        player.endurance *= 0.9f;
+        player.endurance += 0.9f;
     }
 }
 public class BloodPlatedDamaged1 : ModBuff {
@@ -57,7 +57,7 @@ public class BloodPlatedDamaged1 : ModBuff {
 
     public override void Update(Player player, ref int buffIndex) {
         // Apply ongoing effects while the buff is active on the player
-        player.endurance *= 0.6f;
+        player.endurance += 0.6f;
     }
 }
 public class BloodPlatedDamaged2 : ModBuff {
@@ -70,7 +70,7 @@ public class BloodPlatedDamaged2 : ModBuff {
 
     public override void Update(Player player, ref int buffIndex) {
         // Apply ongoing effects while the buff is active on the player
-        player.endurance *= 0.3f;
+        player.endurance += 0.3f;
     }
 }
 public class BloodPlatedBroken : ModBuff {

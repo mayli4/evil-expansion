@@ -2,6 +2,7 @@ using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using SteelSeries.GameSense.DeviceZone;
 using System;
 using Terraria;
 using Terraria.Audio;
@@ -359,17 +360,48 @@ public class SpamOnAStickProjectile : ModProjectile {
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
         OnImpact(false);
+        if(CurrentAIState is AIState.Dropping) {
+            Projectile.NewProjectile(
+                Main.player[Projectile.owner].GetSource_FromAI(),
+                target.position,
+                new Microsoft.Xna.Framework.Vector2(0f, 0f),
+                ModContent.ProjectileType<SpamOnAStickCrit>(),
+                0,
+                0.5f,
+                Main.myPlayer,
+                ai0: 0f,
+                ai1: 50f,
+                ai2: 0.15f
+            );
+            for(int i = 0; i < 25; i++) {// Visuals: Create dust explosion effects here
+                Dust.NewDust(
+                    Projectile.position,
+                    Projectile.width,
+                    Projectile.height,
+                    DustID.CorruptGibs,
+                    Main.rand.NextFloat(-3f, 3f),
+                    Main.rand.NextFloat(-3f, 3f),
+                    default,
+                    default,
+                    Main.rand.NextFloat(0.6f, 1.2f));
+            }
+            SoundEngine.PlaySound(SoundID.Item115 with { Volume = 0.8f } with { PitchRange = (1.6f, 1.8f) }, target.Center); // Pow!
+            SoundEngine.PlaySound(SoundID.Item51 with { Volume = 0.8f } with { PitchRange = (0f, 0.6f) }, target.Center);
+            SoundEngine.PlaySound(SoundID.Item153 with { Volume = 0.3f } with { PitchRange = (-1.4f, -0.8f) }, target.Center);
+        }
     }
 
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
-        if (CurrentAIState == AIState.Spinning)
+        if(CurrentAIState == AIState.Spinning)
             modifiers.SourceDamage *= 0.6f;
 
-        if (CurrentAIState is AIState.LaunchingForward or AIState.Retracting)
+        if(CurrentAIState is AIState.LaunchingForward or AIState.Retracting)
             modifiers.SourceDamage *= 1f;
 
-        if(CurrentAIState is AIState.Dropping)
-            modifiers.SourceDamage *= 4f;
+        if(CurrentAIState is AIState.Dropping) {
+        modifiers.SourceDamage *= 3f;
+        modifiers.SetCrit();
+        }
 
         modifiers.HitDirectionOverride = (Owner.Center.X < target.Center.X) ? 1 : -1;
 
@@ -452,6 +484,71 @@ public class SpamOnAStickProjectile : ModProjectile {
             drawRotation,
             BlockTexture.Size() / 2f,
             drawScale,
+            SpriteEffects.None
+        );
+
+        return false;
+    }
+}
+
+public class SpamOnAStickCrit : ModProjectile {
+    public override string Texture => Assets.Images.Corruption.Items.SpamonAStick.SpamonAStick_Crit.KEY;
+    public override void SetDefaults() {
+        Projectile.width = 48;
+        Projectile.height = 48;
+        Projectile.DamageType = DamageClass.Default;
+        Projectile.friendly = false;
+        Projectile.hostile = false;
+        Projectile.knockBack = 0f;
+        Projectile.tileCollide = false;
+        Projectile.ignoreWater = true;
+        Projectile.timeLeft = 600;
+        Projectile.penetrate = -1;
+        Projectile.usesLocalNPCImmunity = true;
+        Projectile.localNPCHitCooldown = -1;
+        Projectile.scale = Projectile.ai[0];
+        Projectile.alpha = 0;
+        Projectile.aiStyle = -1;
+
+        Main.projFrames[Projectile.type] = 3;
+    }
+    public override void AI() {
+        Lighting.AddLight(Projectile.Center, 0.1f, 0.0f, 0.0f);
+        if(Projectile.scale < Projectile.ai[1]) {
+            Projectile.scale += Projectile.ai[2];
+            Projectile.ai[2] *= 1.1f;
+            if((Projectile.scale < Projectile.ai[1] * 0.7)) {
+                Projectile.alpha += 20;
+            }
+        }
+        else {
+            Projectile.Kill();
+        }
+        if(Projectile.alpha < 100) Projectile.frame = 0;
+        else if(Projectile.alpha < 200) Projectile.frame = 1;
+        else Projectile.frame = 2;
+    }
+    public override bool PreDraw(ref Color lightColor) {
+        Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+
+        int frameHeight = texture.Height / Main.projFrames[Projectile.type];
+        Rectangle sourceRectangle = new Rectangle(
+            0,
+            Projectile.frame * frameHeight,
+            texture.Width,
+            frameHeight
+        );
+
+        Vector2 drawOrigin = new Vector2(texture.Width / 2f, frameHeight / 2f);
+        float fadeOut = 1f - (Projectile.alpha / 255f);
+        Main.EntitySpriteDraw(
+            texture,
+            Projectile.Center - Main.screenPosition,
+            sourceRectangle,
+            lightColor * fadeOut,
+            Projectile.rotation,
+            drawOrigin,
+            Projectile.scale,
             SpriteEffects.None
         );
 

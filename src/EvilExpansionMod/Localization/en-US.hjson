@@ -656,6 +656,7 @@ Mods: {
 			BloodplateHookShield.DisplayName: Bloodplate Hook Shield
 			EvilSplatter.DisplayName: Evil Splatter
 			BloodExplosion.DisplayName: Blood Explosion
+			SpamOnAStickCrit.DisplayName: Spam On A Stick Crit
 		}
 
 		Biomes: {

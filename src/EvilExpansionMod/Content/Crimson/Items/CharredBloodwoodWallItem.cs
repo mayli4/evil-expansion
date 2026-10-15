@@ -12,6 +12,7 @@ namespace EvilExpansionMod.Content.Crimson;
 internal class CharredBloodwoodWall : ModWall {
     public override string Texture => Assets.Images.Crimson.Tiles.CharredBloodwoodWall.KEY;
     public override void SetStaticDefaults() {
+        Main.wallHouse[Type] = true;
 
         Main.tileBlockLight[Type] = true;
 

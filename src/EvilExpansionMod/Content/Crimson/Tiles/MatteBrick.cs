@@ -31,7 +31,7 @@ public class MatteBrick : ModTile {
         Main.tileMerge[Type][TileID.Grass] = true;
         Main.tileMerge[TileID.Grass][Type] = true;
 
-        AddMapEntry(new Color(100, 37, 62));
+        AddMapEntry(new Color(76, 33, 38));
     }
 }
 public class MatteBrickItem : ModItem {

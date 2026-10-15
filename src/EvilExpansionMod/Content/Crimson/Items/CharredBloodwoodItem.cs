@@ -34,6 +34,11 @@ public class CharredBloodwoodItem : ModItem {
             .AddIngredient<CharredBloodwoodWallItem>(4)
             .AddTile(TileID.WorkBenches)
             .Register();
+
+        CreateRecipe(1)
+            .AddIngredient<CharredBloodwoodPlatformItem>(2)
+            .AddTile(TileID.WorkBenches)
+            .Register();
     }
 }
 internal sealed class CharredBloodwoodTile : ModTile {

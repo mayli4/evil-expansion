@@ -1,11 +1,15 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.Enums;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.ObjectData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Corruption.Tiles;
 
 namespace EvilExpansionMod.Content.Corruption.Tiles;
@@ -14,8 +18,13 @@ internal class Coarsebrickwall : ModWall {
     public override string Texture => Assets.Images.Corruption.Tiles.CoarseBrickWall.KEY;
 
     public override void SetStaticDefaults() {
+        Main.wallHouse[Type] = true;
+
         Main.tileBlockLight[Type] = true;
 
+        DustType = DustID.Demonite;
+
+        AddMapEntry(new Color(10, 27, 34));
     }
 }
 

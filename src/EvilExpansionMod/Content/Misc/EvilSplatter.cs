@@ -64,7 +64,7 @@ public class EvilSplatter : ModProjectile {
             Projectile.frame = randomVisualVariant; 
         }
         else{
-            Projectile.frame = 4 + randomVisualVariant; 
+            Projectile.frame = 3 + randomVisualVariant; 
         }
 
         // Standard AI movement/rotation logic goes here

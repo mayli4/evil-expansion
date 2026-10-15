@@ -168,17 +168,19 @@ public class BloodplateHookShield : ModProjectile {
 
         if(Main.dedServ) return true;
         if(modPlayer._plateTier == 0) {
-            var rotation = Main.rand.NextFloat();
-            for(var i = 0; i < 5; i++) {
-                var direction = rotation.ToRotationVector2();
-                Gore.NewGoreDirect(
-                    Projectile.GetSource_Death(),
-                    Projectile.Center + direction * 10f - new Vector2(8, 8),
-                    direction * Main.rand.NextFloat(3f, 4f) + Projectile.velocity,
-                    Mod.Find<ModGore>("BloodplateGore" + i).Type
-                );
+            for(var ii = 0; ii < 2; ii++) {
+                var rotation = Main.rand.NextFloat();
+                for(var i = 0; i < 5; i++) {
+                    var direction = rotation.ToRotationVector2();
+                    Gore.NewGoreDirect(
+                        Projectile.GetSource_Death(),
+                        Projectile.Center + direction * 10f - new Vector2(8, 8),
+                        direction * Main.rand.NextFloat(6f, 9f) + Projectile.velocity,
+                        Mod.Find<ModGore>("BloodplateGore" + i).Type
+                    );
 
-                rotation += MathF.PI * 2f / 3f + Main.rand.NextFloatDirection() * 0.2f;
+                    rotation += MathF.PI * 2f / 3f + Main.rand.NextFloatDirection() * 0.2f;
+                }
             }
         }
         return true;

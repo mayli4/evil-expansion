@@ -557,6 +557,11 @@ Mods: {
 					"How did you get here?"
 					'''
 			}
+
+			CharredBloodwoodPlatformItem: {
+				DisplayName: Charred Bloodwood Platform Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {

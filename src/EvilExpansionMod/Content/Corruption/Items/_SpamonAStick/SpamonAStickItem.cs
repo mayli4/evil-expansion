@@ -379,11 +379,11 @@ public class SpamOnAStickProjectile : ModProjectile {
                     Projectile.width,
                     Projectile.height,
                     DustID.CorruptGibs,
-                    Main.rand.NextFloat(-3f, 3f),
-                    Main.rand.NextFloat(-3f, 3f),
+                    Main.rand.NextFloat(-0.5f, 0.5f),
+                    Main.rand.NextFloat(-1f, 1f),
+                    (int)Main.rand.NextFloat(0f, 20f),
                     default,
-                    default,
-                    Main.rand.NextFloat(0.6f, 1.2f));
+                    Main.rand.NextFloat(0.6f, 0.8f));
             }
             SoundEngine.PlaySound(SoundID.Item115 with { Volume = 0.8f } with { PitchRange = (1.6f, 1.8f) }, target.Center); // Pow!
             SoundEngine.PlaySound(SoundID.Item51 with { Volume = 0.8f } with { PitchRange = (0f, 0.6f) }, target.Center);

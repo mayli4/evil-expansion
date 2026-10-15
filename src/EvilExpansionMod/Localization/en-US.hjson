@@ -548,6 +548,15 @@ Mods: {
 					The hook reacts to danger, releasing more ghosts when you are threatened
 					'''
 			}
+
+			KnowThyEnemy: {
+				DisplayName: Know Thy Enemy
+				Tooltip:
+					'''
+					Unlocks the Bestiary in its entirety
+					"How did you get here?"
+					'''
+			}
 		}
 
 		NPCs: {

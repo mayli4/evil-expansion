@@ -55,9 +55,6 @@ public class CharredBloodwoodSword : ModItem {
             SoundEngine.PlaySound(SoundID.Item127 with { Volume = 1f } with { PitchRange = (-1.0f, -0.5f) }, target.Center);
             SoundEngine.PlaySound(SoundID.Item110 with { Volume = 1.5f } with { PitchRange = (0f, 0.5f) }, target.Center);
         }
-        for(int i = 0; i < 8; i++) { //On-hit VFX goes here
-            Dust.NewDust(target.Center, target.width, target.height, DustID.Blood, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.75f, 1.5f));
-        }
     }
 
     // Please see Content/ExampleRecipes.cs for a detailed explanation of recipe creation.

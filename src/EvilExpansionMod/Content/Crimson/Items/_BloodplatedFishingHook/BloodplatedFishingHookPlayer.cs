@@ -53,8 +53,8 @@ public class BloodplateHookPlayer : ModPlayer {
                             player.Center,
                             new Microsoft.Xna.Framework.Vector2(0f, 0f),
                             ModContent.ProjectileType<BloodplateHookShield>(),
-                            50,
-                            7,
+                            66,
+                            14,
                             Main.myPlayer
                             );
                         if (_plateTier == 3) Player.AddBuff(ModContent.BuffType<BloodPlatedHealthy>(), int.MaxValue);
@@ -106,7 +106,8 @@ public class BloodplateHookPlayer : ModPlayer {
                         0.5f,
                         Main.myPlayer,
                         ai0: 0,
-                        ai1: 0
+                        ai1: 0,
+                        ai2: 1
                         );
             if(_plateTier == 3) {
                 SoundEngine.PlaySound(SoundID.Item178 with { Volume = 0.8f } with { PitchRange = (-0.8f, -0.6f) }, Player.Center);
@@ -123,9 +124,9 @@ public class BloodplateHookPlayer : ModPlayer {
                 _plateTier--;
             }
             else if(_plateTier == 1) {
-                SoundEngine.PlaySound(SoundID.Item178 with { Volume = 0.2f } with { PitchRange = (1.6f, 1.8f) }, Player.Center);
-                SoundEngine.PlaySound(SoundID.NPCDeath22 with { Volume = 0.8f } with { PitchRange = (-1.0f, -0.5f) }, Player.Center);
-                SoundEngine.PlaySound(SoundID.NPCDeath1 with { Volume = 0.8f } with { PitchRange = (-1.0f, -0.5f) }, Player.Center);
+                SoundEngine.PlaySound(SoundID.Item178 with { Volume = 0.8f } with { PitchRange = (1.6f, 1.8f) }, Player.Center);
+                SoundEngine.PlaySound(SoundID.NPCDeath22 with { Volume = 0.9f } with { PitchRange = (-1.0f, -0.5f) }, Player.Center);
+                SoundEngine.PlaySound(SoundID.NPCDeath1 with { Volume = 0.9f } with { PitchRange = (-1.0f, -0.5f) }, Player.Center);
 
                 Player.ClearBuff(ModContent.BuffType<BloodPlatedDamaged2>());
                 Player.AddBuff(ModContent.BuffType<BloodPlatedBroken>(), 30 * 60);
@@ -144,7 +145,7 @@ public class BloodExplosion : ModProjectile {
     public override void SetDefaults() {
         Projectile.width = 98;
         Projectile.height = 98;
-        Projectile.DamageType = DamageClass.Ranged;
+        Projectile.DamageType = DamageClass.Default;
         Projectile.knockBack = 0f;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
@@ -170,6 +171,7 @@ public class BloodExplosion : ModProjectile {
         else {
             Projectile.friendly = false;
         }
+        Projectile.scale = Projectile.ai[2];
         // Visuals: Create dust explosion effects here
         for(int i = 0; i < 5; i++) {
             Dust.NewDust(

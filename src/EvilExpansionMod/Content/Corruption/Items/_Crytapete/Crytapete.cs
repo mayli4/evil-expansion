@@ -21,7 +21,7 @@ public class CrytapeteItem : ModItem {
     }
 
     public override void SetDefaults() {
-        Item.damage = 15;
+        Item.damage = 30;
         Item.DamageType = DamageClass.Summon;
         Item.mana = 10;
         Item.width = 26;
@@ -103,7 +103,7 @@ public class CrytapeteFlame : ModProjectile {
         Projectile.penetrate = 1;
         Projectile.timeLeft = 300;
         Projectile.tileCollide = true;
-        Projectile.ignoreWater = false;
+        Projectile.ignoreWater = true;
         Projectile.aiStyle = -1;
         Projectile.scale = 1f;
         Projectile.alpha = 0;
@@ -206,7 +206,7 @@ public class CrytapeteMinion : ModProjectile {
         Projectile.height = frame_height;
         Projectile.minion = true;
         Projectile.DamageType = DamageClass.Summon;
-        Projectile.friendly = true;
+        Projectile.friendly = false;
         Projectile.hostile = false;
         Projectile.penetrate = -1;
         Projectile.tileCollide = false;

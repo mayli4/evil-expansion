@@ -94,7 +94,7 @@ public class CorruptAshwoodLegs : ModItem {
     }
 
     public override void SetDefaults() {
-        Item.width = 30;
+        Item.width = 40;
         Item.height = 20;
         Item.value = Item.sellPrice(silver: 10);
         Item.rare = ItemRarityID.Blue;
@@ -123,18 +123,18 @@ public sealed class CorruptAshwoodPlayer : ModPlayer {
 
     public override void OnHurt(Player.HurtInfo hurtInfo) { // Spew projectiles when hit while wearing the full set
         if(SetBonusActive && (Player.whoAmI == Main.myPlayer)) {
-            int damage = 30; // Set this to your desired baseline damage value
+            int damage = 50; // Set this to your desired baseline damage value
             float knockback = 0.5f;
             var numberofspikes = Main.rand.NextFloat(8f, 17f); // Spew 8-16 projectiles
             for(int i = 0; i < numberofspikes; i++) { // Counting the number of spikes to spew
-                Vector2 baseSpeed = new Vector2 (20f * Main.rand.NextFloat(0.66f, 1.5f), 0f);
-                float randomAngle = Main.rand.NextFloat(MathHelper. ToRadians(-150f), MathHelper. ToRadians(-30f));
+                Vector2 baseSpeed = new Vector2 (20f * Main.rand.NextFloat(0.66f, 1.8f), 0f);
+                float randomAngle = Main.rand.NextFloat(MathHelper. ToRadians(-110f), MathHelper. ToRadians(-70f));
 
                 Vector2 projVelocity = baseSpeed.RotatedBy(randomAngle);
 
                 Projectile.NewProjectile(
                     Player.GetSource_FromThis(),
-                    Player.Center,
+                    Player.Center + new Vector2(0f, 20f),
                     projVelocity,
                     ModContent.ProjectileType<EvilWoodSpike>(),
                     damage,
@@ -144,8 +144,18 @@ public sealed class CorruptAshwoodPlayer : ModPlayer {
                 SoundEngine.PlaySound(SoundID.Item127 with { Volume = 1f } with { PitchRange = (-1.0f, -0.5f) }, Player.Center);
                 SoundEngine.PlaySound(SoundID.Item110 with { Volume = 1.5f } with { PitchRange = (0f, 0.5f) }, Player.Center);
             }
-            for(int i = 0; i < 12; i++) { //On-hit VFX goes here
-                Dust.NewDust(Player.position, Player.width, Player.height, DustID.Clay, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.5f, 2f));
+            for(int i = 0; i < 20; i++) { //On-hit VFX goes here
+                Dust.NewDust(
+                    Player.position,
+                    Player.width,
+                    Player.height,
+                    DustID.TintableDust,
+                    Main.rand.NextFloat(-3f, 3f),
+                    Main.rand.NextFloat(-6f, 6f),
+                    default,
+                    new Color(220, 205, 127),
+                    Main.rand.NextFloat(0.4f, 0.8f)
+                );
             }
         }
     }
@@ -173,9 +183,19 @@ public sealed class EvilWoodSpike : ModProjectile {
         Projectile.rotation = Projectile.velocity.ToRotation();
     }
     public override void OnKill(int timeLeft) {
-        for(int i = 0; i < 5; i++) { //On-hit VFX goes here
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Clay, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.75f, 1.5f));
-            }
+        for(int i = 0; i < 2; i++) { //On-hit VFX goes here
+            Dust.NewDust(
+                Projectile.position,
+                Projectile.width,
+                Projectile.height,
+                DustID.TintableDust,
+                Main.rand.NextFloat(-0.3f, 0.3f),
+                Main.rand.NextFloat(-0.8f, 0.8f),
+                default,
+                new Color(220,205,127),
+                Main.rand.NextFloat(0.4f, 0.8f)
+            );
+        }
     }
 
 }

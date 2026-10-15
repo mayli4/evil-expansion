@@ -29,7 +29,17 @@ public class CorruptAshwoodSword : ModItem{
     public override void MeleeEffects(Player player, Rectangle hitbox) {
         if (Main.rand.NextBool(3)) {
             // Emit dusts when the sword is swung
-            Dust.NewDust(new Vector2(hitbox.X, hitbox.Y), hitbox.Width, hitbox.Height, DustID.Clay);
+            Dust.NewDust(
+                new Vector2(hitbox.X, hitbox.Y),
+                hitbox.Width,
+                hitbox.Height,
+                DustID.TintableDust,
+                Main.rand.NextFloat(-0.3f, 0.3f),
+                Main.rand.NextFloat(-0.8f, 0.8f),
+                default,
+                new Color(220, 205, 127),
+                Main.rand.NextFloat(0.4f, 0.8f)
+            );
         }
     }
 
@@ -39,7 +49,7 @@ public class CorruptAshwoodSword : ModItem{
         var numberofspikes = Main.rand.NextFloat(2f, 6f); // Spew 2-5 projectiles
             for(int i = 0; i < numberofspikes; i++) { // Counting the number of spikes to spew
             Vector2 baseSpeed = new Vector2 (20f * Main.rand.NextFloat(0.66f, 1.5f), 0f);
-            float randomAngle = Main.rand.NextFloat(MathHelper. ToRadians(-150f), MathHelper. ToRadians(-30f));
+            float randomAngle = Main.rand.NextFloat(MathHelper. ToRadians(-110f), MathHelper. ToRadians(-70f));
 
             Vector2 projVelocity = baseSpeed.RotatedBy(randomAngle);
 
@@ -54,9 +64,6 @@ public class CorruptAshwoodSword : ModItem{
                 ai0: 0);
             SoundEngine.PlaySound(SoundID.Item127 with { Volume = 1f } with { PitchRange = (-1.0f, -0.5f) }, target.Center);
             SoundEngine.PlaySound(SoundID.Item110 with { Volume = 1.5f } with { PitchRange = (0f, 0.5f) }, target.Center);
-        }
-        for(int i = 0; i < 8; i++) { //On-hit VFX goes here
-            Dust.NewDust(target.Center, target.width, target.height, DustID.Clay, Main.rand.NextFloat(-6f, 6f), Main.rand.NextFloat(-6f, 6f), 255, default, Main.rand.NextFloat(0.75f, 1.5f));
         }
     }
 

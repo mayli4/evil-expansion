@@ -7,13 +7,14 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Daybreak.Common.Features.Hooks.GlobalItemHooks;
 
 namespace EvilExpansionMod.Content.Crimson;
 
 public class BloodplateHookShield : ModProjectile {
     public override string Texture => Assets.Images.Crimson.Items.BloodplateHook.BloodplateHookShield.KEY;
     private const int JAB_DURATION = 5;
-    private const float MAX_SCALE_INCREASE = 0.2f;
+    private const float MAX_SCALE_INCREASE = 0.25f;
     float baseScale = 1.0f;
     bool conjureAnimationDone = false;
     bool initialSpawn = false;
@@ -50,7 +51,7 @@ public class BloodplateHookShield : ModProjectile {
             Projectile.velocity = Vector2.Lerp(Projectile.velocity *= 1.05f, vectorToTarget / distance * 10f, 0.1f);
         }
         else {
-            Projectile.velocity *= 0.85f;
+            Projectile.velocity *= 0.9f;
         }
 
         if(Projectile.velocity.Length() < 0.1f) {
@@ -117,6 +118,8 @@ public class BloodplateHookShield : ModProjectile {
         }
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+        Player player = Main.player[Projectile.owner];
+        var modPlayer = player.GetModPlayer<BloodplateHookPlayer>();
         if(JabTimer <= 0) {
             JabTimer = JAB_DURATION;
 
@@ -135,6 +138,28 @@ public class BloodplateHookShield : ModProjectile {
                 Main.rand.NextFloat(0.7f, 1.2f)
             );
         }
+
+        Projectile.NewProjectile(
+                        player.GetSource_FromAI(),
+                        target.position,
+                        new Microsoft.Xna.Framework.Vector2(0f, 0f),
+                        ModContent.ProjectileType<BloodExplosion>(),
+                        0,
+                        0.5f,
+                        Main.myPlayer,
+                        ai0: 0,
+                        ai1: 0,
+                        ai2: Main.rand.NextFloat(0.6f, 1f)
+                        );
+    }
+    public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
+        Player player = Main.player[Projectile.owner];
+        Vector2 directionFromPlayer = target.Center - player.Center;
+
+        if(directionFromPlayer == Vector2.Zero) { // If they are exactly on top of each other, default to pushing right to prevent errors
+            directionFromPlayer = Vector2.UnitX;
+        }
+        modifiers.HitDirectionOverride = directionFromPlayer.X > 0f ? 1 : -1; // Knockback direction based on this vector, a positive horizontal direction knocks them right, negative knocks them left
     }
     public override bool? CanCutTiles() => JabTimer > 0;
     public override bool PreKill(int timeLeft) { // Make gores on shatter or dust when de-conjured

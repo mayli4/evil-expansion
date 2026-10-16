@@ -28,7 +28,7 @@ public class SpamonAStickItem : ModItem {
         
         Item.shoot = ModContent.ProjectileType<SpamOnAStickProjectile>();
 
-        Item.damage = 50;
+        Item.damage = 40;
         Item.knockBack = 8;
         Item.crit = 4;
         Item.value = Item.sellPrice(gold: 1, silver: 10);
@@ -259,7 +259,7 @@ public class SpamOnAStickProjectile : ModProjectile {
         if (!Owner.controlUseItem || Projectile.Distance(mountedCenter) > MaxLength + 160f) {
             ChangeState(AIState.ForcedRetracting);
         } else {
-            Projectile.velocity.Y += 0.8f;
+            Projectile.velocity.Y += 1.4f; //0.8f originally set by Mags
             Projectile.velocity.X *= 0.95f;
             Owner.ChangeDir((Owner.Center.X < Projectile.Center.X) ? 1 : -1);
         }
@@ -312,6 +312,31 @@ public class SpamOnAStickProjectile : ModProjectile {
         if (CurrentAIState == AIState.LaunchingForward || CurrentAIState == AIState.Dropping) {
             OnImpact(true);
 
+            Projectile.NewProjectile(
+                Main.player[Projectile.owner].GetSource_FromAI(),
+                Projectile.position,
+                new Microsoft.Xna.Framework.Vector2(0f, 0f),
+                ModContent.ProjectileType<SpamOnAStickCrit>(),
+                0,
+                0.5f,
+                Main.myPlayer,
+                ai0: 0f,
+                ai1: 1f,
+                ai2: 0.15f
+            );
+            Projectile.NewProjectile(
+                Main.player[Projectile.owner].GetSource_FromAI(),
+                Projectile.position,
+                new Microsoft.Xna.Framework.Vector2(0f, 0f),
+                ModContent.ProjectileType<SpamOnAStickShockwave>(),
+                20,
+                0.5f,
+                Main.myPlayer,
+                ai0: 0f,
+                ai1: 1f,
+                ai2: 0.15f
+            );
+
             bool hitHorizontalSurface = oldVelocity.Y != Projectile.velocity.Y;
 
             if (hitHorizontalSurface && oldVelocity.Y > 0f) {
@@ -322,6 +347,7 @@ public class SpamOnAStickProjectile : ModProjectile {
                     Projectile.netUpdate = true;
                 }
                 else {
+                    Projectile.position += new Vector2(0f, Projectile.velocity.Y * 0.8f); // My genius way of making sure that the flailhead is perfectly flush with the floor! Really happy with this one
                     Projectile.velocity = Vector2.Zero;
                     ChangeState(AIState.StuckToGround);
                     Projectile.rotation = 0f;
@@ -370,10 +396,22 @@ public class SpamOnAStickProjectile : ModProjectile {
                 0.5f,
                 Main.myPlayer,
                 ai0: 0f,
-                ai1: 50f,
+                ai1: 1.5f,
                 ai2: 0.15f
             );
-            for(int i = 0; i < 25; i++) {// Visuals: Create dust explosion effects here
+            Projectile.NewProjectile(
+                Main.player[Projectile.owner].GetSource_FromAI(),
+                target.position,
+                new Microsoft.Xna.Framework.Vector2(0f, 0f),
+                ModContent.ProjectileType<SpamOnAStickShockwave>(),
+                40,
+                0.5f,
+                Main.myPlayer,
+                ai0: 0f,
+                ai1: 1.5f,
+                ai2: 0.15f
+            );
+            for(int i = 0; i < 7; i++) {// Visuals: Create dust explosion effects here
                 Dust.NewDust(
                     Projectile.position,
                     Projectile.width,
@@ -383,11 +421,12 @@ public class SpamOnAStickProjectile : ModProjectile {
                     Main.rand.NextFloat(-1f, 1f),
                     (int)Main.rand.NextFloat(0f, 20f),
                     default,
-                    Main.rand.NextFloat(0.6f, 0.8f));
+                    Main.rand.NextFloat(0.6f, 1f));
             }
             SoundEngine.PlaySound(SoundID.Item115 with { Volume = 0.8f } with { PitchRange = (1.6f, 1.8f) }, target.Center); // Pow!
             SoundEngine.PlaySound(SoundID.Item51 with { Volume = 0.8f } with { PitchRange = (0f, 0.6f) }, target.Center);
-            SoundEngine.PlaySound(SoundID.Item153 with { Volume = 0.3f } with { PitchRange = (-1.4f, -0.8f) }, target.Center);
+            SoundEngine.PlaySound(SoundID.Item153 with { Volume = 0.5f } with { PitchRange = (-1f, 0.5f) }, target.Center);
+            SoundEngine.PlaySound(Assets.Sounds.SpamOnAStickSmash.Asset with { Volume = 1f } with { PitchVariance = 0.4f, Pitch = 1.5f, Volume = 1f }, target.Center);
         }
     }
 
@@ -494,8 +533,8 @@ public class SpamOnAStickProjectile : ModProjectile {
 public class SpamOnAStickCrit : ModProjectile {
     public override string Texture => Assets.Images.Corruption.Items.SpamonAStick.SpamonAStick_Crit.KEY;
     public override void SetDefaults() {
-        Projectile.width = 48;
-        Projectile.height = 48;
+        Projectile.width = 110;
+        Projectile.height = 110;
         Projectile.DamageType = DamageClass.Default;
         Projectile.friendly = false;
         Projectile.hostile = false;
@@ -510,23 +549,23 @@ public class SpamOnAStickCrit : ModProjectile {
         Projectile.alpha = 0;
         Projectile.aiStyle = -1;
 
-        Main.projFrames[Projectile.type] = 3;
+        //Main.projFrames[Projectile.type] = 3;
     }
     public override void AI() {
-        Lighting.AddLight(Projectile.Center, 0.1f, 0.0f, 0.0f);
+        Lighting.AddLight(Projectile.Center, 0.35f, 0.5f, 0.0f);
         if(Projectile.scale < Projectile.ai[1]) {
             Projectile.scale += Projectile.ai[2];
             Projectile.ai[2] *= 1.1f;
-            if((Projectile.scale < Projectile.ai[1] * 0.7)) {
-                Projectile.alpha += 20;
+            if((Projectile.scale > Projectile.ai[1] * 0.2)) {
+                Projectile.alpha += (int)(20 * (1 + (Projectile.scale / Projectile.ai[1])));
             }
         }
         else {
             Projectile.Kill();
         }
-        if(Projectile.alpha < 100) Projectile.frame = 0;
-        else if(Projectile.alpha < 200) Projectile.frame = 1;
-        else Projectile.frame = 2;
+        //if(Projectile.alpha < 100) Projectile.frame = 0;
+        //else if(Projectile.alpha < 200) Projectile.frame = 1;
+        //else Projectile.frame = 2;
     }
     public override bool PreDraw(ref Color lightColor) {
         Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
@@ -553,5 +592,68 @@ public class SpamOnAStickCrit : ModProjectile {
         );
 
         return false;
+    }
+}
+public class SpamOnAStickShockwave : ModProjectile { //Purely serves as a "hitbox" for the "crit" projectile since I don't know how to make the projectile width/height of the latter work properly...
+    public override string Texture => Assets.Images.Corruption.Items.SpamonAStick.SpamonAStick_Crit.KEY;
+    public override void SetDefaults() {
+        Projectile.width = 110;
+        Projectile.height = 110;
+        Projectile.DamageType = DamageClass.Melee;
+        Projectile.friendly = true;
+        Projectile.hostile = false;
+        Projectile.knockBack = 1f;
+        Projectile.tileCollide = false;
+        Projectile.ignoreWater = true;
+        Projectile.timeLeft = 600;
+        Projectile.penetrate = -1;
+        Projectile.usesLocalNPCImmunity = true;
+        Projectile.localNPCHitCooldown = -1;
+        Projectile.scale = Projectile.ai[0];
+        Projectile.alpha = 255;
+        Projectile.aiStyle = -1;
+    }
+    public override void AI() {
+        Lighting.AddLight(Projectile.Center, 0.35f, 0.5f, 0.0f);
+        if(Projectile.scale < Projectile.ai[1]) {
+            Projectile.scale += Projectile.ai[2];
+            Projectile.ai[2] *= 1.1f;
+            if((Projectile.scale > Projectile.ai[1] * 0.2)) {
+                Projectile.alpha += 30;
+            }
+        }
+        else {
+            Projectile.Kill();
+        }
+        Vector2 center = Projectile.Center;
+
+        int defaultWidth = 110;
+        int defaultHeight = 110;
+
+        Projectile.width = (int)(defaultWidth * Projectile.scale);
+        Projectile.height = (int)(defaultHeight * Projectile.scale);
+
+        Projectile.Center = center;
+    }
+    public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) { // Unsure if this actually does anything
+        modifiers.DisableCrit();
+        // Check if the NPC is actually vulnerable to knockback mechanics
+        if(!target.boss && target.knockBackResist > 0f) {
+            // Force Terraria to run custom physics in the OnHitNPC step next
+            modifiers.DisableKnockback(); // Centers horizontal knockback calculations
+        }
+    }
+
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) { // KBs all non-boss, non-KB-immune enemies upwards and cuts their horizontal movement
+        if(!target.boss && target.knockBackResist > 0f) {
+
+            target.velocity.Y = -6f;
+            target.velocity.X *= 0.2f;
+
+            // Keep the server updated in multiplayer contexts
+            if(Main.netMode == NetmodeID.Server) {
+                NetMessage.SendData(MessageID.SyncNPC, -1, -1, null, target.whoAmI);
+            }
+        }
     }
 }

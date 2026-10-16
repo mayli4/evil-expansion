@@ -78,7 +78,11 @@ Mods: {
 					Increases summon damage by 5%
 					Increases your max number of minions by 1
 					'''
-				SetBonus: "{0}% chance to spawn a shadow orb on hit that summons a Corruptling when touched"
+				SetBonus:
+					'''
+					{0}% chance to spawn a shadow orb on hit that summons a Corruptling when touched
+					Corruptlings ignore 20 points of enemy Defense
+					'''
 			}
 
 			HellbringerLegs: {
@@ -169,6 +173,7 @@ Mods: {
 				DisplayName: Spam on a Stick
 				Tooltip:
 					'''
+					The heavy flailhead creates shockwaves on impact
 					Drop it onto enemies to deal crushing damage
 					'Home grown!'
 					'''
@@ -531,17 +536,17 @@ Mods: {
 			}
 
 			BloodplateHookItem: {
-				DisplayName: Bloodplate Hook
+				DisplayName: Bloodplate Fishing Hook
 				Tooltip:
 					'''
-					Forms a blood shield around the owner while fishing which impales enemies and absorbs incoming damage
+					While fishing, forms a blood shield which impales enemies and absorbs incoming damage
 					Getting hurt damages the shield
 					The shield will need time to regenerate after being broken
 					'''
 			}
 
 			WailingHookItem: {
-				DisplayName: Wailing Hook
+				DisplayName: Soulsucking Fishing Hook
 				Tooltip:
 					'''
 					While fishing, releases cursed ghosts from the water that chase after enemies
@@ -662,6 +667,7 @@ Mods: {
 			EvilSplatter.DisplayName: Evil Splatter
 			BloodExplosion.DisplayName: Blood Explosion
 			SpamOnAStickCrit.DisplayName: Spam On A Stick Crit
+			SpamOnAStickShockwave.DisplayName: Spam On A Stick Shockwave
 		}
 
 		Biomes: {

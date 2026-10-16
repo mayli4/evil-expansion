@@ -8,8 +8,8 @@ namespace EvilExpansionMod.Content.Corruption;
 [AutoloadEquip(EquipType.Head)]
 public class HellbringerHead : ModItem {
     public readonly static float ShadowOrbSpawnRange = 800;
-    public readonly static float ShadowOrbSpawnChance = 0.24f;
-    public readonly static int CorruptlingDamage = 15;
+    public readonly static float ShadowOrbSpawnChance = 0.12f;
+    public readonly static int CorruptlingDamage = 20;
 
     public override string Texture => Assets.Images.Corruption.Items.HellbringerArmor.HellbringerHead.KEY;
     public override void SetStaticDefaults() {

@@ -23,9 +23,10 @@ public class CorruptlingProjectile : ModProjectile {
         Projectile.friendly = true;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = false;
-        Projectile.timeLeft = 10*60;
+        Projectile.timeLeft = 20*60;
         Projectile.penetrate = 6;
         Projectile.aiStyle = -1;
+        Projectile.ArmorPenetration = 20;
 
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = 10;

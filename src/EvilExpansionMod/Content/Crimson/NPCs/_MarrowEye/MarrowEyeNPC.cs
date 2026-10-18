@@ -60,7 +60,7 @@ public class MarrowEyeNPC : ModNPC {
         NPC.knockBackResist = 0f;
         NPC.friendly = false;
         NPC.damage = 222;
-        NPC.defense = 2;
+        NPC.defense = 11;
 
         NPC.HitSound = SoundID.NPCHit23;
         NPC.DeathSound = SoundID.NPCDeath1;
@@ -87,10 +87,10 @@ public class MarrowEyeNPC : ModNPC {
     }
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
         if(Main.expertMode) {
-            NPC.defense = 4;
+            NPC.defense = 22;
         }
         if(Main.masterMode) {
-            NPC.defense = 6;
+            NPC.defense = 33;
         }
     }
     public override bool CanHitPlayer(Player target, ref int cooldownSlot) {

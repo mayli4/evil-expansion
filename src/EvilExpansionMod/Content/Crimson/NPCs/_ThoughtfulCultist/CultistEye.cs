@@ -14,7 +14,7 @@ namespace EvilExpansionMod.Content.Crimson;
 
 public class CultistEye : ModNPC {
     public override string Texture => Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistEye.KEY;
-    static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 1.5f : 1.25f) : 1f;
+    static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 1.1f : 1.05f) : 1f;
     private int _dustTimer = 0;
     public override void SetStaticDefaults() {
         var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
@@ -30,12 +30,13 @@ public class CultistEye : ModNPC {
     public override void SetDefaults() {
         NPC.width = 22;
         NPC.height = 22;
-        NPC.lifeMax = 75;
+        NPC.lifeMax = 205;
+        NPC.defense = 5;
         NPC.value = 1f;
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
-        NPC.knockBackResist = 1.2f;
+        NPC.knockBackResist = 3f;
         NPC.friendly = false;
         NPC.damage = 45;
 
@@ -58,11 +59,12 @@ public class CultistEye : ModNPC {
     }
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
         if(Main.expertMode) {
-            NPC.lifeMax = (int)(NPC.lifeMax * 0.65f);
-            NPC.defense = 5;
+            NPC.lifeMax = (int) (NPC.lifeMax /2);
+            NPC.defense = 15;
         }
         if(Main.masterMode) {
-            NPC.defense = 10;
+            NPC.lifeMax = (int)(NPC.lifeMax /3);
+            NPC.defense = 25;
         }
     }
 
@@ -83,7 +85,7 @@ public class CultistEye : ModNPC {
         if(target == null) return;
 
         var moveDirection = NPC.Center.DirectionTo(target.Center);
-        NPC.velocity += moveDirection * 0.35f * DifficultyScaler;
+        NPC.velocity += moveDirection * 0.2f * DifficultyScaler;
         NPC.velocity += 1f * Main.rand.NextFloatDirection()
             * MathF.Sin(NPC.whoAmI * 0.3f + Main.GameUpdateCount * 0.1f)
             * moveDirection.RotatedBy(MathF.PI / 2f);

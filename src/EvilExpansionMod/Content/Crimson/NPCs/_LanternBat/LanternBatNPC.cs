@@ -1,4 +1,5 @@
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Content.Tiles.Banners;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
@@ -55,9 +56,9 @@ public class LanternBatNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 40;
         NPC.height = 30;
-        NPC.lifeMax = 120;
+        NPC.lifeMax = 320;
         NPC.damage = 25;
-        NPC.defense = 8;
+        NPC.defense = 6;
         NPC.knockBackResist = 0.2f;
         NPC.value = 650f;
         NPC.aiStyle = -1;
@@ -78,10 +79,10 @@ public class LanternBatNPC : ModNPC {
         BannerItem = ModContent.ItemType<LanternBatBannerItem>();
     }
 
-    public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.2f : 0;
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.1f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 1, 2));
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<FireInALanternItem>(), 50, 1, 1));
     }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
@@ -113,7 +114,9 @@ public class LanternBatNPC : ModNPC {
         );
     }
 
+    float difficultyScaler = Main.masterMode ? 2f : Main.expertMode ? 1.5f : 1f; // speed multiplied on higher difficulties
     public override void AI() {
+
         NPC.TargetClosest();
         if(Target.dead || !Target.active) {
             return;
@@ -122,7 +125,7 @@ public class LanternBatNPC : ModNPC {
         switch(CurrentState) {
             case State.IdleFlight:
                 Vector2 idealIdlePosition = Target.Center + new Vector2(NPC.direction * 200, -100);
-                NPC.velocity = Vector2.Lerp(NPC.velocity, NPC.DirectionTo(idealIdlePosition) * 4, 0.05f);
+                NPC.velocity = Vector2.Lerp(NPC.velocity, NPC.DirectionTo(idealIdlePosition) * 4 * difficultyScaler, 0.05f);
 
                 StateTimer++;
                 int minIdleTime = 60 * 1;
@@ -143,6 +146,8 @@ public class LanternBatNPC : ModNPC {
 
                     NPC.spriteDirection = NPC.direction = storedDashDirection.X > 0 ? 1 : -1;
 
+                    SoundEngine.PlaySound(SoundID.Item151 with { Pitch = Main.rand.NextFloat(-0.2f, 0.2f) }, NPC.Center); // Hissing
+
                     CurrentState = State.DashTelegraph;
                 }
 
@@ -151,10 +156,25 @@ public class LanternBatNPC : ModNPC {
                 NPC.velocity -= storedDashDirection * 0.065f;
                 NPC.velocity *= 0.95f;
 
-                LanternLightIntensity = MathHelper.Lerp(LanternLightIntensity, 1f, 0.05f);
+                LanternLightIntensity = MathHelper.Lerp(LanternLightIntensity, 10f, 0.05f);
+
+                var particle = SmokeParticle.Pool.RequestParticle(); // Smoke
+
+                Vector2 randomVelocity = new Vector2(
+                    Main.rand.NextFloat(-1.5f, 1.5f),
+                    Main.rand.NextFloat(-2f, -0.5f)
+                );
+
+                Color smokeColor = Color.Lerp(Color.White, Color.Black, Main.rand.NextFloat());
+                float scale = Main.rand.NextFloat(0.1f, 1.2f);
+                int lifetime = Main.rand.Next(40, 90);
+
+                particle.Spawn(NPC.Center + Main.rand.NextVector2Circular(15, 45), randomVelocity, smokeColor, scale, lifetime);
 
                 StateTimer++;
                 if(StateTimer >= 35) {
+                    Vector2 dashTarget = Target.Center + Target.velocity * 0.5f - Vector2.UnitY * 80; // Yeah, I made it aim at the player again
+                    storedDashDirection = NPC.DirectionTo(dashTarget);
                     NPC.velocity = storedDashDirection * 2f;
                     CurrentState = State.Dashing;
 
@@ -163,27 +183,39 @@ public class LanternBatNPC : ModNPC {
                         NPC.Center,
                         Vector2.Zero,
                         ModContent.ProjectileType<LingeringFlameProjectile>(),
-                        20,
+                        Main.expertMode ? (int) 20 : (int) 40,
                         0,
                         Main.myPlayer,
                         NPC.whoAmI,
                         storedDashDirection.X > 0 ? 1 : -1
                     );
 
-                    SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Pitch = 0.1f * Main.rand.NextFloatDirection() }, NPC.Center);
+                    SoundEngine.PlaySound(SoundID.DD2_BetsyFlameBreath with { Pitch = Main.rand.NextFloat(-0.4f, 0f) }, NPC.Center);
                 }
 
                 break;
             case State.Dashing:
-                NPC.velocity += storedDashDirection * 0.45f;
+                NPC.velocity += storedDashDirection * 0.45f * difficultyScaler;
+
+                var particle2 = SmokeParticle.Pool.RequestParticle(); // THIS IS THE WOOORST SOLUTION EVER. I am sorry I just wanted more smoke
+
+                Vector2 randomVelocity2 = new Vector2(
+                    Main.rand.NextFloat(-1.5f, 1.5f),
+                    Main.rand.NextFloat(-2f, -0.5f)
+                );
+
+                Color smokeColor2 = Color.Lerp(Color.White, Color.Black, Main.rand.NextFloat());
+                float scale2 = Main.rand.NextFloat(0.1f, 0.8f);
+                int lifetime2 = Main.rand.Next(20, 60);
+                particle2.Spawn(NPC.Center + Main.rand.NextVector2Circular(15, 45), randomVelocity2, smokeColor2, scale2, lifetime2);
 
                 NPC.noTileCollide = true;
                 NPC.noGravity = true;
 
-                LanternLightIntensity = 1.5f;
+                LanternLightIntensity = 1.8f;
 
                 StateTimer++;
-                if(StateTimer >= 45) {
+                if(StateTimer >= 40 - 10 * (difficultyScaler-1)) {
                     CurrentState = State.PostDashCooldown;
                     NPC.noTileCollide = true;
                     NPC.noGravity = true;

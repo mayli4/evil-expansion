@@ -79,7 +79,7 @@ public sealed class CursehoundNPC : ModNPC {
     public override void SetDefaults() {
         (NPC.width, NPC.height) = (150, 150);
 
-        NPC.lifeMax = 2100;
+        NPC.lifeMax = 2950;
         NPC.damage = 30;
         NPC.defense = 25;
         NPC.value = Item.buyPrice(gold: 1, silver: 50);

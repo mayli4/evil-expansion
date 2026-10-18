@@ -32,7 +32,7 @@ public sealed class DevilOWarNPC : ModNPC {
 
     public Player Target => Main.player[NPC.target];
 
-    private const int FOLLOW_RANGE = 16 * 64;
+    private const int FOLLOW_RANGE = 6 * 64;
     public const int CHARGING_RADIUS = 26 * 10;
     private const int ATTACK_COOLDOWN = 60 * 1;
     public const int STINGER_DURATION_MAX = 60 * 30;
@@ -59,6 +59,7 @@ public sealed class DevilOWarNPC : ModNPC {
         NPC.width = 36;
         NPC.height = 36;
         NPC.lifeMax = 780;
+        NPC.defense = 2;
         NPC.value = NPC.value = Item.buyPrice(silver: 15);
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
@@ -80,6 +81,9 @@ public sealed class DevilOWarNPC : ModNPC {
     }
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
         if(Main.expertMode) {
+            NPC.knockBackResist = 0.01f;
+        }
+        if(Main.masterMode) {
             NPC.knockBackResist = 0f;
         }
     }
@@ -116,7 +120,7 @@ public sealed class DevilOWarNPC : ModNPC {
         spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.2f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
-        npcLoot.Add(ItemDropRule.Common(ItemID.Gel, 1, 3, 6));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>(), 2, 1, 3));
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<InflatableDevilOWarItem>(), 50, 1, 1));
     }
 

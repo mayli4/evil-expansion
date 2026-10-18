@@ -87,10 +87,11 @@ public sealed class EffigyNPC : ModNPC {
             new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.EffigyNPCBestiary.KEY),
         });
     }
-    public override void ModifyNPCLoot(NPCLoot npcLoot) {
-        npcLoot.Add(ItemDropRule.Common(itemId: 68, 3));
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 1, 2, 5));
-    }
+    //public override void ModifyNPCLoot(NPCLoot npcLoot) {
+    //    npcLoot.Add(ItemDropRule.Common(itemId: 68, 3));
+    //    npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 1, 2, 5));
+    //}
+    // YOU CANNOT KILL IT SO A LOOT TABLE IS POINTLESS. THIS ALSO MEANS THAT THE BANNER IS UNOBTAINABLE
     public override void Load() {
         for(int j = 1; j <= 5; j++)
             GoreLoader.AddGoreFromTexture<SimpleModGore>(Mod, "EvilExpansionMod/Assets/Images/Gores/EffigyGore" + j);

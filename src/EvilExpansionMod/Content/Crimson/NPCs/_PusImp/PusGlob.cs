@@ -66,47 +66,58 @@ public sealed class PusGlob : ModProjectile {
     }
     public override void OnKill(int timeLeft) {
         if(Projectile.lavaWet) {
-            SoundEngine.PlaySound(SoundID.LiquidsWaterLava with { PitchVariance = 0.5f }, Projectile.position);
-            for(int i = 0; i < 4; i++) {
-                var dustPos = Projectile.position + Main.rand.NextVector2Circular(10f, 60f) + new Vector2(0f, -5f);
-                var dustVelocity = -Vector2.UnitY * Main.rand.NextFloat(30f, 600f)
-                    + Projectile.position.DirectionTo(dustPos) * 5f;
 
-                var dustColorStart = new Color(133, 122, 94);
-                var dustColorFade = dustColorStart * 0.4f;
-
-                var newDustData = new Smoke.Data()
-                {
-                    InitialLifetime = 40,
-                    ElapsedFrames = 0,
-                    InitialOpacity = 0.8f,
-                    ColorStart = dustColorStart,
-                    ColorFade = dustColorFade,
-                    Spin = 0.03f,
-                    InitialScale = Main.rand.NextFloat(0.3f, 1.0f)
-                };
-
-                var newDust = Dust.NewDustPerfect(
-                    dustPos,
-                    ModContent.DustType<Smoke>(),
-                    dustVelocity,
-                    0,
-                    newColor: Color.White,
-                    newDustData.InitialScale
+            if(SpawnedByGrub == 1f) {
+                NPC.NewNPC(
+                    Projectile.GetSource_FromThis(),
+                    (int)Projectile.Center.X + Main.rand.Next(-10, 10),
+                    (int)Projectile.Center.Y + Main.rand.Next(-10, 10),
+                    ModContent.NPCType<PusImpNPC>()
                 );
+            }
+            else {
+                SoundEngine.PlaySound(SoundID.LiquidsWaterLava with { PitchVariance = 0.5f }, Projectile.position);
+                for(int i = 0; i < 4; i++) {
+                    var dustPos = Projectile.position + Main.rand.NextVector2Circular(10f, 60f) + new Vector2(0f, -5f);
+                    var dustVelocity = -Vector2.UnitY * Main.rand.NextFloat(30f, 600f)
+                        + Projectile.position.DirectionTo(dustPos) * 5f;
 
-                newDust.customData = newDustData;
-                int dustIndex = Dust.NewDust(
-                    dustPos,
-                    Projectile.width,
-                    Projectile.height,
-                    DustID.Smoke,
-                    Main.rand.NextFloat(-3f, 3f),
-                    Main.rand.NextFloat(-7f, 0f),
-                    (int)Main.rand.NextFloat(0f, 100f),
-                    default,
-                    Main.rand.NextFloat(0.5f, 1.5f)
-                );
+                    var dustColorStart = new Color(133, 122, 94);
+                    var dustColorFade = dustColorStart * 0.4f;
+
+                    var newDustData = new Smoke.Data()
+                    {
+                        InitialLifetime = 40,
+                        ElapsedFrames = 0,
+                        InitialOpacity = 0.8f,
+                        ColorStart = dustColorStart,
+                        ColorFade = dustColorFade,
+                        Spin = 0.03f,
+                        InitialScale = Main.rand.NextFloat(0.3f, 1.0f)
+                    };
+
+                    var newDust = Dust.NewDustPerfect(
+                        dustPos,
+                        ModContent.DustType<Smoke>(),
+                        dustVelocity,
+                        0,
+                        newColor: Color.White,
+                        newDustData.InitialScale
+                    );
+
+                    newDust.customData = newDustData;
+                    int dustIndex = Dust.NewDust(
+                        dustPos,
+                        Projectile.width,
+                        Projectile.height,
+                        DustID.Smoke,
+                        Main.rand.NextFloat(-3f, 3f),
+                        Main.rand.NextFloat(-7f, 0f),
+                        (int)Main.rand.NextFloat(0f, 100f),
+                        default,
+                        Main.rand.NextFloat(0.5f, 1.5f)
+                    );
+                }
             }
         }
         else {
@@ -234,10 +245,10 @@ public sealed class PusCreepProjectile : ModProjectile, ITileMask {
             );
 
             Color smokeColor = Color.Lerp(Color.White, Color.Black, Main.rand.NextFloat());
-            float scale = Main.rand.NextFloat(0.1f, 1.2f);
-            int lifetime = Main.rand.Next(20, 60);
+            float scale = Main.rand.NextFloat(0.2f, 1.0f);
+            int lifetime = Main.rand.Next(20, 40);
 
-            particle.Spawn(Projectile.Center + Main.rand.NextVector2Circular(15, 45), randomVelocity, smokeColor, scale, lifetime);
+            particle.Spawn(Projectile.Center + Main.rand.NextVector2Circular(10, 45), randomVelocity, smokeColor, scale, lifetime);
         }
     }
 

@@ -42,6 +42,7 @@ public class PusImpNPC : ModNPC {
     private int attackCooldownTimer;
     private int teleportCooldownTimer;
 
+    float difficultyScaler = Main.expertMode ? 0.5f : 1f; // Counteracting doubled proj. damage scaling on higher difficulties
     public override string Texture => Assets.Images.Crimson.NPCs.PusImp.PusImpNPC.KEY;
 
     public Player Target => Main.player[NPC.target];
@@ -53,7 +54,8 @@ public class PusImpNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 2;
         NPC.height = 38;
-        NPC.lifeMax = 100;
+        NPC.lifeMax = 80;
+        NPC.defense = 46;
         NPC.value = 250f;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
@@ -79,12 +81,21 @@ public class PusImpNPC : ModNPC {
     public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.2f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PusClumpItem>(), 1, 1, 3));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PusClumpItem>(), 2, 1, 2));
     }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
             new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.PusImpNPCBestiary.KEY),
         });
+    }
+    public override bool PreAI() {
+        bool inLava = Collision.LavaCollision(NPC.position, NPC.width, NPC.height);  //Making it float... floaty imp
+        if(inLava) {
+            if(NPC.velocity.Y > -1.5f) {
+                NPC.velocity.Y -= 0.5f;
+            }
+        }
+        return true;
     }
     public override void AI() {
         NPC.TargetClosest();
@@ -129,7 +140,7 @@ public class PusImpNPC : ModNPC {
                     mouthPosition,
                     vel,
                     ModContent.ProjectileType<PusGlob>(),
-                    12,
+                    (int) (35 * difficultyScaler),
                     3f,
                     Main.myPlayer,
                     ai2: 1.3f

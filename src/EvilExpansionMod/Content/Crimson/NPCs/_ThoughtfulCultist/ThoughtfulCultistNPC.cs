@@ -42,7 +42,8 @@ public class ThoughtfulCultistNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 38;
         NPC.height = 38;
-        NPC.lifeMax = 970;
+        NPC.lifeMax = 1830;
+        NPC.defense = Main.expertMode ? (int)15 : (int)10;
         NPC.value = Item.buyPrice(gold: 1, silver: 50);
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
@@ -78,6 +79,7 @@ public class ThoughtfulCultistNPC : ModNPC {
     public override float SpawnChance(NPCSpawnInfo spawnInfo) => Main.hardMode && spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.05f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PusClumpItem>(), 1, 1, 2));
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 3, 5));
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ThoughtfulPendantItem>(), 10, 1, 1));
     }

@@ -34,8 +34,8 @@ public class PusBottleNPC : ModNPC {
         NPC.aiStyle = -1;
         NPC.friendly = false;
         NPC.damage = 0;
-        NPC.lifeMax = 320;
-        NPC.defense = 14;
+        NPC.lifeMax = 690;
+        NPC.defense = 24;
         NPC.knockBackResist = 0f;
         NPC.value = 0f;
 

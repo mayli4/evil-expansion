@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using ReLogic.Utilities;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -53,3 +55,4 @@ public class HeadPounderItem : ModItem {
             .AddTile(TileID.Anvils)
             .Register();
 }
+

@@ -59,7 +59,11 @@ Mods: {
 			HeadPounderItem: {
 				DisplayName: Head Pounder
 				Damage: 1-{0} melee damage
-				Tooltip: Striking the earth at full power unleashes a burst of corrupt mass
+				Tooltip:
+					'''
+					Striking the earth at full power unleashes a burst of corrupt mass
+					Overcharge the attack to increase the range of the burst
+					'''
 			}
 
 			HellbringerBody: {
@@ -668,6 +672,7 @@ Mods: {
 			BloodExplosion.DisplayName: Blood Explosion
 			SpamOnAStickCrit.DisplayName: Spam On A Stick Crit
 			SpamOnAStickShockwave.DisplayName: Spam On A Stick Shockwave
+			HeadPounderCharge.DisplayName: Head Pounder Charge
 		}
 
 		Biomes: {
@@ -709,7 +714,7 @@ Mods: {
 		}
 
 		Bestiary: {
-			StinkflyCritterBestiary: Flies that make themselves at home in the warm, nutrition-rich environment of the Crimson-infested underworld.
+			StinkflyCritterBestiary: Flies that make themselves at home in the warm, nutrition-rich environment of the Crimson-infested underworld, with a particular affinity towards pus.
 			PusSlugCritterBestiary: Slow and dumb, these slugs defend themselves by secreting acidic mucus... stay away!
 			CursedCanaryCritterBestiary: Lower concentrations of Imputed Flame can sometimes manifest as these docile critters. Cute, but mind the heat!
 			EaterOfSoilCritterBestiary: Newly birthed, these juvenile worms of the Corruption are far too small to pose a legitimate threat to anybody.
@@ -724,7 +729,7 @@ Mods: {
 			LanternBatNPCBestiary: The lower caste of the Crimson occult have had their mind and bodies warped, forced to serve their masters as Lantern Bats.
 			MarrowEyeNPCBestiary: Failed attempts at creating artificial Crimson Altars have resulted in these grotesque amalgmations of energy-infused flesh.
 			PusImpNPCBestiary: An unholy mixture of Crimson bile and hell energy, these hollow imitations of hell's denizens only serve as extensions of the Crimson's will.
-			StinkgrubNPCBestiary: Simple cavedwellers, engorged by the Crimson. These hardy grubs often migrate deeper underground in search of nutrients.
+			StinkgrubNPCBestiary: Simple cavedwellers, engorged by the Crimson. These hardy grubs are popular among the Crimson occult for use as carriers of the immobile Pus Demons.
 		}
 
 		Buffs: {

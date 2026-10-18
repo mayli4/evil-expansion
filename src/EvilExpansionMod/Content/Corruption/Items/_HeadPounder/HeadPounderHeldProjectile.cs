@@ -30,6 +30,11 @@ public class HeadPounderHeldProjectile : ModProjectile {
     float _outlineAlpha;
 
     float ChargeProgress => MathF.Min((float)_charge / MaxCharge, 1f);
+    float Overcharge = 0;
+    float spikeMultiplier = 0;
+
+    private SlotId chargeSoundSlot = SlotId.Invalid;
+
     Vector2 RotationVector => (Projectile.rotation - MathF.PI / 4f).ToRotationVector2() * new Vector2(Owner.direction, 0.5f);
     Vector2[] _trailPositions;
 
@@ -169,7 +174,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                                 ColorStart = dustColorStart,
                                 ColorFade = dustColorFade,
                                 Spin = 0.03f,
-                                InitialScale = Main.rand.NextFloat(0.75f, 1.5f)
+                                InitialScale = Main.rand.NextFloat(0.75f, 1.35f)
                             };
 
                             var newDust = Dust.NewDustPerfect(
@@ -187,6 +192,9 @@ public class HeadPounderHeldProjectile : ModProjectile {
                         for(int i = 0; i < 5; i++) {
                             Dust.NewDust(hitPosition, hitSize, hitSize, DustID.Stone);
                         }
+                        for(int i = 0; i < 3; i++) {
+                            Dust.NewDust(hitPosition, hitSize, hitSize, DustID.CursedTorch);
+                        }
 
                         Helper.ForEachNPCInRange(hitCenter, 80f, npc =>
                         {
@@ -200,13 +208,17 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
                         Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(13f, 0.6f));
 
+                        if(Overcharge >= 5) Overcharge = 20;
+                        int Spikemultiplier = (int)Overcharge * 5;
+
                         CoroutineSystem.Start(SpawnSpikesRoutine(
                             Projectile.GetSource_FromAI(),
                             hitCenter,
                             Owner.direction,
                             Projectile.damage,
                             Projectile.knockBack * 2f,
-                            Projectile.owner
+                            Projectile.owner,
+                            Spikemultiplier
                          ));
                         _hit = true;
                     }
@@ -236,6 +248,96 @@ public class HeadPounderHeldProjectile : ModProjectile {
         }
         _trailPositions[0] = trailLastPosition;
     }
+    public override void PostAI() { // Reserving PostAI for overcharge visuals now
+        if(ChargeProgress >= 1 && Owner.channel) {
+            // Check if the sound is NOT already playing to prevent overlapping!
+            if(chargeSoundSlot == SlotId.Invalid || !SoundEngine.TryGetActiveSound(chargeSoundSlot, out _)) {
+
+                // Configure your audio style to loop infinitely
+                SoundStyle loopingAudio = SoundID.Item15;
+
+                loopingAudio.Volume = 0.4f + Overcharge * 0.2f;
+                loopingAudio.Pitch = -0.5f + Overcharge * 0.2f;
+
+                // Play the sound and remember WHICH slot it occupies
+                chargeSoundSlot = SoundEngine.PlaySound(loopingAudio, Projectile.Center);
+
+                SoundStyle loopingAudio2 = SoundID.Item24;
+
+                loopingAudio2.Volume = 0.6f + Overcharge * 0.2f;
+                loopingAudio2.Pitch = 0.0f + Overcharge * 0.4f;
+
+                // Play the sound and remember WHICH slot it occupies
+                chargeSoundSlot = SoundEngine.PlaySound(loopingAudio2, Projectile.Center);
+
+                Projectile.NewProjectile(
+                    Main.player[Projectile.owner].GetSource_FromAI(),
+                    Projectile.Center + Main.rand.NextVector2Circular(2f, 2f) + Vector2.UnitY * 20f + Vector2.UnitX * -60f * new Vector2(Owner.direction, 1f),
+                    new Vector2(0f, 0f),
+                    ModContent.ProjectileType<HeadPounderCharge>(),
+                    0,
+                    0,
+                    Main.myPlayer,
+                    ai0: 2f,
+                    ai1: 0.01f
+                );
+
+                if(Overcharge < 5) Overcharge += 0.2f; // 0.2f probably ideal
+
+                else { // Smoke
+                    var dustPos = Projectile.Center + Main.rand.NextVector2Circular(15f, 18f)
+                        + Vector2.UnitY * 9f + Vector2.UnitX * -70f * new Vector2(Owner.direction, 1f);
+                    var dustVelocity = Vector2.UnitY * -9.5f;
+
+                    var dustColorStart = new Color(133, 122, 94);
+                    var dustColorFade = dustColorStart * 0.4f;
+
+                    var newDustData = new Smoke.Data()
+                    {
+                        InitialLifetime = 40,
+                        ElapsedFrames = 0,
+                        InitialOpacity = Main.rand.NextFloat(0.2f, 0.4f),
+                        ColorStart = dustColorStart,
+                        ColorFade = dustColorFade,
+                        Spin = Main.rand.NextFloat(0.00f, 0.01f),
+                        InitialScale = Main.rand.NextFloat(0.3f, 0.7f)
+                    };
+
+                    var newDust = Dust.NewDustPerfect(
+                        dustPos,
+                        ModContent.DustType<Smoke>(),
+                        dustVelocity,
+                        0,
+                        newColor: Color.White,
+                        newDustData.InitialScale
+                    );
+
+                    newDust.customData = newDustData;
+                }
+            }
+            else {
+                // OPTIONAL: Update the sound's position so it moves smoothly with the player
+                if(SoundEngine.TryGetActiveSound(chargeSoundSlot, out var activeSound)) {
+                    activeSound.Position = Projectile.Center;
+                }
+            }
+        }
+        else {
+            // If they are no longer charging, stop the loop safely
+            StopChargeSound();
+        }
+    }
+
+    private void StopChargeSound() {
+        // If we have a valid slot, locate it and shut it down cleanly
+        if(chargeSoundSlot != SlotId.Invalid) {
+            if(SoundEngine.TryGetActiveSound(chargeSoundSlot, out var activeSound)) {
+                activeSound.Stop();
+            }
+            // Reset the tracker variable
+            chargeSoundSlot = SlotId.Invalid;
+        }
+    }
 
     static IEnumerator SpawnSpikesRoutine(
         IEntitySource source,
@@ -243,11 +345,12 @@ public class HeadPounderHeldProjectile : ModProjectile {
         int direction,
         int damage,
         float knockback,
-        int owner
+        int owner,
+        int spikeMultiplier
     ) {
         var x = position.X;
         var tileY = (int)position.Y >> 4;
-        for(var i = 0; i < 7; i++) {
+        for(var i = 0; i < 6 + spikeMultiplier; i++) {
             x += Main.rand.NextFloat(40f, 60f) * direction;
             if(Collision.SolidTiles(new(x, tileY * 16), 1, 1)) {
                 for(var j = 1; j < 100; j++) {
@@ -268,7 +371,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
             var projectile = Projectile.NewProjectileDirect(
                 source,
-                new(x, tileY * 16f + 8f),
+                new(x, tileY * 16f + 8f - 2f),
                 Vector2.Zero,
                 ModContent.ProjectileType<PounderSpike>(),
                 damage,
@@ -298,6 +401,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
         var modifier = MathF.Pow(ChargeProgress, 2);
+        if(modifier < 0.1) modifier = 0.1f;
         modifiers.Knockback *= modifier;
         modifiers.SourceDamage *= modifier;
     }
@@ -335,7 +439,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
         var tintFlashFrames = 15;
         var tintColor = Color.Transparent;
         if(Owner.channel) {
-            tintColor = Color.White
+            tintColor = Color.Yellow
                 * MathF.Max(1f - MathF.Pow(2f * MathF.Max(_charge - MaxCharge + tintFlashFrames / 2, 0) / tintFlashFrames - 1f, 2), 0f);
         }
 

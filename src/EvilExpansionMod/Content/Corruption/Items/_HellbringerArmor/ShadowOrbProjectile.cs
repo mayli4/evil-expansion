@@ -53,6 +53,8 @@ public class ShadowOrbProjectile : ModProjectile {
 
         return true;
     }
+
+    bool Closeenough = false;
     public override void AI() {
         if(Projectile.timeLeft == MaxTimeLeft) {
             SoundEngine.PlaySound(SoundID.Item106, Projectile.Center);
@@ -133,9 +135,11 @@ public class ShadowOrbProjectile : ModProjectile {
 
         Vector2 vectorToTarget = Owner.Center - Projectile.Center;
         float distance = vectorToTarget.Length();
-
-        if (distance <= 90f && distance >= 10f && !Hit) {
-            Projectile.velocity = Vector2.Lerp(Projectile.velocity *= 1.05f, vectorToTarget / distance * 10f, 0.1f);
+        if (distance <= 120f && distance >= 10f && !Hit) {
+            Closeenough = true;
+        }
+        if (Closeenough && !Hit) {
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity *= 1.1f, vectorToTarget / distance * 10f, 0.1f);
         }
     }
 

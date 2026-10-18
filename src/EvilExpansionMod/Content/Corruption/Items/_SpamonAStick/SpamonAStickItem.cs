@@ -9,6 +9,7 @@ using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Daybreak.Common.Features.Hooks.ModifyItemDrawBasics;
 
 namespace EvilExpansionMod.Content.Corruption;
 
@@ -28,7 +29,7 @@ public class SpamonAStickItem : ModItem {
         
         Item.shoot = ModContent.ProjectileType<SpamOnAStickProjectile>();
 
-        Item.damage = 40;
+        Item.damage = 45;
         Item.knockBack = 8;
         Item.crit = 4;
         Item.value = Item.sellPrice(gold: 1, silver: 10);
@@ -329,7 +330,7 @@ public class SpamOnAStickProjectile : ModProjectile {
                 Projectile.position,
                 new Microsoft.Xna.Framework.Vector2(0f, 0f),
                 ModContent.ProjectileType<SpamOnAStickShockwave>(),
-                20,
+                Projectile.damage / 2,
                 0.5f,
                 Main.myPlayer,
                 ai0: 0f,
@@ -404,7 +405,7 @@ public class SpamOnAStickProjectile : ModProjectile {
                 target.position,
                 new Microsoft.Xna.Framework.Vector2(0f, 0f),
                 ModContent.ProjectileType<SpamOnAStickShockwave>(),
-                40,
+                Projectile.damage,
                 0.5f,
                 Main.myPlayer,
                 ai0: 0f,

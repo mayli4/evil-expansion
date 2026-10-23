@@ -39,11 +39,14 @@ public class HeadPounderCharge : ModProjectile {
         Projectile.scale = 10f;
         Projectile.alpha = 255;
         Projectile.aiStyle = -1;
+
+        Main.projFrames[Projectile.type] = 2;
     }
 
     public override void OnSpawn(IEntitySource source) {
         Projectile.scale = Projectile.ai[0]; // Projectile. ai0 is the starting pulse size,
         Projectile.alpha = 255;
+        Projectile.rotation = Main.rand.NextFloat(0, 360);
 
         Player player = Main.player[Projectile.owner];
         relativeOffset = Projectile.Center - player.Center;
@@ -53,22 +56,31 @@ public class HeadPounderCharge : ModProjectile {
 
         if(Projectile.scale > 0f) {
             Projectile.scale -= Projectile.ai[1]; // Projectile. ai1 is the "speed" of the pulse
-            Projectile.ai[1] *= 1.1f;
+            Projectile.ai[1] *= 1.15f;
         }
         else {
             Projectile.Kill();
         }
 
         if(Projectile.alpha > 0) {
-            Projectile.alpha += -5;
+            Projectile.alpha += (-20 + (int)Projectile.ai[1]);
         }
         else Projectile.alpha = 0;
 
+        if(Projectile.scale > Projectile.ai[0] * 0.8) Projectile.frame = 0;
+        else Projectile.frame = 1;
+
         Player player = Main.player[Projectile.owner];
-        Projectile.Center = player.Center + relativeOffset;
+        if(Projectile.owner == Main.myPlayer) {
+            Projectile.Center = player.Center + relativeOffset; // Follow player position
+            if(!player.channel && !player.controlUseItem) {
+                Projectile.Kill();
+                return;
+            }
+        }
 
         //Main.NewText("Projectile.scale" + Projectile.scale, Microsoft.Xna.Framework.Color.White);
-        Main.NewText("Projectile.alpha" + Projectile.alpha, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("Projectile.alpha" + Projectile.alpha, Microsoft.Xna.Framework.Color.White);
         //Main.NewText("Initalvisual" + InitialVisualSet, Microsoft.Xna.Framework.Color.White);
 
         //if(Projectile.alpha < 100) Projectile.frame = 0;
@@ -87,7 +99,7 @@ public class HeadPounderCharge : ModProjectile {
         );
 
         Vector2 drawOrigin = new Vector2(texture.Width / 2f, frameHeight / 2f);
-        float fadeOut = 1f - (Projectile.alpha / 255); // If Alpha = 255, fadeOut = 0, if Alpha = 0, fadeOut = 1
+        float fadeOut = (255f - Projectile.alpha) / 255f; // If Alpha = 255, fadeOut = 0, if Alpha = 0, fadeOut = 1
         Main.EntitySpriteDraw(
             texture,
             Projectile.Center - Main.screenPosition,

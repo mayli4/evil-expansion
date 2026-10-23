@@ -10,6 +10,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Daybreak.Common.Features.Hooks.GlobalTileHooks;
 
 namespace EvilExpansionMod.Content.Corruption;
 
@@ -97,6 +98,14 @@ public class PounderSpike : ModProjectile {
             velocity.Y += Main.rand.NextFloat(-0.55f, 0.55f);
             
             Dust dust = Dust.NewDustDirect(Projectile.Center, 5, -10, DustID.Dirt, velocity.X, velocity.Y, default, default, Main.rand.NextFloat(0.8f, 1.2f));
+        }
+        for(int i = 0; i < (4 + SpikeIndex * 2) ; i++) {
+            Vector2 burstVelocity = new Vector2(Main.rand.NextFloat(-0.1f, 0.1f), Main.rand.NextFloat(-1f -SpikeIndex * 0.5f, -0f)); // Likewise
+            Vector2 Spawnpt = Projectile.Center + Main.rand.NextVector2Circular(40f, 2f);
+            int dc = Dust.NewDust(Spawnpt, 5, -10, DustID.CursedTorch, default, default, default, default, Main.rand.NextFloat(0.8f, 1.2f));
+            Main.dust[dc].velocity = burstVelocity;
+            Main.dust[dc].scale = Main.rand.NextFloat(0f, 2f);
+            Main.dust[dc].noGravity = true;
         }
 
         //for(int i = 0; i < Main.rand.NextFloat(0f, 2f) ; i++) {

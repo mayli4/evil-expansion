@@ -33,7 +33,8 @@ public class HeadPounderHeldProjectile : ModProjectile {
     float Overcharge = 0;
     float spikeMultiplier = 0;
 
-    private bool hasCreatedOverchargeFlash = false;
+    private bool hasCreatedOverchargeFlash1 = false;
+    private bool hasCreatedOverchargeFlash2 = false;
 
     private SlotId chargeSoundSlot = SlotId.Invalid;
 
@@ -218,7 +219,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                         Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(13f, 0.6f));
 
                         if(Overcharge >= 5) Overcharge = 20;
-                        int Spikemultiplier = (int)Overcharge * 5;
+                        int Spikemultiplier = (int)Overcharge * 3;
 
                         CoroutineSystem.Start(SpawnSpikesRoutine(
                             Projectile.GetSource_FromAI(),
@@ -280,7 +281,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                 chargeSoundSlot = SoundEngine.PlaySound(loopingAudio2, Projectile.Center);
 
                 if(Overcharge < 5) {
-                    Overcharge += 0.2f; // 0.2f probably ideal
+                    Overcharge += 0.3f; // 0.2f probably ideal
 
                     Projectile.NewProjectile(
                         Main.player[Projectile.owner].GetSource_FromAI(),
@@ -290,14 +291,30 @@ public class HeadPounderHeldProjectile : ModProjectile {
                         0,
                         0,
                         Main.myPlayer,
-                        ai0: Main.rand.NextFloat(0.9f, 1.1f),
+                        ai0: Main.rand.NextFloat(1f, 1.3f),
                         ai1: 0.01f
                     );
+                    if(Overcharge >= 1) {
+                        if(!hasCreatedOverchargeFlash1) {
+                            Projectile.NewProjectile(
+                                Main.player[Projectile.owner].GetSource_FromAI(),
+                                Projectile.Center + Vector2.UnitY * 20.5f + Vector2.UnitX * -59.5f * new Vector2(Owner.direction, 1f),
+                                new Vector2(0f, 0f),
+                                ModContent.ProjectileType<HeadPounderChargeShine>(),
+                                0,
+                                0,
+                                Main.myPlayer,
+                                ai0: 0f,
+                                ai1: 0.1f,
+                                ai2: 0
+                            );
+                            hasCreatedOverchargeFlash1 = true;
+                        }
+                    }
                 }
                 else { // Smoke
-                    var dustPos = Projectile.Center + Main.rand.NextVector2Circular(15f, 18f)
+                    var dustPos = Projectile.Center + Main.rand.NextVector2Circular(15f, 22f)
                         + Vector2.UnitY * 9f + Vector2.UnitX * -70f * new Vector2(Owner.direction, 1f);
-                    var dustVelocity = Vector2.UnitY * -9.5f;
 
                     var dustColorStart = new Color(133, 122, 94);
                     var dustColorFade = dustColorStart * 0.4f;
@@ -310,13 +327,13 @@ public class HeadPounderHeldProjectile : ModProjectile {
                         ColorStart = dustColorStart,
                         ColorFade = dustColorFade,
                         Spin = Main.rand.NextFloat(0.00f, 0.01f),
-                        InitialScale = Main.rand.NextFloat(0.3f, 0.7f)
+                        InitialScale = Main.rand.NextFloat(0.2f, 0.8f)
                     };
 
                     var newDust = Dust.NewDustPerfect(
                         dustPos,
                         ModContent.DustType<Smoke>(),
-                        dustVelocity,
+                        new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-6f, -0.5f)),
                         0,
                         newColor: Color.White,
                         newDustData.InitialScale
@@ -325,19 +342,20 @@ public class HeadPounderHeldProjectile : ModProjectile {
                     newDust.customData = newDustData;
 
                     //Shine spawn and sfx etc.
-                    if(!hasCreatedOverchargeFlash) {
+                    if(!hasCreatedOverchargeFlash2) {
                         Projectile.NewProjectile(
                             Main.player[Projectile.owner].GetSource_FromAI(),
-                            Projectile.Center + Main.rand.NextVector2Circular(2f, 2f) + Vector2.UnitY * 20.5f + Vector2.UnitX * -59.5f * new Vector2(Owner.direction, 1f),
+                            Projectile.Center + Vector2.UnitY * 20.5f + Vector2.UnitX * -59.5f * new Vector2(Owner.direction, 1f),
                             new Vector2(0f, 0f),
                             ModContent.ProjectileType<HeadPounderChargeShine>(),
                             0,
                             0,
                             Main.myPlayer,
-                            ai0: 1.0f,
-                            ai1: 0.1f
+                            ai0: 1.4f,
+                            ai1: 0.1f,
+                            ai2: 1
                         );
-                        hasCreatedOverchargeFlash = true;
+                        hasCreatedOverchargeFlash2 = true;
                     }
                 }
             }

@@ -38,7 +38,7 @@ internal class MaceCrack : ModProjectile, ITileMask {
         glowColor *= Projectile.timeLeft > 100 ? 1f : Projectile.timeLeft / 100f;
 
         spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, null, color, 0, tex.Size() / 2, Projectile.scale, SpriteEffects.None, 0);
-        spriteBatch.Draw(tex2, Projectile.Center - Main.screenPosition, null, glowColor * 0.5f, 0, tex.Size() / 2, Projectile.scale - 0.5f, SpriteEffects.None, 0);
+        spriteBatch.Draw(tex2, Projectile.Center - Main.screenPosition, null, glowColor * 0.8f, 0, tex.Size() / 2, Projectile.scale - 0.5f, SpriteEffects.None, 0);
 
         // var data = spriteBatch.CaptureEndBegin(new SpriteBatchSnapshot() with { BlendState = BlendState.Additive });
         // spriteBatch.Draw(glow, Projectile.Center - Main.screenPosition + new Vector2(tex.Height / 2 - 110, tex.Width / 2 - 110), null, glowColor * 0.5f, 0, glow.Size() / 2, new Vector2(3, 3), SpriteEffects.None, 0);

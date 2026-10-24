@@ -5,8 +5,11 @@ using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent;
+using Terraria.ID;
 using Terraria.ModLoader;
+using EvilExpansionMod.Content.Misc;
 
 namespace EvilExpansionMod.Content.Crimson;
 
@@ -103,5 +106,32 @@ public class CutProjectile : ModProjectile, IPreDrawEverythingBulk<CutProjectile
                     * MathF.Pow(MathF.Sin(MathHelper.PiOver2 * (1f - progress)), 2),
                 static _ => Color.Red,
                 axeCutEffect);
+    }
+
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+        base.OnHitNPC(target, hit, damageDone);
+        if(Main.rand.NextFloat() <= 1f) {
+
+            // Calculate direction pointing from the player to the NPC
+            Vector2 directionAway = target.Center - Projectile.Center;
+            // Normalize it and give it an incredibly small speed so it doesn't move, but still contain direction
+            Vector2 customVelocity = directionAway.SafeNormalize(Vector2.UnitX) * 0.001f;
+            Projectile.NewProjectile(
+                    target.GetSource_FromAI(),
+                    target.Center + new Vector2(
+                        Main.rand.NextFloat(-8f, 8f),
+                        Main.rand.NextFloat(-8f, 8f)
+                    ),
+                    customVelocity,
+                    ModContent.ProjectileType<MeatSplatter>(),
+                    0,
+                    0,
+                    Main.myPlayer,
+                    ai0: 0,
+                    ai1: 1
+                    );
+            //SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.5f, PitchRange = (1.1f, 1.6f) }, target.Center);
+            //SoundEngine.PlaySound(SoundID.NPCHit29 with { Volume = 0.3f, PitchRange = (-0.8f, -0.3f) }, target.Center);
+        }
     }
 }

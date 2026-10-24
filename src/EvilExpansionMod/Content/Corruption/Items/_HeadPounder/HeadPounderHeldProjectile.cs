@@ -281,24 +281,25 @@ public class HeadPounderHeldProjectile : ModProjectile {
                 chargeSoundSlot = SoundEngine.PlaySound(loopingAudio2, Projectile.Center);
 
                 if(Overcharge < 5) {
-                    Overcharge += 0.3f; // 0.2f probably ideal
-
-                    Projectile.NewProjectile(
-                        Main.player[Projectile.owner].GetSource_FromAI(),
-                        Projectile.Center + Main.rand.NextVector2Circular(2f, 2f) + Vector2.UnitY * 20.5f + Vector2.UnitX * -59.5f * new Vector2(Owner.direction, 1f),
-                        new Vector2(0f, 0f),
-                        ModContent.ProjectileType<HeadPounderCharge>(),
-                        0,
-                        0,
-                        Main.myPlayer,
-                        ai0: Main.rand.NextFloat(1f, 1.3f),
-                        ai1: 0.01f
-                    );
+                    Overcharge += 0.5f; // Charge speed
+                    if(Overcharge <= 4.5) {
+                        Projectile.NewProjectile(
+                            Main.player[Projectile.owner].GetSource_FromAI(),
+                            Projectile.Center + Main.rand.NextVector2Circular(2f, 2f) + Vector2.UnitY * 20.7f + Vector2.UnitX * -59.5f * new Vector2(Owner.direction, 1f),
+                            new Vector2(0f, 0f),
+                            ModContent.ProjectileType<HeadPounderCharge>(),
+                            0,
+                            0,
+                            Main.myPlayer,
+                            ai0: Main.rand.NextFloat(1f, 1.3f),
+                            ai1: 0.01f
+                        );
+                    }
                     if(Overcharge >= 1) {
                         if(!hasCreatedOverchargeFlash1) {
                             Projectile.NewProjectile(
                                 Main.player[Projectile.owner].GetSource_FromAI(),
-                                Projectile.Center + Vector2.UnitY * 20.5f + Vector2.UnitX * -59.5f * new Vector2(Owner.direction, 1f),
+                                Projectile.Center + Vector2.UnitY * 20.7f + Vector2.UnitX * -59.5f * new Vector2(Owner.direction, 1f),
                                 new Vector2(0f, 0f),
                                 ModContent.ProjectileType<HeadPounderChargeShine>(),
                                 0,
@@ -345,7 +346,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                     if(!hasCreatedOverchargeFlash2) {
                         Projectile.NewProjectile(
                             Main.player[Projectile.owner].GetSource_FromAI(),
-                            Projectile.Center + Vector2.UnitY * 20.5f + Vector2.UnitX * -59.5f * new Vector2(Owner.direction, 1f),
+                            Projectile.Center + Vector2.UnitY * 20.7f + Vector2.UnitX * -59.5f * new Vector2(Owner.direction, 1f),
                             new Vector2(0f, 0f),
                             ModContent.ProjectileType<HeadPounderChargeShine>(),
                             0,

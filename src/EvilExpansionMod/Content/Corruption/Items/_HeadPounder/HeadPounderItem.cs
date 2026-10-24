@@ -23,7 +23,7 @@ public class HeadPounderItem : ModItem {
 
         Item.width = Item.height = 80;
 
-        Item.useTime = Item.useAnimation = 30;
+        Item.useTime = Item.useAnimation = 10;
         Item.useStyle = -1;
 
         Item.value = Item.sellPrice(gold:1);
@@ -44,7 +44,6 @@ public class HeadPounderItem : ModItem {
     //    tooltips.Find(t => t.Name == "Damage").Text =
     //        Mod.GetLocalization($"{LocalizationCategory}.{nameof(HeadPounderItem)}.Damage").Format(Item.damage);
     //}
-
     public override bool CanUseItem(Player player) {
         return player.ownedProjectileCounts[Item.shoot] == 0;
     }

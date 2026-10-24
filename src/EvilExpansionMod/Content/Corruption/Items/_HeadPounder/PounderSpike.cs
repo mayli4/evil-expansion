@@ -28,6 +28,21 @@ public class PounderSpike : ModProjectile {
             if(Projectile.timeLeft > MaxTimeLeft - PopUpFrames) {
                 return (float)(MaxTimeLeft - Projectile.timeLeft) / PopUpFrames;
             }
+            if(Projectile.timeLeft == DropDownFrames * 2) {
+                SoundEngine.PlaySound(SoundID.Item127 with
+                { Pitch = Main.rand.NextFloat(-1.5f, 0.5f), Volume = 0.4f },
+                Projectile.position
+                );
+
+                for(int i = 0; i < 3; i++) {
+                    Vector2 burstVelocity = new Vector2(Main.rand.NextFloat(-0.1f, 0.1f), Main.rand.NextFloat(-1f - SpikeIndex * 0.5f, -0f)); // Likewise
+                    Vector2 Spawnpt = Projectile.Center + Main.rand.NextVector2Circular(40f, 2f);
+                    int dc = Dust.NewDust(Spawnpt, 5, -10, DustID.Dirt, default, default, default, default, Main.rand.NextFloat(0.8f, 1.2f));
+                    Main.dust[dc].velocity = burstVelocity;
+                    Main.dust[dc].scale = Main.rand.NextFloat(0.2f, 1f);
+                    //Main.dust[dc].noGravity = true;
+                }
+            }
             if(Projectile.timeLeft < DropDownFrames) {
                 return (float)Projectile.timeLeft / DropDownFrames;
             }
@@ -64,9 +79,9 @@ public class PounderSpike : ModProjectile {
         };
         var spikeHeight = SpikeIndex switch
         {
-            0 or 1 or 2 => 45,
-            3 or 4 or 5 => 60,
-            _ => 95,
+            0 or 1 or 2 => 47,
+            3 or 4 or 5 => 62,
+            _ => 97,
         };
         // 2. Start point and end point of the spike's damage line
         Vector2 startPos = Projectile.Center;
@@ -99,12 +114,12 @@ public class PounderSpike : ModProjectile {
             
             Dust dust = Dust.NewDustDirect(Projectile.Center, 5, -10, DustID.Dirt, velocity.X, velocity.Y, default, default, Main.rand.NextFloat(0.8f, 1.2f));
         }
-        for(int i = 0; i < (4 + SpikeIndex * 2) ; i++) {
+        for(int i = 0; i < (8 + SpikeIndex * 3) ; i++) {
             Vector2 burstVelocity = new Vector2(Main.rand.NextFloat(-0.1f, 0.1f), Main.rand.NextFloat(-1f -SpikeIndex * 0.5f, -0f)); // Likewise
             Vector2 Spawnpt = Projectile.Center + Main.rand.NextVector2Circular(40f, 2f);
             int dc = Dust.NewDust(Spawnpt, 5, -10, DustID.CursedTorch, default, default, default, default, Main.rand.NextFloat(0.8f, 1.2f));
             Main.dust[dc].velocity = burstVelocity;
-            Main.dust[dc].scale = Main.rand.NextFloat(0f, 2f);
+            Main.dust[dc].scale = Main.rand.NextFloat(0f, 1.5f);
             Main.dust[dc].noGravity = true;
         }
 
@@ -143,21 +158,21 @@ public class PounderSpike : ModProjectile {
 
     public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
         
-        if(Projectile.timeLeft < MaxTimeLeft - PopUpFrames - 5) return false;
+        if(Projectile.timeLeft < MaxTimeLeft - PopUpFrames - 10) return false;
 
         var _ = 0f;
         var spikeWidth = SpikeIndex switch
         {
-            0 or 1 or 2 => 20,
-            3 or 4 or 5 => 25,
-            _ => 35,
+            0 or 1 or 2 => 24,
+            3 or 4 or 5 => 29,
+            _ => 39,
         };
 
         var spikeHeight = SpikeIndex switch
         {
-            0 or 1 or 2 => 45,
-            3 or 4 or 5 => 60,
-            _ => 95,
+            0 or 1 or 2 => 47,
+            3 or 4 or 5 => 62,
+            _ => 97,
         };
 
         return Collision.CheckAABBvLineCollision(
@@ -179,13 +194,20 @@ public class PounderSpike : ModProjectile {
 
         var cellWidth = 40;
         var source = new Vector4(SpikeIndex * cellWidth, 0, cellWidth, texture.Height);
-
+        float slide;
+        if(MaxTimeLeft / Projectile.timeLeft > 3f) {
+            slide = MaxTimeLeft / Projectile.timeLeft;
+            }
+        else if(MaxTimeLeft / Projectile.timeLeft > 2f) {
+            slide = MaxTimeLeft / Projectile.timeLeft / 2f;
+        }
+        else slide = 1;
         Graphics.Begin(scale: Scale)
             .DrawTexture(new()
             {
                 Texture = texture,
-                Position = Projectile.Center - Main.screenPosition,
-                Color = Lighting.GetColor(Projectile.position.ToTileCoordinates()) * MathF.Min(Projectile.timeLeft / 10f, 1f),
+                Position = Projectile.Center - Main.screenPosition - Vector2.UnitY * 4f + Vector2.UnitY * (slide),
+                Color = Lighting.GetColor(Projectile.position.ToTileCoordinates()) * MathF.Min(Projectile.timeLeft / 12f, 1f),
                 Source = source,
                 Rotation = Projectile.rotation,
                 Origin = new Vector2(cellWidth / 2f, 90),

@@ -59,7 +59,7 @@ public class WailingHookPlayer : ModPlayer {
                 Projectile proj = Main.projectile[i];
 
                 // Combined check order: check activity/owner first (fast integers), then check bobber flag
-                if (proj.active && proj.owner == Player.whoAmI && proj.bobber){
+                if (proj.active && proj.owner == Player.whoAmI && proj.bobber && proj.wet){
                     // Spawn the projectile directly at the cached vector center
                     Projectile.NewProjectile(
                         Player.GetSource_FromThis(), 

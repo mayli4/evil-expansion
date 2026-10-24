@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -20,8 +21,8 @@ public class BloodplateHookShield : ModProjectile {
     bool initialSpawn = false;
     float conjureAcceleration = 0.15f;
     public override void SetDefaults() {
-        Projectile.width = 147;
-        Projectile.height = 147;
+        Projectile.width = 174;
+        Projectile.height = 174;
         Projectile.friendly = true;
         Projectile.hostile = false;
         Projectile.penetrate = -1;
@@ -73,7 +74,7 @@ public class BloodplateHookShield : ModProjectile {
             Projectile.Kill(); //Kill the projectile if the player is not actively fishing or shield durability is 0
         }
 
-        if(!conjureAnimationDone) {
+        if(!conjureAnimationDone) { //Simply the "overshoot" animation visual of the shield being created
             if(!initialSpawn) {
                 Projectile.rotation = Main.rand.NextFloat(0, 360);
                 Projectile.scale = 0;
@@ -127,7 +128,7 @@ public class BloodplateHookShield : ModProjectile {
         }
         for(int i = 0; i < Main.rand.NextFloat(17f, 24f); i++) { // You can have a little blood dust on-hit as a treat
             Dust.NewDust(
-                target.position,
+                target.Center,
                 target.width,
                 target.height,
                 DustID.Blood,
@@ -141,7 +142,7 @@ public class BloodplateHookShield : ModProjectile {
 
         Projectile.NewProjectile(
                         player.GetSource_FromAI(),
-                        target.position,
+                        target.Center,
                         new Microsoft.Xna.Framework.Vector2(0f, 0f),
                         ModContent.ProjectileType<BloodExplosion>(),
                         0,
@@ -186,6 +187,8 @@ public class BloodplateHookShield : ModProjectile {
         return true;
     }
     public override void OnKill(int timeLeft) { // Make gores on shatter or dust when de-conjured
+        SoundEngine.PlaySound(SoundID.NPCDeath19 with { Volume = 0.8f, PitchRange = (-0.5f, 0f) }, Projectile.Center);
+
         Player player = Main.player[Projectile.owner];
         var modPlayer = player.GetModPlayer<BloodplateHookPlayer>();
         for(var i = 0; i < 16; i++) {
@@ -214,5 +217,31 @@ public class BloodplateHookShield : ModProjectile {
                 );
             }
         }
+    }
+    public override bool PreDraw(ref Color lightColor) {
+        Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+
+        int frameHeight = texture.Height / Main.projFrames[Projectile.type];
+        Rectangle sourceRectangle = new Rectangle(
+            0,
+            Projectile.frame * frameHeight,
+            texture.Width,
+            frameHeight
+        );
+
+        Vector2 drawOrigin = new Vector2(texture.Width / 2f, frameHeight / 2f);
+        float fadeOut = (255f - Projectile.alpha) / 255f; // If Alpha = 255, fadeOut = 0, if Alpha = 0, fadeOut = 1
+        Main.EntitySpriteDraw(
+            texture,
+            Projectile.Center - Main.screenPosition,
+            sourceRectangle,
+            lightColor * fadeOut,
+            Projectile.rotation,
+            drawOrigin,
+            Projectile.scale,
+            SpriteEffects.None
+        );
+
+        return false;
     }
 }

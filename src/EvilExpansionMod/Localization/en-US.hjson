@@ -674,6 +674,7 @@ Mods: {
 			SpamOnAStickShockwave.DisplayName: Spam On A Stick Shockwave
 			HeadPounderCharge.DisplayName: Head Pounder Charge
 			HeadPounderChargeShine.DisplayName: Head Pounder Charge Shine
+			MeatSplatter.DisplayName: Meat Splatter
 		}
 
 		Biomes: {

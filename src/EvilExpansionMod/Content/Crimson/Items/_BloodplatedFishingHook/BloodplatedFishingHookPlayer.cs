@@ -42,7 +42,7 @@ public class BloodplateHookPlayer : ModPlayer {
         // Check if the player has an active bobber projectile spawned
         for (int i = 0; i < Main.maxProjectiles; i++){
             Projectile proj = Main.projectile[i];
-            if (proj.active && proj.owner == player.whoAmI && proj.bobber){
+            if (proj.active && proj.owner == player.whoAmI && proj.bobber && proj.wet){
                 int buffIndex = Player.FindBuffIndex(ModContent.BuffType<BloodPlatedBroken>()); // Find cooldown debuff
                 if(buffIndex == -1) { // If cooldown debuff isn't present
                     if(_plateTier == 0) //If shield is somehow broken and hasn't been reset by the debuff running out (nurse) (nurse) (nurse), Reset it manually
@@ -57,14 +57,23 @@ public class BloodplateHookPlayer : ModPlayer {
                             14,
                             Main.myPlayer
                             );
-                        if (_plateTier == 3) Player.AddBuff(ModContent.BuffType<BloodPlatedHealthy>(), int.MaxValue);
-                        else if (_plateTier == 2) Player.AddBuff(ModContent.BuffType<BloodPlatedDamaged1>(), int.MaxValue);
-                        else if (_plateTier == 1) Player.AddBuff(ModContent.BuffType<BloodPlatedDamaged2>(), int.MaxValue);
+
+                        var buffType = _plateTier switch
+                        {
+                            1 =>
+                                ModContent.BuffType<BloodPlatedDamaged2>(),
+                            2 =>
+                                ModContent.BuffType<BloodPlatedDamaged1>(),
+                            _ =>
+                                ModContent.BuffType<BloodPlatedHealthy>(),
+                        };
+                        Player.AddBuff(buffType, int.MaxValue);
+
                         SoundEngine.PlaySound(SoundID.NPCDeath19 with { Volume = 0.8f, PitchRange = (-2f, -1.5f) }, player.Center);
-                        SoundEngine.PlaySound(SoundID.Item104 with { Volume = 1f, PitchRange = (-0.5f, 0f) }, player.Center);
+                        SoundEngine.PlaySound(SoundID.Item8 with { Volume = 1f, PitchRange = (-0.5f, 0f) }, player.Center);
                     }
                 }
-                return true; // Found an active fishing bobber!
+                return true; // Found
             }
         }
         return false;

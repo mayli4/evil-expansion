@@ -48,6 +48,12 @@ public class SydneyWithTheHeadOfTobiasTile : ModTile {
     internal class SydneyWithTheHeadOfTobiasItem : ModItem {
     public override string Texture => Assets.Images.Paintings.SydneyWithTheHeadOfTobias.KEY;
     public override void SetDefaults() {
+        Item.useStyle = ItemUseStyleID.Swing;
+        Item.useTurn = true;
+        Item.autoReuse = true;
+        Item.useAnimation = 15;
+        Item.useTime = 10;
+
         (Item.width, Item.height) = (50, 34);
         Item.sellPrice(0,2,0,0);
         Item.maxStack = Terraria.Item.CommonMaxStack;

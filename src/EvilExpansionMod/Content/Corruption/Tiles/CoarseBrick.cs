@@ -13,6 +13,7 @@ public class CoarseBrick : ModTile {
         Main.tileMergeDirt[Type] = true;
         Main.tileBlockLight[Type] = true;
         Main.tileSolid[Type] = true;
+        Main.tileBrick[Type] = true;
 
         TileID.Sets.BlockMergesWithMergeAllBlockOverride[Type] = true;
         Main.tileMerge[Type][TileID.Ash] = true;

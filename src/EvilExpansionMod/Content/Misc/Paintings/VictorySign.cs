@@ -48,6 +48,12 @@ public class VictorySignTile : ModTile {
     internal class VictorySignItem : ModItem {
     public override string Texture => Assets.Images.Paintings.VictorySign.KEY;
     public override void SetDefaults() {
+        Item.useStyle = ItemUseStyleID.Swing;
+        Item.useTurn = true;
+        Item.autoReuse = true;
+        Item.useAnimation = 15;
+        Item.useTime = 10;
+
         (Item.width, Item.height) = (32, 32);
         Item.sellPrice(0,2,0,0);
         Item.maxStack = Terraria.Item.CommonMaxStack;

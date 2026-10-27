@@ -14,7 +14,7 @@ using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Crimson.Tiles;
 
 namespace EvilExpansionMod.Content.Crimson.Tiles;
 
-internal class Mattebrickwall : ModWall {
+internal class MatteBrickWall : ModWall {
     public override string Texture => Assets.Images.Crimson.Tiles.MatteBrickWall.KEY;
     public override void SetStaticDefaults() {
         Main.wallHouse[Type] = true;
@@ -27,11 +27,11 @@ internal class Mattebrickwall : ModWall {
     }
 }
 
-internal sealed class MattebrickwallItem : ModItem {
+internal sealed class MatteBrickWallItem : ModItem {
     public override string Texture => Assets.Images.Crimson.Tiles.MatteBrickWallItem.KEY;
 
     public override void SetDefaults() {
-        Item.DefaultToPlaceableWall(ModContent.WallType<Mattebrickwall>());
+        Item.DefaultToPlaceableWall(ModContent.WallType<MatteBrickWall>());
         Item.width = 16;
         Item.height = 16;
         Item.value = 5;

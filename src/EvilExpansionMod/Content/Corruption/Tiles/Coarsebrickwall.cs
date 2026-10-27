@@ -14,7 +14,7 @@ using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Corruption.Tile
 
 namespace EvilExpansionMod.Content.Corruption.Tiles;
 
-internal class Coarsebrickwall : ModWall {
+internal class CoarseBrickWall : ModWall {
     public override string Texture => Assets.Images.Corruption.Tiles.CoarseBrickWall.KEY;
 
     public override void SetStaticDefaults() {
@@ -28,11 +28,11 @@ internal class Coarsebrickwall : ModWall {
     }
 }
 
-internal sealed class CoarsebrickwallItem : ModItem {
+internal sealed class CoarseBrickWallItem : ModItem {
     public override string Texture => Assets.Images.Corruption.Tiles.CoarseBrickWallItem.KEY;
 
     public override void SetDefaults() {
-        Item.DefaultToPlaceableWall(ModContent.WallType<Coarsebrickwall>());
+        Item.DefaultToPlaceableWall(ModContent.WallType<CoarseBrickWall>());
         Item.width = 16;
         Item.height = 16;
         Item.value = 5;

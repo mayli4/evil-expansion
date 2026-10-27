@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using EvilExpansionMod.Content.Tiles.Banners;
+using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -13,18 +14,18 @@ public class MeatAxeItem : ModItem {
     }
 
     public override void SetDefaults() {
-        Item.damage = 21;
+        Item.damage = 38;
         Item.crit = 4;
-        Item.DamageType = DamageClass.Melee;
-        Item.knockBack = 8;
+        Item.DamageType = DamageClass.MeleeNoSpeed;
+        Item.knockBack = 11;
 
         Item.width = Item.height = 80;
 
-        Item.useTime = Item.useAnimation = 26;
+        Item.useTime = Item.useAnimation = 25;
         Item.useStyle = -1;
 
-        Item.value = Item.sellPrice(gold: 1);
-        Item.rare = ItemRarityID.LightRed;
+        Item.value = Item.sellPrice(gold: 2);
+        Item.rare = ItemRarityID.Pink;
 
         Item.noUseGraphic = true;
         Item.noMelee = true;
@@ -44,6 +45,7 @@ public class MeatAxeItem : ModItem {
     public override void AddRecipes() {
         CreateRecipe()
             .AddIngredient(ModContent.ItemType<CartilageBarItem>(), 20)
+            .AddIngredient(ModContent.ItemType<ThoughtfulCultistBannerItem>(), 1)
             .AddTile(TileID.Anvils)
             .Register();
     }

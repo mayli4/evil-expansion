@@ -91,15 +91,15 @@ public class MeatAxeHeldProjectile : ModProjectile {
                         Projectile.position,
                         Vector2.Zero,
                         ModContent.ProjectileType<CutProjectile>(),
-                        30,
-                        0f
+                        Projectile.damage / 2,
+                        Projectile.knockBack / 2
                     );
                     Projectile.netUpdate = true;
                 }
             }
             else {
                 var cutPosition = Projectile.position
-                    + _rotationVector * 75f
+                    + _rotationVector * 75f * (float)Math.Sqrt(((Main.player[Projectile.owner].GetAttackSpeed(DamageClass.Melee)) + (Main.player[Projectile.owner].GetAttackSpeed(DamageClass.Generic)) - 1))
                     + _rotationVector.RotatedBy(MathHelper.PiOver2) * 30f;
 
                 var cut = Main.projectile[CutProjectile].ModProjectile as CutProjectile;

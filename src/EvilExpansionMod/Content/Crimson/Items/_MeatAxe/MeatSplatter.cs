@@ -21,7 +21,7 @@ public class MeatSplatter : ModProjectile {
         Projectile.knockBack = 0f;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
-        Projectile.timeLeft = 35;
+        Projectile.timeLeft = 12;
         Projectile.penetrate = -1;
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
@@ -49,9 +49,9 @@ public class MeatSplatter : ModProjectile {
         Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
     }
     public override void AI() {
-        if (Projectile.timeLeft < 5){
+        if (Projectile.timeLeft < 8){
             // Increase alpha from 0 (opaque) to 255 (fully transparent) smoothly
-            Projectile.alpha += 50;
+            Projectile.alpha += 30;
             
             if (Projectile.alpha > 255){
                 Projectile.alpha = 255;

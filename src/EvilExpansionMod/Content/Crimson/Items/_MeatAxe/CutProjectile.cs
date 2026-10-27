@@ -31,8 +31,10 @@ public class CutProjectile : ModProjectile, IPreDrawEverythingBulk<CutProjectile
         Projectile.timeLeft = MaxTimeLeft;
         Projectile.DamageType = DamageClass.Melee;
 
-        Projectile.usesLocalNPCImmunity = true;
-        Projectile.localNPCHitCooldown = 10;
+        Projectile.usesIDStaticNPCImmunity = true;
+        Projectile.idStaticNPCHitCooldown = 4;
+        //Projectile.usesLocalNPCImmunity = true;
+        //Projectile.localNPCHitCooldown = 8;
     }
 
     public override bool ShouldUpdatePosition() => false;
@@ -109,29 +111,88 @@ public class CutProjectile : ModProjectile, IPreDrawEverythingBulk<CutProjectile
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
-        base.OnHitNPC(target, hit, damageDone);
-        if(Main.rand.NextFloat() <= 1f) {
 
-            // Calculate direction pointing from the player to the NPC
-            Vector2 directionAway = target.Center - Projectile.Center;
-            // Normalize it and give it an incredibly small speed so it doesn't move, but still contain direction
-            Vector2 customVelocity = directionAway.SafeNormalize(Vector2.UnitX) * 0.001f;
-            Projectile.NewProjectile(
-                    target.GetSource_FromAI(),
-                    target.Center + new Vector2(
-                        Main.rand.NextFloat(-8f, 8f),
-                        Main.rand.NextFloat(-8f, 8f)
-                    ),
-                    customVelocity,
-                    ModContent.ProjectileType<MeatSplatter>(),
-                    0,
-                    0,
-                    Main.myPlayer,
-                    ai0: 0,
-                    ai1: 1
-                    );
-            //SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.5f, PitchRange = (1.1f, 1.6f) }, target.Center);
-            //SoundEngine.PlaySound(SoundID.NPCHit29 with { Volume = 0.3f, PitchRange = (-0.8f, -0.3f) }, target.Center);
+        // Calculate direction pointing from the player to the NPC
+        Vector2 directionAway = target.Center - Projectile.Center;
+        // Normalize it and give it an incredibly small speed so it doesn't move, but still contain direction
+        Vector2 customVelocity = directionAway.SafeNormalize(Vector2.UnitX) * 0.001f;
+        Projectile.NewProjectile(
+                target.GetSource_FromAI(),
+                target.Center + new Vector2(
+                    target.width * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-10f, 10f),
+                    target.height * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-10f, 10f)
+                ),
+                customVelocity.RotatedBy(Main.rand.NextFloat(-MathHelper.ToRadians(22.5f), MathHelper.ToRadians(22.5f))),
+                ModContent.ProjectileType<MeatSplatter>(),
+                0,
+                0,
+                Main.myPlayer,
+                ai0: 0,
+                ai1: 1
+                );
+        //SoundEngine.PlaySound(SoundID.Item71 with { Volume = 0.5f, PitchRange = (1.1f, 1.6f) }, target.Center);
+        //SoundEngine.PlaySound(SoundID.NPCHit29 with { Volume = 0.3f, PitchRange = (-0.8f, -0.3f) }, target.Center);
+
+        for(int i = 0; i < Main.rand.NextFloat(15f, 25f); i++) { // You can have a little blood dust on-hit as a treat
+            Dust dust = Dust.NewDustPerfect(
+                target.Center + new Vector2(
+                    target.width * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-18f, 18f),
+                    target.height * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-18f, 18f)
+                ),
+                DustID.Blood,
+                (directionAway.SafeNormalize(Vector2.UnitX) * Main.rand.NextFloat(2f, 10f)).RotatedBy(Main.rand.NextFloat(-MathHelper.ToRadians(22.5f), MathHelper.ToRadians(22.5f))),
+                default,
+                default,
+                Main.rand.NextFloat(0.7f, 1.2f)
+            );
+        }
+
+        int duration = 60 * 10;
+        target.AddBuff(ModContent.BuffType<MeatAxeDebuff>(), duration);
+    }
+}
+public class MeatAxeDebuff : ModBuff {
+    public override string Texture => Assets.Images.Crimson.Items.MeatAxe.MeatAxeDebuff.KEY;
+    public override void SetStaticDefaults() {
+        Main.buffNoSave[Type] = true;
+        Main.debuff[Type] = true; // Makes it a debuff
+    }
+
+    public override void Update(Player player, ref int buffIndex) {
+        player.statDefense -= 20;
+
+        if(Main.rand.NextBool(2)) {
+            Dust.NewDust(player.position + new Vector2(
+                player.width * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-10f, 10f),
+                player.height * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-10f, 10f)),
+                player.width, player.height, DustID.Blood);
+            Dust.NewDust(player.position + new Vector2(
+                player.width * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-10f, 10f),
+                player.height * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-10f, 10f)),
+                player.width, player.height, DustID.BloodWater);
+        }
+    }
+    public override void Update(NPC npc, ref int buffIndex) {
+
+        if(Main.rand.NextBool(1)) {
+            Dust.NewDust(npc.position + new Vector2(
+                npc.width * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-10f, 10f),
+                npc.height * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-10f, 10f)),
+                npc.width, npc.height, DustID.Blood);
+            Dust.NewDust(npc.position + new Vector2(
+                npc.width * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-10f, 10f),
+                npc.height * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-10f, 10f)),
+                npc.width, npc.height, DustID.BloodWater);
+        }
+    }
+}
+public class MeatAxeGlobalNPC : GlobalNPC {
+    // This hook runs every time the NPC is about to take damage from any source
+    public override void ModifyIncomingHit(NPC npc, ref NPC.HitModifiers modifiers) {
+        // Check if the NPC currently has your custom debuff active
+        if(npc.HasBuff(ModContent.BuffType<MeatAxeDebuff>())) {
+            // Safely reduces their effective defense by exactly 20 for this calculation
+            modifiers.ArmorPenetration += 20;
         }
     }
 }

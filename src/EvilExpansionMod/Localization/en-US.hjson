@@ -123,7 +123,7 @@ Mods: {
 				DisplayName: Stinkfly
 				Tooltip:
 					'''
-					Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
+					Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
 					'Used in perfume, for some reason!'
 					'''
 			}
@@ -185,7 +185,11 @@ Mods: {
 
 			MeatAxeItem: {
 				DisplayName: Carrion Cleaver
-				Tooltip: The gashes it creates shred enemies rapidly
+				Tooltip:
+					'''
+					Creates bloody gashes that shred foes
+					Enemies caught in the attack have their Defense temporarily reduced by 20 points
+					'''
 			}
 
 			CorruptedBlockbreakerItem: {
@@ -248,7 +252,7 @@ Mods: {
 				Tooltip:
 					'''
 					Summons crytapetes that ride atop your head
-					They randomly start crying, dousing enemies with bursts of damaging tears
+					Crytapetes that feel overwhelmed randomly start crying, dousing enemies with volleys of damaging tears
 					'''
 			}
 
@@ -257,13 +261,13 @@ Mods: {
 				Tooltip:
 					'''
 					It's volatile
-					Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
+					Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
 					'''
 			}
 
 			LavaLizardItem: {
 				DisplayName: Lava Lizard
-				Tooltip: Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
+				Tooltip: Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
 			}
 
 			LanternBatBannerItem: {
@@ -320,7 +324,7 @@ Mods: {
 				Tooltip:
 					'''
 					It's volatile
-					Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
+					Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
 					'''
 			}
 
@@ -333,6 +337,7 @@ Mods: {
 				DisplayName: Polyp Ore
 				Tooltip:
 					'''
+					f
 					Its surface is wreathed in cursed energy
 					Burns you more severely when touched without special protection
 					'''
@@ -350,11 +355,6 @@ Mods: {
 					Its surface is coated in scalding ichor
 					Burns you when touched without special protection
 					'''
-			}
-
-			SpamOnAStickItem: {
-				DisplayName: Spam On A Stick Item
-				Tooltip: ""
 			}
 
 			CharredBloodwoodWallItem: {
@@ -383,7 +383,7 @@ Mods: {
 
 			EaterOfSoilItem: {
 				DisplayName: Eater of Soil
-				Tooltip: Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
+				Tooltip: Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
 			}
 
 			EvilMeatloaf: {
@@ -403,16 +403,6 @@ Mods: {
 
 			MatteBrickItem: {
 				DisplayName: Matte Brick
-				Tooltip: ""
-			}
-
-			CoarsebrickwallItem: {
-				DisplayName: Coarse Brick Wall
-				Tooltip: ""
-			}
-
-			MattebrickwallItem: {
-				DisplayName: Matte Brick Wall
 				Tooltip: ""
 			}
 
@@ -478,7 +468,11 @@ Mods: {
 
 			SucsGoodmanItem: {
 				DisplayName: Sucs Goodman
-				Tooltip: "'T. Whan Wauff'"
+				Tooltip:
+					'''
+					'Haunting...'
+					'T. Whan Wauff'
+					'''
 			}
 
 			VictorySignItem: {
@@ -568,7 +562,32 @@ Mods: {
 			}
 
 			CharredBloodwoodPlatformItem: {
-				DisplayName: Charred Bloodwood Platform Item
+				DisplayName: Charred Bloodwood Platform
+				Tooltip: ""
+			}
+
+			CharredBloodwoodBeamItem: {
+				DisplayName: Charred Bloodwood Beam
+				Tooltip: ""
+			}
+
+			CorruptAshwoodBeamItem: {
+				DisplayName: Corrupt Ashwood Beam
+				Tooltip: ""
+			}
+
+			CoarseBrickWallItem: {
+				DisplayName: Coarse Brick Wall
+				Tooltip: ""
+			}
+
+			MatteBrickWallItem: {
+				DisplayName: Matte Brick Wall
+				Tooltip: ""
+			}
+
+			CharredBloodwoodFenceItem: {
+				DisplayName: Charred Bloodwood Fence
 				Tooltip: ""
 			}
 		}
@@ -641,9 +660,8 @@ Mods: {
 			LamethrowerHeldProjectile.DisplayName: Lamethrower Held Projectile
 			SlippedWhipProjectile.DisplayName: Slipped Whip Projectile
 			SlippedWhipCageProjectile.DisplayName: Slipped Whip Cage Projectile
-			SpamOnAStickProjectile.DisplayName: Spam On A Stick
 			MeatAxeHeldProjectile.DisplayName: Meat Axe
-			SpamonAStickProjectile.DisplayName: Spamon A Stick
+			SpamonAStickProjectile.DisplayName: Spam on a Stick
 			CorruptedBlockbreakerProjectile.DisplayName: Corrupt Blockbreaker
 			CrimsonDrillProjectile.DisplayName: Crimson Drill
 			CrytapeteFlame.DisplayName: Crytapete Flame
@@ -675,6 +693,7 @@ Mods: {
 			HeadPounderCharge.DisplayName: Head Pounder Charge
 			HeadPounderChargeShine.DisplayName: Head Pounder Charge Shine
 			MeatSplatter.DisplayName: Meat Splatter
+			SpamOnAStickProjectile.DisplayName: Spam On A Stick Projectile
 		}
 
 		Biomes: {
@@ -711,8 +730,8 @@ Mods: {
 			PolypOreTile.MapEntry: Polyp Ore
 			CartilageOreTile.MapEntry: Cartilage Ore
 			SucsGoodmanTile.MapEntry: Sucs Goodman
-			SydneyWithTheHeadOfTobiasTile.MapEntry: Sydney With The Head Of Tobias Tile
-			VictorySignTile.MapEntry: Victory Sign Tile
+			SydneyWithTheHeadOfTobiasTile.MapEntry: Sydney With The Head Of Tobias
+			VictorySignTile.MapEntry: Victory Sign
 		}
 
 		Bestiary: {
@@ -810,6 +829,11 @@ Mods: {
 			BloodPlatedBroken: {
 				DisplayName: Bloodplate Shield Cooldown
 				Description: The Bloodplate Shield has been broken!
+			}
+
+			MeatAxeDebuff: {
+				DisplayName: Cleaved
+				Description: Greatly reduced defense
 			}
 		}
 

@@ -25,7 +25,7 @@ public class LamethrowerItem : ModItem {
         Item.useStyle = ItemUseStyleID.Shoot;
 
         Item.value = Item.sellPrice(gold: 1, silver: 2);
-        Item.rare = ItemRarityID.Pink;
+        Item.rare = ItemRarityID.LightRed;
 
         Item.noUseGraphic = true;
         Item.noMelee = true;

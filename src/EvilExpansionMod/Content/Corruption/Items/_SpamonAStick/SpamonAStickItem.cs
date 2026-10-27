@@ -33,7 +33,7 @@ public class SpamonAStickItem : ModItem {
         Item.knockBack = 8;
         Item.crit = 4;
         Item.value = Item.sellPrice(gold: 1, silver: 10);
-        Item.rare = ItemRarityID.Pink;
+        Item.rare = ItemRarityID.LightRed;
     }
 
     public override bool CanShoot(Player player) {

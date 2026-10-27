@@ -17,7 +17,7 @@ public class CorruptAshwoodSword : ModItem{
         Item.autoReuse = true; // Whether the weapon can be used more than once automatically by holding the use button.
 
         Item.DamageType = DamageClass.Melee; // Whether your item is part of the melee class.
-        Item.damage = 26; // The damage your item deals.
+        Item.damage = 23; // The damage your item deals.
         Item.knockBack = 5; // The force of knockback of the weapon. Maximum is 20
         Item.crit = 0; // The critical strike chance the weapon has. The player, by default, has a 4% critical strike chance.
 

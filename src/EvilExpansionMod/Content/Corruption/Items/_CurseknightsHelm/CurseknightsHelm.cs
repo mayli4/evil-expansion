@@ -31,7 +31,7 @@ internal sealed class CurseknightsHelm : ModItem {
         Item.height = 30;
         Item.accessory = true;
         Item.rare = ItemRarityID.Pink;
-        Item.value = Item.sellPrice(gold: 1);
+        Item.value = Item.sellPrice(gold: 1, silver: 30);
         Item.defense = 10;
         HelmOn = EquipLoader.GetEquipSlot(Mod, "OnCurseknightsHelm", EquipType.Head);
         HelmOff = EquipLoader.GetEquipSlot(Mod, "OffCurseknightsHelm", EquipType.Head);

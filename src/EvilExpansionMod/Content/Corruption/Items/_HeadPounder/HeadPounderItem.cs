@@ -1,4 +1,5 @@
-﻿using ReLogic.Utilities;
+﻿using EvilExpansionMod.Content.Tiles.Banners;
+using ReLogic.Utilities;
 using System.Collections.Generic;
 using Terraria;
 using Terraria.Audio;
@@ -16,7 +17,7 @@ public class HeadPounderItem : ModItem {
     }
 
     public override void SetDefaults() {
-        Item.damage = 162;
+        Item.damage = 142;
         Item.crit = 0;
         Item.DamageType = DamageClass.Melee;
         Item.knockBack = 8;
@@ -26,8 +27,8 @@ public class HeadPounderItem : ModItem {
         Item.useTime = Item.useAnimation = 10;
         Item.useStyle = -1;
 
-        Item.value = Item.sellPrice(gold:1);
-        Item.rare = ItemRarityID.LightRed;
+        Item.value = Item.sellPrice(gold:2);
+        Item.rare = ItemRarityID.Pink;
 
         Item.noUseGraphic = true;
         Item.noMelee = true;
@@ -51,6 +52,7 @@ public class HeadPounderItem : ModItem {
     public override void AddRecipes()
         => CreateRecipe()
             .AddIngredient(ModContent.ItemType<PolypBarItem>(), 18)
+            .AddIngredient(ModContent.ItemType<CursehoundBannerItem>(), 1)
             .AddTile(TileID.Anvils)
             .Register();
 }

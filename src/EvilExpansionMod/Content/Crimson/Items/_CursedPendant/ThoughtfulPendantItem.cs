@@ -34,7 +34,7 @@ public class ThoughtfulPendantItem : ModItem {
         Item.height = 24;
         Item.accessory = true;
         Item.rare = ItemRarityID.Pink;
-        Item.value = Item.sellPrice(gold: 1);
+        Item.value = Item.sellPrice(gold: 1, silver: 30);
     }
 
     public override void UpdateAccessory(Player player, bool hideVisual) {

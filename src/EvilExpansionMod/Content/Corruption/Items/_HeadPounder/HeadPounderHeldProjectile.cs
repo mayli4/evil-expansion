@@ -24,7 +24,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
     readonly static int PostChargeFrames = 15;
     readonly static int MaxCharge = 60;
 
-    int _charge;
+    float _charge;
     bool _hitCheck;
     bool _hit;
     float _outlineAlpha;
@@ -110,11 +110,12 @@ public class HeadPounderHeldProjectile : ModProjectile {
             Projectile.timeLeft = PostChargeFrames;
             Projectile.rotation = -3.5f * MathF.PI / 4f - ChargeProgress * MathF.PI / 4f;
 
-            _charge += 1;
+            _charge += 1 * ((Main.player[Projectile.owner].GetAttackSpeed(DamageClass.Melee)) + (Main.player[Projectile.owner].GetAttackSpeed(DamageClass.Generic)) - 1);
+            //Main.NewText("Projectile.speed" + ((Main.player[Projectile.owner].GetAttackSpeed(DamageClass.Melee)) + (Main.player[Projectile.owner].GetAttackSpeed(DamageClass.Generic)) - 1 ), Microsoft.Xna.Framework.Color.White);
             _outlineAlpha = MathF.Pow(ChargeProgress, 2);
 
             if(_charge >= MaxCharge) {
-                if(_charge == MaxCharge) {
+                if(Overcharge == 0) {
                     SoundEngine.PlaySound(SoundID.Tink);
                 }
             }
@@ -281,7 +282,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                 chargeSoundSlot = SoundEngine.PlaySound(loopingAudio2, Projectile.Center);
 
                 if(Overcharge < 5) {
-                    Overcharge += 0.5f; // Charge speed
+                    Overcharge += 0.5f * ((Main.player[Projectile.owner].GetAttackSpeed(DamageClass.Melee)) + (Main.player[Projectile.owner].GetAttackSpeed(DamageClass.Generic)) - 1); // Charge speed
                     if(Overcharge <= 4.5) {
                         Projectile.NewProjectile(
                             Main.player[Projectile.owner].GetSource_FromAI(),

@@ -4,6 +4,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -39,15 +40,15 @@ public class EvilSplatter : ModProjectile {
         }
         return true;
     }
-    public override void AI() {
+    public override void OnSpawn(IEntitySource source) {
         if(Projectile.ai[0] == 1) {
             Projectile.friendly = true;
         }
         else {
             Projectile.friendly = false;
         }
-        
-        if (Projectile.localAI[0] == 0f){ // Run this setup exactly once when the projectile spawns
+
+        if(Projectile.localAI[0] == 0f) { // Run this setup exactly once when the projectile spawns
             Projectile.localAI[0] = 1f;
 
             if(Projectile.ai[1] == 1) {
@@ -60,15 +61,18 @@ public class EvilSplatter : ModProjectile {
             randomVisualVariant = Main.rand.Next(0, 3);
         }
 
-        if (isCrimson){
-            Projectile.frame = randomVisualVariant; 
+        if(isCrimson) {
+            Projectile.frame = randomVisualVariant;
         }
-        else{
-            Projectile.frame = 3 + randomVisualVariant; 
+        else {
+            Projectile.frame = 3 + randomVisualVariant;
         }
 
         // Standard AI movement/rotation logic goes here
         Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
+    }
+    public override void AI() {
+        
         if (Projectile.timeLeft < 17){
         // Increase alpha from 0 (opaque) to 255 (fully transparent) smoothly
             Projectile.alpha += 15; // 15 * 17 = 255 (caps at 255 automatically or clamp it)

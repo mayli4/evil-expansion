@@ -251,8 +251,8 @@ Mods: {
 				DisplayName: Crytapete
 				Tooltip:
 					'''
-					Summons crytapetes that ride atop your head
-					Crytapetes that feel overwhelmed randomly start crying, dousing enemies with volleys of damaging tears
+					Summons Crytapetes that ride atop your head
+					Crytapetes cry uncontrollably when they feel overwhelmed
 					'''
 			}
 
@@ -694,6 +694,9 @@ Mods: {
 			HeadPounderChargeShine.DisplayName: Head Pounder Charge Shine
 			MeatSplatter.DisplayName: Meat Splatter
 			SpamOnAStickProjectile.DisplayName: Spam On A Stick Projectile
+			TerrorBatSpitDeath.DisplayName: Terror Bat Spit Death
+			CrytapeteSplatter.DisplayName: Crytapete Splatter
+			TearDeath.DisplayName: Tear Death
 		}
 
 		Biomes: {

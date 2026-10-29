@@ -365,7 +365,8 @@ public class TerrorBatNPC : ModNPC {
                 (int)(NPC.damage * 0.125f / difficultyScaler),
                 //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! To compensate, it is divided by 8 instead of 4.
                 0.5f,
-                Main.myPlayer
+                Main.myPlayer,
+                ai0:0
             );
 
             NPC.velocity += shootDirection * -4;
@@ -467,6 +468,7 @@ public class TerrorBatSpit : ModProjectile {
 
     public static readonly int MaxTimeLeft = 300;
 
+    float Trailscale = 1f;
     float Scale => 1f - MathF.Pow((float)(MaxTimeLeft - Projectile.timeLeft) / MaxTimeLeft, 2);
 
     public readonly static Color GhostColor1 = new(214, 237, 5);
@@ -487,18 +489,39 @@ public class TerrorBatSpit : ModProjectile {
         Projectile.ignoreWater = false;
         Projectile.timeLeft = MaxTimeLeft;
 
-        Projectile.penetrate = 2;
+        Projectile.penetrate = 3;
 
         Projectile.aiStyle = -1;
         Projectile.extraUpdates = 1;
 
         positionCache = new(30);
+
+        Projectile.usesLocalNPCImmunity = true;
+        Projectile.localNPCHitCooldown = -1;
+    }
+
+    public override void OnSpawn(IEntitySource source) {
+        if(Projectile.ai[0] == 0) { 
+            Projectile.hostile = true;
+            Projectile.friendly = false;
+        }
+        else if (Projectile.ai[0] == 1) {
+            Projectile.hostile = false;
+            Projectile.friendly = true;
+            Projectile.DamageType = DamageClass.Summon;
+            Projectile.extraUpdates = 1;
+            Trailscale = 0.5f;
+        }
     }
 
     public override void OnHitPlayer(Player target, Player.HurtInfo info) {
         base.OnHitPlayer(target, info);
         target.AddBuff(BuffID.CursedInferno, 125, false);
     }
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+        target.AddBuff(BuffID.CursedInferno, 3 * 60);
+    }
+
     public override void AI() {
         Projectile.velocity.Y += 0.1f;
         if(Projectile.velocity.Y > 16f) {
@@ -515,7 +538,7 @@ public class TerrorBatSpit : ModProjectile {
             trailInit = true;
         }
 
-        Dust.NewDustDirect(Projectile.position, 10, 10, DustID.CursedTorch);
+        Dust.NewDustDirect(Projectile.Center, (int)(10 * Trailscale), (int)(10 * Trailscale), DustID.CursedTorch, default, default, default, default, Main.rand.NextFloat(0.5f, 1.5f) * Trailscale);
         positionCache.Add(pos);
     }
 
@@ -553,7 +576,7 @@ public class TerrorBatSpit : ModProjectile {
                 ("uScale", 0.65f))
             .DrawTrail(
                 positionCache.Positions,
-                TRAIL_SIZE * Scale,
+                TRAIL_SIZE * Scale * Trailscale,
                 Color.White,
                 cursedFireEffect)
             .ApplyOutline(GhostColor1)
@@ -580,6 +603,34 @@ public class TerrorBatSpit : ModProjectile {
         Main.spriteBatch.EndBegin(snapshot);
 
         return false;
+    }
+
+    public override void OnKill(int timeLeft) {
+        //for(int i = 0; i < 35; i++) {
+        //    Vector2 burstVelocity = new Vector2(Main.rand.NextFloat(-1f, 1f), Main.rand.NextFloat(-1f, 1f));
+        //    int dust = Dust.NewDust(
+        //        Projectile.position,
+        //        Projectile.width,
+        //        Projectile.height,
+        //        DustID.CursedTorch,
+        //        Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-3f, 3f),
+        //        255,
+        //        new Color(207, 255, 0),
+        //        Main.rand.NextFloat(0.5f, 1.5f));
+        //    Main.dust[dust].velocity = burstVelocity;
+        //    Main.dust[dust].noGravity = true;
+        //}
+        Projectile.NewProjectile(
+            Projectile.GetSource_FromThis(),
+            Projectile.Center,
+            Vector2.Zero,
+            ModContent.ProjectileType<TerrorBatSpitDeath>(),
+            0,
+            0.5f,
+            Main.myPlayer,
+            ai0: 1,
+            ai1: 1
+        );
     }
 }
 
@@ -613,5 +664,58 @@ public class Sleep : ModDust {
         Main.EntitySpriteDraw(tex, dust.position - Main.screenPosition, dust.frame, Color.White, dust.rotation, drawOrigin, dust.scale, SpriteEffects.None);
 
         return false;
+    }
+}
+
+public class TerrorBatSpitDeath : ModProjectile {
+    public override string Texture => Assets.Images.Corruption.NPCs.TerrorBat.BatSpitDeath.KEY;
+    public override void SetDefaults() {
+        Projectile.width = 16;
+        Projectile.height = 16;
+        Projectile.DamageType = DamageClass.Ranged;
+        Projectile.knockBack = 0f;
+        Projectile.tileCollide = false;
+        Projectile.ignoreWater = true;
+        Projectile.timeLeft = 30;
+        Projectile.penetrate = -1;
+        Projectile.usesLocalNPCImmunity = true;
+        Projectile.localNPCHitCooldown = -1;
+        CooldownSlot = 0;
+
+        Projectile.aiStyle = -1;
+        Main.projFrames[Projectile.type] = 5;
+    }
+    public override void OnSpawn(IEntitySource source) {
+        if(Projectile.ai[0] == 1) {
+            Projectile.hostile = true;
+        }
+        else {
+            Projectile.hostile = false;
+        }
+        if(Projectile.ai[1] == 1) {
+            Projectile.friendly = true;
+        }
+        else {
+            Projectile.friendly = false;
+        }
+    }
+    public override void AI() {
+        AnimateProjectile();
+    }
+    private const int FrameCount = 5;
+    private void AnimateProjectile() {
+        int frameDuration = 2;
+        Projectile.frameCounter++;
+        if(Projectile.frameCounter >= frameDuration) {
+            Projectile.frame++;
+            Projectile.frameCounter = 0;
+            if(Projectile.frame >= FrameCount) {
+                Projectile.active = false;
+            }
+        }
+    }
+    public override void OnHitPlayer(Player target, Player.HurtInfo info) {
+        base.OnHitPlayer(target, info);
+        target.AddBuff(BuffID.CursedInferno, 125, false);
     }
 }

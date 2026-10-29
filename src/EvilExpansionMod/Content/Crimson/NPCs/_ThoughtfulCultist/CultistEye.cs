@@ -30,13 +30,13 @@ public class CultistEye : ModNPC {
     public override void SetDefaults() {
         NPC.width = 22;
         NPC.height = 22;
-        NPC.lifeMax = 205;
+        NPC.lifeMax = 175;
         NPC.defense = 5;
         NPC.value = 1f;
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
-        NPC.knockBackResist = 3f;
+        NPC.knockBackResist = 2f;
         NPC.friendly = false;
         NPC.damage = 45;
 
@@ -59,11 +59,9 @@ public class CultistEye : ModNPC {
     }
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
         if(Main.expertMode) {
-            NPC.lifeMax = (int) (NPC.lifeMax /2);
             NPC.defense = 15;
         }
         if(Main.masterMode) {
-            NPC.lifeMax = (int)(NPC.lifeMax /3);
             NPC.defense = 25;
         }
     }

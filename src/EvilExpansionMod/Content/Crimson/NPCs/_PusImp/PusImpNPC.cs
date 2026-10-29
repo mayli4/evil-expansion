@@ -55,7 +55,7 @@ public class PusImpNPC : ModNPC {
         NPC.width = 2;
         NPC.height = 38;
         NPC.lifeMax = 80;
-        NPC.defense = 46;
+        NPC.defense = 50;
         NPC.value = 250f;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;

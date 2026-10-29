@@ -34,8 +34,8 @@ public class PusBottleNPC : ModNPC {
         NPC.aiStyle = -1;
         NPC.friendly = false;
         NPC.damage = 0;
-        NPC.lifeMax = 690;
-        NPC.defense = 24;
+        NPC.lifeMax = 790;
+        NPC.defense = 28;
         NPC.knockBackResist = 0f;
         NPC.value = 0f;
 
@@ -48,6 +48,14 @@ public class PusBottleNPC : ModNPC {
 
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         database.Entries.Remove(bestiaryEntry);
+    }
+    public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
+        if(Main.expertMode) {
+            NPC.defense = 32;
+        }
+        if(Main.masterMode) {
+            NPC.defense = 36;
+        }
     }
 
     public override void AI() {

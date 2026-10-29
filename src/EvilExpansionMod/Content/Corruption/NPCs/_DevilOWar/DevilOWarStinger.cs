@@ -19,7 +19,7 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
     private int _healthDrained;
     private int _healthDrainTimer;
     private int health_drain_interval = 30 / (int) (Main.expertMode ? (Main.masterMode ? 2.25f : 1.5f) : 1f);
-    private const int health_drain_amount = 10;
+    private const int health_drain_amount = 15;
     private const float health_return_percentage = 0.75f;
 
     public override void SetDefaults() {
@@ -58,14 +58,14 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
         }
 
         if(!AttachedToPlayer) {
-            Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(TargetPlayer.Center) * 15f, 0.1f);
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity, Projectile.DirectionTo(TargetPlayer.Center) * 25f, 0.1f);
             Projectile.rotation = Projectile.velocity.ToRotation() + MathHelper.PiOver2;
 
             if(Projectile.Hitbox.Intersects(TargetPlayer.Hitbox)) {
                 AttachedToPlayer = true;
                 Projectile.velocity = Vector2.Zero;
                 _stingerDuration = 0;
-                Terraria.Audio.SoundEngine.PlaySound(SoundID.Item3, Projectile.position);
+                Terraria.Audio.SoundEngine.PlaySound(SoundID.Camera with { PitchRange = (0.5f, 1f), Volume = 0.8f }, Projectile.position);
             }
         }
         else {
@@ -87,11 +87,11 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
 
                     CombatText.NewText(TargetPlayer.Hitbox, CombatText.DamagedFriendly, actualDrain, false, false);
                     _healthDrainTimer = 0;
-                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item3, Projectile.position);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item3 with { PitchRange = (-0.2f, 0.2f), Volume = 0.8f }, Projectile.position);
                 }
             }
 
-            if(_stingerDuration >= DevilOWarNPC.STINGER_DURATION_MAX || ParentNPC.Center.Distance(TargetPlayer.Center) >= DevilOWarNPC.CHARGING_RADIUS + 16 * 2) {
+            if(_stingerDuration >= DevilOWarNPC.STINGER_DURATION_MAX || ParentNPC.Center.Distance(TargetPlayer.Center) >= DevilOWarNPC.CHARGING_RADIUS + 16 * 15) {
                 StartRetraction();
             }
         }

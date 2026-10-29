@@ -877,7 +877,7 @@ public class SpiritContactExplosion : ModProjectile {
         Projectile.aiStyle = -1;
         Main.projFrames[Projectile.type] = 7;
     }
-    public override void AI() {
+    public override void OnSpawn(IEntitySource source) {
         if(Projectile.ai[0] == 1) {
             Projectile.hostile = true;
         }
@@ -890,7 +890,8 @@ public class SpiritContactExplosion : ModProjectile {
         else {
             Projectile.friendly = false;
         }
-        // Visuals: Create dust explosion effects here
+    }
+    public override void AI() {
         for(int i = 0; i < 5; i++) {
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.CursedTorch, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-3f, 3f), 255, new Color(207, 255, 0));
         }

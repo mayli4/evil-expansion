@@ -141,7 +141,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                             position,
                             direction,
                             ModContent.ProjectileType<CultistPortal>(),
-                            20,
+                            25,
                             0.2f,
                             ai0: (float)PortalType.Spear,
                             ai1: 112);
@@ -165,7 +165,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                         position,
                         direction,
                         ModContent.ProjectileType<CultistPortal>(),
-                        20,
+                        25,
                         0.2f,
                         ai0: (float)PortalType.Blood,
                         ai1: 336

@@ -9,6 +9,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent; // For TextureAssets
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Daybreak.Common.Features.Hooks.GlobalTileHooks;
 
 namespace EvilExpansionMod.Content.Corruption;
 
@@ -55,7 +56,13 @@ public sealed class CursehoundMace : ModProjectile {
         Projectile.netImportant = true;
     }
 
-    public override void OnSpawn(IEntitySource source) { }
+    public override void OnSpawn(IEntitySource source) {
+        float LavaMaceCounterweight;
+        if(Projectile.wet) { LavaMaceCounterweight = 2.5f; }
+        else { LavaMaceCounterweight = 1f; }
+
+        Projectile.velocity.Y *= LavaMaceCounterweight;
+    }
 
     public override bool ShouldUpdatePosition() => CurrentState == State.Launched || CurrentState == State.Retracting;
 
@@ -114,18 +121,53 @@ public sealed class CursehoundMace : ModProjectile {
     public override bool OnTileCollide(Vector2 oldVelocity) {
         if(CurrentState == State.Launched) {
             CurrentState = State.Embedded;
-            SoundEngine.PlaySound(Assets.Sounds.Cursehound.MaceSlam.Asset, Vector2.Lerp(Main.LocalPlayer.Center, Projectile.Center, 0.7f));
 
             for(int i = 0; i < 5; i++) {
-                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Stone);
+                int soundNum = Main.rand.Next(1, 4);
+                SoundStyle caltropSound = new SoundStyle($"EvilExpansionMod/Assets/Sounds/Cursehound/Isaacballandchainhit{soundNum}")
+                {
+                    Pitch = Main.rand.NextFloat(-0.5f, 0.5f),
+                    Volume = Main.rand.NextFloat(0.3f, 1f) + (Projectile.velocity.Y / 50),
+                };
+            }
+            SoundEngine.PlaySound(Assets.Sounds.Cursehound.MaceSlam.Asset, Vector2.Lerp(Main.LocalPlayer.Center, Projectile.Center, 0.7f));
+            SoundEngine.PlaySound(SoundID.NPCHit52 with { Volume = 0.8f });
+
+            for(int i = 0; i < 18; i++) {
+                Vector2 burstVelocity = new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-6f, -0.5f)); // More charge = crazier dust burst
+                int ds = Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, DustID.Stone);
+                Main.dust[ds].velocity = Vector2.Max(burstVelocity * 1.2f, burstVelocity);
+                Main.dust[ds].scale = Math.Max(Main.rand.NextFloat(0.45f, 0.27f), 0.6f);
+            }
+            for(int i = 0; i < Math.Max(14, 10); i++) {
+                Vector2 burstVelocity = new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-8f, -4f)); // Likewise
+                int dc = Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, DustID.CursedTorch);
+                Main.dust[dc].velocity = Vector2.Max(burstVelocity * 0.8f, burstVelocity);
+                Main.dust[dc].scale = Math.Max(Main.rand.NextFloat(0.45f, 0.27f), 0.55f);
+                //Main.dust[d].noGravity = true;
+            }
+            for(int i = 0; i < Math.Max(12, 7); i++) {
+                Vector2 burstVelocity = new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-8f, -4f)); // Likewise
+                int dp = Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, DustID.Enchanted_Pink);
+                Main.dust[dp].velocity = Vector2.Max(burstVelocity * 0.6f, burstVelocity);
+                Main.dust[dp].scale = Math.Max(Main.rand.NextFloat(0.45f, 0.27f), 1.2f);
+                Main.dust[dp].color = Color.HotPink;
+                //Main.dust[d].noGravity = true;
             }
         }
-        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + Vector2.UnitY * 8, Vector2.Zero, ModContent.ProjectileType<MaceCrack>(), 0, 0);
+        Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center + Vector2.UnitY * 12, Vector2.Zero, ModContent.ProjectileType<MaceCrack>(), 0, 0);
 
-        int amount = Main.rand.Next(4, 8);
+        int amount = (int) (Main.rand.Next(4, 8) * (Main.expertMode ? 1.5f : 1f));
 
         for(int k = 0; k < amount; k++) {
-            Projectile.NewProjectile(Projectile.GetSource_FromThis(), Projectile.Center, -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * Main.rand.NextFloat(4f, 8f), ModContent.ProjectileType<MaceDebris>(), Projectile.damage / 2, 0, Projectile.owner);
+            Projectile.NewProjectile(
+                Projectile.GetSource_FromThis(),
+                Projectile.Center,
+                -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * Main.rand.NextFloat(6f, 12f) * (Main.expertMode ? 1.3f : 1f),
+                ModContent.ProjectileType<MaceDebris>(),
+                Projectile.damage / 3,
+                0,
+                Projectile.owner);
         }
 
         Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(12f, 0.6f));
@@ -147,7 +189,7 @@ public sealed class CursehoundMace : ModProjectile {
                 ColorStart = dustColorStart,
                 ColorFade = dustColorFade,
                 Spin = 0.03f,
-                InitialScale = Main.rand.NextFloat(0.75f, 1.5f)
+                InitialScale = Main.rand.NextFloat(0.75f, 1.2f)
             };
 
             var newDust = Dust.NewDustPerfect(
@@ -173,7 +215,7 @@ public sealed class CursehoundMace : ModProjectile {
         NPC owningNPC = Main.npc[(int)OwningNPCWhoAmI];
 
         if(owningNPC.active && owningNPC.type == ModContent.NPCType<CursehoundNPC>()) {
-            Vector2 chainOrigin = owningNPC.Center + new Vector2(owningNPC.direction * 30, -30);
+            Vector2 chainOrigin = owningNPC.Center + new Vector2(owningNPC.direction * 30, -30) - Vector2.UnitY * 26f;
 
             var diff = Projectile.Center - chainOrigin;
             float length = diff.Length();
@@ -219,6 +261,7 @@ internal class MaceDebris : ModProjectile {
     public override string Texture => Assets.Images.Corruption.NPCs.Cursehound.Debris.KEY;
 
     private Rectangle _frame;
+    Color glowColor => Color.White * ((255f - Projectile.alpha * 2f) / 255f);
 
     public override void SetDefaults() {
         Projectile.width = 18;
@@ -242,8 +285,8 @@ internal class MaceDebris : ModProjectile {
 
         Projectile.velocity.X *= 0.99f;
 
-        if(Projectile.timeLeft < 30)
-            Projectile.alpha = (int)((1 - Projectile.timeLeft / 30f) * 255);
+        if(Projectile.timeLeft < 45)
+            Projectile.alpha = (int)((1 - Projectile.timeLeft / 45f) * 255);
     }
 
     public override bool TileCollideStyle(ref int width, ref int height, ref bool fallThrough, ref Vector2 hitboxCenterFrac) {
@@ -255,16 +298,27 @@ internal class MaceDebris : ModProjectile {
     public override bool OnTileCollide(Vector2 oldVelocity) {
         if(Projectile.penetrate <= 0)
             return true;
+        //Main.NewText("Projectile.velocity.Y" + Projectile.velocity.Y, Microsoft.Xna.Framework.Color.White);
+        if(Projectile.velocity.Y > 1f) {
+            int soundNum = Main.rand.Next(1, 4);
+            SoundStyle caltropSound = new SoundStyle($"EvilExpansionMod/Assets/Sounds/Cursehound/Isaacballandchainhit{soundNum}")
+            {
+                Pitch = Main.rand.NextFloat(-0.5f, 0.5f),
+                Volume = Main.rand.NextFloat(0.0f, 0.05f) + (Projectile.velocity.Y / 50),
+            };
 
+            SoundEngine.PlaySound(caltropSound, Projectile.position);
+        }
         Projectile.velocity.Y += oldVelocity.Y * -0.8f;
-
         return false;
     }
 
     public override bool PreDraw(ref Color lightColor) {
         var tex = TextureAssets.Projectile[Type].Value;
+        Texture2D maceGlow = Assets.Images.Corruption.NPCs.Cursehound.Debris_Glow.Asset.Value;
 
         Main.spriteBatch.Draw(tex, Projectile.Center - Main.screenPosition, _frame, Projectile.GetAlpha(lightColor), Projectile.rotation, _frame.Size() / 2f, Projectile.scale, SpriteEffects.None, 0f);
+        Main.spriteBatch.Draw(maceGlow, Projectile.Center - Main.screenPosition, _frame, glowColor, Projectile.rotation, _frame.Size() / 2f, Projectile.scale, SpriteEffects.None, 0f);
 
         return false;
     }

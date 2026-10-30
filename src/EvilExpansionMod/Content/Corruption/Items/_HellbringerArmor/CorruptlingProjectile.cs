@@ -24,7 +24,7 @@ public class CorruptlingProjectile : ModProjectile {
         Projectile.tileCollide = false;
         Projectile.ignoreWater = false;
         Projectile.timeLeft = 20*60;
-        Projectile.penetrate = 6;
+        Projectile.penetrate = 7;
         Projectile.aiStyle = -1;
         Projectile.ArmorPenetration = 20;
 

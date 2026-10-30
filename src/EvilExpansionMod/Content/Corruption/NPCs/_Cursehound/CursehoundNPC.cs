@@ -1,9 +1,12 @@
 ﻿using EvilExpansionMod.Common;
 using EvilExpansionMod.Content.CameraModifiers;
+using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Content.Tiles.Banners;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Audio;
 using Microsoft.Xna.Framework.Graphics;
+using ReLogic.Utilities;
 using System;
 using System.Collections.Generic;
 using Terraria;
@@ -77,7 +80,7 @@ public sealed class CursehoundNPC : ModNPC {
     }
 
     public override void SetDefaults() {
-        (NPC.width, NPC.height) = (150, 150);
+        (NPC.width, NPC.height) = (125, 100);
 
         NPC.lifeMax = 2950;
         NPC.damage = 30;
@@ -89,7 +92,7 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.knockBackResist = 0f;
         NPC.friendly = false;
         NPC.HitSound = SoundID.NPCHit1;
-        NPC.DeathSound = SoundID.NPCDeath2;
+        NPC.DeathSound = SoundID.NPCDeath60;
 
         ItemID.Sets.KillsToBanner[BannerItem] = 25;
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
@@ -118,7 +121,6 @@ public sealed class CursehoundNPC : ModNPC {
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 1, 3, 4));
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<CurseknightsHelm>(), 10, 1, 1));
     }
-
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
             new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.CursehoundNPCBestiary.KEY),
@@ -134,7 +136,16 @@ public sealed class CursehoundNPC : ModNPC {
         }
     }
 
+    public override bool? CanBeHitByProjectile(Projectile projectile) {
+        if(projectile.hostile) { return false; }
+        Rectangle largerHurtbox = new Rectangle((int)NPC.position.X - 75, (int)NPC.position.Y - 75, 150, 150);
+        if(projectile.Hitbox.Intersects(largerHurtbox)) {
+            return true;
+        }
+        return false;
+    }
 
+    private SlotId activeSoundSlot;
     public override void AI() {
         NPC.TargetClosest(false);
         var target = Target;
@@ -167,7 +178,7 @@ public sealed class CursehoundNPC : ModNPC {
 
         switch(CurrentState) {
             case State.Idle:
-                if(distanceToTarget < 1000f && broadLos) {
+                if(distanceToTarget < 60 * 16f && broadLos) {
                     CurrentState = State.Walking;
                 }
 
@@ -204,11 +215,22 @@ public sealed class CursehoundNPC : ModNPC {
 
         //CurrentState = State.Roaring;
     }
+    bool amStuck = false;
+    private float nothingHappeningX;
+    private float nothingHappeningY;
+    static int nothingHappeningInterval = 60;
+    int nothingHappeningTimer = nothingHappeningInterval;
+    int tooLongAboveYou = 0;
+    int jumpPhasingTimer = 0;
+    bool amJumping = false;
+    int airTime = 0;
 
     private void Movement(float distanceToTarget, float distanceToPlayerX, bool broadLineOfSight) {
+        bool isInsideSolid = Collision.SolidCollision(NPC.position, NPC.width, NPC.height);
+
         float maceAttackRange = 550f;
         float roarAttackMinRange = 200f;
-        float roarAttackMaxRange = 500f;
+        float roarAttackMaxRange = 700f;
         float runThreshold = 300f;
 
         float baseJumpPower = 5f;
@@ -218,7 +240,7 @@ public sealed class CursehoundNPC : ModNPC {
         float verticalDifference = NPC.Center.Y - Target.Center.Y;
         float dynamicJumpVelocity = MathHelper.Clamp(
             -(baseJumpPower + Math.Max(0, verticalDifference) * jumpScaleFactor),
-            -maxJumpPower,
+            -maxJumpPower - 50,
             -baseJumpPower);
 
         if(NPC.velocity.Y == 0 && _timeGrounded >= GROUND_TIME_FOR_ATTACK && RoarAttackCooldown <= 0 && broadLineOfSight && distanceToTarget >= roarAttackMinRange && distanceToTarget <= roarAttackMaxRange) {
@@ -246,35 +268,149 @@ public sealed class CursehoundNPC : ModNPC {
         if(Math.Abs(NPC.velocity.X) > maxSpeed && NPC.velocity.Y != 0) {
             maxSpeed = MathHelper.Lerp(Math.Abs(NPC.velocity.X), maxSpeed, 0.1f);
         }
-
-        NPC.velocity.X += acceleration * NPC.direction;
-        NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * maxSpeed, 0.01f);
-        NPC.velocity.X = MathHelper.Clamp(NPC.velocity.X, -maxSpeed, maxSpeed);
+        if(!isInsideSolid) {
+            NPC.velocity.X += acceleration * NPC.direction;
+            NPC.velocity.X = MathHelper.Lerp(NPC.velocity.X, NPC.direction * maxSpeed, 0.01f);
+            NPC.velocity.X = MathHelper.Clamp(NPC.velocity.X, -maxSpeed, maxSpeed);
+        }
 
         Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
 
-        if(distanceToPlayerX < 50f && NPC.velocity.Y == 0) {
-            NPC.velocity.X *= 0.85f;
+        if(distanceToPlayerX < 10*16f && NPC.velocity.Y == 0 && !isInsideSolid) {
+            NPC.velocity.X *= 0.9f;
+            if(distanceToPlayerX < 6*16f) NPC.velocity.X *= 0.9f;
+            if(distanceToPlayerX < 2*16f) NPC.velocity.X *= 0f;
         }
 
-        if(NPC.collideX && NPC.velocity.Y == 0) {
-            NPC.velocity.Y = dynamicJumpVelocity;
-            _timeGrounded = 0;
+        //if(NPC.collideX && NPC.velocity.Y == 0) {
+        //    amStuck = true;
+        //    //NPC.velocity.Y = dynamicJumpVelocity;
+        //    //_timeGrounded = 0;
+        //    //NPC.noTileCollide = true;
+        //}
+
+        //if(NPC.velocity.Y == 0 && Target.Top.Y > NPC.Bottom.Y && Helper.HoleAtPosition(NPC, NPC.Center.X + NPC.velocity.X)) {
+        //    amStuck = true;
+        //    //NPC.velocity.Y = dynamicJumpVelocity;
+        //    //_timeGrounded = 0;
+        //    //NPC.noTileCollide = true;
+        //}
+
+        if(nothingHappeningTimer > 0) {
+            nothingHappeningTimer--;
+        }
+        else {
+            nothingHappeningX = NPC.Bottom.X;
+            nothingHappeningY = NPC.Bottom.Y;
+            nothingHappeningTimer = nothingHappeningInterval;
+        }
+
+        if(nothingHappeningTimer == nothingHappeningInterval - 1 && nothingHappeningX == NPC.Bottom.X && nothingHappeningY == NPC.Bottom.Y && NPC.velocity.Y == 0) amStuck = true;
+        else amStuck = false;
+
+        if(amStuck) {
+            SoundEngine.PlaySound(Assets.Sounds.Cursehound.CursehoundStep1.Asset with { Pitch = 0.4f, PitchVariance = 0.4f }, NPC.Center);
+
+            for(int i = 0; i < 6 + (distanceToTarget * 0.0625 * 0.1); i++) {
+                var dustPos = NPC.Bottom + Main.rand.NextVector2Circular(120f, 20f)
+                    + Vector2.UnitY * 1.5f;
+                var dustVelocity = -Vector2.UnitY * Main.rand.NextFloat(3f, 6f)
+                    + NPC.Bottom.DirectionTo(dustPos) * 5f;
+
+                var dustColorStart = new Color(133, 122, 94);
+                var dustColorFade = dustColorStart * 0.4f;
+
+                var newDustData = new Smoke.Data()
+                {
+                    InitialLifetime = 40,
+                    ElapsedFrames = 0,
+                    InitialOpacity = 0.8f,
+                    ColorStart = dustColorStart,
+                    ColorFade = dustColorFade,
+                    Spin = 0.03f,
+                    InitialScale = Main.rand.NextFloat(0.25f, 0.75f) * (float)(1 + distanceToTarget * 0.0625 * 0.02)
+                };
+
+                var newDust = Dust.NewDustPerfect(
+                    dustPos,
+                    ModContent.DustType<Smoke>(),
+                    dustVelocity,
+                    0,
+                    newColor: Color.White,
+                    newDustData.InitialScale
+                );
+
+                newDust.customData = newDustData;
+            }
+            if (distanceToTarget > 16 * 35) {
+                SoundEngine.PlaySound(SoundID.Item14 with { Pitch = Main.rand.NextFloat(-0.2f, 0.2f), Volume = 1f }, NPC.Center);
+            }
+            jumpPhasingTimer = (int)(distanceToTarget * 0.001 * 60);
+            amJumping = true;
+            NPC.velocity.Y = dynamicJumpVelocity * 0.8f - (Target.Bottom.Y - NPC.Bottom.Y) * 0.015f;
+            if(NPC.Bottom.X > Target.Bottom.X) NPC.velocity.X = -(distanceToPlayerX) * 0.015f;
+            else NPC.velocity.X = (distanceToPlayerX) * 0.015f;
+        }
+        if(Target.Bottom.Y <= NPC.Bottom.Y && NPC.velocity.Y > 0 || Target.Bottom.Y >= NPC.Bottom.Y && NPC.velocity.Y < 0) amJumping = false;
+        // amJumping is true when Hound is moving UP AND is below player, or moving DOWN AND is above
+
+        if(jumpPhasingTimer > 0) {
+            jumpPhasingTimer--;
+           //if(NPC.velocity.Y > 0 && distanceToTarget < 16 * 5) jumpPhasingTimer = 0;
+        }
+
+        if(Target.Bottom.Y > NPC.Bottom.Y && distanceToPlayerX < 16 * 8) {
+            tooLongAboveYou++;
+            if(distanceToTarget > 16 * 40) tooLongAboveYou++;
+            if(distanceToTarget > 16 * 80) tooLongAboveYou++;
+        }
+        else tooLongAboveYou = 0;
+
+        if(tooLongAboveYou > 1 || NPC.velocity.Y < 0 || amStuck || jumpPhasingTimer > 0 && tooLongAboveYou > 100 || (Target.Bottom.Y > NPC.Bottom.Y || amJumping || jumpPhasingTimer > 0)) {
+            // No collision when aerial AND (above player OR jumping)
             NPC.noTileCollide = true;
         }
+        else NPC.noTileCollide = false;
 
-        if(NPC.velocity.Y == 0 && Target.Top.Y < NPC.Bottom.Y && Helper.HoleAtPosition(NPC, NPC.Center.X + NPC.velocity.X)) {
-            NPC.velocity.Y = dynamicJumpVelocity;
-            _timeGrounded = 0;
-            NPC.noTileCollide = true;
+        if(NPC.velocity.Y != 0) airTime++;
+        Main.NewText("airTime" + airTime, Microsoft.Xna.Framework.Color.White);
+        if(airTime > 60 * 2 && NPC.velocity.Y == 0) {
+            SoundEngine.PlaySound(Assets.Sounds.Cursehound.CursehoundStep1.Asset with { Pitch = -0.3f, PitchVariance = 0.2f }, NPC.Center);
+            if(airTime > 60 * 4) SoundEngine.PlaySound(SoundID.Item14 with { Pitch = Main.rand.NextFloat(-0.2f, 0.2f), Volume = 0.4f }, NPC.Center);
+
+            for(int i = 0; i < 6 + (distanceToTarget * 0.0625 * 0.1); i++) {
+                var dustPos = NPC.Bottom + Main.rand.NextVector2Circular(120f, 20f)
+                    + Vector2.UnitY * 1.5f;
+                var dustVelocity = -Vector2.UnitY * Main.rand.NextFloat(3f, 6f)
+                    + NPC.Bottom.DirectionTo(dustPos) * 5f;
+
+                var dustColorStart = new Color(133, 122, 94);
+                var dustColorFade = dustColorStart * 0.4f;
+
+                var newDustData = new Smoke.Data()
+                {
+                    InitialLifetime = 40,
+                    ElapsedFrames = 0,
+                    InitialOpacity = 0.8f,
+                    ColorStart = dustColorStart,
+                    ColorFade = dustColorFade,
+                    Spin = 0.03f,
+                    InitialScale = Main.rand.NextFloat(0.25f, 0.75f) * (float)(1 + distanceToTarget * 0.0625 * 0.02)
+                };
+
+                var newDust = Dust.NewDustPerfect(
+                    dustPos,
+                    ModContent.DustType<Smoke>(),
+                    dustVelocity,
+                    0,
+                    newColor: Color.White,
+                    newDustData.InitialScale
+                );
+
+                newDust.customData = newDustData;
+            }
+            airTime = 0;
         }
-
-        NPC.noTileCollide = NPC.velocity.Y switch
-        {
-            < 0f => true,
-            >= 0f => false,
-            _ => NPC.noTileCollide,
-        };
 
         NPC.direction = (Target.Center.X < NPC.Center.X) ? -1 : 1;
         NPC.spriteDirection = NPC.direction;
@@ -282,7 +418,21 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.spriteDirection = NPC.direction;
         NPC.rotation = Utils.AngleLerp(NPC.rotation, -NPC.velocity.Y * 0.06f * -NPC.direction, 0.1f);
         NPC.rotation = Math.Clamp(NPC.rotation, -0.2f, 0.2f);
+
+        //Main.NewText("NPC.velocity.X" + NPC.velocity.X, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("NPC.velocity.Y" + NPC.velocity.Y, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("NPC.Bottom.X" + NPC.Bottom.X, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("NPC.Bottom.Y" + NPC.Bottom.Y, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("nothingHappeningX" + nothingHappeningX, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("nothingHappeningY" + nothingHappeningY, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("nothingHappeningTimer" + nothingHappeningTimer, Microsoft.Xna.Framework.Color.White);
+        ////Main.NewText("amStuck" + amStuck, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("NPC.noTileCollide" + NPC.noTileCollide, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("amJumping" + amJumping, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("jumpPhasingTimer" + jumpPhasingTimer, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("tooLongAboveYou" + tooLongAboveYou, Microsoft.Xna.Framework.Color.White);
     }
+
 
     private void MaceSpinning() {
         NPC.velocity.X *= 0.9f;
@@ -305,7 +455,7 @@ public sealed class CursehoundNPC : ModNPC {
 
         if(Timer == 1) {
             Vector2 launchOrigin = NPC.Center + new Vector2(NPC.direction * 50, -40);
-            SoundEngine.PlaySound(Assets.Sounds.Cursehound.MaceThrow.Asset, NPC.Center);
+            SoundEngine.PlaySound(Assets.Sounds.Cursehound.MaceThrow.Asset with { Volume = 1.2f }, NPC.Center);
 
             float gravity = 0.4f;
 
@@ -320,10 +470,10 @@ public sealed class CursehoundNPC : ModNPC {
                 NPC.GetSource_FromAI(),
                 launchOrigin.X,
                 launchOrigin.Y,
-                velocity.X * 1.7f,
-                velocity.Y / 2,
+                velocity.X * 1.9f,
+                velocity.Y / 1.9f,
                 ModContent.ProjectileType<CursehoundMace>(),
-                NPC.damage,
+                (int)(NPC.damage * 0.5f),
                 5f,
                 Main.myPlayer,
                 (int)CursehoundMace.State.Launched,
@@ -356,8 +506,11 @@ public sealed class CursehoundNPC : ModNPC {
 
         var roarProjectilePosition = NPC.Center + new Vector2(126f * NPC.direction, 12f);
         if(Timer == 1) {
-            SoundEngine.PlaySound(SoundID.DD2_BetsyDeath with { Volume = 1.2f, Pitch = 0.1f }, NPC.Center);
-            SoundEngine.PlaySound(SoundID.DD2_BetsyScream with { Volume = 1.2f, Pitch = 0.1f }, NPC.Center);
+            for(int i = 0; i < 2; i++) {
+                SoundEngine.PlaySound(SoundID.DD2_BetsyDeath with { Volume = 1.5f, PitchRange = (0.1f, 0.3f) }, NPC.Center);
+                SoundEngine.PlaySound(SoundID.DD2_BetsyScream with { Volume = 2.5f, PitchRange = (0.1f, 0.3f) }, NPC.Center);
+                SoundEngine.PlaySound(SoundID.ScaryScream with { Volume = 0.1f, PitchRange = (-0.5f, -0.3f) }, NPC.Center);
+            }
 
             Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(22f, 0.6f, NPC.Center, 2000f));
 
@@ -403,7 +556,7 @@ public sealed class CursehoundNPC : ModNPC {
                     spawnPos,
                     Vector2.Zero,
                     ModContent.ProjectileType<LavaTelegraphProjectile>(),
-                    0,
+                    30,
                     0f,
                     Main.myPlayer,
                     ai0: telegraphDuration,
@@ -413,8 +566,8 @@ public sealed class CursehoundNPC : ModNPC {
         }
 
         if(Timer is > 40 and < ROAR_DURATION - 30 && Timer % 20 == 0) {
-            int numberOfStalactites = (int)(Main.rand.Next(2, 4) * (Math.Sqrt(DifficultyScaler)));
-            float spawnAreaWidth = (int)(450f * (Math.Sqrt(DifficultyScaler)));
+            int numberOfStalactites = (int)(Main.rand.Next(3, 5) * (Math.Sqrt(DifficultyScaler)));
+            float spawnAreaWidth = (int)(550f * (Math.Sqrt(DifficultyScaler)));
 
             for(int i = 0; i < numberOfStalactites; i++) {
                 float spawnX = Target.Center.X + Main.rand.NextFloat(-spawnAreaWidth / 2f, spawnAreaWidth / 2f);
@@ -483,7 +636,7 @@ public sealed class CursehoundNPC : ModNPC {
 
         spriteBatch.Draw(
             tex,
-            drawPosition,
+            drawPosition - Vector2.UnitY * 28f,
             frame,
             drawColor,
             NPC.rotation,
@@ -495,7 +648,7 @@ public sealed class CursehoundNPC : ModNPC {
 
         spriteBatch.Draw(
             Assets.Images.Corruption.NPCs.Cursehound.CursehoundNPC_Glow.Asset.Value,
-            drawPosition,
+            drawPosition - Vector2.UnitY * 28f,
             frame,
             Color.White,
             NPC.rotation,
@@ -543,7 +696,39 @@ public sealed class CursehoundNPC : ModNPC {
                 if(NPC.frameCounter >= 6) {
                     NPC.frameCounter = 0;
                     //ueah i hate this but im lazy
+                    // I'll kill you Sucs
                     SoundEngine.PlaySound(Assets.Sounds.Cursehound.CursehoundStep1.Asset with { Pitch = 0.0f, PitchVariance = 0.4f }, NPC.Center);
+                    for(int i = 0; i < Main.rand.NextFloat(3f,5f); i++) {
+                        var dustPos = NPC.Bottom + Main.rand.NextVector2Circular(120f, 20f)
+                            + Vector2.UnitY * 1.5f;
+                        var dustVelocity = -Vector2.UnitY * Main.rand.NextFloat(4f, 8f)
+                            + NPC.Bottom.DirectionTo(dustPos) * 5f;
+
+                        var dustColorStart = new Color(133, 122, 94);
+                        var dustColorFade = dustColorStart * 0.4f;
+
+                        var newDustData = new Smoke.Data()
+                        {
+                            InitialLifetime = 40,
+                            ElapsedFrames = 0,
+                            InitialOpacity = Main.rand.NextFloat(0.1f, 0.5f),
+                            ColorStart = dustColorStart,
+                            ColorFade = dustColorFade,
+                            Spin = 0.01f,
+                            InitialScale = Main.rand.NextFloat(0.25f, 1f)
+                        };
+
+                        var newDust = Dust.NewDustPerfect(
+                            dustPos,
+                            ModContent.DustType<Smoke>(),
+                            dustVelocity,
+                            0,
+                            newColor: Color.White,
+                            newDustData.InitialScale
+                        );
+
+                        newDust.customData = newDustData;
+                    }
                 }
                 NPC.frame.Y = (23 + (int)NPC.frameCounter) * frameHeight;
                 break;
@@ -641,7 +826,7 @@ internal sealed class LavaTelegraphProjectile : ModProjectile {
                     ModContent.ProjectileType<SpiritFireball>(),
                     (int)Damage,
                     0f,
-                    Projectile.owner
+                    Main.myPlayer
                 );
             }
 

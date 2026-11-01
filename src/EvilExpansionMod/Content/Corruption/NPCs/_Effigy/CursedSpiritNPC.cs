@@ -318,7 +318,17 @@ public sealed class CursedSpiritNPC : ModNPC {
             case ExploderState.Exploding:
                 UpdateLookDirection(_lookDirection);
                 _lookOffset *= 0.95f;
-
+                if (Timer == (int)(ExploderExplosionTime / 1.5)) {
+                    SoundEngine.PlaySound(SoundID.Item151, NPC.Center);
+                }
+                if (Timer > ExploderExplosionTime / 2) {
+                    for(int i = 0; i < 2; i++) {
+                        var ember = GlowEmberParticle.NewParticle(NPC.Center + Main.rand.NextVector2Circular(15, 15), Main.rand.NextVector2Circular(11, 11), Main.rand.NextFloat(0.1f, 1f), GhostColor1 with { A = 0 }, Color.White with { A = 0 });
+                        ember.Randomness *= 2f;
+                        ember.LossPerSecond *= 3f;
+                        ParticleEngine.PARTICLES.Add(ember);
+                    }
+                }
                 if(Timer > ExploderExplosionTime) {
                     const int ExplosionRange = 300;
                     if(Main.netMode != NetmodeID.MultiplayerClient) {

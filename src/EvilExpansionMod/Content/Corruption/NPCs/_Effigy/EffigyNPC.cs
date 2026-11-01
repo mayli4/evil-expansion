@@ -23,7 +23,8 @@ public sealed class EffigyNPC : ModNPC {
     private int deadTimer;
     private int animCounter;
     private byte spawnedSprits;
-    static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
+    private int spawnTimer;
+    static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 2f : 1.5f) : 1f;
 
     public const int DEATH_TIME = 5 * 60;
 
@@ -111,6 +112,7 @@ public sealed class EffigyNPC : ModNPC {
                     Assets.Sounds.EffigyBurn.Asset with
                     {
                         PitchVariance = 0.3f,
+                        Volume = 2f
                     }, 
                     NPC.Center
                 );
@@ -142,7 +144,7 @@ public sealed class EffigyNPC : ModNPC {
             }
         
             if(deadTimer >= DEATH_TIME) {
-                if(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds.TryGetValue(ModContent.NPCType<EffigyNPC>(), out string bestiaryId)) { //Uhm I hope this works?????????
+                if(ContentSamples.NpcBestiaryCreditIdsByNpcNetIds.TryGetValue(ModContent.NPCType<EffigyNPC>(), out string bestiaryId)) { // Uhm I hope this works?????????
                     Main.BestiaryTracker.Kills.RegisterKill(NPC);
                 }
                 NPC.life = 0;
@@ -150,36 +152,44 @@ public sealed class EffigyNPC : ModNPC {
             }
         }
         
-        if(spawnedSprits >= 3 * DifficultyScaler) {
+        if(spawnedSprits >= 4 * DifficultyScaler) { // Can spawn up to 4, 6, or 8 spirits depending on difficulty
             dead = true;
+        }
+
+        if (spawnTimer > 0) {
+            spawnTimer--;
         }
     }
 
     void SpawnSpirit(Entity attacker) {
-        var position = NPC.position + Vector2.UnitX * NPC.width / 2f;
-        NPC.NewNPC(NPC.GetSource_OnHurt(attacker), (int)position.X, (int)position.Y, ModContent.NPCType<CursedSpiritNPC>());
+        if(!dead) {
+            var position = NPC.position + Vector2.UnitX * NPC.width / 2f;
+            NPC.NewNPC(NPC.GetSource_OnHurt(attacker), (int)position.X, (int)position.Y, ModContent.NPCType<CursedSpiritNPC>());
 
-        spawnedSprits++;
-        
-        squashStretch = new Vector2(0.75f, 1.35f);
+            spawnedSprits++;
 
-        for(int i = 0; i < Main.rand.Next(10, 15); i++) {
-            var ember = GlowEmberParticle.NewParticle(NPC.Center + Main.rand.NextVector2Circular(11, 11), Main.rand.NextVector2Circular(11, 11), Main.rand.NextFloat(0.5f, 1f), glowColor with { A = 0 }, Color.White with { A = 0 });
-            ember.Randomness *= 2f;
-            ember.LossPerSecond *= 2f;
-            ParticleEngine.PARTICLES.Add(ember);
+            squashStretch = new Vector2(0.75f, 1.35f);
+
+            for(int i = 0; i < Main.rand.Next(10, 15); i++) {
+                var ember = GlowEmberParticle.NewParticle(NPC.Center + Main.rand.NextVector2Circular(11, 11), Main.rand.NextVector2Circular(11, 11), Main.rand.NextFloat(0.5f, 1f), glowColor with { A = 0 }, Color.White with { A = 0 });
+                ember.Randomness *= 2f;
+                ember.LossPerSecond *= 2f;
+                ParticleEngine.PARTICLES.Add(ember);
+            }
         }
     }
 
     public override void OnHitByProjectile(Projectile projectile, NPC.HitInfo hit, int damageDone) {
-        if(Main.rand.NextBool(5)) {
+        if(Main.rand.NextBool(5) && spawnTimer == 0) {
             SpawnSpirit(projectile);
+            spawnTimer = 60;
         }
     }
 
     public override void OnHitByItem(Player player, Item item, NPC.HitInfo hit, int damageDone) {
-        if(Main.rand.NextBool(5)) {
+        if(Main.rand.NextBool(5) && spawnTimer == 0) {
             SpawnSpirit(player);
+            spawnTimer = 60;
         }
     }
     public override bool PreDraw(SpriteBatch spriteBatch, Vector2 screenPos, Color drawColor) {

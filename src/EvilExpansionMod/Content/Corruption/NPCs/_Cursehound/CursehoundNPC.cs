@@ -17,6 +17,7 @@ using Terraria.GameContent.ItemDropRules;
 using Terraria.GameContent.Shaders;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Daybreak.Common.Features.Hooks.GlobalTileHooks;
 using Filters = Terraria.Graphics.Effects.Filters;
 
 namespace EvilExpansionMod.Content.Corruption;
@@ -136,13 +137,11 @@ public sealed class CursehoundNPC : ModNPC {
         }
     }
 
-    public override bool? CanBeHitByProjectile(Projectile projectile) {
-        if(projectile.hostile) { return false; }
-        Rectangle largerHurtbox = new Rectangle((int)NPC.position.X - 75, (int)NPC.position.Y - 75, 150, 150);
-        if(projectile.Hitbox.Intersects(largerHurtbox)) {
-            return true;
-        }
-        return false;
+    public override bool ModifyCollisionData(Rectangle victimHitbox, ref int immunityCooldownSlot, ref MultipliableFloat damageMultiplier, ref Rectangle npcHitbox) {
+        // I'll try making this the hurtbox
+        npcHitbox = new Rectangle(0, 0, 150, 150); // Unsure as to any of this works
+
+        return base.ModifyCollisionData(victimHitbox, ref immunityCooldownSlot, ref damageMultiplier, ref npcHitbox);
     }
 
     private SlotId activeSoundSlot;
@@ -359,26 +358,26 @@ public sealed class CursehoundNPC : ModNPC {
            //if(NPC.velocity.Y > 0 && distanceToTarget < 16 * 5) jumpPhasingTimer = 0;
         }
 
-        if(Target.Bottom.Y > NPC.Bottom.Y && distanceToPlayerX < 16 * 8) {
+        if(Target.Bottom.Y > NPC.Bottom.Y && distanceToPlayerX < 16 * 8 || Target.Bottom.Y > NPC.Bottom.Y + 16 * 40) { // If Hound is above AND horizontally close OR really far above
             tooLongAboveYou++;
             if(distanceToTarget > 16 * 40) tooLongAboveYou++;
             if(distanceToTarget > 16 * 80) tooLongAboveYou++;
         }
         else tooLongAboveYou = 0;
 
-        if(tooLongAboveYou > 1 || NPC.velocity.Y < 0 || amStuck || jumpPhasingTimer > 0 && tooLongAboveYou > 100 || (Target.Bottom.Y > NPC.Bottom.Y || amJumping || jumpPhasingTimer > 0)) {
+        if(tooLongAboveYou > 1 || NPC.velocity.Y < 0 || amStuck || jumpPhasingTimer > 0 && (tooLongAboveYou > 200 || Target.Bottom.Y > NPC.Bottom.Y || amJumping || jumpPhasingTimer > 0)) {
             // No collision when aerial AND (above player OR jumping)
             NPC.noTileCollide = true;
         }
         else NPC.noTileCollide = false;
 
         if(NPC.velocity.Y != 0) airTime++;
-        Main.NewText("airTime" + airTime, Microsoft.Xna.Framework.Color.White);
-        if(airTime > 60 * 2 && NPC.velocity.Y == 0) {
+        if(airTime > 60 * 1 && NPC.velocity.Y == 0) {
+            float airTimeMultipier = airTime / 30;
             SoundEngine.PlaySound(Assets.Sounds.Cursehound.CursehoundStep1.Asset with { Pitch = -0.3f, PitchVariance = 0.2f }, NPC.Center);
-            if(airTime > 60 * 4) SoundEngine.PlaySound(SoundID.Item14 with { Pitch = Main.rand.NextFloat(-0.2f, 0.2f), Volume = 0.4f }, NPC.Center);
+            if(airTime > 60 * 2) SoundEngine.PlaySound(SoundID.Item14 with { Pitch = Main.rand.NextFloat(-0.2f, 0.2f), Volume = 1f }, NPC.Center);
 
-            for(int i = 0; i < 6 + (distanceToTarget * 0.0625 * 0.1); i++) {
+            for(int i = 0; i < 6 + airTimeMultipier; i++) {
                 var dustPos = NPC.Bottom + Main.rand.NextVector2Circular(120f, 20f)
                     + Vector2.UnitY * 1.5f;
                 var dustVelocity = -Vector2.UnitY * Main.rand.NextFloat(3f, 6f)
@@ -395,7 +394,7 @@ public sealed class CursehoundNPC : ModNPC {
                     ColorStart = dustColorStart,
                     ColorFade = dustColorFade,
                     Spin = 0.03f,
-                    InitialScale = Main.rand.NextFloat(0.25f, 0.75f) * (float)(1 + distanceToTarget * 0.0625 * 0.02)
+                    InitialScale = Main.rand.NextFloat(0.25f, 0.75f)
                 };
 
                 var newDust = Dust.NewDustPerfect(
@@ -408,6 +407,12 @@ public sealed class CursehoundNPC : ModNPC {
                 );
 
                 newDust.customData = newDustData;
+            }
+            for(int i = 0; i < 5 * airTimeMultipier; i++) {
+                Vector2 burstVelocity = new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-6f, -0.5f)); // More charge = crazier dust burst
+                int ds = Dust.NewDust(NPC.Bottom, (int)Main.rand.NextFloat(-120f, 120f), 0, DustID.Stone);
+                Main.dust[ds].velocity = Vector2.Max(burstVelocity * airTimeMultipier * 0.3f, burstVelocity);
+                Main.dust[ds].scale = Math.Max(Main.rand.NextFloat(0.05f * airTimeMultipier, 0.3f * airTimeMultipier), 0.6f);
             }
             airTime = 0;
         }
@@ -431,6 +436,7 @@ public sealed class CursehoundNPC : ModNPC {
         //Main.NewText("amJumping" + amJumping, Microsoft.Xna.Framework.Color.White);
         //Main.NewText("jumpPhasingTimer" + jumpPhasingTimer, Microsoft.Xna.Framework.Color.White);
         //Main.NewText("tooLongAboveYou" + tooLongAboveYou, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("airTime" + airTime, Microsoft.Xna.Framework.Color.White);
     }
 
 
@@ -522,13 +528,13 @@ public sealed class CursehoundNPC : ModNPC {
         }
 
         if(Timer == 20) {
-            int searchRadiusTiles = 40;
+            int searchRadiusTiles = 50;
             List<Point> lavaTiles = new();
 
             int startTileX = (int)((Target.Center.X - searchRadiusTiles * 16) / 16f);
             int endTileX = (int)((Target.Center.X + searchRadiusTiles * 16) / 16f);
             int startTileY = (int)((Target.Bottom.Y - 1) / 16f);
-            int endTileY = (int)((Target.Bottom.Y + 10 + searchRadiusTiles / 2 * 16) / 16f);
+            int endTileY = (int)((Target.Bottom.Y + 16 + searchRadiusTiles * 2 * 16) / 16f);
 
             for(int x = startTileX; x < endTileX; x++) {
                 for(int y = startTileY; y < endTileY; y++) {
@@ -542,7 +548,7 @@ public sealed class CursehoundNPC : ModNPC {
             }
 
             int totalTelegraphs = (int)(4 * (Math.Sqrt(DifficultyScaler)));
-            int telegraphDuration = 45;
+            int telegraphDuration = 45 + Main.rand.Next(-15, 15 + 1);
 
             for(int i = 0; i < totalTelegraphs && lavaTiles.Count > 0; i++) {
                 int index = Main.rand.Next(lavaTiles.Count);
@@ -560,7 +566,7 @@ public sealed class CursehoundNPC : ModNPC {
                     0f,
                     Main.myPlayer,
                     ai0: telegraphDuration,
-                    ai2: NPC.damage / 2
+                    ai1: 20
                 );
             }
         }

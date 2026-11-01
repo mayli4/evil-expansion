@@ -79,6 +79,13 @@ public sealed class CursehoundMace : ModProjectile {
             if(!owningNPC.active) Projectile.timeLeft = Math.Min(Projectile.timeLeft, 60);
         }
 
+        if(Projectile.position.Y > owningNPC.position.Y + 16 * 55) { // Retract if the mace falls 55 tiles below the Hound
+            if(CurrentState != State.Retracting) {
+                CurrentState = State.Retracting;
+                Projectile.tileCollide = false;
+            }
+        }
+
         switch(CurrentState) {
             case State.Launched:
                 Projectile.velocity.Y += 0.5f;
@@ -119,7 +126,7 @@ public sealed class CursehoundMace : ModProjectile {
     }
 
     public override bool OnTileCollide(Vector2 oldVelocity) {
-        if(CurrentState == State.Launched) {
+        if(CurrentState == State.Launched && CurrentState != State.Retracting) {
             CurrentState = State.Embedded;
 
             for(int i = 0; i < 5; i++) {
@@ -215,7 +222,7 @@ public sealed class CursehoundMace : ModProjectile {
         NPC owningNPC = Main.npc[(int)OwningNPCWhoAmI];
 
         if(owningNPC.active && owningNPC.type == ModContent.NPCType<CursehoundNPC>()) {
-            Vector2 chainOrigin = owningNPC.Center + new Vector2(owningNPC.direction * 30, -30) - Vector2.UnitY * 26f;
+            Vector2 chainOrigin = owningNPC.Center + new Vector2(owningNPC.direction * 30, -30) - Vector2.UnitY * 24f;
 
             var diff = Projectile.Center - chainOrigin;
             float length = diff.Length();

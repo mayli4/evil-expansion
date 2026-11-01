@@ -43,7 +43,7 @@ public class SpiritFireball : ModProjectile {
     }
 
     public override void OnHitPlayer(Player target, Player.HurtInfo info) {
-        target.AddBuff(BuffID.CursedInferno, 60 * 5);
+        target.AddBuff(BuffID.CursedInferno, 60 * 2);
     }
     public override void AI() {
         _trailPositions ??= [.. Enumerable.Repeat(Projectile.Center, 6)];

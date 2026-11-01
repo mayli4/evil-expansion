@@ -18,7 +18,7 @@ public sealed class PusSlugCritter : ModNPC {
         Main.npcFrameCount[Type] = 3;
         Main.npcCatchable[Type] = true;
         NPCID.Sets.CountsAsCritter[Type] = true;
-        NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
+        NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = false;
     }
 
     public override void SetDefaults() {

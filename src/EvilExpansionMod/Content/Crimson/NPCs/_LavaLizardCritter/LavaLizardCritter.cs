@@ -82,13 +82,12 @@ public sealed class LavaLizardCritter : ModNPC {
         Main.npcCatchable[Type] = true;
         NPCID.Sets.CountsAsCritter[Type] = true;
         NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
-        NPCID.Sets.TownCritter[Type] = true;
     }
 
     public override void SetDefaults() {
         NPC.width = 20;
         NPC.height = 15;
-        NPC.lifeMax = 15;
+        NPC.lifeMax = 5;
         NPC.damage = 0;
         NPC.defense = 0;
         NPC.value = 0f;
@@ -99,6 +98,7 @@ public sealed class LavaLizardCritter : ModNPC {
         NPC.noTileCollide = false;
         NPC.lavaImmune = true;
         NPC.aiStyle = -1;
+        //NPC.friendly = true;
 
         NPC.DeathSound = SoundID.NPCDeath1;
 
@@ -123,8 +123,9 @@ public sealed class LavaLizardCritter : ModNPC {
         CurrentState = State.Walk;
         WalkDirection = Main.rand.NextBool() ? 1 : -1;
     }
-
+    int forceDig = 0;
     public override void AI() {
+        NPC.target = -1;
         NPC.TargetClosest(false);
         Player player = Main.player[NPC.target];
 
@@ -138,9 +139,8 @@ public sealed class LavaLizardCritter : ModNPC {
                 NPC.velocity.Y += 0.2f;
                 if(NPC.velocity.Y > 10f) NPC.velocity.Y = 10f;
 
-                if(!NPC.collideY) {
-                    NPC.velocity.X *= 0.9f;
-                }
+                //if(!NPC.collideY) NPC.velocity.X *= 0.9f;
+                //This code makes it get stuck on slopes so I commented it out
                 else {
                     NPC.velocity.X = WalkDirection * 1.5f;
                     Collision.StepUp(ref NPC.position, ref NPC.velocity, NPC.width, NPC.height, ref NPC.stepSpeed, ref NPC.gfxOffY);
@@ -149,13 +149,17 @@ public sealed class LavaLizardCritter : ModNPC {
                     int checkGroundY = (int)((NPC.position.Y + NPC.height + 3) / 16f);
                     var groundTile = Framing.GetTileSafely(checkGroundX, checkGroundY);
 
-                    if(!groundTile.HasTile || !Main.tileSolid[groundTile.TileType]) {
+                    if(!groundTile.HasTile || !Main.tileSolid[groundTile.TileType]) { //This makes it flip-flop jitter really fast when on a single tile, so I'm forcing it to dig after doing it thrice
                         WalkDirection *= -1;
                         NPC.velocity.X = 0;
                         NPC.netUpdate = true;
+                        forceDig += 1;
+                        Main.NewText("forceIdle" + forceDig, Microsoft.Xna.Framework.Color.White);
+                        if(forceDig > 3) CurrentState = State.Burrowing;
+
                     }
 
-                    if(StateTimer >= Main.rand.Next(60 * 2, 60 * 5) && NPC.collideY) {
+                    if(StateTimer >= Main.rand.Next(60 / 2, 60 * 5) && NPC.collideY) { // Idles after 0.5-5 seconds
                         CurrentState = State.Idle;
                         BurrowResurfaceTimer = Main.rand.Next(60 * 1, 60 * 8);
                         NPC.netUpdate = true;
@@ -215,7 +219,7 @@ public sealed class LavaLizardCritter : ModNPC {
 
                 BurrowResurfaceTimer--;
                 if(BurrowResurfaceTimer <= 0) {
-                    Vector2 resurfaceSpot = FindSafeResurfaceSpot(player.Center, 16 * 15);
+                    Vector2 resurfaceSpot = FindSafeResurfaceSpot(player.Center, 16 * 25);
                     if(resurfaceSpot != Vector2.Zero) {
                         NPC.Center = resurfaceSpot;
                         CurrentState = State.Resurfacing;

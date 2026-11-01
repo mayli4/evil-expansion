@@ -77,9 +77,9 @@ public class DevouringPotionBuffPlayer : ModPlayer {
                 Vector2 customVelocity = directionAway.SafeNormalize(Vector2.UnitX) * 0.001f;
                 Projectile.NewProjectile(
                         target.GetSource_FromAI(),
-                        target.Center + new Vector2(
-                            Main.rand.NextFloat(-8f, 8f), 
-                            Main.rand.NextFloat(-8f, 8f)
+                        target.Center + customVelocity * 10000f + new Vector2(
+                            target.width * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-10f, 10f),
+                            target.height * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-10f, 10f)
                         ),
                         customVelocity,
                         ModContent.ProjectileType<EvilSplatter>(),
@@ -90,7 +90,7 @@ public class DevouringPotionBuffPlayer : ModPlayer {
                         ai1: 0
                         );
                     SoundEngine.PlaySound(SoundID.Item4 with { Volume = 0.15f , PitchRange = (1.1f, 1.6f) }, target.Center);
-                    SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.15f , PitchRange = (0.6f, 1.0f) }, target.Center);
+                    SoundEngine.PlaySound(SoundID.NPCDeath52 with { Volume = 0.1f , PitchRange = (0.6f, 1.0f) }, target.Center);
             }
         }
     }

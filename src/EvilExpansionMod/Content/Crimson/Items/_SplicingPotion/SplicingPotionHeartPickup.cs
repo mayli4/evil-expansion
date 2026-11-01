@@ -20,6 +20,12 @@ public class SplicingPotionHeartPickup : ModItem {
         Item.noGrabDelay = 0;
         ItemID.Sets.ItemIconPulse[Item.type] = true;
     }
+    public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI) {
+        float baseScale = 1.0f;
+        baseScale += MathF.Sin(Main.GameUpdateCount / 20f) * 0.1f;
+        scale = baseScale;
+        return true; // Return false to stop the default engine drawing
+    }
     // 1. SEMI-TRANSPARENT & GLOWING EFFECT
     public override Color? GetAlpha(Color lightColor)
     {
@@ -31,7 +37,6 @@ public class SplicingPotionHeartPickup : ModItem {
     // PostUpdate runs every frame while the item exists as a physical world drop
     public override void PostUpdate()
     {
-        // Emit a soft red/pink light around the item's world position
         Lighting.AddLight(Item.Center, 1.0f, 0.2f, 0.6f);
     }
     
@@ -40,12 +45,22 @@ public class SplicingPotionHeartPickup : ModItem {
             grabRange += Item.lifeGrabRange;
     }
 
+    float pullAcceleration = 0f;
+    public override bool GrabStyle(Player player) {
+        // Makes the item zip to the player
+        Vector2 pullDirection = player.Center - Item.Center;
+        pullDirection.Normalize();
+        Item.velocity = pullDirection * pullAcceleration;
+        if(pullAcceleration < 12) pullAcceleration += 1f;
+
+        return true;
+    }
     public override bool ItemSpace(Player Player) => true;
 
     public override bool OnPickup(Player Player) {
         SoundEngine.PlaySound(SoundID.Grab, Player.Center);
-        Player.statLife += 4;
-        Player.HealEffect(4);
+        Player.statLife += 3;
+        Player.HealEffect(3);
 
         return false;
     }

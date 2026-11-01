@@ -18,7 +18,7 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
     private int _stingerDuration;
     private int _healthDrained;
     private int _healthDrainTimer;
-    private int health_drain_interval = 30 / (int) (Main.expertMode ? (Main.masterMode ? 2.25f : 1.5f) : 1f);
+    private int health_drain_interval = 30 / (int) (Main.expertMode ? (Main.masterMode ? 2.0f : 1.5f) : 1f);
     private const int health_drain_amount = 15;
     private const float health_return_percentage = 0.75f;
 
@@ -91,7 +91,7 @@ public sealed class DevilOWarStingerProjectile : ModProjectile {
                 }
             }
 
-            if(_stingerDuration >= DevilOWarNPC.STINGER_DURATION_MAX || ParentNPC.Center.Distance(TargetPlayer.Center) >= DevilOWarNPC.CHARGING_RADIUS + 16 * 15) {
+            if(_stingerDuration >= DevilOWarNPC.STINGER_DURATION_MAX || ParentNPC.Center.Distance(TargetPlayer.Center) >= DevilOWarNPC.CHARGING_RADIUS + 16 * 5) {
                 StartRetraction();
             }
         }

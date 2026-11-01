@@ -32,8 +32,8 @@ public sealed class DevilOWarNPC : ModNPC {
 
     public Player Target => Main.player[NPC.target];
 
-    private const int FOLLOW_RANGE = 8 * 30;
-    public const int CHARGING_RADIUS = 26 * 10;
+    private const int FOLLOW_RANGE = 16 * 15;
+    public const int CHARGING_RADIUS = 16 * 17;
     private const int ATTACK_COOLDOWN = 60 * 1;
     public const int STINGER_DURATION_MAX = 60 * 30;
     public const int MAX_DRAIN_FOR_LEVEL = 160;
@@ -64,7 +64,7 @@ public sealed class DevilOWarNPC : ModNPC {
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
-        NPC.knockBackResist = 0.05f;
+        NPC.knockBackResist = 0.01f;
         NPC.friendly = false;
 
         NPC.HitSound = SoundID.NPCHit13;
@@ -81,9 +81,6 @@ public sealed class DevilOWarNPC : ModNPC {
     }
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
         if(Main.expertMode) {
-            NPC.knockBackResist = 0.01f;
-        }
-        if(Main.masterMode) {
             NPC.knockBackResist = 0f;
         }
     }
@@ -226,7 +223,7 @@ public sealed class DevilOWarNPC : ModNPC {
                             NPC.velocity = Vector2.Normalize(NPC.velocity);
                         }
 
-                        if(NPC.Center.Distance(Target.Center) >= CHARGING_RADIUS + 16 * 15) {
+                        if(NPC.Center.Distance(Target.Center) >= CHARGING_RADIUS + 16 * 5) {
                             RetractStinger();
                         }
                     }

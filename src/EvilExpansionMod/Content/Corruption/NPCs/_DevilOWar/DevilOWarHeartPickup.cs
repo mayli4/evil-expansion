@@ -7,6 +7,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Daybreak.Common.Features.Hooks.ModifyItemDrawBasics;
 
 namespace EvilExpansionMod.Content.Corruption;
 
@@ -18,6 +19,8 @@ public class DevilOWarHeartPickup : ModItem {
 
         Item.maxStack = 1;
         Item.noGrabDelay = 0;
+        Item.rare = ItemRarityID.Green;
+        ItemID.Sets.ItemNoGravity[Type] = false;
     }
 
     public override void GrabRange(Player player, ref int grabRange) {
@@ -25,6 +28,16 @@ public class DevilOWarHeartPickup : ModItem {
             grabRange += Item.lifeGrabRange;
     }
 
+    float pullAcceleration = 0f;
+    public override bool GrabStyle(Player player) {
+        // Makes the item zip to the player
+        Vector2 pullDirection = player.Center - Item.Center;
+        pullDirection.Normalize();
+        Item.velocity = pullDirection * pullAcceleration;
+        if (pullAcceleration < 12) pullAcceleration += 0.75f;
+
+        return true;
+    }
     public override bool ItemSpace(Player Player) => true;
 
     public override bool OnPickup(Player Player) {
@@ -37,6 +50,18 @@ public class DevilOWarHeartPickup : ModItem {
         }
 
         return false;
+    }
+
+    bool noGravity = false;
+    public override void PostUpdate() {
+        if(Item.wet) {
+            if(Item.velocity.Y > -3f) {
+                Item.velocity.Y -= Main.rand.NextFloat(0.3f, 0.5f);
+            }
+            noGravity = true;
+        }
+
+        if(noGravity && !Item.wet && Item.velocity.Y > 0 && !Item.beingGrabbed) Item.velocity.Y = 0f;
     }
 
     public override bool PreDrawInWorld(SpriteBatch spriteBatch, Color lightColor, Color alphaColor, ref float rotation, ref float scale, int whoAmI) {
@@ -56,7 +81,7 @@ public class DevilOWarHeartPickup : ModItem {
                 tex,
                 Item.position - Main.screenPosition + Main.rand.NextVector2Unit() * 2f,
                 null,
-                Color.GreenYellow,
+                Color.YellowGreen,
                 rotation,
                 Vector2.Zero,
                 scale,
@@ -65,17 +90,17 @@ public class DevilOWarHeartPickup : ModItem {
             );
         }
 
-        spriteBatch.Draw(
-            glowTexture,
-            Item.position - Main.screenPosition,
-            null,
-            bigGlowColor,
-            0f,
-            glowTexture.Size() * 0.5f - new Vector2(40, 40),
-            0.3f,
-            SpriteEffects.None,
-            0
-        );
+        //spriteBatch.Draw(
+        //    glowTexture,
+        //    Item.position - Main.screenPosition,
+        //    null,
+        //    bigGlowColor,
+        //    0f,
+        //    glowTexture.Size() * 0.5f - new Vector2(40, 40),
+        //    0.3f,
+        //    SpriteEffects.None,
+        //    0
+        //);
 
         Lighting.AddLight(Main.item[whoAmI].position, bigGlowColor.ToVector3());
 

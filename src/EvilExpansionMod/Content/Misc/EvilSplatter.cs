@@ -21,7 +21,7 @@ public class EvilSplatter : ModProjectile {
         Projectile.knockBack = 0f;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
-        Projectile.timeLeft = 35;
+        Projectile.timeLeft = 12;
         Projectile.penetrate = -1;
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
@@ -73,9 +73,9 @@ public class EvilSplatter : ModProjectile {
     }
     public override void AI() {
         
-        if (Projectile.timeLeft < 17){
+        if (Projectile.timeLeft < 8){
         // Increase alpha from 0 (opaque) to 255 (fully transparent) smoothly
-            Projectile.alpha += 15; // 15 * 17 = 255 (caps at 255 automatically or clamp it)
+            Projectile.alpha += 30; // 15 * 17 = 255 (caps at 255 automatically or clamp it)
             
             if (Projectile.alpha > 255){
                 Projectile.alpha = 255;

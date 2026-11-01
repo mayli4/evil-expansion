@@ -177,10 +177,10 @@ public sealed class BloodWarden : ModProjectile {
                 break;
         }
 
-        if(Main.rand.NextBool(12)) {
+        if(Main.rand.NextBool(18)) {
             var particle = BloodParticle.NewParticle(
                 Projectile.Center + Vector2.UnitY * 30f + Main.rand.NextVector2Unit() * Main.rand.NextFloat(15f),
-                Vector2.UnitY * Projectile.velocity.Y,
+                Vector2.Zero, //Vector2.UnitY * Projectile.velocity.Y,
                 Main.rand.NextFloat(0.2f, 0.5f),
                 new Color(180, 15, 25));
             ParticleEngine.PARTICLES.Add(particle);

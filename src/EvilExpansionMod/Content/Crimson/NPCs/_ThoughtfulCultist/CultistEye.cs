@@ -14,8 +14,7 @@ namespace EvilExpansionMod.Content.Crimson;
 
 public class CultistEye : ModNPC {
     public override string Texture => Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistEye.KEY;
-    static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 1.1f : 1.05f) : 1f;
-    private int _dustTimer = 0;
+    static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 1.2f : 1.1f) : 1f;
     public override void SetStaticDefaults() {
         var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
         {
@@ -25,6 +24,9 @@ public class CultistEye : ModNPC {
         };
         NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
         Main.npcFrameCount[Type] = 3;
+
+        //NPCID.Sets.DontDoHardmodeScaling[NPC.type] = true;
+        // Doesn't work???????????????
     }
 
     public override void SetDefaults() {
@@ -58,12 +60,16 @@ public class CultistEye : ModNPC {
         });
     }
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
-        if(Main.expertMode) {
-            NPC.defense = 15;
-        }
-        if(Main.masterMode) {
-            NPC.defense = 25;
-        }
+        //if(Main.expertMode) {
+        //    NPC.lifeMax = 275;
+        //    NPC.defense = 15;
+        //    NPC.damage = 90;
+        //}
+        //if(Main.masterMode) {
+        //    NPC.lifeMax = 375;
+        //    NPC.defense = 25;
+        //    NPC.damage = 135;
+        //}
     }
 
     public bool EyeAltCostume;
@@ -95,23 +101,17 @@ public class CultistEye : ModNPC {
             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood);
         }
 
-        _dustTimer++;
-        if(_dustTimer >= Main.rand.NextFloat(4, 50)) // Spawns every x ticks
-        {
-            if(Main.netMode != NetmodeID.Server) {
-                int dustIndex = Dust.NewDust(
-                    NPC.position,
-                    NPC.width,
-                    NPC.height,
-                    DustID.Shadowflame,
-                    0f, 0f,
-                    100,
-                    default,
-                    Main.rand.NextFloat(0.5f, 1.5f)
-                );
-                Main.dust[dustIndex].noGravity = false;
-            }
-            _dustTimer = 0;
+        if(Main.rand.NextBool(15)) {
+            Dust.NewDust(
+                NPC.position,
+                NPC.width,
+                NPC.height,
+                DustID.Shadowflame,
+                0f, 0f,
+                100,
+                default,
+                Main.rand.NextFloat(0.5f, 1.5f)
+            );
         }
     }
     public override void HitEffect(NPC.HitInfo hit) {

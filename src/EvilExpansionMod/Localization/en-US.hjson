@@ -590,6 +590,191 @@ Mods: {
 				DisplayName: Charred Bloodwood Fence
 				Tooltip: ""
 			}
+
+			CharredBloodwoodWorkbenchItem: {
+				DisplayName: Charred Bloodwood Workbench Item
+				Tooltip: ""
+			}
+
+			CharredBloodwoodWorkbench: {
+				DisplayName: Charred Bloodwood Workbench
+				Tooltip: ""
+			}
+
+			CharredBloodwoodBathtub: {
+				DisplayName: Charred Bloodwood Bathtub
+				Tooltip: ""
+			}
+
+			CharredBloodwoodBed: {
+				DisplayName: Charred Bloodwood Bed
+				Tooltip: ""
+			}
+
+			CharredBloodwoodBookcase: {
+				DisplayName: Charred Bloodwood Bookcase
+				Tooltip: ""
+			}
+
+			CharredBloodwoodCandelabra: {
+				DisplayName: Charred Bloodwood Candelabra
+				Tooltip: ""
+			}
+
+			CharredBloodwoodCandleItem: {
+				DisplayName: Charred Bloodwood Candle Item
+				Tooltip: ""
+			}
+
+			CharredBloodwoodChair: {
+				DisplayName: Charred Bloodwood Chair
+				Tooltip: ""
+			}
+
+			CharredBloodwoodChandelier: {
+				DisplayName: Charred Bloodwood Chandelier
+				Tooltip: ""
+			}
+
+			CharredBloodwoodChest: {
+				DisplayName: Charred Bloodwood Chest
+				Tooltip: ""
+			}
+
+			CharredBloodwoodClock: {
+				DisplayName: Charred Bloodwood Clock
+				Tooltip: ""
+			}
+
+			CharredBloodwoodDresser: {
+				DisplayName: Charred Bloodwood Dresser
+				Tooltip: ""
+			}
+
+			CharredBloodwoodLamp: {
+				DisplayName: Charred Bloodwood Lamp
+				Tooltip: ""
+			}
+
+			CharredBloodwoodLantern: {
+				DisplayName: Charred Bloodwood Lantern
+				Tooltip: ""
+			}
+
+			CharredBloodwoodSink: {
+				DisplayName: Charred Bloodwood Sink
+				Tooltip: ""
+			}
+
+			CharredBloodwoodSofa: {
+				DisplayName: Charred Bloodwood Sofa
+				Tooltip: ""
+			}
+
+			CharredBloodwoodTable: {
+				DisplayName: Charred Bloodwood Table
+				Tooltip: ""
+			}
+
+			CharredBloodwoodToilet: {
+				DisplayName: Charred Bloodwood Toilet
+				Tooltip: ""
+			}
+
+			CorruptAshwoodBathtub: {
+				DisplayName: Corrupt Ashwood Bathtub
+				Tooltip: ""
+			}
+
+			CorruptAshwoodBed: {
+				DisplayName: Corrupt Ashwood Bed
+				Tooltip: ""
+			}
+
+			CorruptAshwoodBookcase: {
+				DisplayName: Corrupt Ashwood Bookcase
+				Tooltip: ""
+			}
+
+			CorruptAshwoodCandelabra: {
+				DisplayName: Corrupt Ashwood Candelabra
+				Tooltip: ""
+			}
+
+			CorruptAshwoodCandleItem: {
+				DisplayName: Corrupt Ashwood Candle Item
+				Tooltip: ""
+			}
+
+			CorruptAshwoodChair: {
+				DisplayName: Corrupt Ashwood Chair
+				Tooltip: ""
+			}
+
+			CorruptAshwoodChandelier: {
+				DisplayName: Corrupt Ashwood Chandelier
+				Tooltip: ""
+			}
+
+			CorruptAshwoodChest: {
+				DisplayName: Corrupt Ashwood Chest
+				Tooltip: ""
+			}
+
+			CorruptAshwoodClock: {
+				DisplayName: Corrupt Ashwood Clock
+				Tooltip: ""
+			}
+
+			CorruptAshwoodDresser: {
+				DisplayName: Corrupt Ashwood Dresser
+				Tooltip: ""
+			}
+
+			CorruptAshwoodLamp: {
+				DisplayName: Corrupt Ashwood Lamp
+				Tooltip: ""
+			}
+
+			CorruptAshwoodLantern: {
+				DisplayName: Corrupt Ashwood Lantern
+				Tooltip: ""
+			}
+
+			CorruptAshwoodSink: {
+				DisplayName: Corrupt Ashwood Sink
+				Tooltip: ""
+			}
+
+			CorruptAshwoodSofa: {
+				DisplayName: Corrupt Ashwood Sofa
+				Tooltip: ""
+			}
+
+			CorruptAshwoodTable: {
+				DisplayName: Corrupt Ashwood Table
+				Tooltip: ""
+			}
+
+			CorruptAshwoodToilet: {
+				DisplayName: Corrupt Ashwood Toilet
+				Tooltip: ""
+			}
+
+			CorruptAshwoodWorkbench: {
+				DisplayName: Corrupt Ashwood Workbench
+				Tooltip: ""
+			}
+
+			CharredBloodwoodDoor: {
+				DisplayName: Charred Bloodwood Door
+				Tooltip: ""
+			}
+
+			CorruptAshwoodDoor: {
+				DisplayName: Corrupt Ashwood Door
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {

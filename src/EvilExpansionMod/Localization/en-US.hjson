@@ -775,6 +775,21 @@ Mods: {
 				DisplayName: Corrupt Ashwood Door
 				Tooltip: ""
 			}
+
+			CorruptAshwoodFenceItem: {
+				DisplayName: Corrupt Ashwood Fence Item
+				Tooltip: ""
+			}
+
+			CorruptAshwoodPlatformItem: {
+				DisplayName: Corrupt Ashwood Platform Item
+				Tooltip: ""
+			}
+
+			CorruptAshwoodWallItem: {
+				DisplayName: Corrupt Ashwood Wall Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {

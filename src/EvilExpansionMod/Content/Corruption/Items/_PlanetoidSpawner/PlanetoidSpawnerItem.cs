@@ -18,8 +18,8 @@ public class PlanetoidSpawnerItem : ModItem {
         Item.width = 30;
         Item.height = 30;
         Item.useStyle = ItemUseStyleID.Shoot;
-        Item.useTime = 2;
-        Item.useAnimation = 3;
+        Item.useTime = 4;
+        Item.useAnimation = 5;
 
         Item.DamageType = DamageClass.Magic;
         Item.channel = true;
@@ -27,7 +27,7 @@ public class PlanetoidSpawnerItem : ModItem {
         Item.noUseGraphic = true;
 
         Item.damage = 500;
-        Item.knockBack = 1f;
+        Item.knockBack = 5f;
         Item.crit = 30;
 
         Item.shoot = ModContent.ProjectileType<PlanetoidProjectile>();

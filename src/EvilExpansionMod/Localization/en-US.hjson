@@ -143,7 +143,7 @@ Mods: {
 				Damage: 1-{0} magic damage
 				Tooltip:
 					'''
-					Creates a planetoid which slowly grows in size
+					Slowly grows a corrupt planetoid
 					Planetoids that grow too large explode violently
 					'Definitely DON’T use purification powder on these…'
 					'''
@@ -897,6 +897,7 @@ Mods: {
 			TerrorBatSpitDeath.DisplayName: Terror Bat Spit Death
 			CrytapeteSplatter.DisplayName: Crytapete Splatter
 			TearDeath.DisplayName: Tear Death
+			PlanetoidDebris.DisplayName: Planetoid Debris
 		}
 
 		Biomes: {

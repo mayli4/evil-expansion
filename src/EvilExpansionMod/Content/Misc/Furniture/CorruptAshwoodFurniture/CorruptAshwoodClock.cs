@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace EvilExpansionMod.Content.Misc.Furniture.CorruptAshwoodFurniture;
 
-public class CorruptAshwoodClockTile : ClockTile {
+public class CorruptAshwoodClockTile : ClockTile<CorruptAshwoodClock> {
     public override string Texture => Assets.Images.Furniture.CorruptAshwoodFurniture.CorruptAshwoodClockTile.KEY;
 };
 

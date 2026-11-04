@@ -45,7 +45,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
         Projectile.DamageType = DamageClass.Ranged;
         Projectile.timeLeft = FullFlameFrames * 2;
         Projectile.ownerHitCheck = true;
-        Projectile.localNPCHitCooldown = 5;
+        Projectile.localNPCHitCooldown = 6;
         Projectile.usesLocalNPCImmunity = true;
     }
     public override bool? CanCutTiles() {

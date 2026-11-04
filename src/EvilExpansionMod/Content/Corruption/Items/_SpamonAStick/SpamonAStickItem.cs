@@ -315,7 +315,7 @@ public class SpamOnAStickProjectile : ModProjectile {
 
             Projectile.NewProjectile(
                 Main.player[Projectile.owner].GetSource_FromAI(),
-                Projectile.position,
+                Projectile.Center,
                 new Microsoft.Xna.Framework.Vector2(0f, 0f),
                 ModContent.ProjectileType<SpamOnAStickCrit>(),
                 0,
@@ -327,7 +327,7 @@ public class SpamOnAStickProjectile : ModProjectile {
             );
             Projectile.NewProjectile(
                 Main.player[Projectile.owner].GetSource_FromAI(),
-                Projectile.position,
+                Projectile.Center,
                 new Microsoft.Xna.Framework.Vector2(0f, 0f),
                 ModContent.ProjectileType<SpamOnAStickShockwave>(),
                 Projectile.damage / 2,
@@ -390,7 +390,7 @@ public class SpamOnAStickProjectile : ModProjectile {
         if(CurrentAIState is AIState.Dropping) {
             Projectile.NewProjectile(
                 Main.player[Projectile.owner].GetSource_FromAI(),
-                target.position,
+                target.Center,
                 new Microsoft.Xna.Framework.Vector2(0f, 0f),
                 ModContent.ProjectileType<SpamOnAStickCrit>(),
                 0,
@@ -402,7 +402,7 @@ public class SpamOnAStickProjectile : ModProjectile {
             );
             Projectile.NewProjectile(
                 Main.player[Projectile.owner].GetSource_FromAI(),
-                target.position,
+                target.Center,
                 new Microsoft.Xna.Framework.Vector2(0f, 0f),
                 ModContent.ProjectileType<SpamOnAStickShockwave>(),
                 Projectile.damage,
@@ -414,7 +414,7 @@ public class SpamOnAStickProjectile : ModProjectile {
             );
             for(int i = 0; i < 7; i++) {// Visuals: Create dust explosion effects here
                 Dust.NewDust(
-                    Projectile.position,
+                    target.Center,
                     Projectile.width,
                     Projectile.height,
                     DustID.CorruptGibs,

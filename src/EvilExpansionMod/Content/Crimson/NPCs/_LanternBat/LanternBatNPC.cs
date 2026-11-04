@@ -67,7 +67,7 @@ public class LanternBatNPC : ModNPC {
         NPC.noTileCollide = true;
 
         NPC.HitSound = SoundID.NPCHit1;
-        NPC.DeathSound = SoundID.NPCDeath4;
+        NPC.DeathSound = SoundID.NPCDeath4 with { Pitch = -0.6f };
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
 
@@ -241,7 +241,7 @@ public class LanternBatNPC : ModNPC {
         }
 
         if(StateTimer % 30 == 0) {
-            SoundEngine.PlaySound(SoundID.DD2_SkyDragonsFurySwing with { Pitch = 0.1f * Main.rand.NextFloatDirection() }, NPC.Center);
+            SoundEngine.PlaySound(SoundID.DD2_SkyDragonsFurySwing with { Volume = 0.5f, Pitch = 0.1f * Main.rand.NextFloatDirection() }, NPC.Center);
         }
 
         NPC.rotation = Utils.AngleLerp(NPC.rotation, Math.Clamp(NPC.velocity.X * 0.15f, -0.65f, 0.65f), 0.1f);

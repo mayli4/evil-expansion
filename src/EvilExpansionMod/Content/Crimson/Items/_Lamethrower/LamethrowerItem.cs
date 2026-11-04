@@ -35,7 +35,7 @@ public class LamethrowerItem : ModItem {
         Item.shootSpeed = 6f;
 
         Item.channel = true;
-        Item.useTurn = false;
+        Item.useTurn = true;
 
         Item.UseSound = SoundID.Item100;
     }

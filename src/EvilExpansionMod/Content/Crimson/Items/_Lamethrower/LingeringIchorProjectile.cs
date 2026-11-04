@@ -24,7 +24,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
         Projectile.timeLeft = 240;
         Projectile.DamageType = DamageClass.Ranged;
         Projectile.usesIDStaticNPCImmunity = true;
-        Projectile.idStaticNPCHitCooldown = 5;
+        Projectile.idStaticNPCHitCooldown = 12;
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {

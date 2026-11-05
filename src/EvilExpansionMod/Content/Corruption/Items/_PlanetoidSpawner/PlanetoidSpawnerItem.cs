@@ -32,6 +32,7 @@ public class PlanetoidSpawnerItem : ModItem {
 
         Item.shoot = ModContent.ProjectileType<PlanetoidProjectile>();
         Item.shootSpeed = 1f;
+        Item.mana = 20;
         Item.value = Item.sellPrice(gold: 5);
         Item.rare = ItemRarityID.LightPurple;
         Item.autoReuse = false;

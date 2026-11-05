@@ -988,7 +988,7 @@ public abstract class ChestTile<T> : ModTile where T : ModItem {
             if(chest != -1) {
                 Main.stackSplit = 600;
                 if(Main.chest[chest].name == string.Empty) {
-                    Main.chest[chest].name = ;
+                    Main.chest[chest].name = "PlaceHolderNameHereRotonPleaseFixThanks";
                 }
                 if(chest == player.chest) {
                     player.chest = -1;

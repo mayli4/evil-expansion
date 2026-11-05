@@ -47,11 +47,11 @@ public class GulpyYoyoProjectile : ModProjectile {
         Projectile.DamageType = DamageClass.MeleeNoSpeed;
         Projectile.penetrate = -1;
         Projectile.usesLocalNPCImmunity = true;
-        Projectile.localNPCHitCooldown = 8;
+        Projectile.localNPCHitCooldown = 6;
     }
 
     public override void AI() {
-        Main.NewText("ChompProgress" + ChompProgress, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("ChompProgress" + ChompProgress, Microsoft.Xna.Framework.Color.White);
 
         var maxDistance = 200f * 16f;
         if(Projectile.Center.DistanceSQ(Main.player[Projectile.owner].Center) > maxDistance * maxDistance) {

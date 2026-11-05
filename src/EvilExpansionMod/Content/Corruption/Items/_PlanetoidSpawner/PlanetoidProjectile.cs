@@ -526,6 +526,16 @@ public class PlanetoidProjectile : ModProjectile {
             CurrentTextureIndex = newTextureIndex;
             _shake = 1f;
 
+            if(Projectile.owner == Main.myPlayer) { // Mana drain with stage transition
+                Player player = Main.player[Projectile.owner];
+                int manaCost = player.HeldItem.mana;
+                if(player.statMana >= manaCost) {
+                    player.statMana -= manaCost;
+                    //player.ManaEffect(-manaCost);
+                }
+                else Projectile.Kill();
+            }
+
             SoundEngine.PlaySound(SoundID.DD2_BetsyFireballShot with { Volume = Main.rand.NextFloat(0.4f, 0.7f) }, Projectile.Center);
         }
 

@@ -154,7 +154,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                         hitCenter.Y += 8f;
                         Projectile.NewProjectile(
                             Projectile.GetSource_FromThis(),
-                            hitCenter - Vector2.UnitY * 5, // Does the "- Vector2.UnitY * 5" bit even do anything......
+                            hitCenter - Vector2.UnitY * 5, // Does the "- Vector2.UnitY * 5" bit even do anything...... idk, you're the one who wrote it lol
                             Vector2.Zero,
                             ModContent.ProjectileType<MaceCrack>(),
                             0,
@@ -458,14 +458,19 @@ public class HeadPounderHeldProjectile : ModProjectile {
         var rotation = (Projectile.rotation + MathF.PI / 4f) * Owner.direction;
         Vector2 origin = new(offset - 5f, texture.Height - offset);
 
-        var trailColor = new Color(96, 91, 206) * _outlineAlpha * 0.4f;
+        var trailColor = new Color(174, 203, 5) * _outlineAlpha * 0.4f;
 
         Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
             .SetTexture(TextureAssets.MagicPixel.Value)
             .DrawTrail(
                 _trailPositions.Select(p => p + Projectile.position).ToArray(),
-                static t => (1.25f - t) * 20f,
-                _ => trailColor
+                static t => (1.25f - t) * 20f ,
+                t => Color.Lerp(trailColor, new Color(0, 0, 0, 0), t)
+            )
+            .DrawTrail(
+                _trailPositions.Select(p => p + Projectile.position).ToArray(),
+                static t => (1.25f - t) * 25f,
+                t => Color.Lerp(new Color(105f, 136f, 20f), new Color(0, 0, 0, 0), t)
             )
             .SetSamplerState(SamplerState.PointClamp)
             .DrawTexture(new()
@@ -478,8 +483,8 @@ public class HeadPounderHeldProjectile : ModProjectile {
                 Scale = Vector2.One * Projectile.scale,
                 SpriteEffects = Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
             })
-            .ApplyOutline(trailColor)
-            .ApplyOutline(new Color(230, 255, 5) * _outlineAlpha)
+            //.ApplyOutline(trailColor)
+            //.ApplyOutline(new Color(5, 30, 0, 0) * _outlineAlpha) didy
             .End();
 
         var tintFlashFrames = 15;

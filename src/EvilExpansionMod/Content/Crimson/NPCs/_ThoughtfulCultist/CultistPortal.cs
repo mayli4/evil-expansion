@@ -16,6 +16,7 @@ namespace EvilExpansionMod.Content.Crimson;
 internal enum PortalType {
     Spear,
     Blood,
+    Eyes,
 }
 
 public class CultistPortal : ModProjectile {
@@ -76,30 +77,7 @@ public class CultistPortal : ModProjectile {
         var t = Projectile.timeLeft / Projectile.ai[1];
         switch(PortalType) {
             case PortalType.Blood:
-                if(Main.netMode != NetmodeID.MultiplayerClient && !_spawnedEye && t < 0.6f) {
-                    _spawnedEye = true;
 
-                    var spawnPosition = Projectile.Center + Projectile.velocity * 20f;
-                    var npc = NPC.NewNPCDirect(
-                        Projectile.GetSource_FromAI(),
-                        (int)spawnPosition.X,
-                        (int)spawnPosition.Y,
-                        ModContent.NPCType<CultistEye>()
-                    );
-                    npc.velocity = Projectile.velocity * 12f;
-
-                    SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistGoreFlingLowLayer.Asset with
-                    {
-                        Pitch = Main.rand.NextFloatDirection() * 0.1f,
-                        MaxInstances = 3,
-                    }, Projectile.Center);
-
-                    SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistGoreFlingSquelch.Asset with
-                    {
-                        Pitch = Main.rand.NextFloatDirection() * 0.1f,
-                        MaxInstances = 3,
-                    }, Projectile.Center);
-                }
 
                 if(Main.rand.NextBool(2)) {
                     Dust.NewDustPerfect(
@@ -136,6 +114,8 @@ public class CultistPortal : ModProjectile {
                 }
                 break;
             case PortalType.Spear:
+                break;
+            case PortalType.Eyes:
                 break;
         }
     }
@@ -190,6 +170,8 @@ public class CultistPortal : ModProjectile {
             0f);
 
         switch(PortalType) {
+
+
             case PortalType.Blood:
                 break;
             case PortalType.Spear:
@@ -226,7 +208,44 @@ public class CultistPortal : ModProjectile {
                     0f
                 );
                 break;
+            case PortalType.Eyes:
+                break;
         }
+
+        switch(PortalType) {
+            case PortalType.Eyes:
+                if(Main.netMode != NetmodeID.MultiplayerClient && !_spawnedEye && t < 0.6f) {
+                    _spawnedEye = true;
+
+                    var spawnPosition = Projectile.Center + Projectile.velocity * 20f;
+                    var npc = NPC.NewNPCDirect(
+                        Projectile.GetSource_FromAI(),
+                        (int)spawnPosition.X,
+                        (int)spawnPosition.Y,
+                        ModContent.NPCType<CultistEye>()
+                    );
+                    npc.velocity = Projectile.velocity * 12f;
+
+                    SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistGoreFlingLowLayer.Asset with
+                    {
+                        Pitch = Main.rand.NextFloatDirection() * 0.1f,
+                        MaxInstances = 3,
+                    }, Projectile.Center);
+
+                    SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistGoreFlingSquelch.Asset with
+                    {
+                        Pitch = Main.rand.NextFloatDirection() * 0.1f,
+                        MaxInstances = 3,
+                    }, Projectile.Center);
+                }
+                break;
+            case PortalType.Spear:
+                break;
+            case PortalType.Blood:
+               
+                break;
+        }
+
 
         Main.spriteBatch.End(out var ss);
         Main.spriteBatch.Begin(ss with { BlendState = BlendState.Additive });

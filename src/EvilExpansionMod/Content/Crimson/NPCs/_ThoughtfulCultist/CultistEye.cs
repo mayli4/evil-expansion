@@ -3,6 +3,7 @@ using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
@@ -22,11 +23,15 @@ public class CultistEye : ModNPC {
             PortraitPositionXOverride = 0f,
             PortraitPositionYOverride = 2f
         };
+        NPCID.Sets.TrailingMode[NPC.type] = 0;
+        NPCID.Sets.TrailCacheLength[NPC.type] = 5;
         NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
         Main.npcFrameCount[Type] = 3;
 
         //NPCID.Sets.DontDoHardmodeScaling[NPC.type] = true;
-        // Doesn't work???????????????
+        // Doesn't work??????????????? lol
+       
+       
     }
 
     public override void SetDefaults() {
@@ -81,6 +86,10 @@ public class CultistEye : ModNPC {
             return;
         }
     }
+    int DashWindupTimer = 60;
+    int DashTimer = 15;
+
+    private Vector2 dashDirection;
 
     public override void AI() {
         NPC.TargetClosest();
@@ -89,7 +98,8 @@ public class CultistEye : ModNPC {
         if(target == null) return;
 
         var moveDirection = NPC.Center.DirectionTo(target.Center);
-        NPC.velocity += moveDirection * 0.2f * DifficultyScaler;
+
+        NPC.velocity += moveDirection * 0.3f * DifficultyScaler;
         NPC.velocity += 1f * Main.rand.NextFloatDirection()
             * MathF.Sin(NPC.whoAmI * 0.3f + Main.GameUpdateCount * 0.1f)
             * moveDirection.RotatedBy(MathF.PI / 2f);
@@ -97,9 +107,43 @@ public class CultistEye : ModNPC {
         NPC.velocity *= 0.93f;
         NPC.rotation = NPC.velocity.ToRotation() + MathF.PI;
 
+
+
+        if(Main.rand.NextBool(200) && (DashWindupTimer <= 0)) //randomly decidess ifff the eye windsup a dash
+        {
+            DashWindupTimer =30;
+        }
+
+
+
+        if(DashWindupTimer != 0)  //windup timer starts
+            {
+            DashWindupTimer--;
+            NPC.velocity -= moveDirection * 0.80f;
+        }
+        ;
+        if(DashWindupTimer == 1) //when the windup timer hits 1 it adds to the dash timer
+            {
+            dashDirection = moveDirection;
+            DashTimer = 20;
+            };
+        if(DashTimer != 0) //timer that decides how long it should  alast
+            {
+            DashTimer--;
+            SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.1f } with { PitchRange = (0.4f, 1f) });
+            moveDirection = dashDirection;
+            NPC.velocity += moveDirection * 1.9f;
+            
+
+
+        }
+        ;
+
+
+
         if(Main.rand.NextBool(6)) {
             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood);
-        }
+        } 
 
         if(Main.rand.NextBool(15)) {
             Dust.NewDust(

@@ -20,7 +20,8 @@ namespace EvilExpansionMod.Content.Crimson;
 enum CultistState {
     FlyToTarget,
     SpearAttack,
-    EyeAttack
+    EyeAttack,
+    BloodAttack,
 }
 
 public class ThoughtfulCultistNPC : ModNPC {
@@ -108,14 +109,18 @@ public class ThoughtfulCultistNPC : ModNPC {
                     NPC.velocity += directionToTarget * 0.15f;
                     NPC.velocity *= 0.97f;
                 }
-                else if(Main.netMode != NetmodeID.MultiplayerClient && _timer > 120) {
+                else if(Main.netMode != NetmodeID.MultiplayerClient && _timer > 240) {
                     if(Main.rand.NextBool()) {
                         _portalRotation = Main.rand.NextFloat(0, -MathF.PI);
+                        ChangeState(CultistState.SpearAttack);
+                    }
+                    else if(Main.rand.NextBool()) {
+                        _portalRotation = Main.rand.NextFloat(0, 2 * MathF.PI);
                         ChangeState(CultistState.EyeAttack);
                     }
                     else {
-                        _portalRotation = Main.rand.NextFloat(0, 2 * MathF.PI);
-                        ChangeState(CultistState.SpearAttack);
+                        _portalRotation = Main.rand.NextFloat(0, 4 * MathF.PI);
+                        ChangeState(CultistState.BloodAttack);
                     }
 
                     SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistPendantActivate.Asset with
@@ -154,7 +159,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                 NPC.velocity += moveDirection * 0.075f;
 
                 break;
-            case CultistState.EyeAttack:
+            case CultistState.BloodAttack:
                 NPC.velocity *= 0.98f;
 
                 if(_timer > 60 / DifficultyScaler && (int)_timer % 30 == 0) {
@@ -168,6 +173,30 @@ public class ThoughtfulCultistNPC : ModNPC {
                         25,
                         0.2f,
                         ai0: (float)PortalType.Blood,
+                        ai1: 336
+                    );
+
+                    _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
+                }
+
+                if(_timer > 120) {
+                    ChangeState(CultistState.FlyToTarget);
+                }
+                break;
+            case CultistState.EyeAttack:
+                NPC.velocity *= 0.98f;
+
+                if(_timer > 60 / DifficultyScaler && (int)_timer % 30 == 0) {
+                    var position = Target.Center + _portalRotation.ToRotationVector2() * Main.rand.NextFloat(300, 400);
+                    var direction = position.DirectionTo(Target.Center);
+                    Projectile.NewProjectile(
+                        NPC.GetSource_FromAI(),
+                        position,
+                        direction,
+                        ModContent.ProjectileType<CultistPortal>(),
+                        25,
+                        0.2f,
+                        ai0: (float)PortalType.Eyes,
                         ai1: 336
                     );
 
@@ -258,6 +287,12 @@ public class ThoughtfulCultistNPC : ModNPC {
                         t);
                     break;
                 case CultistState.EyeAttack:
+                    pendantOutlineColor = Color.Lerp(
+                        pendantOutlineColor,
+                        Color.Red,
+                        MathF.Sin(MathF.PI * _timer / 60));
+                    break;
+                case CultistState.BloodAttack:
                     pendantOutlineColor = Color.Lerp(
                         pendantOutlineColor,
                         Color.Red,

@@ -23,8 +23,6 @@ public class CultistEye : ModNPC {
             PortraitPositionXOverride = 0f,
             PortraitPositionYOverride = 2f
         };
-        NPCID.Sets.TrailingMode[NPC.type] = 0;
-        NPCID.Sets.TrailCacheLength[NPC.type] = 5;
         NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
         Main.npcFrameCount[Type] = 3;
 
@@ -97,47 +95,38 @@ public class CultistEye : ModNPC {
 
         var moveDirection = NPC.Center.DirectionTo(target.Center);
         NPC.velocity += moveDirection * 0.3f * DifficultyScaler * (1 + distanceToTarget / 16 / 20);
-        NPC.velocity += 1f * Main.rand.NextFloatDirection()
-            * MathF.Sin(NPC.whoAmI * 0.3f + Main.GameUpdateCount * 0.1f)
-            * moveDirection.RotatedBy(MathF.PI / 2f)
-            * (1 + distanceToTarget / 16 / 40);
+
+        NPC.velocity = Vector2.Lerp(NPC.velocity, moveDirection, 0.02f); 
 
         NPC.velocity *= 0.93f;
         NPC.rotation = NPC.velocity.ToRotation() + MathF.PI;
 
 
-
+        //this is really wack and i did this on a whim but it seemed easiest to do it like this so here's my explanation and thoughtprocess to any unlucky future programmer or future tobias lol;
         if(Main.rand.NextBool(200) && (DashWindupTimer <= 0)) //randomly decidess ifff the eye windsup a dash
         {
             DashWindupTimer =30;
         }
-
-
-
+            
         if(DashWindupTimer != 0)  //windup timer starts
-            {
+        {
             DashWindupTimer--;
-            NPC.velocity -= moveDirection * 0.80f;
+            NPC.velocity -= moveDirection * 1.3f;
+            NPC.velocity += 1f * MathF.Sin(NPC.whoAmI * 0.3f + Main.GameUpdateCount * 0.1f) * moveDirection.RotatedBy(MathF.PI / 2f);
         }
         ;
-        if(DashWindupTimer == 1) //when the windup timer hits 1 it adds to the dash timer
-            {
+        if(DashWindupTimer == 1) //when the windup timer hits 1 it adds to the dash timer, and when it does it captures the last known movedirection that's updated before the dash starts
+        {
             dashDirection = moveDirection;
             DashTimer = 20;
-            };
-        if(DashTimer != 0) //timer that decides how long it should  alast
-            {
+        };
+        if(DashTimer != 0) //timer that decides how long the dash should last, uses "dashdirection" so it doesnt perfectly home in on the player
+        {
             DashTimer--;
             SoundEngine.PlaySound(SoundID.Roar with { Volume = 0.1f } with { PitchRange = (0.4f, 1f) });
             moveDirection = dashDirection;
-            NPC.velocity += moveDirection * 1.9f;
-            
-
-
-        }
-        ;
-
-
+            NPC.velocity += moveDirection * 3f;
+        }; //thanks for coming to my tedtalk
 
         if(Main.rand.NextBool(6)) {
             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood);

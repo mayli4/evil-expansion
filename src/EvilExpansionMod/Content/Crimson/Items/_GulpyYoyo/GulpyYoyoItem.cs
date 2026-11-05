@@ -28,7 +28,7 @@ public class GulpyYoyoItem : ModItem {
         Item.damage = 80;
         Item.DamageType = DamageClass.MeleeNoSpeed;
         Item.knockBack = 2.5f;
-        Item.crit = 8;
+        Item.crit = 0;
         Item.channel = true;
         Item.rare = ItemRarityID.LightPurple;
         Item.value = Item.buyPrice(gold: 5);

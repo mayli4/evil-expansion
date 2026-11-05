@@ -141,17 +141,17 @@ public class BloodplateHookShield : ModProjectile {
         }
 
         Projectile.NewProjectile(
-                        player.GetSource_FromAI(),
-                        target.Center,
-                        new Microsoft.Xna.Framework.Vector2(0f, 0f),
-                        ModContent.ProjectileType<BloodExplosion>(),
-                        0,
-                        0.5f,
-                        Main.myPlayer,
-                        ai0: 0,
-                        ai1: 0,
-                        ai2: Main.rand.NextFloat(0.6f, 1f)
-                        );
+            player.GetSource_FromAI(),
+            target.Center,
+            new Microsoft.Xna.Framework.Vector2(0f, 0f),
+            ModContent.ProjectileType<BloodExplosion>(),
+            0,
+            0.5f,
+            Main.myPlayer,
+            ai0: 0,
+            ai1: 0,
+            ai2: Main.rand.NextFloat(0.6f, 1f)
+        );
     }
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
         Player player = Main.player[Projectile.owner];

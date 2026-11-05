@@ -11,6 +11,7 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static Terraria.ModLoader.BackupIO;
 
 namespace EvilExpansionMod.Content.Crimson;
 
@@ -22,7 +23,7 @@ public class GulpyYoyoProjectile : ModProjectile {
     private const int INITIAL_WIDTH = 18;
     private const int INITIAL_HEIGHT = 18;
 
-    private const int MAX_CHOMP_STACKS = 3;
+    private int MAX_CHOMP_STACKS = 40;
     private int _chompStacks = 0;
 
     private float ChompProgress => (float)_chompStacks / MAX_CHOMP_STACKS;
@@ -33,7 +34,7 @@ public class GulpyYoyoProjectile : ModProjectile {
     private VerletChain _righArmChain = null!;
 
     public override void SetStaticDefaults() {
-        ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 300f;
+        ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 16 * 14f;
         ProjectileID.Sets.YoyosTopSpeed[Projectile.type] = 13f;
         Main.projFrames[Projectile.type] = 3;
     }
@@ -45,9 +46,13 @@ public class GulpyYoyoProjectile : ModProjectile {
         Projectile.friendly = true;
         Projectile.DamageType = DamageClass.MeleeNoSpeed;
         Projectile.penetrate = -1;
+        Projectile.usesLocalNPCImmunity = true;
+        Projectile.localNPCHitCooldown = 8;
     }
 
     public override void AI() {
+        Main.NewText("ChompProgress" + ChompProgress, Microsoft.Xna.Framework.Color.White);
+
         var maxDistance = 200f * 16f;
         if(Projectile.Center.DistanceSQ(Main.player[Projectile.owner].Center) > maxDistance * maxDistance) {
             Projectile.Kill();
@@ -58,24 +63,26 @@ public class GulpyYoyoProjectile : ModProjectile {
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Crimson);
         }
 
-        Projectile.rotation = 0;
-
+        Projectile.rotation += -0.45f;
+        Projectile.rotation += Math.Min(110f, 4f * (float)Math.Pow(ChompProgress, 3));
+        ProjectileID.Sets.YoyosTopSpeed[Projectile.type] = 13f * (1 + ChompProgress);
         var chompingFrequency = 8;
-        if(Timer > 10) {
+        if(Timer > 20 - 19.5 * Math.Min(1, ChompProgress * 2) && ChompProgress < 1) {
             Projectile.friendly = false;
             Projectile.frame = 1 + (Timer % (chompingFrequency * 2) / chompingFrequency);
             Timer -= 1;
         }
         else if(Timer > 0) {
             Projectile.frame = 0;
-            if(Timer == 10 && _chompStacks >= MAX_CHOMP_STACKS) {
+            if(Timer <= 10 && _chompStacks >= MAX_CHOMP_STACKS) { // Timer was originally 10
                 _chompStacks = 0;
-                Projectile.scale = 2.5f;
+                Projectile.scale = 3.5f;
 
-                SoundEngine.PlaySound(SoundID.Zombie64, Projectile.Center);
+                SoundEngine.PlaySound(SoundID.Zombie64 with { Pitch = 1f }, Projectile.Center);
+                SoundEngine.PlaySound(SoundID.NPCDeath13 with { Pitch = 0.5f, Volume = 0.75f }, Projectile.Center);
 
                 for(var i = 0; i < 6; i++) {
-                    var velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 6f);
+                    var velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(3f, 6f) * (1 + ChompProgress);
                     Dust.NewDust(
                         Projectile.position,
                         Projectile.width,
@@ -86,41 +93,63 @@ public class GulpyYoyoProjectile : ModProjectile {
                     );
                 }
 
-                for(var i = 0; i < 6; i++) {
+                for(var i = 0; i < 12; i++) {
                     var velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(7f, 15f);
                     var particle = BloodParticle.NewParticle(
                         Projectile.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f),
-                        velocity,
+                        velocity + Vector2.UnitY * -Main.rand.NextFloat(5f),
                         Main.rand.NextFloat(0.2f, 0.5f),
                         new Color(180, 15, 25));
                     ParticleEngine.PARTICLES.Add(particle);
-                }
 
-                for(var i = 0; i < 3; i++) {
+                    Dust particle2 = Dust.NewDustPerfect(
+                        Projectile.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f),
+                        DustID.Blood,
+                        velocity * 1.5f + Vector2.UnitY * -Main.rand.NextFloat(5f),
+                        Main.rand.Next(0, 180),
+                        default,
+                        Main.rand.NextFloat(0.2f, 0.5f)
+                    );
+                    particle2.noGravity = false;
+                }
+                Projectile.NewProjectile(
+                    Projectile.GetSource_FromAI(),
+                    Projectile.Center,
+                    new Microsoft.Xna.Framework.Vector2(0f, 0f),
+                    ModContent.ProjectileType<BloodExplosion>(),
+                    0,
+                    0.5f,
+                    Main.myPlayer,
+                    ai0: 0,
+                    ai1: 0,
+                    ai2: Main.rand.NextFloat(0.6f, 1f)
+                );
+
+                for(var i = 0; i < 5; i++) {
                     var velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 9f);
                     var projectile = Projectile.NewProjectileDirect(
                         Projectile.GetSource_FromAI(),
                         Projectile.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f),
-                        velocity,
+                        velocity + Vector2.UnitY * -5f,
                         ProjectileID.Bone,
-                        Projectile.damage,
+                        (int) (Projectile.damage * 0.75f),
                         0.3f,
                         Projectile.owner
                     );
 
                     projectile.usesLocalNPCImmunity = true;
-                    projectile.localNPCHitCooldown = Projectile.timeLeft;
+                    projectile.localNPCHitCooldown = 12;
                     projectile.friendly = true;
                     projectile.hostile = false;
                     projectile.penetrate = -1;
                 }
 
-                for(var i = 0; i < 3; i++) {
+                for(var i = 0; i < 4; i++) {
                     var velocity = Main.rand.NextVector2Unit() * Main.rand.NextFloat(4f, 9f);
                     var projectile = Projectile.NewProjectileDirect(
                         Projectile.GetSource_FromAI(),
                         Projectile.Center + Main.rand.NextVector2Unit() * Main.rand.NextFloat(5f),
-                        velocity,
+                        velocity + Vector2.UnitY * -5f,
                         ModContent.ProjectileType<PortalGore>(),
                         Projectile.damage,
                         0.3f,
@@ -128,7 +157,7 @@ public class GulpyYoyoProjectile : ModProjectile {
                     );
 
                     projectile.usesLocalNPCImmunity = true;
-                    projectile.localNPCHitCooldown = Projectile.timeLeft;
+                    projectile.localNPCHitCooldown = 12;
                     projectile.friendly = true;
                     projectile.hostile = false;
                     projectile.penetrate = -1;
@@ -151,7 +180,7 @@ public class GulpyYoyoProjectile : ModProjectile {
         _righArmChain ??= new VerletChain(leftArmOrigin, [16f, 24f]);
         _righArmChain.Update(rightArmOrigin, null);
 
-        Projectile.scale = MathHelper.Lerp(Projectile.scale, 1f + ChompProgress * 0.55f, 0.1f);
+        Projectile.scale = MathHelper.Lerp(Projectile.scale, 1f + ChompProgress * 0.4f, 0.1f);
         Projectile.Resize((int)(INITIAL_WIDTH * Projectile.scale), (int)(INITIAL_HEIGHT * Projectile.scale));
 
         _twitch *= 0.92f;
@@ -176,10 +205,10 @@ public class GulpyYoyoProjectile : ModProjectile {
             0f);
         projectile.rotation = Main.rand.NextFloatDirection() * 0.4f;
 
-        SoundEngine.PlaySound(SoundID.Zombie27, Projectile.Center);
+        SoundEngine.PlaySound(SoundID.Zombie27 with { Pitch = (float)(0f + Math.Sqrt(ChompProgress)) }, Projectile.Center);
 
-        Timer = 45;
-        _chompStacks += 1;
+        Timer = (int)(45 - 44 * Math.Min(1, ChompProgress * 2));
+        if(_chompStacks < MAX_CHOMP_STACKS) _chompStacks += 1;
         Projectile.netUpdate = true;
     }
 
@@ -194,7 +223,7 @@ public class GulpyYoyoProjectile : ModProjectile {
         var drawPosition = Projectile.Center + _twitch;
         var origin = new Vector2(source.Z, source.W) / 2f;
 
-        var outlineColor = Color.Lerp(Color.Transparent, Color.Red, (Projectile.scale - 1f) * 0.55f);
+        var outlineColor = Color.Lerp(Color.Transparent, Color.Red, (Projectile.scale - 1f) * 1f); // Previously * 0.55f
 
         DrawArm(_righArmChain.Positions, SpriteEffects.None);
         DrawArm(_leftArmChain.Positions, SpriteEffects.FlipHorizontally);
@@ -224,7 +253,7 @@ public class GulpyYoyoProjectile : ModProjectile {
                 Origin = origin,
                 Scale = Vector2.One * Projectile.scale,
             })
-            .ApplyTint(Color.Lerp(Color.Transparent, Color.Red, (Projectile.scale - 1f) * 0.3f))
+            .ApplyTint(Color.Lerp(Color.Transparent, Color.Red, (Projectile.scale - 1f) * 0.5f))
             .End();
     }
 

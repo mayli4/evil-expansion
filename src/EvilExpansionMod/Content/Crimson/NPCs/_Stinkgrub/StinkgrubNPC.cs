@@ -62,7 +62,7 @@ public sealed class StinkgrubNPC : ModNPC {
         NPC.noGravity = false;
         NPC.knockBackResist = 0.2f;
         NPC.friendly = false;
-        NPC.damage = 15;
+        NPC.damage = 22;
 
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath1;

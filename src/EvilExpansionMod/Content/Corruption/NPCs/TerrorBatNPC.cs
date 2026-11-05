@@ -516,7 +516,7 @@ public class TerrorBatSpit : ModProjectile {
 
     public override void OnHitPlayer(Player target, Player.HurtInfo info) {
         base.OnHitPlayer(target, info);
-        target.AddBuff(BuffID.CursedInferno, 125, false);
+        target.AddBuff(BuffID.CursedInferno, 2 * 60, false);
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
         target.AddBuff(BuffID.CursedInferno, 3 * 60);

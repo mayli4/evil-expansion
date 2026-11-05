@@ -49,7 +49,9 @@ public class CultistPortal : ModProjectile {
         Projectile.timeLeft = (int)Projectile.ai[1];
         Projectile.netUpdate = true;
     }
-
+    public override void OnHitPlayer(Player target, Player.HurtInfo info) {
+        target.AddBuff(BuffID.Bleeding, 60 * 10);
+    }
     public override void AI() {
         if(Projectile.timeLeft == (int)Projectile.ai[1]) {
             SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistPortalOpenLayer1.Asset with

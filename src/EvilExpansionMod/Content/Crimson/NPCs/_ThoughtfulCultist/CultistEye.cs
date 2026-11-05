@@ -37,8 +37,8 @@ public class CultistEye : ModNPC {
     public override void SetDefaults() {
         NPC.width = 22;
         NPC.height = 22;
-        NPC.lifeMax = 175;
-        NPC.defense = 5;
+        NPC.lifeMax = 250;
+        NPC.defense = 25;
         NPC.value = 1f;
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
@@ -65,16 +65,12 @@ public class CultistEye : ModNPC {
         });
     }
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
-        //if(Main.expertMode) {
-        //    NPC.lifeMax = 275;
-        //    NPC.defense = 15;
-        //    NPC.damage = 90;
-        //}
-        //if(Main.masterMode) {
-        //    NPC.lifeMax = 375;
-        //    NPC.defense = 25;
-        //    NPC.damage = 135;
-        //}
+        if(Main.expertMode) {
+            NPC.lifeMax = 350 / 2;
+        }
+        if(Main.masterMode) {
+            NPC.lifeMax = 450 / 3;
+        }
     }
 
     public bool EyeAltCostume;
@@ -97,12 +93,14 @@ public class CultistEye : ModNPC {
         var target = Main.player[NPC.target];
         if(target == null) return;
 
-        var moveDirection = NPC.Center.DirectionTo(target.Center);
+        float distanceToTarget = NPC.Distance(target.Center);
 
-        NPC.velocity += moveDirection * 0.3f * DifficultyScaler;
+        var moveDirection = NPC.Center.DirectionTo(target.Center);
+        NPC.velocity += moveDirection * 0.3f * DifficultyScaler * (1 + distanceToTarget / 16 / 20);
         NPC.velocity += 1f * Main.rand.NextFloatDirection()
             * MathF.Sin(NPC.whoAmI * 0.3f + Main.GameUpdateCount * 0.1f)
-            * moveDirection.RotatedBy(MathF.PI / 2f);
+            * moveDirection.RotatedBy(MathF.PI / 2f)
+            * (1 + distanceToTarget / 16 / 40);
 
         NPC.velocity *= 0.93f;
         NPC.rotation = NPC.velocity.ToRotation() + MathF.PI;

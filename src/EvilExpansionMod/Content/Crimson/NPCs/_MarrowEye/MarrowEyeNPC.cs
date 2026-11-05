@@ -252,7 +252,7 @@ public class MarrowEyeNPC : ModNPC {
 
                 if(IsTargetValid(400f)) {
                     State = State.Waking;
-                    SoundEngine.PlaySound(Assets.Sounds.MarrowEye.MarrowEyeChargeup.Asset, NPC.Center);
+                    SoundEngine.PlaySound(Assets.Sounds.MarrowEye.MarrowEyeChargeup.Asset with { Volume = 0.6f }, NPC.Center);
                 }
                 break;
             case State.Waking:

@@ -11,7 +11,6 @@ using Terraria.Audio;
 using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
-using static Terraria.ModLoader.BackupIO;
 
 namespace EvilExpansionMod.Content.Crimson;
 
@@ -23,7 +22,7 @@ public class GulpyYoyoProjectile : ModProjectile {
     private const int INITIAL_WIDTH = 18;
     private const int INITIAL_HEIGHT = 18;
 
-    private int MAX_CHOMP_STACKS = 40;
+    private int MAX_CHOMP_STACKS = 30;
     private int _chompStacks = 0;
 
     private float ChompProgress => (float)_chompStacks / MAX_CHOMP_STACKS;

@@ -1,12 +1,17 @@
 ﻿using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Corruption;
+using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
+using Terraria.ModLoader.IO;
 
 namespace EvilExpansionMod.Content.Crimson;
 
@@ -21,7 +26,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
         Projectile.penetrate = -1;
-        Projectile.timeLeft = 240;
+        Projectile.timeLeft = 300;
         Projectile.DamageType = DamageClass.Ranged;
         Projectile.usesIDStaticNPCImmunity = true;
         Projectile.idStaticNPCHitCooldown = 12;
@@ -32,12 +37,73 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
         target.AddBuff(BuffID.Ichor, 900, false);
         target.AddBuff(BuffID.OnFire3, 120, false);
     }
-
+    int Compustiontimer = 1;
     public override bool ShouldUpdatePosition() => false;
 
     public override void AI() {
         if(Main.rand.NextBool(70)) {
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.IchorTorch);
+        }
+
+        if (Compustiontimer != 210){
+            Compustiontimer++;
+
+        }
+
+        if(Compustiontimer >= 100) {
+            
+            if(Main.rand.NextBool(5)) {
+                var particle = SmokeParticle.Pool.RequestParticle();
+
+                Vector2 randomVelocity = new Vector2(
+                    Main.rand.NextFloat(-1.5f, 1.5f),
+                    Main.rand.NextFloat(-2f, -0.5f)
+                );
+
+                Color smokeColor = Color.Lerp(Color.White, Color.Black, Main.rand.NextFloat());
+                float scale = Main.rand.NextFloat(0.2f, 1.0f);
+                int lifetime = Main.rand.Next(20, 40);
+
+                particle.Spawn(Projectile.Center - Main.rand.NextVector2Circular(10, 0), randomVelocity, smokeColor, scale, lifetime);
+            }
+
+            
+
+            if(Main.rand.NextBool(300 / Compustiontimer) && Compustiontimer != 210) {
+                int dustIndex = Dust.NewDust(
+            Projectile.Center,
+            Projectile.width,
+            Projectile.height + -16,
+            174,
+            0,
+            -3f,
+            (int)Main.rand.NextFloat(0f, 100f),
+            default,
+            Main.rand.NextFloat(0.9f, 0.1f)
+
+        );
+            }
+        }
+        
+
+
+
+
+        if(Compustiontimer == 209) {
+
+            SoundEngine.PlaySound(SoundID.Item100 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
+            SoundEngine.PlaySound(SoundID.Item45 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
+            for(int i = 0; i < 6; i++) { 
+            Projectile.NewProjectile(
+            Projectile.GetSource_FromThis(),
+            Projectile.Center + new Vector2(0, -70),
+            new Vector2(Main.rand.NextFloat(-1f, 1f), -Main.rand.NextFloat(10f, 1f)),
+            ModContent.ProjectileType<IchorCompustion>(),
+            Projectile.damage,
+            Projectile.knockBack,
+            Projectile.owner
+            );
+            }
         }
     }
 
@@ -76,5 +142,89 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
 
         Main.spriteBatch.EndBegin(snapshot);
         return false;
+    }
+}
+
+
+
+
+public class IchorCompustion : ModProjectile {
+    public override string Texture => Assets.Images.Crimson.Items.Lamethrower.IchorFlame.KEY;
+
+    public static float Gravity = 0.2f;
+    public override void SetDefaults() {
+        Projectile.width = 18;
+        Projectile.height = 18;
+        Projectile.friendly = true;
+        Projectile.hostile = false;
+        Projectile.DamageType = DamageClass.Ranged;
+        Projectile.penetrate = 1;
+        Projectile.timeLeft = 300;
+        Projectile.tileCollide = true;
+        Projectile.ignoreWater = false;
+        Projectile.aiStyle = -1;
+        Projectile.scale = 1f;
+        Projectile.alpha = 0;
+
+        //Projectile.usesLocalNPCImmunity = true;
+        //Projectile.localNPCHitCooldown = -1;
+    }
+    public override void SetStaticDefaults() {
+        Main.projFrames[Type] = 18;
+    }
+    int FlameVariant = Main.rand.Next(1, 4);
+    public override void OnSpawn(IEntitySource source) {
+        Projectile.velocity *= Main.rand.NextFloat(0.8f, 1.2f);
+        Projectile.netUpdate = true;
+        //GlopVariant = Main.rand.Next(1, 3);
+        if(FlameVariant == 1) { Projectile.frame = 0; }
+        if(FlameVariant == 2) { Projectile.frame = 6; }
+        if(FlameVariant == 3) { Projectile.frame = 12; }
+        //Sync the frame in multiplayer?
+        if(Main.netMode == Terraria.ID.NetmodeID.Server) {
+            NetMessage.SendData(Terraria.ID.MessageID.SyncProjectile, -1, -1, null, Projectile.whoAmI);
+        }
+    }
+
+    public override void AI() {
+        if(Projectile.velocity.Y > 0) { Projectile.velocity.Y *= 1.03f; }
+
+        Projectile.velocity = Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.02f, 0.02f));
+        Projectile.rotation = 180 * MathHelper.PiOver2;
+
+
+        Projectile.frameCounter++;
+        if(Projectile.frameCounter >= 6) {
+            Projectile.frameCounter = 0;
+
+            Projectile.frame++;
+
+            if(FlameVariant == 1)
+                if(Projectile.frame >= 5) {
+                    Projectile.Kill();
+                }
+            if(FlameVariant == 2)
+                if(Projectile.frame >= 11) {
+                    Projectile.Kill();
+                }
+            if(FlameVariant == 3)
+                if(Projectile.frame >= 17) {
+                    Projectile.Kill();
+                }
+        }
+        if(Main.rand.NextBool(5)) {
+            int dustIndex = Dust.NewDust(
+        Projectile.Center,
+        Projectile.width,
+        Projectile.height,
+        DustID.Torch,
+        Main.rand.NextFloat(-3f, 3f),
+        Main.rand.NextFloat(-7f, 0f),
+        (int)Main.rand.NextFloat(0f, 100f),
+        default,
+        Main.rand.NextFloat(0.5f, 1.5f)
+
+    );
+        }
     }
 }

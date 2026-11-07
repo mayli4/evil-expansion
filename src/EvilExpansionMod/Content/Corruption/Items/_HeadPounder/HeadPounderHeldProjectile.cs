@@ -116,7 +116,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
             if(_charge >= MaxCharge) {
                 if(Overcharge == 0) {
-                    SoundEngine.PlaySound(SoundID.Tink);
+                    SoundEngine.PlaySound(SoundID.Item20);
                 }
             }
         }
@@ -461,6 +461,17 @@ public class HeadPounderHeldProjectile : ModProjectile {
         var trailColor = new Color(174, 203, 5) * _outlineAlpha * 0.4f;
 
         Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
+               .DrawTexture(new()
+               {
+                   Texture = texture,
+                   Position = Projectile.position,
+                   Color = lightColor,
+                   Rotation = rotation,
+                   Origin = Owner.direction == -1 ? new Vector2(texture.Width - origin.X, origin.Y) : origin,
+                   Scale = Vector2.One * Projectile.scale,
+                   SpriteEffects = Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
+               })
+            .ApplyOutline(trailColor * _outlineAlpha)
             .SetTexture(TextureAssets.MagicPixel.Value)
             .DrawTrail(
                 _trailPositions.Select(p => p + Projectile.position).ToArray(),
@@ -470,20 +481,10 @@ public class HeadPounderHeldProjectile : ModProjectile {
             .DrawTrail(
                 _trailPositions.Select(p => p + Projectile.position).ToArray(),
                 static t => (1.25f - t) * 25f,
-                t => Color.Lerp(new Color(105f, 136f, 20f), new Color(0, 0, 0, 0), t)
+                t => Color.Lerp(trailColor, new Color(0, 0, 0, 0), t)
             )
             .SetSamplerState(SamplerState.PointClamp)
-            .DrawTexture(new()
-            {
-                Texture = texture,
-                Position = Projectile.position,
-                Color = lightColor,
-                Rotation = rotation,
-                Origin = Owner.direction == -1 ? new Vector2(texture.Width - origin.X, origin.Y) : origin,
-                Scale = Vector2.One * Projectile.scale,
-                SpriteEffects = Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
-            })
-            //.ApplyOutline(trailColor)
+         
             //.ApplyOutline(new Color(5, 30, 0, 0) * _outlineAlpha) didy
             .End();
 

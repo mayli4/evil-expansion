@@ -898,6 +898,8 @@ Mods: {
 			CrytapeteSplatter.DisplayName: Crytapete Splatter
 			TearDeath.DisplayName: Tear Death
 			PlanetoidDebris.DisplayName: Planetoid Debris
+			Glop.DisplayName: Glop
+			IchorCompustion.DisplayName: Ichor Compustion
 		}
 
 		Biomes: {

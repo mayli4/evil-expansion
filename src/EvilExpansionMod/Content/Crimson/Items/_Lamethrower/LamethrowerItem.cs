@@ -37,7 +37,7 @@ public class LamethrowerItem : ModItem {
         Item.channel = true;
         Item.useTurn = true;
 
-        Item.UseSound = SoundID.Item100;
+        Item.UseSound = SoundID.NPCDeath1;
     }
 
     public override bool CanUseItem(Player player) {

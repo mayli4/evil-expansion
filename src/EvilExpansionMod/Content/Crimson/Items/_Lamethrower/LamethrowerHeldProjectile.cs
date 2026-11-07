@@ -1,11 +1,14 @@
 ﻿using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Corruption;
 using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using Terraria;
+using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.ID;
@@ -14,18 +17,10 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class LamethrowerHeldProjectile : ModProjectile {
-    readonly static int FullFlameFrames = 60;
 
-    readonly static float FlameWidth = 90;
-    readonly static float FlameLength = 450;
-
-    float FlameScale => MathF.Sin(MathF.PI * Projectile.timeLeft / FullFlameFrames / 2);
-
+    int Pus = 0;
     Player Owner => Main.player[Projectile.owner];
     Vector2 _rotationVector;
-    Vector2 _trailOrigin;
-
-    Vector2[] _trailPositions;
 
     public override string Texture => Assets.Images.Crimson.Items.Lamethrower.LamethrowerHeldSprite.KEY;
 
@@ -43,26 +38,10 @@ public class LamethrowerHeldProjectile : ModProjectile {
         Projectile.friendly = true;
         Projectile.hostile = false;
         Projectile.DamageType = DamageClass.Ranged;
-        Projectile.timeLeft = FullFlameFrames * 2;
+        Projectile.timeLeft = 1;
         Projectile.ownerHitCheck = true;
         Projectile.localNPCHitCooldown = 6;
         Projectile.usesLocalNPCImmunity = true;
-    }
-    public override bool? CanCutTiles() {
-        return true;
-    }
-    public override void CutTiles() {
-        DelegateMethods.tilecut_0 = Terraria.Enums.TileCuttingContext.AttackProjectile;
-
-        if(_trailPositions != null && _trailPositions.Length > 1) {
-            for(int i = 0; i < _trailPositions.Length - 1; i++) {
-                Vector2 startPos = _trailOrigin + _trailPositions[i];
-                Vector2 endPos = _trailOrigin + _trailPositions[i + 1];
-                float dynamicWidth = FlameWidth * FlameScale;
-
-                Utils.PlotTileLine(startPos, endPos, dynamicWidth, DelegateMethods.CutTiles);
-            }
-        }
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
         target.AddBuff(BuffID.Oiled, 1200, false);
@@ -84,22 +63,32 @@ public class LamethrowerHeldProjectile : ModProjectile {
         }
 
         if(Owner.channel) {
-            Projectile.timeLeft = Math.Max(Projectile.timeLeft, FullFlameFrames);
+            Projectile.timeLeft = Math.Max(Projectile.timeLeft, 60);
             Owner.itemTime = Projectile.timeLeft;
             Owner.itemAnimation = Projectile.timeLeft;
         }
-
+        else
+        Projectile.Kill();
         return true;
+
     }
 
     public override void AI() {
-        Projectile.frameCounter++;
-        if(Projectile.frameCounter >= 8) {
-            Projectile.frameCounter = 0;
 
-            Projectile.frame++;
-            if(Projectile.frame >= 7) {
-                Projectile.frame = 0;
+        Projectile.position = Owner.RotatedRelativePoint(Owner.MountedCenter) + new Vector2(-4 * Owner.direction, -2);
+
+        if(Pus != 200) {
+        Projectile.frame = (Pus / 25);
+        }
+        if(Pus == 200) {
+            Projectile.frameCounter++;
+            if(Projectile.frameCounter >= 8) {
+                Projectile.frameCounter = 0;
+
+                Projectile.frame++;
+                if(Projectile.frame >= 15) {
+                    Projectile.frame = 9;
+                }
             }
         }
 
@@ -108,9 +97,6 @@ public class LamethrowerHeldProjectile : ModProjectile {
         var mouseDirection = Projectile.Center.DirectionTo(Main.MouseWorld);
         _rotationVector = Vector2.Lerp(mouseDirection, _rotationVector, 0.2f);
 
-        _trailOrigin = Projectile.position + _rotationVector * 62f;
-        _trailOrigin += Owner.velocity;
-
         Projectile.rotation = _rotationVector.ToRotation();
 
         Owner.SetCompositeArmFront(
@@ -118,200 +104,164 @@ public class LamethrowerHeldProjectile : ModProjectile {
             Player.CompositeArmStretchAmount.Full,
             Projectile.rotation - MathHelper.PiOver2
         );
-        Projectile.position = Owner.RotatedRelativePoint(Owner.MountedCenter) + new Vector2(-4 * Owner.direction, -2);
+        if(Pus != 200) {
+            Pus++;
+        };
+    }
 
-        _trailPositions ??= [.. Enumerable.Repeat(Vector2.Zero, 8)];
-        for(var i = 0; i < _trailPositions.Length; i++) {
-            var targetPosition = FlameScale * FlameLength * i / _trailPositions.Length * _rotationVector;
-            _trailPositions[i] = Vector2.Lerp(_trailPositions[i], targetPosition, 0.1f);
-        }
+    public override void OnKill(int timeLeft) {
+        for(int i = 0; i < (Pus / 20); i++) { 
+            if(Main.myPlayer != Projectile.owner) return;
 
-        Span<Point> tiles = new Point[128];
-        var count = Helper.TilesLineCollision(
-            tiles,
-            _trailOrigin + _trailPositions[0],
-            _trailOrigin + _trailPositions[^1],
-            FlameWidth * FlameScale
+        Vector2 spawnPosition = Projectile.Center + _rotationVector;
+            SoundEngine.PlaySound(SoundID.NPCHit8 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
+            Projectile.NewProjectile(
+        Projectile.GetSource_FromThis(),
+        spawnPosition,
+        Main.rand.NextFloat(5f, 6f) * _rotationVector * MathHelper.PiOver2,
+        ModContent.ProjectileType<Glop>(),
+        Projectile.damage,
+        Projectile.knockBack,
+        Projectile.owner
         );
 
-        foreach(var tile in tiles[..count]) {
-            Tile surface = Main.tile[tile.X, tile.Y];
-            Tile airAbove = Main.tile[tile.X, tile.Y - 1];
-            if(
-                surface.HasTile
-                && (Main.tileSolid[surface.type] || Main.tileSolidTop[surface.type])
-                && !surface.inActive()
-                && (!airAbove.HasTile || !Main.tileSolid[airAbove.type] || airAbove.inActive())
-                && Main.rand.NextFloat() < 0.015f
-            ) {
-                Vector2 spawnPos = tile.ToVector2() * 16f + Vector2.UnitX * 8f;
+        }
+    }
 
-                bool alreadyExists = false;
-                for(int i = 0; i < Main.maxProjectiles; i++) {
-                    Projectile p = Main.projectile[i];
+    public override void PostDraw(SpriteBatch spriteBatch) { //i largely looked at ibans ark of the elements charge bar that appears in the inventory, to figure out how to do this, thanks iban tehee
+        Texture2D chargeFront = ModContent.Request<Texture2D>(
+                "EvilExpansionMod/Assets/Images/Crimson/Items/Lamethrower/LameThrowerChargebarFront").Value;
+        Texture2D chargeBack = ModContent.Request<Texture2D>(
+                "EvilExpansionMod/Assets/Images/Crimson/Items/Lamethrower/LameThrowerChargebarBack").Value;
+        int BackBarWidth = 46;
+        int BackBarHeight = 14;
+        int FrontBarWidth = 46;
+        int FrontBarHeight = 14;
+        int cutoff = (int)(FrontBarWidth * Pus);
+        Vector2 PivotPoint = new Vector2(BackBarWidth / 2f, BackBarHeight / 2f);
+        Vector2 Position = new Vector2(0,32) + Owner.Bottom - Main.screenPosition;
+        Vector2 frontPos = Position - PivotPoint;
+        Rectangle frontCrop = new Rectangle(0, 0, (FrontBarWidth * Pus / 200), FrontBarHeight); 
 
-                    if(p.active && p.type == ModContent.ProjectileType<LingeringIchorProjectile>() && Vector2.DistanceSquared(p.position, spawnPos) < 16f * 16f) {
-                        alreadyExists = true;
-                        break;
-                    }
-                }
+        spriteBatch.Draw(chargeBack, Position, null, Color.White, 0f, PivotPoint, 1f, SpriteEffects.None, 0f);
+        spriteBatch.Draw(chargeFront, frontPos, frontCrop, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+    }
+}
 
-                if(!alreadyExists) {
-                    Projectile.NewProjectile(
-                        Projectile.GetSource_FromAI(),
-                        spawnPos,
-                        Vector2.Zero,
-                        ModContent.ProjectileType<LingeringIchorProjectile>(),
-                        Projectile.damage,
-                        0f
-                );
-                }
+
+public class Glop : ModProjectile {
+    public override string Texture => Assets.Images.Crimson.Items.Lamethrower.PusGlop.KEY;
+
+    public static float Gravity = 0.2f;
+    public override void SetDefaults() {
+        Projectile.width = 18;
+        Projectile.height = 18;
+        Projectile.friendly = true;
+        Projectile.hostile = false;
+        Projectile.DamageType = DamageClass.Ranged;
+        Projectile.penetrate = 1;
+        Projectile.timeLeft = 300;
+        Projectile.tileCollide = true;
+        Projectile.ignoreWater = false;
+        Projectile.aiStyle = -1;
+        Projectile.scale = 1f;
+        Projectile.alpha = 0;
+
+        //Projectile.usesLocalNPCImmunity = true;
+        //Projectile.localNPCHitCooldown = -1;
+    }
+    public override void SetStaticDefaults() {
+        Main.projFrames[Type] = 12;
+    }
+    int GlopVariant = Main.rand.Next(1, 4);
+    public override void OnSpawn(IEntitySource source) {
+        Projectile.velocity *= Main.rand.NextFloat(0.8f, 1.2f);
+        Projectile.netUpdate = true;
+        //GlopVariant = Main.rand.Next(1, 3);
+        if(GlopVariant == 1) { Projectile.frame = 0; }
+        if(GlopVariant == 2) { Projectile.frame = 4; }
+        if(GlopVariant == 3) { Projectile.frame = 8; }
+        //Sync the frame in multiplayer?
+        if(Main.netMode == Terraria.ID.NetmodeID.Server) {
+            NetMessage.SendData(Terraria.ID.MessageID.SyncProjectile, -1, -1, null, Projectile.whoAmI);
+        }
+    }
+
+    public override void AI() {
+        Projectile.velocity.Y += Gravity * 1.1f;
+        if(Projectile.velocity.Y > 0) { Projectile.velocity.Y *= 1.03f; }
+
+        Projectile.velocity = Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.02f, 0.02f));
+        Projectile.rotation = Projectile.velocity.ToRotation();
+
+
+        Projectile.frameCounter++;
+        if(Projectile.frameCounter >= 8) {
+            Projectile.frameCounter = 0;
+
+            Projectile.frame++;
+
+            if (GlopVariant == 1)
+            if(Projectile.frame >= 3) {
+                Projectile.frame = 0;
             }
+            if(GlopVariant == 2)
+                if(Projectile.frame >= 7) {
+                    Projectile.frame = 4;
+                }
+            if(GlopVariant == 3)
+                if(Projectile.frame >= 11) {
+                    Projectile.frame = 8;
+                }
         }
 
-        if(_trailPositions is { Length: > 1 }) {
-            // Define how many total light points to plant down the beam. 
-            // 24 to 32 points provides perfect grid blending for a 450px line.
-            int denseLightPoints = 28;
-            float currentFlameLength = FlameScale * FlameLength;
+    }
+    public override void OnKill(int timeLeft) {
+        for(int i = 0; i < 4; i++) {
+            int dustIndex = Dust.NewDust(
+                    Projectile.Center,
+                    default,
+                    default,
+                    ModContent.DustType<SmallCrytapeteTear>(),
+                    Main.rand.NextFloat(-4f, 4f),
+                    Main.rand.NextFloat(-4f, 4f),
+                    0,
+                    default,
+                    Main.rand.NextFloat(1f, 2f)
+            );
+            Main.dust[dustIndex].noGravity = false;
 
-            for(int i = 0; i < denseLightPoints; i++) {
-                float progress = (float)i / (denseLightPoints - 1);
-
-                // Plot directly using the actual aim vector to eliminate trailing lag
-                Vector2 lightLocation = _trailOrigin + (_rotationVector * currentFlameLength * progress);
-
-                // Strong exponential taper curve
-                float distanceFade = 1f - MathF.Pow(progress, 0.5f);
-                float currentIntensity = FlameScale * distanceFade;
-
-                if(currentIntensity > 0.05f) {
-                    Lighting.AddLight(
-                        lightLocation,
-                        2.41f * currentIntensity,
-                        1.94f * currentIntensity,
-                        0.92f * currentIntensity
-                    );
-                }
-            }
+            SoundEngine.PlaySound(SoundID.NPCHit9 with { Volume = 0.8f } with { PitchRange = (0.1f, 1f) });
         }
 
-        if(Main.rand.NextBool(8)) {
-            var particle = SmokeParticle.Pool.RequestParticle();
-            particle.Spawn(
-                _trailOrigin + Main.rand.NextVector2Unit() * Main.rand.NextFloat(24) - _rotationVector * 5f - Vector2.UnitY * 16f,
+        Projectile.NewProjectile(
+            Projectile.GetSource_FromThis(),
+            Projectile.Center,
+            Vector2.Zero,
+            ModContent.ProjectileType<TearDeath>(),
+            0,
+            0.5f,
+            Main.myPlayer,
+            ai0: 1,
+            ai1: 1
+        );
+
+        SoundEngine.PlaySound(SoundID.Drip with
+        {
+            Pitch = Main.rand.NextFloat(0f, 1.5f),
+            Volume = Main.rand.NextFloat(0.1f, 0.2f)
+        },
+            Projectile.position);
+        Projectile.NewProjectile(
+                Projectile.GetSource_FromAI(),
+                Projectile.Center,
                 Vector2.Zero,
-                Color.Gray,
-                Main.rand.NextFloat(0.1f, 0.3f));
-        }
-    }
-    public override bool? Colliding(Rectangle projHitbox, Rectangle targetHitbox) {
-        for(var i = 0; i < _trailPositions.Length - 1; i++) {
-            var _ = 0f;
-            if(Collision.CheckAABBvLineCollision(
-                targetHitbox.TopLeft(),
-                targetHitbox.Size(),
-                _trailOrigin + _trailPositions[i],
-                _trailOrigin + _trailPositions[i + 1],
-                50f,
-                ref _
-            )) {
-                return true;
-            }
-        }
+                ModContent.ProjectileType<LingeringIchorProjectile>(),
+                Projectile.damage,
+                0f);
 
-        return false;
-    }
 
-    public override bool PreDraw(ref Color lightColor) {
-        var outlineColor = new Color(223, 116, 40);
-        var flameColor = new Color(241, 194, 92);
 
-        var snapshot = Main.spriteBatch.CaptureEndBegin(new() { BlendState = BlendState.Additive });
 
-        var glowTexture = Assets.Images.Sample.Glow1.Asset.Value;
-        var glowPosition = _trailOrigin + _rotationVector * 2f;
-        Main.spriteBatch.Draw(
-            glowTexture,
-            glowPosition - Main.screenPosition,
-            null,
-            flameColor * 0.35f,
-            Projectile.rotation,
-            glowTexture.Size() / 2f,
-            new Vector2(FlameScale * 0.3f, 0.15f + Main.rand.NextFloat(0.02f)),
-            SpriteEffects.None,
-            0f
-        );
-
-        Main.spriteBatch.Draw(
-            glowTexture,
-            (_trailPositions[0] + _trailPositions[^1]) * 0.5f - Main.screenPosition + _trailOrigin,
-            null,
-            flameColor * 0.35f * FlameScale,
-            (_trailPositions[0] - _trailPositions[^1]).ToRotation(),
-            glowTexture.Size() / 2f,
-            new Vector2(FlameScale * 1.3f, 0.45f + Main.rand.NextFloat(0.02f)),
-            SpriteEffects.None,
-            0f
-        );
-        Main.spriteBatch.EndBegin(snapshot);
-
-        var flameShader = Assets.Shaders.Pixel.Lamethrower.Asset.Value;
-        var noiseTexture1 = Assets.Images.Sample.Pebbles.Asset.Value;
-        var circleTexture = Assets.Images.Misc.Circle.Asset.Value;
-
-        Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
-            .SetTexture(0, noiseTexture1)
-            .SetEffectParams(
-                flameShader,
-                ("time", 0.025f * Main.GameUpdateCount + Projectile.whoAmI + 10),
-                ("size", new Vector2(1, 1)),
-                ("coreColor", Color.Lerp(flameColor, Color.White, 0.4f).ToVector4()),
-                ("outerCoreColor", flameColor.ToVector4()),
-                ("flameColor", outlineColor.ToVector4()),
-                ("noiseScale", 0.5f),
-                ("flameSize", FlameScale))
-            .DrawTrail(
-                _trailPositions.Select(p => p + _trailOrigin).ToArray(),
-                static _ => FlameWidth,
-                t => Color.Lerp(flameColor, outlineColor, t),
-                flameShader
-            )
-            .ApplyOutline(flameColor)
-            .ApplyBloom(1.75f)
-            .End();
-
-        var texture = TextureAssets.Projectile[Type].Value;
-        int frameHeight = texture.Height / Main.projFrames[Type];
-        Rectangle sourceRectangle = new Rectangle(0, frameHeight * Projectile.frame, texture.Width, frameHeight);
-
-        var origin = new Vector2(-8, 18);
-        Main.spriteBatch.Draw(
-            texture,
-            Projectile.position - Main.screenPosition,
-            sourceRectangle,
-            lightColor,
-            Projectile.rotation - (Owner.direction == -1 ? MathF.PI : 0f),
-            Owner.direction == -1 ? new Vector2(texture.Width - origin.X, origin.Y) : origin,
-            Vector2.One * Projectile.scale,
-            Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
-            0f
-        );
-
-        Main.spriteBatch.EndBegin(new() { BlendState = BlendState.Additive });
-        Main.spriteBatch.Draw(
-            glowTexture,
-            glowPosition - Main.screenPosition,
-            null,
-            flameColor,
-            0f,
-            glowTexture.Size() / 2f,
-            FlameScale * 0.1f + Main.rand.NextFloat(0.02f),
-            SpriteEffects.None,
-            0f
-        );
-
-        Main.spriteBatch.EndBegin(snapshot);
-        return false;
     }
 }

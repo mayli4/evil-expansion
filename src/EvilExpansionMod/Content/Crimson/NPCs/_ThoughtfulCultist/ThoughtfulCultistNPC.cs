@@ -128,6 +128,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                         Pitch = Main.rand.NextFloatDirection() * 0.5f,
                     }, NPC.Center);
                 }
+                //ChangeState(CultistState.EyeAttack); // For testing purposes
                 break;
             case CultistState.SpearAttack:
                 NPC.velocity *= 0.98f;
@@ -289,7 +290,7 @@ public class ThoughtfulCultistNPC : ModNPC {
                 case CultistState.EyeAttack:
                     pendantOutlineColor = Color.Lerp(
                         pendantOutlineColor,
-                        Color.Red,
+                        new Color(234, 90, 255, 0),
                         MathF.Sin(MathF.PI * _timer / 60));
                     break;
                 case CultistState.BloodAttack:

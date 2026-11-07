@@ -22,7 +22,7 @@ internal enum PortalType {
 public class CultistPortal : ModProjectile {
     private const int AnimationSpeed = 4;
     public override string Texture => Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPortal.KEY;
-
+    public bool isShadowPortal = false;
     PortalType PortalType => (PortalType)Projectile.ai[0];
     bool _spawnedEye;
 
@@ -77,10 +77,19 @@ public class CultistPortal : ModProjectile {
         }
 
         var t = Projectile.timeLeft / Projectile.ai[1];
+        if(Main.rand.NextBool(2)) {
+            Dust.NewDustPerfect(
+                Projectile.Center + Projectile.velocity * 20f
+                + Main.rand.NextFloatDirection() * 20f * Projectile.velocity.RotatedBy(MathF.PI / 2f),
+                DustID.Blood,
+                Velocity: Projectile.velocity * 8f,
+                Main.rand.Next(0, 50),
+                default,
+                Main.rand.NextFloat(0.75f, 1.75f) * t
+            );
+        }
         switch(PortalType) {
             case PortalType.Blood:
-
-
                 if(Main.rand.NextBool(2)) {
                     Dust.NewDustPerfect(
                         Projectile.Center + Projectile.velocity * 20f
@@ -115,9 +124,23 @@ public class CultistPortal : ModProjectile {
                     }, Projectile.Center);
                 }
                 break;
+
             case PortalType.Spear:
                 break;
+
             case PortalType.Eyes:
+                isShadowPortal = true;
+                if(Main.rand.NextBool(4)) {
+                    Dust.NewDustPerfect(
+                        Projectile.Center + Projectile.velocity * 20f
+                        + Main.rand.NextFloatDirection() * 20f * Projectile.velocity.RotatedBy(MathF.PI / 2f),
+                        DustID.Shadowflame,
+                        Velocity: Projectile.velocity * Main.rand.NextFloat(1f, 6f),
+                        Main.rand.Next(0, 50),
+                        default,
+                        Main.rand.NextFloat(0.75f, 2f) * t
+                    );
+                }
                 break;
         }
     }
@@ -158,7 +181,10 @@ public class CultistPortal : ModProjectile {
             (timer >= maxTimeLeft / AnimationSpeed - 8 ? 23 + timer - maxTimeLeft / AnimationSpeed : 8 + (timer - 8) % 5);
 
         var frameHeight = 86;
-        var portalSource = new Rectangle(0, frame * frameHeight, portalTexture.Width, frameHeight);
+        var frameWidth = 48;
+        var frameOffset = 0;
+        if(isShadowPortal) frameOffset = frameWidth;
+        var portalSource = new Rectangle(frameOffset, frame * frameHeight, frameWidth, frameHeight);
 
         Main.spriteBatch.Draw(
             portalTexture,

@@ -16,6 +16,8 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 using static Daybreak.Common.Features.Hooks.GlobalTileHooks;
+using static Terraria.ModLoader.BackupIO;
+using Player = Terraria.Player;
 
 namespace EvilExpansionMod.Content.Crimson;
 
@@ -78,6 +80,9 @@ public class LamethrowerHeldProjectile : ModProjectile {
 
 
     public override void AI() {
+        var mouseDirection = Projectile.Center.DirectionTo(Main.MouseWorld);
+        Player player = Main.player[Projectile.owner];
+        player.ChangeDir(mouseDirection.X >= 0 ? 1 : -1);
 
         Projectile.position = Owner.RotatedRelativePoint(Owner.MountedCenter) + new Vector2(-4 * Owner.direction, -2);
         if(killtimer == 50) { 
@@ -104,7 +109,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
         }
         Owner.heldProj = Projectile.whoAmI;
 
-        var mouseDirection = Projectile.Center.DirectionTo(Main.MouseWorld);
+ 
         rotationVector = Vector2.Lerp(mouseDirection, rotationVector, 0.2f);
 
         Projectile.rotation = rotationVector.ToRotation();

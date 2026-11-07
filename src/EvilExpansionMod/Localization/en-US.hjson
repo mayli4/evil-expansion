@@ -900,6 +900,7 @@ Mods: {
 			PlanetoidDebris.DisplayName: Planetoid Debris
 			Glop.DisplayName: Glop
 			IchorCompustion.DisplayName: Ichor Compustion
+			KidneyStone.DisplayName: Kidney Stone
 		}
 
 		Biomes: {

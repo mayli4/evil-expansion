@@ -2,6 +2,7 @@
 using EvilExpansionMod.Content.Corruption;
 using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
+using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System;
@@ -20,7 +21,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
     public Player Owner => Main.player[Projectile.owner];
     private Vector2 rotationVector;
     private int pus = 0;
-    
+    private int Overchargetimer = 0;
     public override string Texture => Assets.Images.Crimson.Items.Lamethrower.LamethrowerHeldSprite.KEY;
 
     public override void SetStaticDefaults() {
@@ -106,25 +107,59 @@ public class LamethrowerHeldProjectile : ModProjectile {
         if(pus != 200) {
             pus++;
         }
+
+        if(pus == 200 && Overchargetimer != 100) {
+            Overchargetimer++;
+        }
     }
 
     public override void OnKill(int timeLeft) {
-        for(int i = 0; i < (pus / 20); i++) { 
-            if(Main.myPlayer != Projectile.owner) return;
+        Vector2 spawnPosition = Projectile.Center + rotationVector;
+        if(Overchargetimer != 100) {
+            for(int i = 0; i < (pus / 20); i++) {
+                if(Main.myPlayer != Projectile.owner) return;
 
-            Vector2 spawnPosition = Projectile.Center + rotationVector;
-            SoundEngine.PlaySound(SoundID.NPCHit8 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
+                
+                SoundEngine.PlaySound(SoundID.NPCHit8 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
+                Projectile.NewProjectile(
+                    Projectile.GetSource_FromThis(),
+                    spawnPosition,
+                    new Vector2(Main.rand.NextFloat(4f, 7f), Main.rand.NextFloat(4f, 7f)) * rotationVector * MathHelper.PiOver2,
+                    ModContent.ProjectileType<Glop>(),
+                    Projectile.damage,
+                    Projectile.knockBack,
+                    Projectile.owner
+                );
+            }
+        }
+
+            if(Overchargetimer == 100) {
+            SoundEngine.PlaySound(SoundID.Item70 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
             Projectile.NewProjectile(
                 Projectile.GetSource_FromThis(),
                 spawnPosition,
-                Main.rand.NextFloat(5f, 6f) * rotationVector * MathHelper.PiOver2,
-                ModContent.ProjectileType<Glop>(),
+                new Vector2 (Main.rand.NextFloat(5f, 6f), Main.rand.NextFloat(5f, 6f)) * rotationVector * MathHelper.PiOver2,
+                ModContent.ProjectileType<KidneyStone>(),
                 Projectile.damage,
                 Projectile.knockBack,
                 Projectile.owner
             );
+
+            for(int i = 0; i < (40); i++) {
+                if(Main.myPlayer != Projectile.owner) return;
+                SoundEngine.PlaySound(SoundID.NPCHit8 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
+                Projectile.NewProjectile(
+                    Projectile.GetSource_FromThis(),
+                    spawnPosition,
+                    new Vector2(Main.rand.NextFloat(5f, 16), Main.rand.NextFloat(5f, 16)) * rotationVector * MathHelper.PiOver2,
+                    ModContent.ProjectileType<Glop>(),
+                    Projectile.damage,
+                    Projectile.knockBack,
+                    Projectile.owner
+                );
+            }
+            }
         }
-    }
 
     public override bool PreDraw(ref Color lightColor) {
         var texture = TextureAssets.Projectile[Type].Value;
@@ -154,14 +189,16 @@ public class LamethrowerHeldProjectile : ModProjectile {
         int backBarHeight = 14;
         int frontBarWidth = 46;
         int frontBarHeight = 14;
+        float shakey = Main.rand.NextFloat(-2f, 2f) * ((Overchargetimer) / 100);
+        float shakex = Main.rand.NextFloat(-2f, 2f) * ((Overchargetimer) / 100);
         int cutoff = frontBarWidth * pus;
         Vector2 pivotPoint = new(backBarWidth / 2f, backBarHeight / 2f);
-        Vector2 position = new Vector2(0,32) + Owner.Bottom - Main.screenPosition;
+        Vector2 position = new Vector2(0 + shakex, 32 + shakey) + Owner.Bottom  - Main.screenPosition;
         Vector2 frontPos = position - pivotPoint;
         Rectangle frontCrop = new(0, 0, (frontBarWidth * pus / 200), frontBarHeight); 
 
-        Main.EntitySpriteDraw(chargeBack, position, null, Color.White, 0f, pivotPoint, 1f, SpriteEffects.None);
-        Main.EntitySpriteDraw(chargeFront, frontPos, frontCrop, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None);
+        Main.EntitySpriteDraw(chargeBack, position , null, Color.White, 0f, pivotPoint, 1f, SpriteEffects.None);
+        Main.EntitySpriteDraw(chargeFront, frontPos, frontCrop, Color.Lerp(Color.White, Color.Red, Overchargetimer / 100f), 0, Vector2.Zero, 1, SpriteEffects.None);
     }
 }
 
@@ -171,11 +208,11 @@ public class Glop : ModProjectile, IPreDrawEverythingBulk<Glop> {
     private int glopVariant = Main.rand.Next(1, 4);
     private Vector2[] trailPositions;
     public static float Gravity = 0.2f;
-    
+
     public override void SetStaticDefaults() {
         Main.projFrames[Type] = 12;
     }
-    
+
     public override void SetDefaults() {
         Projectile.width = 18;
         Projectile.height = 18;
@@ -193,11 +230,11 @@ public class Glop : ModProjectile, IPreDrawEverythingBulk<Glop> {
         //Projectile.usesLocalNPCImmunity = true;
         //Projectile.localNPCHitCooldown = -1;
     }
-    
+
     public override void OnSpawn(IEntitySource source) {
         Projectile.velocity *= Main.rand.NextFloat(0.8f, 1.2f);
         Projectile.netUpdate = true;
-        
+
         Projectile.frame = glopVariant switch
         {
             1 => 0,
@@ -227,7 +264,7 @@ public class Glop : ModProjectile, IPreDrawEverythingBulk<Glop> {
 
             Projectile.frame++;
 
-            if (glopVariant == 1)
+            if(glopVariant == 1)
                 if(Projectile.frame >= 3) {
                     Projectile.frame = 0;
                 }
@@ -252,7 +289,7 @@ public class Glop : ModProjectile, IPreDrawEverythingBulk<Glop> {
 
         foreach(var entity in entities) {
             var proj = entity.Projectile;
-            if(entity.trailPositions is null || entity.trailPositions.Length < 2) continue;
+            if(entity.trailPositions is null || entity.trailPositions.Length < 1) continue;
 
             var lightColor = Lighting.GetColor(proj.Center.ToTileCoordinates());
             var source = new Vector4(0f, proj.frame * frameHeight, texture.Width, frameHeight);
@@ -268,10 +305,10 @@ public class Glop : ModProjectile, IPreDrawEverythingBulk<Glop> {
                     ("uColor1", new Color(141, 73, 6)),
                     ("uColor2", new Color(163, 118, 19)),
                     ("uStepColor", 0.07f),
-                    ("uScale", 0.5f))
+                    ("uScale", 6f))
                 .DrawTrail(
                     entity.trailPositions,
-                    13f * proj.scale,
+                    1f * proj.scale,
                     Color.White,
                     trailEffect)
                 .DrawTexture(new()
@@ -285,8 +322,6 @@ public class Glop : ModProjectile, IPreDrawEverythingBulk<Glop> {
                     Scale = Vector2.One * proj.scale,
                 });
         }
-
-        pipeline.ApplyOutline(new Color(70, 4, 0));
     }
 
     public override void OnKill(int timeLeft) {
@@ -319,12 +354,13 @@ public class Glop : ModProjectile, IPreDrawEverythingBulk<Glop> {
             ai1: 1
         );
 
-        SoundEngine.PlaySound(SoundID.Drip with {
+        SoundEngine.PlaySound(SoundID.Drip with
+        {
             Pitch = Main.rand.NextFloat(0f, 1.5f),
             Volume = Main.rand.NextFloat(0.1f, 0.2f)
-        }, 
+        },
             Projectile.position);
-        
+
         Projectile.NewProjectile(
                 Projectile.GetSource_FromAI(),
                 Projectile.Center,
@@ -332,5 +368,80 @@ public class Glop : ModProjectile, IPreDrawEverythingBulk<Glop> {
                 ModContent.ProjectileType<LingeringIchorProjectile>(),
                 Projectile.damage,
                 0f);
+    }
+}
+
+
+
+
+
+
+public class KidneyStone : ModProjectile{
+    public override string Texture => Assets.Images.Crimson.Items.Lamethrower.KidneyStone.KEY;
+    private int StoneVariant = Main.rand.Next(1, 4);
+    public static float Gravity = 0.3f;
+
+    public override void SetStaticDefaults() {
+        Main.projFrames[Type] = 3;
+    }
+
+    public override void SetDefaults() {
+        Projectile.width = 40;
+        Projectile.height = 40;
+        Projectile.friendly = true;
+        Projectile.hostile = false;
+        Projectile.DamageType = DamageClass.Ranged;
+        Projectile.penetrate = 1;
+        Projectile.timeLeft = 300;
+        Projectile.tileCollide = true;
+        Projectile.ignoreWater = false;
+        Projectile.aiStyle = -1;
+        Projectile.scale = 1f;
+        Projectile.alpha = 0;
+
+        //Projectile.usesLocalNPCImmunity = true;
+        //Projectile.localNPCHitCooldown = -1;
+    }
+
+    public override void OnSpawn(IEntitySource source) {
+        Projectile.velocity *= Main.rand.NextFloat(0.8f, 1.2f);
+        Projectile.netUpdate = true;
+
+        Projectile.frame = StoneVariant switch
+        {
+            1 => 0,
+            2 => 1,
+            3 => 2,
+            _ => Projectile.frame
+        };
+    }
+
+    public override void AI() {
+        Projectile.velocity.Y += Gravity * 1.1f;
+        if(Projectile.velocity.Y > 0) { Projectile.velocity.Y *= 1.03f; }
+
+        Projectile.velocity = Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.02f, 0.02f));
+        Projectile.rotation = Projectile.velocity.ToRotation();
+    }
+    public override void OnKill(int timeLeft) {
+
+        var rotation = Main.rand.NextFloat();
+
+        for(var i = 0; i < 2; i++) {
+            var direction = rotation.ToRotationVector2();
+
+            var gore = Mod.Find<ModGore>("KidneystoneGore" + i);
+            var size = TextureAssets.Gore[gore.Type].Size();
+
+            Gore.NewGorePerfect(
+                Projectile.GetSource_Death(),
+                Projectile.Center + direction * (Main.rand.NextFloat(0.5f) + 0.5f) * 42 - size / 2f,
+                direction * Main.rand.NextFloat(5f, 10f),
+                gore.Type
+            );
+
+            rotation += MathF.PI * 2f / 3f + Main.rand.NextFloatDirection() * 0.2f;
+        }
+        SoundEngine.PlaySound(SoundID.Item70 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
     }
 }

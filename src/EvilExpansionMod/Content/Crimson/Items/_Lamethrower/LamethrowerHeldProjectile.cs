@@ -17,11 +17,10 @@ using Terraria.ModLoader;
 namespace EvilExpansionMod.Content.Crimson;
 
 public class LamethrowerHeldProjectile : ModProjectile {
-
-    int Pus = 0;
-    Player Owner => Main.player[Projectile.owner];
-    Vector2 _rotationVector;
-
+    public Player Owner => Main.player[Projectile.owner];
+    private Vector2 rotationVector;
+    private int pus = 0;
+    
     public override string Texture => Assets.Images.Crimson.Items.Lamethrower.LamethrowerHeldSprite.KEY;
 
     public override void SetStaticDefaults() {
@@ -44,16 +43,16 @@ public class LamethrowerHeldProjectile : ModProjectile {
         Projectile.usesLocalNPCImmunity = true;
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
-        target.AddBuff(BuffID.Oiled, 1200, false);
-        target.AddBuff(BuffID.Ichor, 900, false);
-        target.AddBuff(BuffID.OnFire3, 120, false);
+        target.AddBuff(BuffID.Oiled, 1200);
+        target.AddBuff(BuffID.Ichor, 900);
+        target.AddBuff(BuffID.OnFire3, 120);
     }
 
     public override bool ShouldUpdatePosition() => false;
 
     public override void OnSpawn(IEntitySource source) {
-        _rotationVector = Projectile.Center.DirectionTo(Main.MouseWorld);
-        Projectile.rotation = _rotationVector.ToRotation();
+        rotationVector = Projectile.Center.DirectionTo(Main.MouseWorld);
+        Projectile.rotation = rotationVector.ToRotation();
     }
 
     public override bool PreAI() {
@@ -68,7 +67,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
             Owner.itemAnimation = Projectile.timeLeft;
         }
         else
-        Projectile.Kill();
+            Projectile.Kill();
         return true;
 
     }
@@ -77,10 +76,10 @@ public class LamethrowerHeldProjectile : ModProjectile {
 
         Projectile.position = Owner.RotatedRelativePoint(Owner.MountedCenter) + new Vector2(-4 * Owner.direction, -2);
 
-        if(Pus != 200) {
-        Projectile.frame = (Pus / 25);
+        if(pus != 200) {
+            Projectile.frame = (pus / 25);
         }
-        if(Pus == 200) {
+        if(pus == 200) {
             Projectile.frameCounter++;
             if(Projectile.frameCounter >= 8) {
                 Projectile.frameCounter = 0;
@@ -95,64 +94,87 @@ public class LamethrowerHeldProjectile : ModProjectile {
         Owner.heldProj = Projectile.whoAmI;
 
         var mouseDirection = Projectile.Center.DirectionTo(Main.MouseWorld);
-        _rotationVector = Vector2.Lerp(mouseDirection, _rotationVector, 0.2f);
+        rotationVector = Vector2.Lerp(mouseDirection, rotationVector, 0.2f);
 
-        Projectile.rotation = _rotationVector.ToRotation();
+        Projectile.rotation = rotationVector.ToRotation();
 
         Owner.SetCompositeArmFront(
             true,
             Player.CompositeArmStretchAmount.Full,
             Projectile.rotation - MathHelper.PiOver2
         );
-        if(Pus != 200) {
-            Pus++;
-        };
-    }
-
-    public override void OnKill(int timeLeft) {
-        for(int i = 0; i < (Pus / 20); i++) { 
-            if(Main.myPlayer != Projectile.owner) return;
-
-        Vector2 spawnPosition = Projectile.Center + _rotationVector;
-            SoundEngine.PlaySound(SoundID.NPCHit8 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
-            Projectile.NewProjectile(
-        Projectile.GetSource_FromThis(),
-        spawnPosition,
-        Main.rand.NextFloat(5f, 6f) * _rotationVector * MathHelper.PiOver2,
-        ModContent.ProjectileType<Glop>(),
-        Projectile.damage,
-        Projectile.knockBack,
-        Projectile.owner
-        );
-
+        if(pus != 200) {
+            pus++;
         }
     }
 
-    public override void PostDraw(SpriteBatch spriteBatch) { //i largely looked at ibans ark of the elements charge bar that appears in the inventory, to figure out how to do this, thanks iban tehee
-        Texture2D chargeFront = ModContent.Request<Texture2D>(
-                "EvilExpansionMod/Assets/Images/Crimson/Items/Lamethrower/LameThrowerChargebarFront").Value;
-        Texture2D chargeBack = ModContent.Request<Texture2D>(
-                "EvilExpansionMod/Assets/Images/Crimson/Items/Lamethrower/LameThrowerChargebarBack").Value;
-        int BackBarWidth = 46;
-        int BackBarHeight = 14;
-        int FrontBarWidth = 46;
-        int FrontBarHeight = 14;
-        int cutoff = (int)(FrontBarWidth * Pus);
-        Vector2 PivotPoint = new Vector2(BackBarWidth / 2f, BackBarHeight / 2f);
-        Vector2 Position = new Vector2(0,32) + Owner.Bottom - Main.screenPosition;
-        Vector2 frontPos = Position - PivotPoint;
-        Rectangle frontCrop = new Rectangle(0, 0, (FrontBarWidth * Pus / 200), FrontBarHeight); 
+    public override void OnKill(int timeLeft) {
+        for(int i = 0; i < (pus / 20); i++) { 
+            if(Main.myPlayer != Projectile.owner) return;
 
-        spriteBatch.Draw(chargeBack, Position, null, Color.White, 0f, PivotPoint, 1f, SpriteEffects.None, 0f);
-        spriteBatch.Draw(chargeFront, frontPos, frontCrop, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None, 0);
+            Vector2 spawnPosition = Projectile.Center + rotationVector;
+            SoundEngine.PlaySound(SoundID.NPCHit8 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
+            Projectile.NewProjectile(
+                Projectile.GetSource_FromThis(),
+                spawnPosition,
+                Main.rand.NextFloat(5f, 6f) * rotationVector * MathHelper.PiOver2,
+                ModContent.ProjectileType<Glop>(),
+                Projectile.damage,
+                Projectile.knockBack,
+                Projectile.owner
+            );
+        }
+    }
+
+    public override bool PreDraw(ref Color lightColor) {
+        var texture = TextureAssets.Projectile[Type].Value;
+        int frameHeight = texture.Height / Main.projFrames[Type];
+        Rectangle sourceRectangle = new Rectangle(0, frameHeight * Projectile.frame, texture.Width, frameHeight);
+
+        var origin = new Vector2(-8, 18);
+        Main.spriteBatch.Draw(
+            texture,
+            Projectile.position - Main.screenPosition,
+            sourceRectangle,
+            lightColor,
+            Projectile.rotation - (Owner.direction == -1 ? MathF.PI : 0f),
+            Owner.direction == -1 ? new Vector2(texture.Width - origin.X, origin.Y) : origin,
+            Vector2.One * Projectile.scale,
+            Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally,
+            0f
+        );
+
+        return false;
+    }
+
+    public override void PostDraw(Color lightColor) {
+        Texture2D chargeFront = Assets.Images.Crimson.Items.Lamethrower.LameThrowerChargebarFront.Asset.Value;
+        Texture2D chargeBack = Assets.Images.Crimson.Items.Lamethrower.LameThrowerChargebarBack.Asset.Value;
+        int backBarWidth = 46;
+        int backBarHeight = 14;
+        int frontBarWidth = 46;
+        int frontBarHeight = 14;
+        int cutoff = frontBarWidth * pus;
+        Vector2 pivotPoint = new(backBarWidth / 2f, backBarHeight / 2f);
+        Vector2 position = new Vector2(0,32) + Owner.Bottom - Main.screenPosition;
+        Vector2 frontPos = position - pivotPoint;
+        Rectangle frontCrop = new(0, 0, (frontBarWidth * pus / 200), frontBarHeight); 
+
+        Main.EntitySpriteDraw(chargeBack, position, null, Color.White, 0f, pivotPoint, 1f, SpriteEffects.None);
+        Main.EntitySpriteDraw(chargeFront, frontPos, frontCrop, Color.White, 0, Vector2.Zero, 1, SpriteEffects.None);
     }
 }
 
 
 public class Glop : ModProjectile {
     public override string Texture => Assets.Images.Crimson.Items.Lamethrower.PusGlop.KEY;
-
+    private int glopVariant = Main.rand.Next(1, 4);
     public static float Gravity = 0.2f;
+    
+    public override void SetStaticDefaults() {
+        Main.projFrames[Type] = 12;
+    }
+    
     public override void SetDefaults() {
         Projectile.width = 18;
         Projectile.height = 18;
@@ -170,21 +192,18 @@ public class Glop : ModProjectile {
         //Projectile.usesLocalNPCImmunity = true;
         //Projectile.localNPCHitCooldown = -1;
     }
-    public override void SetStaticDefaults() {
-        Main.projFrames[Type] = 12;
-    }
-    int GlopVariant = Main.rand.Next(1, 4);
+    
     public override void OnSpawn(IEntitySource source) {
         Projectile.velocity *= Main.rand.NextFloat(0.8f, 1.2f);
         Projectile.netUpdate = true;
-        //GlopVariant = Main.rand.Next(1, 3);
-        if(GlopVariant == 1) { Projectile.frame = 0; }
-        if(GlopVariant == 2) { Projectile.frame = 4; }
-        if(GlopVariant == 3) { Projectile.frame = 8; }
-        //Sync the frame in multiplayer?
-        if(Main.netMode == Terraria.ID.NetmodeID.Server) {
-            NetMessage.SendData(Terraria.ID.MessageID.SyncProjectile, -1, -1, null, Projectile.whoAmI);
-        }
+        
+        Projectile.frame = glopVariant switch
+        {
+            1 => 0,
+            2 => 4,
+            3 => 8,
+            _ => Projectile.frame
+        };
     }
 
     public override void AI() {
@@ -201,15 +220,15 @@ public class Glop : ModProjectile {
 
             Projectile.frame++;
 
-            if (GlopVariant == 1)
-            if(Projectile.frame >= 3) {
-                Projectile.frame = 0;
-            }
-            if(GlopVariant == 2)
+            if (glopVariant == 1)
+                if(Projectile.frame >= 3) {
+                    Projectile.frame = 0;
+                }
+            if(glopVariant == 2)
                 if(Projectile.frame >= 7) {
                     Projectile.frame = 4;
                 }
-            if(GlopVariant == 3)
+            if(glopVariant == 3)
                 if(Projectile.frame >= 11) {
                     Projectile.frame = 8;
                 }
@@ -220,8 +239,8 @@ public class Glop : ModProjectile {
         for(int i = 0; i < 4; i++) {
             int dustIndex = Dust.NewDust(
                     Projectile.Center,
-                    default,
-                    default,
+                    0,
+                    0,
                     ModContent.DustType<SmallCrytapeteTear>(),
                     Main.rand.NextFloat(-4f, 4f),
                     Main.rand.NextFloat(-4f, 4f),
@@ -246,12 +265,12 @@ public class Glop : ModProjectile {
             ai1: 1
         );
 
-        SoundEngine.PlaySound(SoundID.Drip with
-        {
+        SoundEngine.PlaySound(SoundID.Drip with {
             Pitch = Main.rand.NextFloat(0f, 1.5f),
             Volume = Main.rand.NextFloat(0.1f, 0.2f)
-        },
+        }, 
             Projectile.position);
+        
         Projectile.NewProjectile(
                 Projectile.GetSource_FromAI(),
                 Projectile.Center,
@@ -259,9 +278,5 @@ public class Glop : ModProjectile {
                 ModContent.ProjectileType<LingeringIchorProjectile>(),
                 Projectile.damage,
                 0f);
-
-
-
-
     }
 }

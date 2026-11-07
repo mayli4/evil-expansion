@@ -94,15 +94,15 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
             SoundEngine.PlaySound(SoundID.Item100 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
             SoundEngine.PlaySound(SoundID.Item45 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
             for(int i = 0; i < 6; i++) { 
-            Projectile.NewProjectile(
-            Projectile.GetSource_FromThis(),
-            Projectile.Center + new Vector2(0, -70),
-            new Vector2(Main.rand.NextFloat(-1f, 1f), -Main.rand.NextFloat(10f, 1f)),
-            ModContent.ProjectileType<IchorCompustion>(),
-            Projectile.damage,
-            Projectile.knockBack,
-            Projectile.owner
-            );
+                Projectile.NewProjectile(
+                    Projectile.GetSource_FromThis(),
+                    Projectile.Center + new Vector2(0, -70),
+                    new Vector2(Main.rand.NextFloat(-1f, 1f), -Main.rand.NextFloat(10f, 1f)),
+                    ModContent.ProjectileType<IchorCompustion>(),
+                    Projectile.damage,
+                    Projectile.knockBack,
+                    Projectile.owner
+                );
             }
         }
     }
@@ -145,13 +145,16 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
     }
 }
 
-
-
-
 public class IchorCompustion : ModProjectile {
     public override string Texture => Assets.Images.Crimson.Items.Lamethrower.IchorFlame.KEY;
 
-    public static float Gravity = 0.2f;
+    public static float Gravity = 0.2f;    
+    int flameVariant = Main.rand.Next(1, 4);
+    
+    public override void SetStaticDefaults() {
+        Main.projFrames[Type] = 18;
+    }
+    
     public override void SetDefaults() {
         Projectile.width = 18;
         Projectile.height = 18;
@@ -169,21 +172,18 @@ public class IchorCompustion : ModProjectile {
         //Projectile.usesLocalNPCImmunity = true;
         //Projectile.localNPCHitCooldown = -1;
     }
-    public override void SetStaticDefaults() {
-        Main.projFrames[Type] = 18;
-    }
-    int FlameVariant = Main.rand.Next(1, 4);
+
     public override void OnSpawn(IEntitySource source) {
         Projectile.velocity *= Main.rand.NextFloat(0.8f, 1.2f);
         Projectile.netUpdate = true;
-        //GlopVariant = Main.rand.Next(1, 3);
-        if(FlameVariant == 1) { Projectile.frame = 0; }
-        if(FlameVariant == 2) { Projectile.frame = 6; }
-        if(FlameVariant == 3) { Projectile.frame = 12; }
-        //Sync the frame in multiplayer?
-        if(Main.netMode == Terraria.ID.NetmodeID.Server) {
-            NetMessage.SendData(Terraria.ID.MessageID.SyncProjectile, -1, -1, null, Projectile.whoAmI);
-        }
+        Projectile.frame = flameVariant switch
+        {
+            1 => 0,
+            2 => 6,
+            3 => 12,
+            _ => Projectile.frame
+        };
+
     }
 
     public override void AI() {
@@ -199,32 +199,32 @@ public class IchorCompustion : ModProjectile {
 
             Projectile.frame++;
 
-            if(FlameVariant == 1)
+            if(flameVariant == 1)
                 if(Projectile.frame >= 5) {
                     Projectile.Kill();
                 }
-            if(FlameVariant == 2)
+            if(flameVariant == 2)
                 if(Projectile.frame >= 11) {
                     Projectile.Kill();
                 }
-            if(FlameVariant == 3)
+            if(flameVariant == 3)
                 if(Projectile.frame >= 17) {
                     Projectile.Kill();
                 }
         }
         if(Main.rand.NextBool(5)) {
             int dustIndex = Dust.NewDust(
-        Projectile.Center,
-        Projectile.width,
-        Projectile.height,
-        DustID.Torch,
-        Main.rand.NextFloat(-3f, 3f),
-        Main.rand.NextFloat(-7f, 0f),
-        (int)Main.rand.NextFloat(0f, 100f),
-        default,
-        Main.rand.NextFloat(0.5f, 1.5f)
+                Projectile.Center,
+                Projectile.width,
+                Projectile.height,
+                DustID.Torch,
+                Main.rand.NextFloat(-3f, 3f),
+                Main.rand.NextFloat(-7f, 0f),
+                (int)Main.rand.NextFloat(0f, 100f),
+                default,
+                Main.rand.NextFloat(0.5f, 1.5f)
 
-    );
+            );
         }
     }
 }

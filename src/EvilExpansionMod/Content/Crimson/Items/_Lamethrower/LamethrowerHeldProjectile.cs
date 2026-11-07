@@ -166,9 +166,10 @@ public class LamethrowerHeldProjectile : ModProjectile {
 }
 
 
-public class Glop : ModProjectile {
+public class Glop : ModProjectile, IPreDrawEverythingBulk<Glop> {
     public override string Texture => Assets.Images.Crimson.Items.Lamethrower.PusGlop.KEY;
     private int glopVariant = Main.rand.Next(1, 4);
+    private Vector2[] trailPositions;
     public static float Gravity = 0.2f;
     
     public override void SetStaticDefaults() {
@@ -213,6 +214,12 @@ public class Glop : ModProjectile {
         Projectile.velocity = Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.02f, 0.02f));
         Projectile.rotation = Projectile.velocity.ToRotation();
 
+        trailPositions ??= [.. Enumerable.Repeat(Projectile.Center, 10)];
+        for(int i = trailPositions.Length - 1; i > 0; i--) {
+            trailPositions[i] = trailPositions[i - 1];
+        }
+        trailPositions[0] = Projectile.Center + Projectile.velocity;
+
 
         Projectile.frameCounter++;
         if(Projectile.frameCounter >= 8) {
@@ -235,6 +242,53 @@ public class Glop : ModProjectile {
         }
 
     }
+    public void PreDrawEverythingBulk(ReadOnlySpan<Glop> entities) {
+        using var pipeline = new RenderPipeline(Graphics.PreDrawNPCsQueue, 0.5f, Graphics.WorldTransformMatrix);
+
+        var trailEffect = Assets.Shaders.Pixel.CursedSpiritFire.Asset.Value;
+        var noise = Assets.Images.Sample.Noise2.Asset.Value;
+        var texture = TextureAssets.Projectile[Type].Value;
+        int frameHeight = texture.Height / Main.projFrames[Type];
+
+        foreach(var entity in entities) {
+            var proj = entity.Projectile;
+            if(entity.trailPositions is null || entity.trailPositions.Length < 2) continue;
+
+            var lightColor = Lighting.GetColor(proj.Center.ToTileCoordinates());
+            var source = new Vector4(0f, proj.frame * frameHeight, texture.Width, frameHeight);
+            var origin = new Vector2(source.Z, source.W) / 2f;
+
+            pipeline
+                .SetTexture(0, noise)
+                .SetTexture(1, noise)
+                .SetEffectParams(
+                    trailEffect,
+                    ("uTime", 0.0075f * Main.GameUpdateCount + proj.whoAmI * 34.432f),
+                    ("uStepY", 0.176f),
+                    ("uColor1", new Color(141, 73, 6)),
+                    ("uColor2", new Color(163, 118, 19)),
+                    ("uStepColor", 0.07f),
+                    ("uScale", 0.5f))
+                .DrawTrail(
+                    entity.trailPositions,
+                    13f * proj.scale,
+                    Color.White,
+                    trailEffect)
+                .DrawTexture(new()
+                {
+                    Texture = texture,
+                    Position = proj.Center,
+                    Color = lightColor,
+                    Source = source,
+                    Rotation = proj.rotation,
+                    Origin = origin,
+                    Scale = Vector2.One * proj.scale,
+                });
+        }
+
+        pipeline.ApplyOutline(new Color(70, 4, 0));
+    }
+
     public override void OnKill(int timeLeft) {
         for(int i = 0; i < 4; i++) {
             int dustIndex = Dust.NewDust(

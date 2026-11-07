@@ -202,7 +202,7 @@ public class IchorCompustion : ModProjectile {
     public override void AI() {
         if(Projectile.velocity.Y > 0) { Projectile.velocity.Y *= 1.03f; }
 
-        Projectile.velocity = Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.02f, 0.02f));
+        Projectile.velocity *= 0.94f;
         Projectile.rotation = 180 * MathHelper.PiOver2;
 
 

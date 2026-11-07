@@ -1,4 +1,5 @@
 ﻿using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.CameraModifiers;
 using EvilExpansionMod.Content.Corruption;
 using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Utilities;
@@ -30,6 +31,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
         Projectile.DamageType = DamageClass.Ranged;
         Projectile.usesIDStaticNPCImmunity = true;
         Projectile.idStaticNPCHitCooldown = 12;
+        Projectile.damage = 30;
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
@@ -49,10 +51,15 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
             Compustiontimer++;
 
         }
+        if(Compustiontimer == 100) {
+            SoundStyle ignite = new SoundStyle($"EvilExpansionMod/Assets/Sounds/LameThrower/MinecraftFlintnSteel");
+            SoundEngine.PlaySound(ignite, Projectile.position);
+        }
 
         if(Compustiontimer >= 100) {
-            
+
             if(Main.rand.NextBool(5)) {
+
                 var particle = SmokeParticle.Pool.RequestParticle();
 
                 Vector2 randomVelocity = new Vector2(
@@ -90,10 +97,10 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
 
 
         if(Compustiontimer == 209) {
-
+            Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier((1), 0.10f));
             SoundEngine.PlaySound(SoundID.Item100 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
-            SoundEngine.PlaySound(SoundID.Item45 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
-            for(int i = 0; i < 6; i++) { 
+            SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
+            for(int i = 0; i < 3; i++) { 
                 Projectile.NewProjectile(
                     Projectile.GetSource_FromThis(),
                     Projectile.Center + new Vector2(0, -70),
@@ -172,6 +179,12 @@ public class IchorCompustion : ModProjectile {
         //Projectile.usesLocalNPCImmunity = true;
         //Projectile.localNPCHitCooldown = -1;
     }
+    public override void PostDraw(Color lightColor) {
+       
+        Texture2D FlameGlowmask = Assets.Images.Crimson.Items.Lamethrower.IchorFlame_glow.Asset.Value;
+
+        Main.EntitySpriteDraw(FlameGlowmask, Projectile.position - Main.screenPosition, Utils.Frame(FlameGlowmask, 1, Main.projFrames[Projectile.type], 0, Projectile.frame), Color.White, 0f, new Vector2(0,0), 1f, SpriteEffects.None);
+    }
 
     public override void OnSpawn(IEntitySource source) {
         Projectile.velocity *= Main.rand.NextFloat(0.8f, 1.2f);
@@ -228,3 +241,4 @@ public class IchorCompustion : ModProjectile {
         }
     }
 }
+

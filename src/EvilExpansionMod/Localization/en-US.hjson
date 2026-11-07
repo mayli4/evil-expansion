@@ -160,6 +160,7 @@ Mods: {
 					'''
 					Coats enemies and surfaces alike with flaming ichor, inflicting a multitude of debuffs
 					Enemies suffer reduced defense and take extra damage when set ablaze
+					Overcharge the lamethrower to make it hurt...
 					'''
 			}
 
@@ -901,6 +902,7 @@ Mods: {
 			Glop.DisplayName: Glop
 			IchorCompustion.DisplayName: Ichor Compustion
 			KidneyStone.DisplayName: Kidney Stone
+			PusDeath.DisplayName: Pus Death
 		}
 
 		Biomes: {

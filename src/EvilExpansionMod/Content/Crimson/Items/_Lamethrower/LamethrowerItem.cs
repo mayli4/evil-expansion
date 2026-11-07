@@ -13,7 +13,7 @@ public class LamethrowerItem : ModItem {
     }
 
     public override void SetDefaults() {
-        Item.damage = 8;
+        Item.damage = 35;
         Item.crit = 4;
         Item.DamageType = DamageClass.Ranged;
         Item.knockBack = 0.025f;
@@ -54,3 +54,5 @@ public class LamethrowerItem : ModItem {
             .Register();
     }
 }
+
+

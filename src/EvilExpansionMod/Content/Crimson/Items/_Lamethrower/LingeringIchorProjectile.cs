@@ -20,8 +20,8 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
     public override string Texture => Helper.PlaceholderTextureKey;
     readonly static int DisappearFrames = 40;
     public override void SetDefaults() {
-        Projectile.width = 52;
-        Projectile.height = 40;
+        Projectile.width = 32;
+        Projectile.height = 32;
         Projectile.friendly = true;
         Projectile.hostile = false;
         Projectile.tileCollide = false;
@@ -29,15 +29,15 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
         Projectile.penetrate = -1;
         Projectile.timeLeft = 300;
         Projectile.DamageType = DamageClass.Ranged;
+
         Projectile.usesIDStaticNPCImmunity = true;
-        Projectile.idStaticNPCHitCooldown = 12;
-        Projectile.damage = 30;
+        Projectile.idStaticNPCHitCooldown = 15;
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
-        target.AddBuff(BuffID.Oiled, 1200, false);
-        target.AddBuff(BuffID.Ichor, 900, false);
-        target.AddBuff(BuffID.OnFire3, 120, false);
+        target.AddBuff(BuffID.Oiled, 60 * 20, false);
+        target.AddBuff(BuffID.Ichor, 60 * 15, false);
+        target.AddBuff(BuffID.OnFire3, 60 * 2, false);
     }
     int Compustiontimer = 1;
     public override bool ShouldUpdatePosition() => false;
@@ -71,42 +71,46 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
                 float scale = Main.rand.NextFloat(0.2f, 1.0f);
                 int lifetime = Main.rand.Next(20, 40);
 
-                particle.Spawn(Projectile.Center - Main.rand.NextVector2Circular(10, 0), randomVelocity, smokeColor, scale, lifetime);
+                particle.Spawn(Projectile.Left - Main.rand.NextVector2Circular(10, 0), randomVelocity, smokeColor, scale, lifetime);
             }
-
-            
 
             if(Main.rand.NextBool(300 / Compustiontimer) && Compustiontimer != 210) {
                 int dustIndex = Dust.NewDust(
-            Projectile.Center,
-            Projectile.width,
-            Projectile.height + -16,
-            174,
-            0,
-            -3f,
-            (int)Main.rand.NextFloat(0f, 100f),
-            default,
-            Main.rand.NextFloat(0.9f, 0.1f)
+                    Projectile.Left,
+                    Projectile.width,
+                    Projectile.height + -16,
+                    174,
+                    0,
+                    -3f,
+                    (int)Main.rand.NextFloat(0f, 100f),
+                    default,
+                    Main.rand.NextFloat(0.9f, 0.1f)
 
-        );
+                );
             }
         }
         
-
-
-
-
-        if(Compustiontimer == 209) {
-            Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier((1), 0.10f));
-            SoundEngine.PlaySound(SoundID.Item100 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
-            SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
+        if(Compustiontimer == 209) { // Create "Compustion" projectiles
+            //Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier((1), 0.10f));
+            SoundEngine.PlaySound(SoundID.Item100 with {
+                Volume = 0.4f,
+                PitchRange = (0f, 1.5f),
+                MaxInstances = 40,
+                SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
+            }, Projectile.position);
+            SoundEngine.PlaySound(SoundID.Item74 with {
+                Volume = 0.2f,
+                PitchRange = (-0.5f, 0.5f),
+                MaxInstances = 40,
+                SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
+            }, Projectile.position);
             for(int i = 0; i < 3; i++) { 
                 Projectile.NewProjectile(
                     Projectile.GetSource_FromThis(),
-                    Projectile.Center + new Vector2(0, -70),
+                    Projectile.Center + new Vector2(0, 0),
                     new Vector2(Main.rand.NextFloat(-1f, 1f), -Main.rand.NextFloat(10f, 1f)),
                     ModContent.ProjectileType<IchorCompustion>(),
-                    Projectile.damage,
+                    Projectile.damage * 4, // (listed damage)
                     Projectile.knockBack,
                     Projectile.owner
                 );
@@ -119,7 +123,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
         var texture = Assets.Images.Crimson.Items.Lamethrower.IchorSplat.Asset.Value;
         spriteBatch.Draw(
             texture,
-            Projectile.Center - Main.screenPosition,
+            Projectile.Center - Main.screenPosition - Vector2.UnitY * 16f,
             null,
             Lighting.GetColor(Projectile.Center.ToTileCoordinates()) * alpha,
             0f,
@@ -153,9 +157,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
 }
 
 public class IchorCompustion : ModProjectile {
-    public override string Texture => Assets.Images.Crimson.Items.Lamethrower.IchorFlame.KEY;
-
-    public static float Gravity = 0.2f;    
+    public override string Texture => Assets.Images.Crimson.Items.Lamethrower.IchorFlame.KEY;   
     int flameVariant = Main.rand.Next(1, 4);
     
     public override void SetStaticDefaults() {
@@ -163,19 +165,21 @@ public class IchorCompustion : ModProjectile {
     }
     
     public override void SetDefaults() {
-        Projectile.width = 18;
-        Projectile.height = 18;
+        Projectile.width = 16 * 2;
+        Projectile.height = 16 * 10;
         Projectile.friendly = true;
         Projectile.hostile = false;
         Projectile.DamageType = DamageClass.Ranged;
-        Projectile.penetrate = 1;
+        Projectile.penetrate = -1;
         Projectile.timeLeft = 300;
-        Projectile.tileCollide = true;
+        Projectile.tileCollide = false;
         Projectile.ignoreWater = false;
         Projectile.aiStyle = -1;
         Projectile.scale = 1f;
         Projectile.alpha = 0;
 
+        Projectile.usesIDStaticNPCImmunity = true;
+        Projectile.idStaticNPCHitCooldown = 6;
         //Projectile.usesLocalNPCImmunity = true;
         //Projectile.localNPCHitCooldown = -1;
     }
@@ -198,13 +202,15 @@ public class IchorCompustion : ModProjectile {
         };
 
     }
-
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+        target.AddBuff(BuffID.Ichor, 60 * 10, false);
+        target.AddBuff(BuffID.OnFire3, 60 * 1, false);
+    }
     public override void AI() {
         if(Projectile.velocity.Y > 0) { Projectile.velocity.Y *= 1.03f; }
 
         Projectile.velocity *= 0.94f;
         Projectile.rotation = 180 * MathHelper.PiOver2;
-
 
         Projectile.frameCounter++;
         if(Projectile.frameCounter >= 6) {
@@ -225,9 +231,9 @@ public class IchorCompustion : ModProjectile {
                     Projectile.Kill();
                 }
         }
-        if(Main.rand.NextBool(5)) {
+        if(Main.rand.NextBool(10)) {
             int dustIndex = Dust.NewDust(
-                Projectile.Center,
+                Projectile.Top,
                 Projectile.width,
                 Projectile.height,
                 DustID.Torch,

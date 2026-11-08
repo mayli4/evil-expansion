@@ -154,7 +154,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                         hitCenter.Y += 8f;
                         Projectile.NewProjectile(
                             Projectile.GetSource_FromThis(),
-                            hitCenter - Vector2.UnitY * 5, // Does the "- Vector2.UnitY * 5" bit even do anything...... idk, you're the one who wrote it lol
+                            hitCenter - Vector2.UnitY * 5,
                             Vector2.Zero,
                             ModContent.ProjectileType<MaceCrack>(),
                             0,
@@ -261,10 +261,8 @@ public class HeadPounderHeldProjectile : ModProjectile {
     }
     public override void PostAI() { // Reserving PostAI for overcharge visuals now
         if(ChargeProgress >= 1 && Owner.channel) {
-            // Check if the sound is NOT already playing to prevent overlapping!
             if(chargeSoundSlot == SlotId.Invalid || !SoundEngine.TryGetActiveSound(chargeSoundSlot, out _)) {
 
-                // Configure your audio style to loop infinitely
                 SoundStyle loopingAudio = SoundID.Item15;
 
                 loopingAudio.Volume = 0.4f + Overcharge * 0.2f;

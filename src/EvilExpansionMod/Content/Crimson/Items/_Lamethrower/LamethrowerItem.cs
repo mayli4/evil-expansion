@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -15,7 +16,7 @@ public class LamethrowerItem : ModItem {
     public override void SetDefaults() {
         Item.damage = 35;
         Item.crit = 4;
-        Item.DamageType = DamageClass.Ranged;
+        Item.DamageType = DamageClass.Magic;
         Item.knockBack = 0.025f;
 
         Item.width = 68;
@@ -33,11 +34,10 @@ public class LamethrowerItem : ModItem {
         Item.noUseGraphic = true;
         Item.shoot = ModContent.ProjectileType<LamethrowerHeldProjectile>();
         Item.shootSpeed = 6f;
+        Item.mana = 1; // For the "meat" of mana consumption please consult the held projectile code
 
         Item.channel = true;
         Item.useTurn = true;
-
-        Item.UseSound = SoundID.NPCDeath1;
     }
 
     public override bool CanUseItem(Player player) {
@@ -53,6 +53,8 @@ public class LamethrowerItem : ModItem {
             .AddTile(TileID.MythrilAnvil)
             .Register();
     }
+
+    //public override void
 }
 
 

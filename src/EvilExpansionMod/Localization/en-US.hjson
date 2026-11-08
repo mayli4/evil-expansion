@@ -158,9 +158,9 @@ Mods: {
 				DisplayName: Lamethrower
 				Tooltip:
 					'''
-					Coats enemies and surfaces alike with flaming ichor, inflicting a multitude of debuffs
+					Coats enemies and surfaces alike with incendiary ichor, inflicting a multitude of debuffs
 					Enemies suffer reduced defense and take extra damage when set ablaze
-					Overcharge the lamethrower to make it hurt...
+					Overcharge the weapon to make it hurt...
 					'''
 			}
 

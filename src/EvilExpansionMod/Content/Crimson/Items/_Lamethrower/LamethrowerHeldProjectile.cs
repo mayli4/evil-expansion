@@ -80,9 +80,9 @@ public class LamethrowerHeldProjectile : ModProjectile {
     }
 
     public override void AI() {
-        Main.NewText("pus" + pus, Microsoft.Xna.Framework.Color.White);
-        Main.NewText("killTimer" + killTimer, Microsoft.Xna.Framework.Color.White);
-        Main.NewText("overchargeTimer" + overchargeTimer, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("pus" + pus, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("killTimer" + killTimer, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("overchargeTimer" + overchargeTimer, Microsoft.Xna.Framework.Color.White);
         var mouseDirection = Projectile.Center.DirectionTo(Main.MouseWorld);
         Player player = Main.player[Projectile.owner];
         player.ChangeDir(mouseDirection.X >= 0 ? 1 : -1);
@@ -121,9 +121,9 @@ public class LamethrowerHeldProjectile : ModProjectile {
             Player.CompositeArmStretchAmount.Full,
             Projectile.rotation - MathHelper.PiOver2
         );
-        Main.NewText("attackSpeedMultiplier" + attackSpeedMultiplier, Microsoft.Xna.Framework.Color.White);
 
-        if(pus != 140 && killTimer == 60) { // Pus increments to a maximum of 140, twice per frame, scaling with attack speed
+        //Main.NewText("attackSpeedMultiplier" + attackSpeedMultiplier, Microsoft.Xna.Framework.Color.White);
+        if(pus != 140 && killTimer == 60) { // Pus increments to a maximum of 140, once per frame, scaling with attack speed
             for(int i = 0; i < 1 * attackSpeedMultiplier; i++) {
                 pus++;
             }
@@ -143,7 +143,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
             int manaCost = 1;
             if(player.statMana >= manaCost && killTimer == 60 && currentMultiple > lastTriggeredMultiple) {
                 player.statMana -= manaCost;
-                player.ManaEffect(-manaCost);
+                //player.ManaEffect(-manaCost);
                 lastTriggeredMultiple = currentMultiple;
             }
             else if(player.statMana < manaCost) {
@@ -219,7 +219,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
                     Projectile.NewProjectile(
                         Projectile.GetSource_FromThis(),
                         spawnPosition,
-                        Main.rand.NextFloat(4f, 7f) * rotationVector * MathHelper.PiOver2 * (1 + (float)pus / 140),
+                        Main.rand.NextFloat(4f, 7f) * rotationVector * MathHelper.PiOver2 * (1 + (float)pus / 140), // Scales with charge
                         ModContent.ProjectileType<Glop>(),
                         Projectile.damage / 4,
                         Projectile.knockBack,
@@ -240,7 +240,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
                     spawnPosition,
                     20f * rotationVector * MathHelper.PiOver2,
                     ModContent.ProjectileType<KidneyStone>(),
-                    Projectile.damage * 8, // Pow! Yes, the stone will do 280 damage, yes this is more than balanced, it takes ages for the player to fire an overcharged shot
+                    Projectile.damage * 8, // Pow! Yes, the stone does 280 damage at base, yes I think this is balanced, it takes ages for the player to fire an overcharged shot
                     10f,
                     Projectile.owner
                 );

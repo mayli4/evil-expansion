@@ -19,7 +19,7 @@ internal sealed class CurseknightsHelm : ModItem {
     public static int HelmOff;
     public static bool HelmExploded;
 
-    public static float DifficultylessDebuff => Main.expertMode ? (Main.masterMode ? 0.4f : 0.5f) : 1f; // Expert and master mode multiply debuff time... need to counteract this
+    public static float DifficultylessDebuff => Main.expertMode ? (Main.masterMode ? 0.4f : 0.5f) : 1f; // To counteract Expert and master mode's multiplied debuff time
 
     public override void Load() {
         EquipLoader.AddEquipTexture(Mod, Assets.Images.Corruption.Items.CurseknightsHelm.CurseknightsHelmOn_Head.KEY, EquipType.Head, this, name: "OnCurseknightsHelm");
@@ -60,13 +60,13 @@ internal sealed class CurseknightsHelm : ModItem {
     }
     public override void UpdateAccessory(Player player, bool hideVisual) {
         var modPlayer = player.GetModPlayer<CurseknightsHelmPlayer>();
-        modPlayer.IsWearingHelm = true; // this keeps setting the accessory being equipped... a little inefficient, oh well
+        modPlayer.IsWearingHelm = true; // This keeps setting the accessory being equipped... a little inefficient, oh well
         modPlayer.HideVisual = hideVisual;
 
         var healthThreshold = player.statLifeMax2 / 2;
         modPlayer.IsBelowThreshold = player.statLife < healthThreshold;
 
-        if(false) { // if HP >50%
+        if(!modPlayer.IsBelowThreshold) { // if HP >50%
             if(HelmExploded && modPlayer.ActiveReformParticles <= 0) {
                 //SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.8f, Pitch = -0.2f }, player.position);
 

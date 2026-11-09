@@ -35,9 +35,9 @@ public sealed class EffigyNPC : ModNPC {
     public override void SetStaticDefaults() {
         var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
         {
-            Position = new Vector2(5f, 70f),
+            Position = new Vector2(5f, 130f),
             PortraitPositionXOverride = 0f,
-            PortraitPositionYOverride = 110f
+            PortraitPositionYOverride = 90f
         };
         NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
         Main.npcFrameCount[Type] = 21;

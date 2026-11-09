@@ -225,7 +225,7 @@ public class CultistEye : ModNPC {
         var origin = new Vector2(18, 14);
         Color c = NPC.GetNPCColorTintedByBuffs(drawColor) * NPC.Opacity;
 
-        if(DashWindupTimer != 0 || DashTimer != 0) { // Chargeup/ dash trail
+        if( (DashWindupTimer != 0 || DashTimer != 0) && !NPC.IsABestiaryIconDummy) { // Chargeup/ dash trail
             for(int i = NPC.oldPos.Length - 1; i >= 0; i--) {
                 float opacity = (1f - (i / (float)NPC.oldPos.Length));
                 spriteBatch.Draw(

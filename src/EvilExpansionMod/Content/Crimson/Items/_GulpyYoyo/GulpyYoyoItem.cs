@@ -25,7 +25,7 @@ public class GulpyYoyoItem : ModItem {
         Item.noUseGraphic = true;
         Item.UseSound = SoundID.Item1;
 
-        Item.damage = 80;
+        Item.damage = 60;
         Item.DamageType = DamageClass.MeleeNoSpeed;
         Item.knockBack = 2.5f;
         Item.crit = 0;

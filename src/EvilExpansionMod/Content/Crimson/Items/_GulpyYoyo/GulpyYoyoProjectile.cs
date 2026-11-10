@@ -22,7 +22,7 @@ public class GulpyYoyoProjectile : ModProjectile {
     private const int INITIAL_WIDTH = 18;
     private const int INITIAL_HEIGHT = 18;
 
-    private int MAX_CHOMP_STACKS = 30;
+    private int MAX_CHOMP_STACKS = 40;
     private int _chompStacks = 0;
 
     private float ChompProgress => (float)_chompStacks / MAX_CHOMP_STACKS;
@@ -30,11 +30,12 @@ public class GulpyYoyoProjectile : ModProjectile {
     private Vector2 _twitch;
 
     private VerletChain _leftArmChain = null!;
-    private VerletChain _righArmChain = null!;
+    private VerletChain _rightArmChain = null!;
 
     public override void SetStaticDefaults() {
-        ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 16 * 14f;
-        ProjectileID.Sets.YoyosTopSpeed[Projectile.type] = 13f;
+        ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 16 * 10f;
+        ProjectileID.Sets.YoyosTopSpeed[Projectile.type] = 8f;
+        ProjectileID.Sets.YoyosLifeTimeMultiplier[Projectile.type] = -1f;
         Main.projFrames[Projectile.type] = 3;
     }
 
@@ -50,6 +51,7 @@ public class GulpyYoyoProjectile : ModProjectile {
     }
 
     public override void AI() {
+        ProjectileID.Sets.YoyosLifeTimeMultiplier[Projectile.type] = -1f;
         //Main.NewText("ChompProgress" + ChompProgress, Microsoft.Xna.Framework.Color.White);
 
         var maxDistance = 200f * 16f;
@@ -62,11 +64,13 @@ public class GulpyYoyoProjectile : ModProjectile {
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Crimson);
         }
 
-        Projectile.rotation += -0.45f;
+        //Projectile.rotation += -0.45f; 
+        Projectile.rotation += -0.41f; 
         Projectile.rotation += Math.Min(110f, 4f * (float)Math.Pow(ChompProgress, 3));
-        ProjectileID.Sets.YoyosTopSpeed[Projectile.type] = 13f * (1 + ChompProgress);
-        var chompingFrequency = 8;
-        if(Timer > 20 - 19.5 * Math.Min(1, ChompProgress * 2) && ChompProgress < 1) {
+        ProjectileID.Sets.YoyosTopSpeed[Projectile.type] = 16f * (float)(Math.Pow(1 + ChompProgress,0.6));
+        ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 16 * 10f * (float)(Math.Pow(1 + ChompProgress, 3));
+        var chompingFrequency = 12;
+        if(Timer > 20 - 19.5 * Math.Min(1, ChompProgress * 1.5) && ChompProgress < 1) {
             Projectile.friendly = false;
             Projectile.frame = 1 + (Timer % (chompingFrequency * 2) / chompingFrequency);
             Timer -= 1;
@@ -76,7 +80,6 @@ public class GulpyYoyoProjectile : ModProjectile {
             if(Timer <= 10 && _chompStacks >= MAX_CHOMP_STACKS) { // Timer was originally 10
                 _chompStacks = 0;
                 Projectile.scale = 3.5f;
-
                 SoundEngine.PlaySound(SoundID.Zombie64 with { Pitch = 1f }, Projectile.Center);
                 SoundEngine.PlaySound(SoundID.NPCDeath13 with { Pitch = 0.5f, Volume = 0.75f }, Projectile.Center);
 
@@ -176,8 +179,8 @@ public class GulpyYoyoProjectile : ModProjectile {
         _leftArmChain ??= new VerletChain(leftArmOrigin, [16f, 24f]);
         _leftArmChain.Update(leftArmOrigin, null);
 
-        _righArmChain ??= new VerletChain(leftArmOrigin, [16f, 24f]);
-        _righArmChain.Update(rightArmOrigin, null);
+        _rightArmChain ??= new VerletChain(leftArmOrigin, [16f, 24f]);
+        _rightArmChain.Update(rightArmOrigin, null);
 
         Projectile.scale = MathHelper.Lerp(Projectile.scale, 1f + ChompProgress * 0.4f, 0.1f);
         Projectile.Resize((int)(INITIAL_WIDTH * Projectile.scale), (int)(INITIAL_HEIGHT * Projectile.scale));
@@ -224,8 +227,8 @@ public class GulpyYoyoProjectile : ModProjectile {
 
         var outlineColor = Color.Lerp(Color.Transparent, Color.Red, (Projectile.scale - 1f) * 1f); // Previously * 0.55f
 
-        DrawArm(_righArmChain.Positions, SpriteEffects.None);
-        DrawArm(_leftArmChain.Positions, SpriteEffects.FlipHorizontally);
+        if (_rightArmChain != null) DrawArm(_rightArmChain.Positions, SpriteEffects.None);
+        if (_leftArmChain != null) DrawArm(_leftArmChain.Positions, SpriteEffects.FlipHorizontally);
 
         Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
             .DrawTexture(new()

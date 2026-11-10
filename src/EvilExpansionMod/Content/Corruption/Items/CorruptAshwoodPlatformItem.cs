@@ -52,9 +52,9 @@ internal sealed class CorruptAshwoodPlatformTile : ModTile {
 
     //TileID.Sets.RoomNeeds.CountsAsDoor[Type] = true; (This, does not even work)
 
-    AddMapEntry(new Color(138, 38, 35));
+    AddMapEntry(new Color(103, 104, 138));
 
-    DustType = DustID.Blood;
+    DustType = DustID.Corruption;
     AdjTiles = [TileID.Platforms];
     VanillaFallbackOnModDeletion = TileID.Platforms;
 

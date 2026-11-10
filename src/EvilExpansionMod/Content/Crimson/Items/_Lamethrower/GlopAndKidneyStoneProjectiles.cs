@@ -38,7 +38,7 @@ public class Glop : ModProjectile, IPreDrawEverythingBulk<Glop> {
         Projectile.friendly = true;
         Projectile.hostile = false;
         Projectile.DamageType = DamageClass.Ranged;
-        Projectile.penetrate = 6;
+        Projectile.penetrate = -1;
         Projectile.timeLeft = 300;
         Projectile.tileCollide = true;
         Projectile.ignoreWater = false;
@@ -168,7 +168,7 @@ public class Glop : ModProjectile, IPreDrawEverythingBulk<Glop> {
             Projectile.Center,
             Vector2.Zero,
             ModContent.ProjectileType<LingeringIchorProjectile>(),
-            Projectile.damage, // (0.25 listed damage)
+            Projectile.damage, // Creep inherits base damage
             0f
         );
     }
@@ -226,7 +226,7 @@ public class KidneyStone : ModProjectile{
     public override void AI() {
         //if(Projectile.velocity.Y > 0) { Projectile.velocity.Y *= 1.03f; }
         Projectile.velocity.Y += gravityBuilding;
-        gravityBuilding += 0.01f;
+        gravityBuilding += 0.005f;
         //Projectile.velocity = Projectile.velocity.RotatedBy(Main.rand.NextFloat(-0.02f, 0.02f));
         Projectile.rotation += 0.1f * MathHelper.PiOver2;
     }

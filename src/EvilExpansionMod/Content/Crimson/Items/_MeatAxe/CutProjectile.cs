@@ -69,7 +69,9 @@ public class CutProjectile : ModProjectile, IPreDrawEverythingBulk<CutProjectile
             entity.Draw(pipeline);
         }
 
-        pipeline.ApplyOutline(Color.Lerp(Color.DarkRed, Color.Black, 0.5f));
+        pipeline
+            .ApplyOutline(Color.Lerp(Color.Red, Color.DarkRed, 0.5f))
+            .ApplyOutline(Color.Lerp(Color.DarkRed, Color.Black, 0.5f));
     }
 
     private void Draw(RenderPipeline pipeline) {

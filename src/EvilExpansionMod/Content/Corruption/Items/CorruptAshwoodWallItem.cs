@@ -9,25 +9,25 @@ using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Corruption.Tile
 
 namespace EvilExpansionMod.Content.Corruption;
 
-internal class CorruptAshwoodFence : ModWall {
-    public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshwoodFence.KEY;
+internal class CorruptAshwoodWall : ModWall {
+    public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshwoodWall.KEY;
     public override void SetStaticDefaults() {
         Main.wallHouse[Type] = true;
 
         Main.tileBlockLight[Type] = true;
 
-        DustType = DustID.Blood;
+        DustType = DustID.Corruption;
 
-        AddMapEntry(new Color(67, 21, 19));
+        AddMapEntry(new Color(46, 45, 41));
     }
 }
-internal sealed class CorruptAshwoodFenceItem : ModItem {
-    public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshwoodFenceItem.KEY;
+internal sealed class CorruptAshwoodWallItem : ModItem {
+    public override string Texture => Assets.Images.Corruption.Items.CorruptAshwoodWallItem.KEY;
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 400;
     }
     public override void SetDefaults() {
-        Item.DefaultToPlaceableWall(ModContent.WallType<CorruptAshwoodFence>());
+        Item.DefaultToPlaceableWall(ModContent.WallType<CorruptAshwoodWall>());
         Item.width = 16;
         Item.height = 16;
         Item.value = Item.sellPrice();

@@ -149,7 +149,7 @@ public class CutProjectile : ModProjectile, IPreDrawEverythingBulk<CutProjectile
             );
         }
 
-        int duration = 60 * 10;
+        int duration = 60 * 12;
         target.AddBuff(ModContent.BuffType<MeatAxeDebuff>(), duration);
     }
 }
@@ -176,7 +176,7 @@ public class MeatAxeDebuff : ModBuff {
     }
     public override void Update(NPC npc, ref int buffIndex) {
 
-        if(Main.rand.NextBool(1)) {
+        for(int i = 0; i < 3; i++) {
             Dust.NewDust(npc.position + new Vector2(
                 npc.width * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-10f, 10f),
                 npc.height * Main.rand.NextFloat(-0.3f, 0.3f) + Main.rand.NextFloat(-10f, 10f)),

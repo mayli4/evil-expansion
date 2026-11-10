@@ -71,8 +71,8 @@ public sealed class CursehoundNPC : ModNPC {
     public override void SetStaticDefaults() {
         var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
         {
-            Position = new Vector2(50f, 50f),
-            PortraitPositionXOverride = 20f,
+            Position = new Vector2(85f, 40f),
+            PortraitPositionXOverride = 50f,
             PortraitPositionYOverride = 40f,
         };
         NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
@@ -83,7 +83,7 @@ public sealed class CursehoundNPC : ModNPC {
     public override void SetDefaults() {
         (NPC.width, NPC.height) = (125, 100);
 
-        NPC.lifeMax = 2950;
+        NPC.lifeMax = 3260;
         NPC.damage = 30;
         NPC.defense = 25;
         NPC.value = Item.buyPrice(gold: 1, silver: 50);

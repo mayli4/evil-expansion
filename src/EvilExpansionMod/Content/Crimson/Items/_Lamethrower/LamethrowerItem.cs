@@ -14,7 +14,7 @@ public class LamethrowerItem : ModItem {
     }
 
     public override void SetDefaults() {
-        Item.damage = 35;
+        Item.damage = 20;
         Item.crit = 4;
         Item.DamageType = DamageClass.Magic;
         Item.knockBack = 0.025f;
@@ -34,10 +34,10 @@ public class LamethrowerItem : ModItem {
         Item.noUseGraphic = true;
         Item.shoot = ModContent.ProjectileType<LamethrowerHeldProjectile>();
         Item.shootSpeed = 6f;
-        Item.mana = 1; // For the "meat" of mana consumption please consult the held projectile code
+        Item.mana = 10; // For the "meat" of mana consumption please consult the held projectile code
 
         Item.channel = true;
-        Item.useTurn = true;
+        //Item.useTurn = true; // Surprisingly, having it be "false" gets rid of a bug: wherein pets and other visual things will jitter erratically when you aim in the opposite direction of movement whilst this is true
     }
 
     public override bool CanUseItem(Player player) {

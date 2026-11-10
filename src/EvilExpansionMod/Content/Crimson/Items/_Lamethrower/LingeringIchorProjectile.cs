@@ -31,7 +31,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
         Projectile.DamageType = DamageClass.Ranged;
 
         Projectile.usesIDStaticNPCImmunity = true;
-        Projectile.idStaticNPCHitCooldown = 15;
+        Projectile.idStaticNPCHitCooldown = 10; // Hits enemies up to 6 times per second
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
@@ -110,7 +110,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
                     Projectile.Center + new Vector2(0, 0),
                     new Vector2(Main.rand.NextFloat(-1f, 1f), -Main.rand.NextFloat(10f, 1f)),
                     ModContent.ProjectileType<IchorCompustion>(),
-                    Projectile.damage * 4, // (listed damage)
+                    Projectile.damage * 3, // Triple damage
                     Projectile.knockBack,
                     Projectile.owner
                 );
@@ -179,7 +179,7 @@ public class IchorCompustion : ModProjectile {
         Projectile.alpha = 0;
 
         Projectile.usesIDStaticNPCImmunity = true;
-        Projectile.idStaticNPCHitCooldown = 6;
+        Projectile.idStaticNPCHitCooldown = 6; // Hits enemies up to 10 times per second
         //Projectile.usesLocalNPCImmunity = true;
         //Projectile.localNPCHitCooldown = -1;
     }

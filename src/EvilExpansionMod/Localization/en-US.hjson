@@ -160,7 +160,7 @@ Mods: {
 					'''
 					Coats enemies and surfaces alike with incendiary ichor, inflicting a multitude of debuffs
 					Enemies suffer reduced defense and take extra damage when set ablaze
-					Overcharge the weapon to make it hurt...
+					Overcharge the weapon to blast enemies apart with a kidney stone boulder
 					'''
 			}
 
@@ -170,7 +170,7 @@ Mods: {
 					'''
 					Your summons will focus struck enemies
 					Has a {0}% chance to cage enemies on hit
-					Caged enemies take {1}% increased damage from minions
+					Caged enemies take {1}% increased summon damage
 					'''
 			}
 
@@ -314,7 +314,7 @@ Mods: {
 				DisplayName: Gulpy
 				Tooltip:
 					'''
-					The yoyo takes bites out of enemies
+					The yoyo takes bites out of enemies, increasing its range and attack speed
 					Repeated bites cause it to vomit out a spray of half-digested gore
 					'My little Gulpy...'
 					'''
@@ -778,17 +778,17 @@ Mods: {
 			}
 
 			CorruptAshwoodFenceItem: {
-				DisplayName: Corrupt Ashwood Fence Item
+				DisplayName: Corrupt Ashwood Fence
 				Tooltip: ""
 			}
 
 			CorruptAshwoodPlatformItem: {
-				DisplayName: Corrupt Ashwood Platform Item
+				DisplayName: Corrupt Ashwood Platform
 				Tooltip: ""
 			}
 
 			CorruptAshwoodWallItem: {
-				DisplayName: Corrupt Ashwood Wall Item
+				DisplayName: Corrupt Ashwood Wall
 				Tooltip: ""
 			}
 		}
@@ -907,23 +907,23 @@ Mods: {
 
 		Biomes: {
 			UnderworldCorruptionBiome: {
-				DisplayName: Underworld Corruption Biome
-				TownNPCDialogueName: The Underworld Corruption Biome
+				DisplayName: Corrupt Underworld Biome
+				TownNPCDialogueName: The Corrupt Underworld Biome
 			}
 
 			UnderworldCorruption: {
-				DisplayName: Underworld Corruption
-				TownNPCDialogueName: The Underworld Corruption
+				DisplayName: Corrupt Underworld
+				TownNPCDialogueName: The Corrupt Underworld
 			}
 
 			UnderworldCrimsonBiome: {
-				DisplayName: Underworld Crimson Biome
-				TownNPCDialogueName: The Underworld Crimson Biome
+				DisplayName: Crimson Underworld Biome
+				TownNPCDialogueName: The Crimson Underworld Biome
 			}
 
 			UnderworldCrimson: {
-				DisplayName: Underworld Crimson
-				TownNPCDialogueName: the Underworld Crimson
+				DisplayName: Crimson Underworld
+				TownNPCDialogueName: the Crimson Underworld
 			}
 		}
 

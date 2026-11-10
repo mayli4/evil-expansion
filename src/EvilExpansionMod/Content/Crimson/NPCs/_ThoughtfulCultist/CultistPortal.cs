@@ -52,41 +52,66 @@ public class CultistPortal : ModProjectile {
     public override void OnHitPlayer(Player target, Player.HurtInfo info) {
         target.AddBuff(BuffID.Bleeding, 60 * 10);
     }
+    private float SoftenVolume = 1;
     public override void AI() {
         if(Projectile.timeLeft == (int)Projectile.ai[1]) {
+            switch(PortalType) {
+                case PortalType.Spear:
+                    SoftenVolume = 0.6f;
+                return;
+            }
             SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistPortalOpenLayer1.Asset with
             {
                 Pitch = Main.rand.NextFloatDirection() * 0.4f,
-                MaxInstances = 3,
+                Volume = 0.75f * SoftenVolume,
+                MaxInstances = 20,
+                SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest
             }, Projectile.Center);
 
             SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistPortalOpenLayer2.Asset with
             {
                 Pitch = Main.rand.NextFloatDirection() * 0.4f,
-                MaxInstances = 3,
+                Volume = 0.75f * SoftenVolume,
+                MaxInstances = 20,
+                SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest
             }, Projectile.Center);
         }
         else if(Projectile.timeLeft == (int)Projectile.ai[1] - 16) {
             if(PortalType == PortalType.Spear) {
                 SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistSpearThrustMaybe.Asset with
                 {
-                    Pitch = Main.rand.NextFloatDirection() * 0.1f,
-                    MaxInstances = 3,
+                    Pitch = Main.rand.NextFloatDirection() * 0.2f,
+                    Volume = 0.55f,
+                    MaxInstances = 18,
+                    SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest
                 }, Projectile.Center);
             }
         }
 
         var t = Projectile.timeLeft / Projectile.ai[1];
+
+        Dust.NewDustPerfect(
+            Projectile.Center + Projectile.velocity * 20f
+            + Main.rand.NextFloatDirection() * 20f * Projectile.velocity.RotatedBy(MathF.PI / 2f),
+            DustID.Blood,
+            Velocity: Projectile.velocity * 6f,
+            Main.rand.Next(0, 50),
+            default,
+            Main.rand.NextFloat(1f, 2f) * t
+        );
         if(Main.rand.NextBool(2)) {
-            Dust.NewDustPerfect(
-                Projectile.Center + Projectile.velocity * 20f
+            Dust d = Dust.NewDustPerfect(
+                Projectile.Center + Projectile.velocity * 10f
                 + Main.rand.NextFloatDirection() * 20f * Projectile.velocity.RotatedBy(MathF.PI / 2f),
-                DustID.Blood,
-                Velocity: Projectile.velocity * 8f,
-                Main.rand.Next(0, 50),
+                DustID.Torch,
+                Velocity: Projectile.velocity * 6f,
+                Main.rand.Next(0, 150),
                 default,
-                Main.rand.NextFloat(0.75f, 1.75f) * t
+                Main.rand.NextFloat(1f, 3f) * t
             );
+            var spread = 2f;
+            d.velocity = d.velocity + new Vector2(Main.rand.NextFloat(-spread * t, spread * t), Main.rand.NextFloat(-spread * t, spread * t));
+            d.noGravity = true;
         }
         switch(PortalType) {
             case PortalType.Blood:
@@ -95,9 +120,33 @@ public class CultistPortal : ModProjectile {
                         Projectile.Center + Projectile.velocity * 20f
                         + Main.rand.NextFloatDirection() * 20f * Projectile.velocity.RotatedBy(MathF.PI / 2f),
                         DustID.Blood,
-                        Velocity: Projectile.velocity * 5f
+                        Velocity: Projectile.velocity * 5f,
+                        Main.rand.Next(0, 50),
+                        default,
+                        Main.rand.NextFloat(1f, 2f)
                     );
+                    Dust d = Dust.NewDustPerfect(
+                        Projectile.Center + Projectile.velocity * 10f
+                        + Main.rand.NextFloatDirection() * 20f * Projectile.velocity.RotatedBy(MathF.PI / 2f),
+                        DustID.Torch,
+                        Velocity: Projectile.velocity * 10f * (0.5f + t),
+                        Main.rand.Next(0, 255),
+                        default,
+                        Main.rand.NextFloat(1f, 2f) * (0.5f + t)
+                    );
+                    var spread = 1f;
+                    d.velocity = d.velocity + new Vector2(Main.rand.NextFloat(-spread * t, spread * t), Main.rand.NextFloat(-spread * t, spread * t));
+                    d.noGravity = true;
                 }
+                Dust.NewDustPerfect(
+                    Projectile.Center + Projectile.velocity * 20f
+                    + Main.rand.NextFloatDirection() * 20f * Projectile.velocity.RotatedBy(MathF.PI / 2f),
+                    DustID.BloodWater,
+                    Velocity: Projectile.velocity * 10f,
+                    Main.rand.Next(0, 50),
+                    default,
+                    Main.rand.NextFloat(1f, 2f) * (0.5f + t)
+                );
 
                 if(Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft % 20 == 0) {
                     var position = Projectile.Center + Projectile.velocity * 15f;
@@ -107,20 +156,24 @@ public class CultistPortal : ModProjectile {
                         position,
                         velocity,
                         ModContent.ProjectileType<PortalGore>(),
-                        20,
+                        25, //50, 100, 150
                         4f
                     );
 
                     SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistGoreFlingLowLayer.Asset with
                     {
                         Pitch = Main.rand.NextFloatDirection() * 0.1f,
-                        MaxInstances = 3,
+                        Volume = 0.85f,
+                        MaxInstances = 40,
+                        SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
                     }, Projectile.Center);
 
                     SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistGoreFlingSquelch.Asset with
                     {
                         Pitch = Main.rand.NextFloatDirection() * 0.1f,
-                        MaxInstances = 3,
+                        Volume = 1.2f,
+                        MaxInstances = 40,
+                        SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
                     }, Projectile.Center);
                 }
                 break;
@@ -198,8 +251,6 @@ public class CultistPortal : ModProjectile {
             0f);
 
         switch(PortalType) {
-
-
             case PortalType.Blood:
                 break;
             case PortalType.Spear:
@@ -257,12 +308,14 @@ public class CultistPortal : ModProjectile {
                     SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistGoreFlingLowLayer.Asset with
                     {
                         Pitch = Main.rand.NextFloatDirection() * 0.1f,
+                        Volume = 0.85f,
                         MaxInstances = 3,
                     }, Projectile.Center);
 
                     SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistGoreFlingSquelch.Asset with
                     {
                         Pitch = Main.rand.NextFloatDirection() * 0.1f,
+                        Volume = 1.5f,
                         MaxInstances = 3,
                     }, Projectile.Center);
                 }
@@ -279,18 +332,47 @@ public class CultistPortal : ModProjectile {
         Main.spriteBatch.Begin(ss with { BlendState = BlendState.Additive });
 
         var scale = t < 0.1f ? t / 0.1f : (t > 0.9f ? MathF.Max(0f, (0.1f - (t - 0.9f)) / 0.1f) : 1f);
-        Main.spriteBatch.Draw(
-            glowTexture,
-            Projectile.Center - Main.screenPosition,
-            null,
-            Color.Red * 0.2f,
-            rotation,
-            glowTexture.Size() * 0.5f,
-            0.55f * scale * new Vector2(1.25f, 2.2f),
-            SpriteEffects.None,
-            0
-        );
-
+        switch(PortalType) {
+            case PortalType.Spear:
+                Main.spriteBatch.Draw(
+                glowTexture,
+                Projectile.Center - Main.screenPosition,
+                null,
+                Color.Red * 0.15f,
+                rotation,
+                glowTexture.Size() * 0.5f,
+                0.55f * scale * new Vector2(1.25f, 2.2f),
+                SpriteEffects.None,
+                0
+                );
+                break;
+            case PortalType.Eyes:
+                Main.spriteBatch.Draw(
+                glowTexture,
+                Projectile.Center - Main.screenPosition,
+                null,
+                Color.Purple * 0.35f,
+                rotation,
+                glowTexture.Size() * 0.5f,
+                0.55f * scale * new Vector2(1.25f, 2.2f),
+                SpriteEffects.None,
+                0
+                );
+                break;
+            case PortalType.Blood:
+                Main.spriteBatch.Draw(
+                glowTexture,
+                Projectile.Center - Main.screenPosition,
+                null,
+                Color.Red * 0.30f,
+                rotation,
+                glowTexture.Size() * 0.5f,
+                0.55f * scale * new Vector2(1.25f, 2.2f),
+                SpriteEffects.None,
+                0
+                );
+                break;
+        }
         Main.spriteBatch.Restart(ss);
         return false;
     }

@@ -35,7 +35,7 @@ public class CultistEye : ModNPC {
     public override void SetDefaults() {
         NPC.width = 22;
         NPC.height = 22;
-        NPC.lifeMax = 250;
+        NPC.lifeMax = 350;
         NPC.defense = 25;
         NPC.value = 1f;
         NPC.noTileCollide = true;
@@ -64,7 +64,7 @@ public class CultistEye : ModNPC {
     }
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
         if(Main.expertMode) {
-            NPC.lifeMax = 350 / 2;
+            NPC.lifeMax = 400 / 2;
         }
         if(Main.masterMode) {
             NPC.lifeMax = 450 / 3;
@@ -82,7 +82,7 @@ public class CultistEye : ModNPC {
     }
 
     int DashCooldownTimer = 60 * Main.rand.Next(4, 8);
-    int DashCooldown = (int)(60 * (Main.expertMode ? 4 : 8) * Main.rand.NextFloat(0.8f, 1.2f));
+    int DashCooldown = (int)(60 * (Main.expertMode ? 4 : 6) * Main.rand.NextFloat(0.8f, 1.2f));
     int DashWindupTimer = 0;
     int DashWindupMax = 60;
     int DashTimer = 15;
@@ -90,11 +90,11 @@ public class CultistEye : ModNPC {
     private Vector2 dashDirection;
 
     public override void AI() {
-        Main.NewText("DashMultiplier" + DashMultiplier, Microsoft.Xna.Framework.Color.White);
-        Main.NewText("DashWindupTimer" + DashWindupTimer, Microsoft.Xna.Framework.Color.White);
-        Main.NewText("DashWindupMax" + DashWindupMax, Microsoft.Xna.Framework.Color.White);
-        Main.NewText("DashCooldownTimer" + DashCooldownTimer, Microsoft.Xna.Framework.Color.White);
-        Main.NewText("NPC.alpha" + NPC.alpha, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("DashMultiplier" + DashMultiplier, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("DashWindupTimer" + DashWindupTimer, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("DashWindupMax" + DashWindupMax, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("DashCooldownTimer" + DashCooldownTimer, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("NPC.alpha" + NPC.alpha, Microsoft.Xna.Framework.Color.White);
         NPC.TargetClosest();
 
         NPC.Opacity += 0.05f;
@@ -129,16 +129,16 @@ public class CultistEye : ModNPC {
 
             //NPC.rotation = NPC.Center.DirectionTo(target.Center).ToRotation() - MathHelper.Pi; // Faces the player
 
-            Dust.NewDust(
-                NPC.position,
-                NPC.width,
-                NPC.height,
-                DustID.Shadowflame,
-                0f, 0f,
-                100,
-                default,
-                Main.rand.NextFloat(0.5f, 1.5f) * DashMultiplier
-            );
+            //Dust.NewDust(
+            //    NPC.position,
+            //    NPC.width,
+            //    NPC.height,
+            //    DustID.Shadowflame,
+            //    0f, 0f,
+            //    100,
+            //    default,
+            //    Main.rand.NextFloat(0.5f, 1.5f) * DashMultiplier
+            //);
         }
 
         if(DashWindupTimer == 1) { // When DashWindupTimer = 1
@@ -161,7 +161,7 @@ public class CultistEye : ModNPC {
                 0f, 0f,
                 100,
                 default,
-                Main.rand.NextFloat(0.5f, 1.5f) * DashMultiplier
+                Main.rand.NextFloat(0.5f, 1.0f)
             );
         } //thanks for coming to my tedtalk
         else if (DashCooldownTimer > 0) DashCooldownTimer--; // When not dashing, decrease CooldownTimer
@@ -170,7 +170,7 @@ public class CultistEye : ModNPC {
             Dust.NewDust(NPC.position, NPC.width, NPC.height, DustID.Blood);
         } 
 
-        if(Main.rand.NextBool(20)) { // Passive dust 2
+        if(Main.rand.NextBool(25)) { // Passive dust 2
             Dust.NewDust(
                 NPC.position,
                 NPC.width,
@@ -225,14 +225,14 @@ public class CultistEye : ModNPC {
         var origin = new Vector2(18, 14);
         Color c = NPC.GetNPCColorTintedByBuffs(drawColor) * NPC.Opacity;
 
-        if(DashWindupTimer != 0 || DashTimer != 0) { // Chargeup/ dash trail
+        if( (DashWindupTimer != 0 || DashTimer != 0) && !NPC.IsABestiaryIconDummy) { // Chargeup/ dash trail
             for(int i = NPC.oldPos.Length - 1; i >= 0; i--) {
                 float opacity = (1f - (i / (float)NPC.oldPos.Length));
                 spriteBatch.Draw(
                     texture,
                     NPC.oldPos[i] - screenPos + NPC.Size / 2,
                     NPC.frame,
-                    new Color(180, 30, 255, 100) * opacity,
+                    new Color(103, 61, 255, 100) * opacity, //new Color(103, 61, 255, 100) new Color(180, 30, 255, 100)
                     NPC.rotation,
                     NPC.frame.Size() / 2,
                     NPC.scale,

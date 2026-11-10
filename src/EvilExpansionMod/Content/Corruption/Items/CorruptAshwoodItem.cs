@@ -30,6 +30,20 @@ public class CorruptAshwoodItem : ModItem {
         Item.rare = ItemRarityID.White;
     }
     public override void AddRecipes() {
+        CreateRecipe(1)
+            .AddIngredient<CorruptAshwoodWallItem>(4)
+            .AddTile(TileID.WorkBenches)
+            .Register();
+
+        CreateRecipe(1)
+            .AddIngredient<CorruptAshwoodPlatformItem>(2)
+            .AddTile(TileID.WorkBenches)
+            .Register();
+
+        CreateRecipe(1)
+            .AddIngredient<CorruptAshwoodFenceItem>(4)
+            .AddTile(TileID.WorkBenches)
+            .Register();
     }
 }
 internal sealed class CorruptAshwoodTile : ModTile {
@@ -39,8 +53,8 @@ internal sealed class CorruptAshwoodTile : ModTile {
         Main.tileSolid[Type] = true;
         Main.tileBrick[Type] = true;
 
-        DustType = DustID.Blood;
+        DustType = DustID.Corruption;
 
-        AddMapEntry(new Color(118, 18, 15));
+        AddMapEntry(new Color(83, 84, 118));
     }
 }

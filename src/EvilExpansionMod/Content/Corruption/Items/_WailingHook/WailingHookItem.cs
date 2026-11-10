@@ -27,8 +27,8 @@ public class WailingHookItem : ModItem {
         var modPlayer = player.GetModPlayer<WailingHookPlayer>();
         modPlayer.HasSoulsuckingFishingAccessory = true;
 
-        // Max range limit here (8 pixels = 1 tiles)
-        float maxRange = 40 * 8f; 
+        // Max range limit here (16 pixels = 1 tiles)
+        float maxRange = 40 * 16f; 
 
         // Recalculate every 10 frames (~6 times a second)
         if (Main.GameUpdateCount % 10 == 0){

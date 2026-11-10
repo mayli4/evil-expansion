@@ -56,7 +56,7 @@ public class LanternBatNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 40;
         NPC.height = 30;
-        NPC.lifeMax = 320;
+        NPC.lifeMax = 420;
         NPC.damage = 25;
         NPC.defense = 6;
         NPC.knockBackResist = 0.2f;

@@ -47,7 +47,7 @@ public class WailingHookPlayer : ModPlayer {
             }
 
             // Increment the timer, with the amount scaling with enemy count
-            float enemyBonus = (float)Math.Log(1 + nearbyEnemyCount) * 10.0f;
+            float enemyBonus = (float)Math.Log(1 + nearbyEnemyCount) * 50.0f;
             _spawnTimer += 1 + enemyBonus;
             if (_spawnTimer < 120)
                 return;

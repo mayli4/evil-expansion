@@ -314,7 +314,7 @@ Mods: {
 				DisplayName: Gulpy
 				Tooltip:
 					'''
-					The yoyo takes bites out of enemies, increasing its range and attack speed
+					The yoyo takes bites out of enemies, increasing its attack speed
 					Repeated bites cause it to vomit out a spray of half-digested gore
 					'My little Gulpy...'
 					'''
@@ -549,6 +549,20 @@ Mods: {
 					'''
 					While fishing, releases cursed ghosts from the water that chase after enemies
 					The hook reacts to danger, releasing more ghosts when you are threatened
+					'''
+			}
+
+			SoulplatedHookItem: {
+				DisplayName: Soulplated Fishing Hook
+				Tooltip:
+					'''
+					While fishing:
+					-Releases cursed ghosts from the water that chase after enemies
+					The hook reacts to danger, releasing more ghosts when you are threatened
+
+					-Forms a blood shield which impales enemies and absorbs incoming damage
+					Getting hurt damages the shield
+					The shield will need time to regenerate after being broken
 					'''
 			}
 
@@ -899,6 +913,8 @@ Mods: {
 			IchorCompustion.DisplayName: Ichor Compustion
 			KidneyStone.DisplayName: Kidney Stone
 			PusDeath.DisplayName: Pus Death
+			WailingTelegraphProjectile.DisplayName: Wailing Telegraph Projectile
+			WailingFireball.DisplayName: Wailing Fireball
 		}
 
 		Biomes: {

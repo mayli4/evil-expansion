@@ -54,8 +54,6 @@ public class ThoughtfulCultistNPC : ModNPC {
         ContentSamples.NpcBestiaryRarityStars[Type] = 4;
 
         ItemID.Sets.KillsToBanner[BannerItem] = 25;
-        SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
-
     }
     public override void SetDefaults() {
         NPC.width = 38;
@@ -78,6 +76,8 @@ public class ThoughtfulCultistNPC : ModNPC {
 
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<ThoughtfulCultistBannerItem>();
+
+        SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
     }
    
     public override float SpawnChance(NPCSpawnInfo spawnInfo) => Main.hardMode && spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.05f : 0;
@@ -109,7 +109,7 @@ public class ThoughtfulCultistNPC : ModNPC {
         switch(State) {
             case CultistState.FlyToTarget:
                 if(distanceToTarget > 400) {
-                    NPC.velocity += directionToTarget * 0.15f;
+                    NPC.velocity += directionToTarget * 0.2f;
                     NPC.velocity *= 0.97f;
                 }
                 else if(Main.netMode != NetmodeID.MultiplayerClient && _timer > 240) { // Start attack when in range and timer > 240

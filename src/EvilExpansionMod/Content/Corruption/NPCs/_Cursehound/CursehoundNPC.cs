@@ -80,7 +80,6 @@ public sealed class CursehoundNPC : ModNPC {
         Main.npcFrameCount[Type] = 29;
 
         ItemID.Sets.KillsToBanner[BannerItem] = 25;
-        SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
     }
     public override void SetDefaults() {
         (NPC.width, NPC.height) = (125, 100);
@@ -99,10 +98,13 @@ public sealed class CursehoundNPC : ModNPC {
 
         NPC.buffImmune[BuffID.CursedInferno] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
+        NPC.buffImmune[BuffID.Confused] = true;
         NPC.lavaImmune = true;
 
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<CursehoundBannerItem>();
+
+        SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
     }
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
         if(Main.expertMode) {

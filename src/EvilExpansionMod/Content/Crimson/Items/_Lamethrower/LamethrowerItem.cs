@@ -17,7 +17,7 @@ public class LamethrowerItem : ModItem {
         Item.damage = 20;
         Item.crit = 4;
         Item.DamageType = DamageClass.Magic;
-        Item.knockBack = 0.025f;
+        Item.knockBack = 2f;
 
         Item.width = 68;
         Item.height = 46;

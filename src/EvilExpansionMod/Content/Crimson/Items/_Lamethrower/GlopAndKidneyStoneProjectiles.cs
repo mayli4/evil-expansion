@@ -169,7 +169,7 @@ public class Glop : ModProjectile, IPreDrawEverythingBulk<Glop> {
             Vector2.Zero,
             ModContent.ProjectileType<LingeringIchorProjectile>(),
             Projectile.damage, // Creep inherits base damage
-            0f
+            Projectile.knockBack
         );
     }
 }

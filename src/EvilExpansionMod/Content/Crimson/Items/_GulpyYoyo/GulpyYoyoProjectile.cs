@@ -33,7 +33,7 @@ public class GulpyYoyoProjectile : ModProjectile {
     private VerletChain _rightArmChain = null!;
 
     public override void SetStaticDefaults() {
-        ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 16 * 10f;
+        ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 16 * 16f;
         ProjectileID.Sets.YoyosTopSpeed[Projectile.type] = 8f;
         ProjectileID.Sets.YoyosLifeTimeMultiplier[Projectile.type] = -1f;
         Main.projFrames[Projectile.type] = 3;
@@ -47,7 +47,7 @@ public class GulpyYoyoProjectile : ModProjectile {
         Projectile.DamageType = DamageClass.MeleeNoSpeed;
         Projectile.penetrate = -1;
         Projectile.usesLocalNPCImmunity = true;
-        Projectile.localNPCHitCooldown = 6;
+        Projectile.localNPCHitCooldown = 5;
     }
 
     public override void AI() {
@@ -60,15 +60,20 @@ public class GulpyYoyoProjectile : ModProjectile {
             return;
         }
 
-        if(Main.rand.NextBool(15)) {
+        if(Main.rand.NextBool(15 - (int)(14 * ChompProgress))) {
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Crimson);
+            if (ChompProgress > 0.5f) {
+                Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BloodWater);
+            }
         }
 
         //Projectile.rotation += -0.45f; 
         Projectile.rotation += -0.41f; 
-        Projectile.rotation += Math.Min(110f, 4f * (float)Math.Pow(ChompProgress, 3));
-        ProjectileID.Sets.YoyosTopSpeed[Projectile.type] = 16f * (float)(Math.Pow(1 + ChompProgress,0.6));
-        ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 16 * 10f * (float)(Math.Pow(1 + ChompProgress, 3));
+        Projectile.rotation += Math.Min(63f, 4f * (float)Math.Pow(ChompProgress, 3));
+        ProjectileID.Sets.YoyosTopSpeed[Projectile.type] = 16f * (float)(Math.Pow(1 + ChompProgress,0.5));
+        ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 16 * 16f;
+        //ProjectileID.Sets.YoyosMaximumRange[Projectile.type] = 16 * 8f * (float)(Math.Pow(1 + ChompProgress, 6));
+        //Main.NewText("ProjectileID.Sets.YoyosMaximumRange[Projectile.type]" + ProjectileID.Sets.YoyosMaximumRange[Projectile.type] /16, Microsoft.Xna.Framework.Color.White);
         var chompingFrequency = 12;
         if(Timer > 20 - 19.5 * Math.Min(1, ChompProgress * 1.5) && ChompProgress < 1) {
             Projectile.friendly = false;

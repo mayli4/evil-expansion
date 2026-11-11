@@ -103,7 +103,7 @@ public class PlanetoidProjectile : ModProjectile {
                 Vector2 toMouse = (Main.MouseWorld - Projectile.Center);
                 float distanceToMouse = toMouse.Length();
 
-                if(distanceToMouse > Main.rand.NextFloat(1f, 3f)) Projectile.velocity += directionToMouse * 1.0f * (1 - 0.3f * Projectile.scale);
+                if(distanceToMouse > Main.rand.NextFloat(1f, 3f)) Projectile.velocity += directionToMouse * 1.3f * (1 - 0.5f * Projectile.scale);
                 Projectile.velocity *= 0.89f;
 
 

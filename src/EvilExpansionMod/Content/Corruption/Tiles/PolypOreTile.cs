@@ -48,8 +48,8 @@ public class PolypOreTile : ModTile {
         Main.tileMerge[Type][ModContent.TileType<CorruptAsh>()] = true;
         Main.tileMerge[ModContent.TileType<CorruptAsh>()][Type] = true;
 
-        Main.tileMerge[Type][ModContent.TileType<OvergrownCorruptAsh>()] = true;
-        Main.tileMerge[ModContent.TileType<OvergrownCorruptAsh>()][Type] = true;
+        Main.tileMerge[Type][ModContent.TileType<CorruptAshGrass>()] = true;
+        Main.tileMerge[ModContent.TileType<CorruptAshGrass>()][Type] = true;
         
         TileID.Sets.ChecksForMerge[Type] = true;
 

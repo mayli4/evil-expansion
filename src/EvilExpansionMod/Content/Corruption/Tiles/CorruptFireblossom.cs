@@ -39,7 +39,7 @@ public class CorruptFireblossom : ModTile {
 
         TileObjectData.newTile.AnchorValidTiles = new int[]
         {
-            ModContent.TileType<OvergrownCorruptAsh>()
+            ModContent.TileType<CorruptAshGrass>()
         };
 
         TileObjectData.newTile.AnchorAlternateTiles = new int[]

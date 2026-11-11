@@ -6,7 +6,7 @@ using Terraria.ObjectData;
 
 namespace EvilExpansionMod.Content.Corruption;
 
-public class CorruptionAshRubble : ModTile {
+public class CorruptAshRubble : ModTile {
     public override string Texture => Assets.Images.Corruption.Tiles.CorruptionAshRubble.KEY;
 
     public override void SetStaticDefaults() {
@@ -24,7 +24,7 @@ public class CorruptionAshRubble : ModTile {
         TileObjectData.newTile.StyleHorizontal = true;
         TileObjectData.newTile.RandomStyleRange = 3;
         TileObjectData.newTile.DrawYOffset = 2;
-        TileObjectData.newTile.AnchorValidTiles = new int[] { ModContent.TileType<CorruptAsh>(), ModContent.TileType<OvergrownCorruptAsh>() };
+        TileObjectData.newTile.AnchorValidTiles = new int[] { ModContent.TileType<CorruptAsh>(), ModContent.TileType<CorruptAshGrass>() };
         TileObjectData.addTile(Type);
 
         DustType = DustID.Corruption;

@@ -31,7 +31,7 @@ public class HellEbonModTree : ModTree {
     };
 
     public override void SetStaticDefaults() {
-        GrowsOnTileId = new int[1] { ModContent.TileType<OvergrownCorruptAsh>() };
+        GrowsOnTileId = new int[1] { ModContent.TileType<CorruptAshGrass>() };
     }
 
     public override bool Shake(int x, int y, ref bool createLeaves) {
@@ -833,7 +833,7 @@ public class HellEbontree : ModTile {
         if(tileType < 0) {
             return false;
         }
-        if(tileType == ModContent.TileType<OvergrownCorruptAsh>()) {
+        if(tileType == ModContent.TileType<CorruptAshGrass>()) {
             return true;
         }
         return false;

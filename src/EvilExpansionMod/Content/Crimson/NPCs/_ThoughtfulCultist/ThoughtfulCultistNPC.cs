@@ -42,7 +42,21 @@ public class ThoughtfulCultistNPC : ModNPC {
         if (NPC.ai[0] != 0) _timer = 0; // Timer starts from 0 every time ATTACK IS INITIATED (previously, when state was changed)
         NPC.netUpdate = true;
     }
+    public override void SetStaticDefaults() {
+        var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
+        {
+            CustomTexturePath = Assets.Images.Crimson.NPCs.ThoughtfulCultist.ThoughtfulCultist_Bestiary.KEY, //Custom texture for the Bestiary
+            Position = new Vector2(1f, 50f),
+            PortraitPositionXOverride = 0f,
+            PortraitPositionYOverride = 40f
+        };
+        NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
+        ContentSamples.NpcBestiaryRarityStars[Type] = 4;
 
+        ItemID.Sets.KillsToBanner[BannerItem] = 25;
+        SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
+
+    }
     public override void SetDefaults() {
         NPC.width = 38;
         NPC.height = 38;
@@ -58,28 +72,14 @@ public class ThoughtfulCultistNPC : ModNPC {
 
         NPC.HitSound = SoundID.NPCHit23;
 
-        ItemID.Sets.KillsToBanner[BannerItem] = 25;
-        SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
-
-        NPC.buffImmune[BuffID.CursedInferno] = true;
+        NPC.buffImmune[BuffID.Ichor] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
 
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<ThoughtfulCultistBannerItem>();
     }
-    public override void SetStaticDefaults() {
-        var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
-        {
-            CustomTexturePath = Assets.Images.Crimson.NPCs.ThoughtfulCultist.ThoughtfulCultist_Bestiary.KEY, //Custom texture for the Bestiary
-            Position = new Vector2(1f, 50f),
-            PortraitPositionXOverride = 0f,
-            PortraitPositionYOverride = 40f
-        };
-        NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
-        ContentSamples.NpcBestiaryRarityStars[Type] = 3;
-    }
-
+   
     public override float SpawnChance(NPCSpawnInfo spawnInfo) => Main.hardMode && spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.05f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
@@ -149,10 +149,6 @@ public class ThoughtfulCultistNPC : ModNPC {
                 break;
             case CultistState.SpearAttack:
                 NPC.velocity *= 0.98f;
-                if(Target == null || _timer > 150) { // Stop attack when timer is above 150
-                    ChangeState(CultistState.FlyToTarget);
-                    break;
-                }
 
                 if(_timer > 60 / DifficultyScaler && (int)_timer % (Main.expertMode ? 6f : 12f) == 0) { // If timer is above 60 frames / difficultyscaler, every 12 frames, or 6 frames on expert+
                     Vector2 vel = Target.velocity;
@@ -170,6 +166,11 @@ public class ThoughtfulCultistNPC : ModNPC {
                         ai1: 112
                     );
                     _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
+                }
+
+                if(Target == null || _timer > 150) { // Stop attack when timer is above 150
+                    ChangeState(CultistState.FlyToTarget);
+                    break;
                 }
 
                 //if(_timer > 60 / DifficultyScaler && (int)_timer % (30f) == 0) { // If timer is above 60 frames / difficultyscaler, every 30 frames
@@ -212,7 +213,6 @@ public class ThoughtfulCultistNPC : ModNPC {
                         ai0: (float)PortalType.Blood,
                         ai1: 336
                     );
-
                     _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
                 }
 
@@ -236,7 +236,6 @@ public class ThoughtfulCultistNPC : ModNPC {
                         ai0: (float)PortalType.Eyes,
                         ai1: 224
                     );
-
                     _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
                 }
 

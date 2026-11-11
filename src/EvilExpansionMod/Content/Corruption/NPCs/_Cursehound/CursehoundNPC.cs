@@ -76,10 +76,12 @@ public sealed class CursehoundNPC : ModNPC {
             PortraitPositionYOverride = 40f,
         };
         NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
-        ContentSamples.NpcBestiaryRarityStars[Type] = 3;
+        ContentSamples.NpcBestiaryRarityStars[Type] = 4;
         Main.npcFrameCount[Type] = 29;
-    }
 
+        ItemID.Sets.KillsToBanner[BannerItem] = 25;
+        SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
+    }
     public override void SetDefaults() {
         (NPC.width, NPC.height) = (125, 100);
 
@@ -94,9 +96,6 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.friendly = false;
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath60;
-
-        ItemID.Sets.KillsToBanner[BannerItem] = 25;
-        SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
 
         NPC.buffImmune[BuffID.CursedInferno] = true;
         NPC.buffImmune[BuffID.OnFire] = true;

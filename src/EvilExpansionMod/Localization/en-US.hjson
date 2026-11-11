@@ -123,7 +123,7 @@ Mods: {
 				DisplayName: Stinkfly
 				Tooltip:
 					'''
-					Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
+					Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 					'Used in perfume, for some reason!'
 					'''
 			}
@@ -145,13 +145,13 @@ Mods: {
 					'''
 					Slowly grows a corrupt planetoid
 					Planetoids that grow too large explode violently
-					'Definitely DON’T use purification powder on these…'
+					'Definitely DON’T use purification powder on it…'
 					'''
 			}
 
 			NormalRevolverItem: {
-				DisplayName: Normal Revolver
-				Tooltip: Summons a baby planetoid that follows you around
+				DisplayName: Purified Spawner
+				Tooltip: Summons a little planetoid that follows you around
 			}
 
 			LamethrowerItem: {
@@ -262,13 +262,13 @@ Mods: {
 				Tooltip:
 					'''
 					It's volatile
-					Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
+					Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 					'''
 			}
 
 			LavaLizardItem: {
 				DisplayName: Lava Lizard
-				Tooltip: Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
+				Tooltip: Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 			}
 
 			LanternBatBannerItem: {
@@ -325,7 +325,7 @@ Mods: {
 				Tooltip:
 					'''
 					It's volatile
-					Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
+					Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 					'''
 			}
 
@@ -338,7 +338,6 @@ Mods: {
 				DisplayName: Polyp Ore
 				Tooltip:
 					'''
-					f
 					Its surface is wreathed in cursed energy
 					Burns you more severely when touched without special protection
 					'''
@@ -384,7 +383,7 @@ Mods: {
 
 			EaterOfSoilItem: {
 				DisplayName: Eater of Soil
-				Tooltip: Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
+				Tooltip: Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 			}
 
 			EvilMeatloaf: {
@@ -593,7 +592,7 @@ Mods: {
 			}
 
 			CharredBloodwoodWorkbenchItem: {
-				DisplayName: Charred Bloodwood Workbench Item
+				DisplayName: Charred Bloodwood Workbench
 				Tooltip: ""
 			}
 
@@ -623,7 +622,7 @@ Mods: {
 			}
 
 			CharredBloodwoodCandleItem: {
-				DisplayName: Charred Bloodwood Candle Item
+				DisplayName: Charred Bloodwood Candle
 				Tooltip: ""
 			}
 
@@ -703,7 +702,7 @@ Mods: {
 			}
 
 			CorruptAshwoodCandleItem: {
-				DisplayName: Corrupt Ashwood Candle Item
+				DisplayName: Corrupt Ashwood Candle
 				Tooltip: ""
 			}
 
@@ -821,15 +820,12 @@ Mods: {
 
 		Projectiles: {
 			DevilOWarStingerProjectile.DisplayName: Devil O War Stinger
-			HellbatSpit.DisplayName: Hellbat Spit
-			HellbatSpitProjectile.DisplayName: Hellbat Spit
 			TerrorBatSpit.DisplayName: Terror Bat Spit
 			SpiritFireball.DisplayName: Spirit Fireball
 			CursehoundMace.DisplayName: Cursehound Mace
 			MaceCrack.DisplayName: Mace Crack
 			MaceShard.DisplayName: Mace Shard
 			EffigyRootProjectile.DisplayName: Effigy Root Projectile
-			CursedFog.DisplayName: Cursed Fog
 			CultistPortal.DisplayName: Cultist Portal
 			MaceDebris.DisplayName: Mace Debris
 			StalactiteProjectile.DisplayName: Stalactite

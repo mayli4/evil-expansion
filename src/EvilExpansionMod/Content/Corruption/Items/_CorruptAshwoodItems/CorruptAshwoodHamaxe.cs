@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using EvilExpansionMod.Content.Corruption.Items._CorruptAshwoodTiles;
 
 namespace EvilExpansionMod.Content.Corruption;
 public class CorruptAshwoodHamaxe : ModItem{

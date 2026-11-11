@@ -8,9 +8,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
-namespace EvilExpansionMod.Content.Corruption;
+namespace EvilExpansionMod.Content.Corruption.Items._CorruptAshwoodTiles;
 
-public class CorruptAshwoodBeam : ModTile {
+public class CorruptAshwoodBeamTile : ModTile {
     public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshwoodBeamTile.KEY;
 
     public override void SetStaticDefaults() {
@@ -29,7 +29,7 @@ public class CorruptAshwoodBeamItem : ModItem {
     public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshwoodBeamItem.KEY;
 
     public override void SetDefaults() {
-        Item.DefaultToPlaceableTile(ModContent.TileType<CorruptAshwoodBeam>());
+        Item.DefaultToPlaceableTile(ModContent.TileType<CorruptAshwoodBeamTile>());
         Item.width = 16;
         Item.height = 16;
         Item.value = 0;

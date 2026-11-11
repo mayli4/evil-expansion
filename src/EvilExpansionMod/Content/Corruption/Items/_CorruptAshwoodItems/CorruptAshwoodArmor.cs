@@ -20,6 +20,7 @@ using Terraria.DataStructures;
 using Terraria.GameContent;
 using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
+using EvilExpansionMod.Content.Corruption.Items._CorruptAshwoodTiles;
 namespace EvilExpansionMod.Content.Corruption;
 
 [AutoloadEquip(EquipType.Head)]

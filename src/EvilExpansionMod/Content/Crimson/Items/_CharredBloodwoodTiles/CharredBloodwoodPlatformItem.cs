@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Crimson.Tiles;
 
-namespace EvilExpansionMod.Content.Crimson;
+namespace EvilExpansionMod.Content.Crimson.Items._CharredBloodwoodTiles;
 
 public class CharredBloodwoodPlatformItem : ModItem {
     public override string Texture => Assets.Images.Crimson.Items.CharredBloodwoodPlatformItem.KEY;

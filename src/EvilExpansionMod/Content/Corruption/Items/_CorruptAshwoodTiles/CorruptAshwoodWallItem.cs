@@ -7,10 +7,10 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Corruption.Tiles;
 
-namespace EvilExpansionMod.Content.Corruption;
+namespace EvilExpansionMod.Content.Corruption.Items._CorruptAshwoodTiles;
 
-internal class CorruptAshwoodFence : ModWall {
-    public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshwoodFence.KEY;
+internal class CorruptAshwoodWall : ModWall {
+    public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshwoodWall.KEY;
     public override void SetStaticDefaults() {
         Main.wallHouse[Type] = true;
 
@@ -18,16 +18,16 @@ internal class CorruptAshwoodFence : ModWall {
 
         DustType = DustID.Corruption;
 
-        AddMapEntry(new Color(51, 51, 67));
+        AddMapEntry(new Color(46, 45, 41));
     }
 }
-internal sealed class CorruptAshwoodFenceItem : ModItem {
-    public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshwoodFenceItem.KEY;
+internal sealed class CorruptAshwoodWallItem : ModItem {
+    public override string Texture => Assets.Images.Corruption.Items.CorruptAshwoodWallItem.KEY;
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 400;
     }
     public override void SetDefaults() {
-        Item.DefaultToPlaceableWall(ModContent.WallType<CorruptAshwoodFence>());
+        Item.DefaultToPlaceableWall(ModContent.WallType<CorruptAshwoodWall>());
         Item.width = 16;
         Item.height = 16;
         Item.value = Item.sellPrice();

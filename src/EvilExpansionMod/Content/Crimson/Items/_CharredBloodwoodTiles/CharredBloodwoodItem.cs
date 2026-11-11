@@ -5,18 +5,18 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
-using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Corruption.Tiles;
+using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Crimson.Tiles;
 
-namespace EvilExpansionMod.Content.Corruption;
+namespace EvilExpansionMod.Content.Crimson.Items._CharredBloodwoodTiles;
 
-public class CorruptAshwoodItem : ModItem {
-    public override string Texture => Assets.Images.Corruption.Items.CorruptAshwoodItem.KEY;
+public class CharredBloodwoodItem : ModItem {
+    public override string Texture => Assets.Images.Crimson.Items.CharredBloodwoodItem.KEY;
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 100;
-        RecipeGroup.recipeGroups[RecipeGroupID.Wood].ValidItems.Add(ModContent.ItemType<CorruptAshwoodItem>());
+        RecipeGroup.recipeGroups[RecipeGroupID.Wood].ValidItems.Add(ModContent.ItemType<CharredBloodwoodItem>());
     }
     public override void SetDefaults() {
-        Item.DefaultToPlaceableTile(ModContent.TileType<CorruptAshwoodTile>());
+        Item.DefaultToPlaceableTile(ModContent.TileType<CharredBloodwoodTile>());
         Item.width = 20;
         Item.height = 20;
         Item.value = Item.sellPrice();
@@ -31,30 +31,30 @@ public class CorruptAshwoodItem : ModItem {
     }
     public override void AddRecipes() {
         CreateRecipe(1)
-            .AddIngredient<CorruptAshwoodWallItem>(4)
+            .AddIngredient<CharredBloodwoodWallItem>(4)
             .AddTile(TileID.WorkBenches)
             .Register();
 
         CreateRecipe(1)
-            .AddIngredient<CorruptAshwoodPlatformItem>(2)
+            .AddIngredient<CharredBloodwoodPlatformItem>(2)
             .AddTile(TileID.WorkBenches)
             .Register();
 
         CreateRecipe(1)
-            .AddIngredient<CorruptAshwoodFenceItem>(4)
+            .AddIngredient<CharredBloodwoodFenceItem>(4)
             .AddTile(TileID.WorkBenches)
             .Register();
     }
 }
-internal sealed class CorruptAshwoodTile : ModTile {
-    public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshwoodTile.KEY;
+internal sealed class CharredBloodwoodTile : ModTile {
+    public override string Texture => Assets.Images.Crimson.Tiles.CharredBloodwoodTile.KEY;
     public override void SetStaticDefaults() {
-
+                
         Main.tileSolid[Type] = true;
         Main.tileBrick[Type] = true;
 
-        DustType = DustID.Corruption;
+        DustType = DustID.Blood;
 
-        AddMapEntry(new Color(83, 84, 118));
+        AddMapEntry(new Color(118, 18, 15));
     }
 }

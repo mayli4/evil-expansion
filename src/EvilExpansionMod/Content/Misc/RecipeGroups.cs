@@ -5,8 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using Terraria;
 using Terraria.ModLoader;
-using EvilExpansionMod.Content.Corruption;
-using EvilExpansionMod.Content.Crimson;
+using EvilExpansionMod.Content.Crimson.Items._CharredBloodwoodTiles;
+using EvilExpansionMod.Content.Corruption.Items._CorruptAshwoodTiles;
 
 namespace EvilExpansionMod.Content.Misc;
 

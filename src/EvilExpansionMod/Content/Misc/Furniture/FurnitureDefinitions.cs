@@ -503,7 +503,7 @@ public abstract class CandelabraTile : FurnitureTile
 {
     public override int VanillaTileType => TileID.Candelabras;
 
-    public abstract Asset<Texture2D>? FlameTexture { get; }
+    public virtual Asset<Texture2D> FlameTexture => ModContent.Request<Texture2D>(Texture + "_Glow");
 
     public virtual Color FlameColor { get; } = Color.White;
 
@@ -517,7 +517,7 @@ public abstract class CandelabraTile : FurnitureTile
         Main.tileLighted[Type] = true;
         Main.tileFrameImportant[Type] = true;
         Main.tileLavaDeath[Type] = true;
-        // Main.tileFlame[Type] = FlameTexture is not null;
+        //Main.tileFlame[Type] = true;
         TileID.Sets.InteractibleByNPCs[Type] = true;
         AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
 #endregion
@@ -545,46 +545,51 @@ public abstract class CandelabraTile : FurnitureTile
                 Wiring.SkipWire(x, y);
             }
         }
-
         if (Main.netMode != NetmodeID.SinglePlayer)
         {
             NetMessage.SendTileSquare(-1, topX, topY, 3, 3);
         }
     }
 
-    public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
-    {
-        if (Main.tile[i, j].TileFrameX / 36 != 0)
-        {
+    public override void PostDraw(int i, int j, SpriteBatch spriteBatch) {
+        var tile = Main.tile[i, j];
+
+        if(!TileDrawing.IsVisible(tile)) {
             return;
         }
 
-        r = FlameColor.R / 255f;
-        g = FlameColor.G / 255f;
-        b = FlameColor.B / 255f;
-    }
+        Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
 
-    public override void GetTileFlameData(int i, int j, ref TileDrawing.TileFlameData tileFlameData)
-    {
-        if (FlameTexture is not null)
-        {
-            tileFlameData.flameSeed = Main.TileFrameSeed ^ (ulong)(((long)i << 32) | (uint)j);
-            tileFlameData.flameTexture = FlameTexture.Value;
-            tileFlameData.flameColor = FlameColor;
-            tileFlameData.flameRangeXMin = -10;
-            tileFlameData.flameRangeXMax = 11;
-            tileFlameData.flameRangeYMin = -10;
-            tileFlameData.flameRangeYMax = 1;
-            tileFlameData.flameRangeMultX = 0.25f;
-            tileFlameData.flameRangeMultY = 0.25f;
+        ulong randSeed = Main.TileFrameSeed ^ (ulong)((long)j << 32 | (long)(uint)i); // Don't remove any casts. ok buddy
+        Color color = new Color(100, 100, 100, 0);
+        int width = 20;
+        int height = 20;
+        int frameX = tile.TileFrameX;
+        int frameY = tile.TileFrameY;
+        int style = TileObjectData.GetTileStyle(Main.tile[i, j]);
+
+        for(int k = 0; k < 7; k++) {
+            float xx = Utils.RandomInt(ref randSeed, -10, 11) * 0.15f;
+            float yy = Utils.RandomInt(ref randSeed, -10, 1) * 0.35f;
+
+            spriteBatch.Draw(FlameTexture.Value, new Vector2(i * 16 - (int)Main.screenPosition.X + xx, j * 16 - (int)Main.screenPosition.Y + yy) + zero, new Rectangle(frameX, frameY, width, height), color, 0f, default, 1f, SpriteEffects.None, 0f);
         }
     }
 
+    public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {
+        base.ModifyLight(i, j, ref r, ref g, ref b);
+
+        if(Main.tile[i, j].TileFrameX / 34 != 1) {
+            r = GlowColor.R / 255f;
+            g = GlowColor.G / 255f;
+            b = GlowColor.B / 255f;
+        }
+        return;
+    }
     public override void SetDrawPositions(int i, int j, ref int width, ref int offsetY, ref int height, ref short tileFrameX, ref short tileFrameY)
     {
-        base.SetDrawPositions(i, j, ref width, ref offsetY, ref height, ref tileFrameX, ref tileFrameY);
+        base.SetDrawPositions(i, j, ref width, ref offsetY, ref height, ref tileFrameX, ref tileFrameY); // id ont kow what this does 
 
-        // offsetY = 2;
     }
 }
 
@@ -667,31 +672,110 @@ public abstract class CandleTile : FurnitureTile
 {
     public override int VanillaTileType => TileID.Candles;
 
-    public abstract Asset<Texture2D>? FlameTexture { get; }
+    public virtual Asset<Texture2D> FlameTexture => ModContent.Request<Texture2D>(Texture + "_Glow");
 
-    public override void SetStaticDefaults()
-    {
+    public override void SetStaticDefaults() {
         base.SetStaticDefaults();
 
-#region Sets
+        #region Sets
         Main.tileLighted[Type] = true;
         Main.tileFrameImportant[Type] = true;
         Main.tileLavaDeath[Type] = true;
-        // Main.tileFlame[Type] = FlameTexture is not null;
+        // Main.tileFlame[Type] = true;
         TileID.Sets.InteractibleByNPCs[Type] = true;
         TileID.Sets.DisableSmartCursor[Type] = true;
         TileID.Sets.DisableSmartInteract[Type] = true;
         AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
-#endregion
+        #endregion
 
-#region TileObjectData
+        #region TileObjectData
         TileObjectData.newTile.CopyFrom(TileObjectData.StyleOnTable1x1);
         TileObjectData.newTile.CoordinateHeights = [20];
         TileObjectData.newTile.DrawYOffset = -4;
         TileObjectData.addTile(Type);
-#endregion
     }
+        public override void MouseOver(int i, int j) {
+        Player player = Main.LocalPlayer;
+        player.noThrow = 2;
+        player.cursorItemIconEnabled = true;
+
+        // We can determine the item to show on the cursor by getting the tile style and looking up the corresponding item drop.
+        int style = TileObjectData.GetTileStyle(Main.tile[i, j]);
+        player.cursorItemIconID = TileLoader.GetItemDropFromTypeAndStyle(Type, style);
+        }
+        public override void HitWire(int i, int j) {
+        var tile = Main.tile[i, j];
+        var topX = i - tile.TileFrameX % 18 / 18;
+        var topY = j - tile.TileFrameY % 20 / 18;
+
+        var frameAdjustment = (short)(tile.TileFrameX >= 18 ? -18 : 18);
+
+        for(var x = topX; x < topX + 1; x++) {
+            for(var y = topY; y < topY + 1; y++) {
+                Main.tile[x, y].TileFrameX += frameAdjustment;
+                Wiring.SkipWire(x, y);
+            }
+        }
+        if(Main.netMode != NetmodeID.SinglePlayer) {
+            NetMessage.SendTileSquare(-1, topX, topY, 3, 3);
+        }
+        }
+        public override bool RightClick(int i, int j) {
+        var tile = Main.tile[i, j];
+        var topX = i - tile.TileFrameX % 18 / 18;
+        var topY = j - tile.TileFrameY % 20 / 18;
+
+        var frameAdjustment = (short)(tile.TileFrameX >= 18 ? -18 : 18);
+
+        for(var x = topX; x < topX + 1; x++) {
+            for(var y = topY; y < topY + 1; y++) {
+                Main.tile[x, y].TileFrameX += frameAdjustment;
+                Wiring.SkipWire(x, y);
+            }
+        }
+        if(Main.netMode != NetmodeID.SinglePlayer) {
+            NetMessage.SendTileSquare(-1, topX, topY, 3, 3);
+        }
+        return true;
+    }
+
+    public override void PostDraw(int i, int j, SpriteBatch spriteBatch) {
+        var tile = Main.tile[i, j];
+
+        if(!TileDrawing.IsVisible(tile)) {
+            return;
+        }
+
+        Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
+
+        ulong randSeed = Main.TileFrameSeed ^ (ulong)((long)j << 32 | (long)(uint)i); // Don't remove any casts. ok buddy
+        Color color = new Color(100, 100, 100, 0);
+        int width = 20;
+        int height = 20;
+        int frameX = tile.TileFrameX;
+        int frameY = tile.TileFrameY;
+        int style = TileObjectData.GetTileStyle(Main.tile[i, j]);
+
+        for(int k = 0; k < 7; k++) {
+            float xx = Utils.RandomInt(ref randSeed, -10, 11) * 0.15f;
+            float yy = Utils.RandomInt(ref randSeed, -10, 1) * 0.35f;
+
+            spriteBatch.Draw(FlameTexture.Value, new Vector2(i * 16 - (int)Main.screenPosition.X + xx, j * 16 - (int)Main.screenPosition.Y + yy) + zero, new Rectangle(frameX, frameY, width, height), color, 0f, default, 1f, SpriteEffects.None, 0f);
+        }
+    }
+    public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {
+        base.ModifyLight(i, j, ref r, ref g, ref b);
+
+        if(Main.tile[i, j].TileFrameX / 16 != 1) {
+            r = GlowColor.R / 255f;
+            g = GlowColor.G / 255f;
+            b = GlowColor.B / 255f;
+        }
+        return;
+    }
+
 }
+#endregion
 
 public abstract class CandleItem<T> : FurnitureItem<T>
     where T : ModTile
@@ -752,7 +836,7 @@ public abstract class ChandelierTile : FurnitureTile
 {
     public override int VanillaTileType => TileID.Chandeliers;
 
-    public abstract Asset<Texture2D>? FlameTexture { get; }
+    public virtual Asset<Texture2D> FlameTexture => ModContent.Request<Texture2D>(Texture + "_Glow");
 
     public override void SetStaticDefaults()
     {
@@ -762,8 +846,6 @@ public abstract class ChandelierTile : FurnitureTile
         Main.tileLighted[Type] = true;
         Main.tileFrameImportant[Type] = true;
         Main.tileLavaDeath[Type] = true;
-        // Main.tileFlame[Type] = FlameTexture is not null;
-        TileID.Sets.MultiTileSway[Type] = true;
         TileID.Sets.IsAMechanism[Type] = true;
         AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
 #endregion
@@ -781,7 +863,6 @@ public abstract class ChandelierTile : FurnitureTile
         TileObjectData.addTile(Type);
 #endregion
     }
-
     public override void HitWire(int i, int j)
     {
         var tile = Main.tile[i, j];
@@ -804,38 +885,43 @@ public abstract class ChandelierTile : FurnitureTile
             NetMessage.SendTileSquare(-1, topX, topY, 3, 3);
         }
     }
-
     public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b)
     {
         base.ModifyLight(i, j, ref r, ref g, ref b);
 
-        if (Main.tile[i, j].TileFrameY / 54 != 0)
+        if (Main.tile[i, j].TileFrameX / 54 != 1)
         {
+            r = GlowColor.R / 255f;
+            g = GlowColor.G / 255f;
+            b = GlowColor.B / 255f; 
+        }
+        return;
+    }
+    
+    public override void PostDraw(int i, int j, SpriteBatch spriteBatch) {
+        
+        var tile = Main.tile[i, j];
+
+        if(!TileDrawing.IsVisible(tile)) {
             return;
         }
 
-        r = GlowColor.R / 255f;
-        g = GlowColor.G / 255f;
-        b = GlowColor.B / 255f;
-    }
+        Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
 
-    public override bool PreDraw(int i, int j, SpriteBatch spriteBatch)
-    {
-        var tile = Main.tile[i, j];
-        if (TileObjectData.IsTopLeft(tile))
-        {
-            Main.instance.TilesRenderer.AddSpecialPoint(i, j, TileDrawing.TileCounterType.MultiTileVine);
+        ulong randSeed = Main.TileFrameSeed ^ (ulong)((long)j << 32 | (long)(uint)i); // Don't remove any casts. ok buddy
+        Color color = new Color(100, 100, 100, 0);
+        int width = 20;
+        int height = 20;
+        int frameX = tile.TileFrameX;
+        int frameY = tile.TileFrameY;
+        int style = TileObjectData.GetTileStyle(Main.tile[i, j]);
+
+        for(int k = 0; k < 7; k++) {
+            float xx = Utils.RandomInt(ref randSeed, -10, 11) * 0.15f;
+            float yy = Utils.RandomInt(ref randSeed, -10, 1) * 0.35f;
+
+            spriteBatch.Draw(FlameTexture.Value, new Vector2(i * 16 - (int)Main.screenPosition.X + xx, j * 16 - (int)Main.screenPosition.Y + yy) + zero, new Rectangle(frameX, frameY, width, height), color, 0f, default, 1f, SpriteEffects.None, 0f);
         }
-
-        return false;
-    }
-
-    public override void AdjustMultiTileVineParameters(int i, int j, ref float? overrideWindCycle, ref float windPushPowerX, ref float windPushPowerY, ref bool dontRotateTopTiles, ref float totalWindMultiplier, ref Texture2D glowTexture, ref Color glowColor)
-    {
-        base.AdjustMultiTileVineParameters(i, j, ref overrideWindCycle, ref windPushPowerX, ref windPushPowerY, ref dontRotateTopTiles, ref totalWindMultiplier, ref glowTexture, ref glowColor);
-
-        overrideWindCycle = 1f;
-        windPushPowerY = 0;
     }
 }
 
@@ -1430,13 +1516,12 @@ public abstract class LampTile<T> : FurnitureTile
 {
     public override int VanillaTileType => TileID.Lamps;
 
-    public abstract Asset<Texture2D>? FlameTexture { get; }
+    public virtual Asset<Texture2D> FlameTexture => ModContent.Request<Texture2D>(Texture + "_Glow");
 
-    public override void SetStaticDefaults()
-    {
+    public override void SetStaticDefaults() {
         base.SetStaticDefaults();
 
-#region Sets
+        #region Sets
         Main.tileLighted[Type] = true;
         Main.tileFrameImportant[Type] = true;
         Main.tileNoAttach[Type] = true;
@@ -1444,10 +1529,11 @@ public abstract class LampTile<T> : FurnitureTile
         Main.tileLavaDeath[Type] = true;
         // Main.tileFlame[Type] = FlameTexture is not null;
         TileID.Sets.DrawFlipMode[Type] = 1;
+        TileID.Sets.IsAMechanism[Type] = true;
         AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
-#endregion
+        #endregion
 
-#region TileObjectData
+        #region TileObjectData
         TileObjectData.newTile.CopyFrom(TileObjectData.Style1xX);
         TileObjectData.newTile.StyleWrapLimitVisualOverride = 37;
         TileObjectData.newTile.StyleLineSkip = 2;
@@ -1456,8 +1542,66 @@ public abstract class LampTile<T> : FurnitureTile
         TileObjectData.newTile.WaterPlacement = LiquidPlacement.NotAllowed;
         TileObjectData.newTile.LavaPlacement = LiquidPlacement.NotAllowed;
         TileObjectData.addTile(Type);
-#endregion
+        #endregion
     }
+        public override void HitWire(int i, int j) {
+        var tile = Main.tile[i, j];
+        var topX = i - tile.TileFrameX % 16 / 18;
+        var topY = j - tile.TileFrameY % 52 / 18;
+
+        var frameAdjustment = (short)(tile.TileFrameX >= 18 ? -18 : 18);
+
+        for(var x = topX; x < topX + 1; x++) {
+            for(var y = topY; y < topY + 3; y++) {
+                Main.tile[x, y].TileFrameX += frameAdjustment;
+                Wiring.SkipWire(x, y);
+            }
+        }
+        if(Main.netMode != NetmodeID.SinglePlayer) {
+            NetMessage.SendTileSquare(-1, topX, topY, 3, 3);
+        }
+    }
+    public override void PostDraw(int i, int j, SpriteBatch spriteBatch) {
+        var tile = Main.tile[i, j];
+
+        if(!TileDrawing.IsVisible(tile)) {
+            return;
+        }
+
+        Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
+
+        ulong randSeed = Main.TileFrameSeed ^ (ulong)((long)j << 32 | (long)(uint)i); // Don't remove any casts. ok buddy
+        Color color = new Color(100, 100, 100, 0);
+        int width = 20;
+        int height = 20;
+        int frameX = tile.TileFrameX;
+        int frameY = tile.TileFrameY;
+        int style = TileObjectData.GetTileStyle(Main.tile[i, j]);
+
+        for(int k = 0; k < 7; k++) {
+            float xx = Utils.RandomInt(ref randSeed, -10, 11) * 0.15f;
+            float yy = Utils.RandomInt(ref randSeed, -10, 1) * 0.35f;
+
+            spriteBatch.Draw(FlameTexture.Value, new Vector2(i * 16 - (int)Main.screenPosition.X + xx, j * 16 - (int)Main.screenPosition.Y + 2f + yy) + zero, new Rectangle(frameX, frameY, width, height), color, 0f, default, 1f, SpriteEffects.None, 0f);
+        }
+    }
+
+    public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {
+        base.ModifyLight(i, j, ref r, ref g, ref b);
+
+        if(Main.tile[i, j].TileFrameX / 34 != 1) {
+            r = GlowColor.R / 255f;
+            g = GlowColor.G / 255f;
+            b = GlowColor.B / 255f;
+        }
+        return;
+    }
+
+
+
+
+
+
 }
 
 public abstract class LampItem<T> : FurnitureItem<T>
@@ -1508,20 +1652,26 @@ case 660:
 */
 
 // TODO: DustType, AddMapEntry
-public abstract class LanternTile : FurnitureTile
-{
+public abstract class LanternTile : FurnitureTile {
     public override int VanillaTileType => TileID.HangingLanterns;
 
-    public override void SetStaticDefaults()
-    {
+    public virtual Asset<Texture2D> FlameTexture => ModContent.Request<Texture2D>(Texture + "_Glow");
+
+    public override void SetStaticDefaults() {
         base.SetStaticDefaults();
 
-#region Sets
+        Main.tileLighted[Type] = true;
+        Main.tileFrameImportant[Type] = true;
+        Main.tileNoAttach[Type] = true;
+        Main.tileWaterDeath[Type] = true;
+        Main.tileLavaDeath[Type] = true;
+
+        #region Sets
         TileID.Sets.IsAMechanism[Type] = true;
         AddToArray(ref TileID.Sets.RoomNeeds.CountsAsTorch);
-#endregion
+        #endregion
 
-#region TileObjectData
+        #region TileObjectData
         TileObjectData.newTile.CopyFrom(TileObjectData.Style1x2Top);
         TileObjectData.newTile.DrawYOffset = -2;
         TileObjectData.newAlternate.CopyFrom(TileObjectData.newTile);
@@ -1529,8 +1679,62 @@ public abstract class LanternTile : FurnitureTile
         TileObjectData.newAlternate.DrawYOffset = -10;
         TileObjectData.addAlternate(0);
         TileObjectData.addTile(Type);
-#endregion
+        #endregion
     }
+    public override void HitWire(int i, int j) {
+        var tile = Main.tile[i, j];
+        var topX = i - tile.TileFrameX % 16 / 18;
+        var topY = j - tile.TileFrameY % 36 / 18;
+
+        var frameAdjustment = (short)(tile.TileFrameX >= 18 ? -18 : 18);
+
+        for(var x = topX; x < topX + 1; x++) {
+            for(var y = topY; y < topY + 2; y++) {
+                Main.tile[x, y].TileFrameX += frameAdjustment;
+                Wiring.SkipWire(x, y);
+            }
+        }
+        if(Main.netMode != NetmodeID.SinglePlayer) {
+            NetMessage.SendTileSquare(-1, topX, topY, 3, 3);
+        }
+    }
+
+    public override void PostDraw(int i, int j, SpriteBatch spriteBatch) {
+        var tile = Main.tile[i, j];
+
+        if(!TileDrawing.IsVisible(tile)) {
+            return;
+        }
+
+        Vector2 zero = Main.drawToScreen ? Vector2.Zero : new Vector2(Main.offScreenRange);
+
+        ulong randSeed = Main.TileFrameSeed ^ (ulong)((long)j << 32 | (long)(uint)i); // Don't remove any casts. ok buddy
+        Color color = new Color(100, 100, 100, 0);
+        int width = 20;
+        int height = 20;
+        int frameX = tile.TileFrameX;
+        int frameY = tile.TileFrameY;
+        int style = TileObjectData.GetTileStyle(Main.tile[i, j]);
+
+        for(int k = 0; k < 7; k++) {
+            float xx = Utils.RandomInt(ref randSeed, -10, 11) * 0.15f;
+            float yy = Utils.RandomInt(ref randSeed, -10, 1) * 0.35f;
+
+            spriteBatch.Draw(FlameTexture.Value, new Vector2(i * 16 - (int)Main.screenPosition.X + xx, j * 16 - (int)Main.screenPosition.Y + yy) + zero, new Rectangle(frameX, frameY, width, height), color, 0f, default, 1f, SpriteEffects.None, 0f);
+        }
+    }
+
+    public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {
+        base.ModifyLight(i, j, ref r, ref g, ref b);
+
+        if(Main.tile[i, j].TileFrameX / 34 != 1) {
+            r = GlowColor.R / 255f;
+            g = GlowColor.G / 255f;
+            b = GlowColor.B / 255f;
+        }
+        return;
+    }
+
 }
 
 public abstract class LanternItem<T> : FurnitureItem<T>
@@ -1790,6 +1994,49 @@ public abstract class SofaTile<T> : FurnitureTile
         TileObjectData.addTile(Type);
 #endregion
     }
+
+    public override bool HasSmartInteract(int i, int j, SmartInteractScanSettings settings) {
+        return settings.player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance); // Avoid being able to trigger it from long range
+    }
+    public override void ModifySittingTargetInfo(int i, int j, ref TileRestingInfo info) {
+        // thanks examplemod, although im not sure what i needed to change 
+        Tile tile = Framing.GetTileSafely(i, j);
+        Player player = Main.LocalPlayer;
+        info.TargetDirection = player.direction;
+
+        info.AnchorTilePosition.X = i; 
+        info.AnchorTilePosition.Y = j;
+    }
+
+    public override bool RightClick(int i, int j) {
+        Player player = Main.LocalPlayer;
+
+        if(player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance)) { // Avoid being able to trigger it from long range
+            player.GamepadEnableGrappleCooldown();
+            player.sitting.SitDown(player, i, j);
+        }
+        return true;
+    }
+
+    public override void MouseOver(int i, int j) {
+        Player player = Main.LocalPlayer;
+
+        if(!player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance)) { // Match condition in RightClick. Interaction should only show if clicking it does something
+            return;
+        }
+
+        player.noThrow = 2;
+        player.cursorItemIconEnabled = true;
+
+        int style = TileObjectData.GetTileStyle(Main.tile[i, j]);
+        player.cursorItemIconID = TileLoader.GetItemDropFromTypeAndStyle(Type, style);
+
+        if(Main.tile[i, j].TileFrameX / 18 < 1) {
+            player.cursorItemIconReversed = true;
+        }
+    }
+
+
 }
 
 public abstract class SofaItem<T> : FurnitureItem<T>

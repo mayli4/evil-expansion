@@ -13,7 +13,6 @@ namespace EvilExpansionMod.Content.Misc.Furniture.CharredBloodwoodFurniture;
 
 public class CharredBloodwoodChandelierTile : ChandelierTile {
     public override string Texture => Assets.Images.Furniture.CharredBloodwoodFurniture.CharredBloodwoodChandelierTile.KEY;
-    public override Asset<Texture2D> FlameTexture => ModContent.Request<Texture2D>(Texture + "_Glow");
 };
 
 public class CharredBloodwoodChandelier : ChandelierItem<CharredBloodwoodChandelierTile> {

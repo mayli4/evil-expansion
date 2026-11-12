@@ -54,7 +54,7 @@ public class CrimsonHellVines : ModTile {
                 WorldGen.ConvertTile(i, j, TileID.AshVines);
                 return;
             case BiomeConversionID.Crimson:
-                WorldGen.ConvertTile(i, j, ModContent.TileType<UnderworldCorruptVines>());
+                WorldGen.ConvertTile(i, j, ModContent.TileType<CorruptHellVines>());
                 return;
 
         }

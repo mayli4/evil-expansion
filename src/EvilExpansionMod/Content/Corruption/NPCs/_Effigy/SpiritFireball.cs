@@ -29,7 +29,7 @@ public class SpiritFireball : ModProjectile {
         Projectile.height = 16;
         Projectile.hostile = true;
         Projectile.friendly = false;
-        Projectile.DamageType = DamageClass.Ranged;
+        Projectile.DamageType = DamageClass.Default;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = false;
         Projectile.timeLeft = MaxTimeLeft;

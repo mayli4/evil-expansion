@@ -54,7 +54,7 @@ public sealed class ClentaminatorConversions {
                     Tile tileBelow = Main.tile[x, y + 1];
                     if(tileBelow.TileType == ModContent.TileType<CrimsonAshGrass>()) {
                         didAnything = true;
-                        tile.ResetToType((ushort)ModContent.TileType<CrimsonFoliage>());
+                        tile.ResetToType((ushort)ModContent.TileType<CrimsonAshFoliage>());
                     }
                     if(tileBelow.TileType == TileID.AshGrass) {
                         tile.ResetToType(TileID.AshPlants);

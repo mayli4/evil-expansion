@@ -15,7 +15,7 @@ public sealed class CorruptSeedsSystem : GlobalItem {
 
         var tile = Framing.GetTileSafely(Player.tileTargetX, Player.tileTargetY);
         if(tile.HasTile && tile.TileType == ModContent.TileType<CorruptAsh>() && player.IsTargetTileInItemRange(item)) {
-            WorldGen.PlaceTile(Player.tileTargetX, Player.tileTargetY, ModContent.TileType<OvergrownCorruptAsh>(), forced: true);
+            WorldGen.PlaceTile(Player.tileTargetX, Player.tileTargetY, ModContent.TileType<CorruptAshGrass>(), forced: true);
 
             if(Main.netMode != NetmodeID.SinglePlayer)
                 NetMessage.SendTileSquare(player.whoAmI, Player.tileTargetX, Player.tileTargetY);

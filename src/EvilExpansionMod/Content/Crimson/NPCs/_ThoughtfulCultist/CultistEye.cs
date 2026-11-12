@@ -49,7 +49,6 @@ public class CultistEye : ModNPC {
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
 
-        NPC.buffImmune[BuffID.CursedInferno] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
 
@@ -64,10 +63,10 @@ public class CultistEye : ModNPC {
     }
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
         if(Main.expertMode) {
-            NPC.lifeMax = 400 / 2;
+            NPC.lifeMax = 375 / 2;
         }
         if(Main.masterMode) {
-            NPC.lifeMax = 450 / 3;
+            NPC.lifeMax = 400 / 3;
         }
     }
 

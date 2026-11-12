@@ -534,7 +534,7 @@ Mods: {
 			}
 
 			BloodplateHookItem: {
-				DisplayName: Bloodplate Fishing Hook
+				DisplayName: Bloodplated Fishing Hook
 				Tooltip:
 					'''
 					While fishing, forms a blood shield which impales enemies and absorbs incoming damage

@@ -59,7 +59,7 @@ public class WailingHookPlayer : ModPlayer {
         _spawnTimer += 1 + enemyBonus;
         if (_spawnTimer < 120)
             return;
-        Main.NewText("enemyBonus" + enemyBonus, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("enemyBonus" + enemyBonus, Microsoft.Xna.Framework.Color.White);
         _spawnTimer = 0; // Reset loop interval
 
         // Loop backwards through projectiles. Projectiles spawned last are at the end of the array
@@ -71,7 +71,7 @@ public class WailingHookPlayer : ModPlayer {
                 // Spawn the projectile directly at the cached vector center
                 Projectile.NewProjectile(
                     Player.GetSource_FromThis(), 
-                    proj.Right, 
+                    proj.Right + Vector2.UnitY * -4f, 
                     Vector2.Zero,
                     ModContent.ProjectileType<WailingTelegraphProjectile>(),
                     0,
@@ -103,6 +103,7 @@ internal sealed class WailingTelegraphProjectile : ModProjectile {
         Projectile.friendly = false;
         Projectile.penetrate = -1;
         Projectile.timeLeft = 60;
+        Projectile.hide = true;
     }
 
     public override void AI() {
@@ -133,17 +134,19 @@ internal sealed class WailingTelegraphProjectile : ModProjectile {
             }
         }
     }
-
+    public override void DrawBehind(int index, List<int> behindNPCsAndTiles, List<int> behindNPCs, List<int> behindProjectiles, List<int> overPlayers, List<int> overWiresUI) {
+        behindNPCsAndTiles.Add(index);
+    }
     public override bool PreDraw(ref Color lightColor) {
         var texture = ModContent.Request<Texture2D>(Texture).Value;
 
         float progress = 1f - (Projectile.timeLeft / MaxTime);
-        float maxTelegraphHeight = 75f;
+        float maxTelegraphHeight = 50f;
 
         float growthProgress = MathHelper.Clamp(progress / 0.3f, 0f, 1f);
         float currentHeight = MathHelper.SmoothStep(0f, maxTelegraphHeight, growthProgress);
 
-        float scaleX = progress < 0.3f ? MathHelper.Lerp(0.2f, 1f, progress / 0.3f) :
+        float scaleX = progress < 0.3f ? MathHelper.Lerp(0.1f, 1f, progress / 0.3f) :
             MathHelper.Lerp(1f, 0.5f, (progress - 0.3f) / 0.7f);
 
         float alpha;
@@ -175,7 +178,6 @@ internal sealed class WailingTelegraphProjectile : ModProjectile {
             scale,
             SpriteEffects.None
         );
-
         return false;
     }
 }
@@ -203,15 +205,16 @@ public class WailingFireball : ModProjectile {
         Projectile.ignoreWater = true;
         Projectile.timeLeft = MaxTimeLeft;
         Projectile.penetrate = -1;
-        //Projectile.alpha = 255;
+        Projectile.alpha = 255;
 
         Projectile.aiStyle = -1;
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = 20; // Hits at a maximum of 3 times every second
     }
     public override void OnSpawn(IEntitySource source) {
-        SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.15f, Pitch = Main.rand.NextFloat(-0.7f, 0.2f) }, Projectile.Center);
-        SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.5f, Pitch = Main.rand.NextFloat(-0.5f, 0.5f) }, Projectile.Center);
+        SoundEngine.PlaySound(SoundID.NPCDeath6 with { Volume = 0.1f, Pitch = Main.rand.NextFloat(-1.2f, -0.2f) }, Projectile.Center);
+        SoundEngine.PlaySound(SoundID.Item8 with { Volume = 0.4f, Pitch = Main.rand.NextFloat(-0.5f, 0.5f) }, Projectile.Center);
+        Projectile.alpha = 150;
     }
     public override bool CanHitPlayer(Player target) {
         return true;
@@ -229,22 +232,29 @@ public class WailingFireball : ModProjectile {
         modifiers.HitDirectionOverride = target.Center.X >= owner.Center.X ? 1 : -1; // KB enemies away from user
     }
     public override void AI() {
-
+        //Main.NewText("Projectile.Opacity" + Projectile.Opacity, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("Projectile.Center" + Projectile.Center, Microsoft.Xna.Framework.Color.White);
         float maxDetectRadius = 16 * 80f;
         float projSpeed = 16f;
 
-        if (Projectile.timeLeft < 100f) {
-            Projectile.Opacity = (int)MathHelper.Lerp(1, 0, 100f / (Projectile.timeLeft + 100f));
+        if (Projectile.timeLeft <= 60f) {
+            Projectile.Opacity = MathHelper.Lerp(1, 0, (60f - Projectile.timeLeft) / 60f); // Timeleft = 60, Opacity = 1, Timeleft = 0, Opacity = 0,
+        }
+        else if (Projectile.alpha > 0) {
+            Projectile.alpha -= 5;
+            Projectile.velocity.X += Main.rand.NextFloat(-1f, 1f);
         }
 
-        NPC targetNPC = FindClosestNPC(maxDetectRadius);
-        if(targetNPC != null) {
-            Vector2 toTarget = targetNPC.Center - Projectile.Center;
-            if(toTarget != Vector2.Zero) {
-                toTarget.Normalize();
+        if(MaxTimeLeft - Projectile.timeLeft > 60f * 0.4) { // Projectile has existed for a bit
+            NPC targetNPC = FindClosestNPC(maxDetectRadius);
+            if(targetNPC != null) {
+                Vector2 toTarget = targetNPC.Center - Projectile.Center;
+                if(toTarget != Vector2.Zero) {
+                    toTarget.Normalize();
+                }
+                Vector2 desiredVelocity = toTarget * projSpeed;
+                Projectile.velocity = (Projectile.velocity * Main.rand.NextFloat(15.5f, 15.7f) + desiredVelocity) / 16f; // Swerve to hit target
             }
-            Vector2 desiredVelocity = toTarget * projSpeed;
-            Projectile.velocity = (Projectile.velocity * Main.rand.NextFloat(15.5f, 15.7f) + desiredVelocity) / 16f; // Swerve to hit target
         }
 
         _trailPositions ??= [.. Enumerable.Repeat(Projectile.Center, 12)]; // Visuals just straight ripped from SpiritFireball
@@ -261,7 +271,7 @@ public class WailingFireball : ModProjectile {
                 Projectile.width,
                 Projectile.height,
                 DustID.CursedTorch,
-                newColor: Main.rand.NextFromList(CursedSpiritNPC.GhostColor1, CursedSpiritNPC.GhostColor2)
+                newColor: Main.rand.NextFromList(CursedSpiritNPC.GhostColor1, CursedSpiritNPC.GhostColor2) * Projectile.Opacity
             );
 
             var dir = Projectile.velocity != Vector2.Zero
@@ -276,8 +286,8 @@ public class WailingFireball : ModProjectile {
             var flame = DustFlameParticle.RequestNew(
                 spawnPosition,
                 dir.RotatedBy(coneAngle) * backwardSpeed,
-                GhostColor1,
-                GhostColor1,
+                GhostColor1 * Projectile.Opacity,
+                GhostColor1 * Projectile.Opacity,
                 Main.rand.NextFloat(0.8f, 1.4f),
                 Main.rand.Next(18, 28)
             );
@@ -339,6 +349,16 @@ public class WailingFireball : ModProjectile {
             SpriteEffects.None,
             0
         );
+
+        //if(MaxTimeLeft - Projectile.timeLeft < 60f * 0.2) { // Spawn shine
+        //    var texture = TextureAssets.Extra[ExtrasID.ThePerfectGlow].Value;
+        //    Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.YellowGreen with { A = 0 } * (1f - Projectile.Opacity), 0, texture.Size() / 2, 2f - Projectile.Opacity, SpriteEffects.None, 0);
+        //    Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.White with { A = 0 } * (1f - Projectile.Opacity) * 0.5f, 0, texture.Size() / 2, 0.8f, SpriteEffects.None, 0);
+
+        //    Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.YellowGreen with { A = 0 } * (1f - Projectile.Opacity), MathHelper.PiOver2, texture.Size() / 2, 1.5f - Projectile.Opacity, SpriteEffects.None, 0);
+        //    Main.spriteBatch.Draw(texture, Projectile.Center - Main.screenPosition, null, Color.White with { A = 0 } * (1f - Projectile.Opacity) * 0.5f, MathHelper.PiOver2, texture.Size() / 2, 0.6f, SpriteEffects.None, 0);
+        //}
+
         Main.spriteBatch.EndBegin(snapshot);
 
         var trailEffect = Assets.Shaders.Pixel.CursedSpiritFire.Asset.Value;
@@ -349,8 +369,8 @@ public class WailingFireball : ModProjectile {
                 trailEffect,
                 ("uTime", 0.025f * Main.GameUpdateCount + Projectile.whoAmI * 34.432f),
                 ("uStepY", 0.25f),
-                ("uColor1", GhostColor1),
-                ("uColor2", GhostColor2),
+                ("uColor1", GhostColor1 * Projectile.Opacity),
+                ("uColor2", GhostColor2 * Projectile.Opacity),
                 ("uStepColor", 0.05f),
                 ("uScale", 0.6f))
             .DrawTrail(
@@ -367,7 +387,7 @@ public class WailingFireball : ModProjectile {
                 Origin = 10f * Vector2.One,
                 Scale = Vector2.One * 0.3f,
             })
-            .ApplyOutline(CursedSpiritNPC.GhostColor1)
+            .ApplyOutline(CursedSpiritNPC.GhostColor1 * Projectile.Opacity)
             .End();
 
         return false;

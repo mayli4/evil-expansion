@@ -17,12 +17,13 @@ internal enum PortalType {
     Spear,
     Blood,
     Eyes,
+    Knives,
 }
 
 public class CultistPortal : ModProjectile {
     private const int AnimationSpeed = 4;
     public override string Texture => Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPortal.KEY;
-    public bool isShadowPortal = false;
+    public int portalVariant = 0; // 0 = Spear, 1 = Eyes, 2 = Blood
     PortalType PortalType => (PortalType)Projectile.ai[0];
     bool _spawnedEye;
 
@@ -64,7 +65,7 @@ public class CultistPortal : ModProjectile {
             {
                 Pitch = Main.rand.NextFloatDirection() * 0.4f,
                 Volume = 0.75f * SoftenVolume,
-                MaxInstances = 20,
+                MaxInstances = 50,
                 SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest
             }, Projectile.Center);
 
@@ -72,7 +73,7 @@ public class CultistPortal : ModProjectile {
             {
                 Pitch = Main.rand.NextFloatDirection() * 0.4f,
                 Volume = 0.75f * SoftenVolume,
-                MaxInstances = 20,
+                MaxInstances = 50,
                 SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest
             }, Projectile.Center);
         }
@@ -82,7 +83,7 @@ public class CultistPortal : ModProjectile {
                 {
                     Pitch = Main.rand.NextFloatDirection() * 0.2f,
                     Volume = 0.55f,
-                    MaxInstances = 18,
+                    MaxInstances = 50,
                     SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest
                 }, Projectile.Center);
             }
@@ -115,6 +116,7 @@ public class CultistPortal : ModProjectile {
         }
         switch(PortalType) {
             case PortalType.Blood:
+                portalVariant = 2;
                 if(Main.rand.NextBool(2)) {
                     Dust.NewDustPerfect(
                         Projectile.Center + Projectile.velocity * 20f
@@ -179,10 +181,11 @@ public class CultistPortal : ModProjectile {
                 break;
 
             case PortalType.Spear:
+                portalVariant = 0;
                 break;
 
             case PortalType.Eyes:
-                isShadowPortal = true;
+                portalVariant = 1;
                 if(Main.rand.NextBool(4)) {
                     Dust.NewDustPerfect(
                         Projectile.Center + Projectile.velocity * 20f
@@ -193,6 +196,42 @@ public class CultistPortal : ModProjectile {
                         default,
                         Main.rand.NextFloat(0.75f, 2f) * t
                     );
+                }
+                break;
+
+            case PortalType.Knives:
+                portalVariant = 2;
+                if(Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft % 20 == 0 && Projectile.timeLeft > 40) {
+                    float _portalRotation = 0;
+                    for(int i = 0; i < (int)Main.rand.Next(3, 5); i++) {
+                        var position = Projectile.Center - Projectile.velocity * 8f;
+                        var velocity = Projectile.velocity.RotatedBy(_portalRotation) * 6f;
+                        Projectile.NewProjectile(
+                            Projectile.GetSource_FromAI(),
+                            position,
+                            velocity,
+                            ModContent.ProjectileType<PortalKnives>(),
+                            Projectile.damage,
+                            4f
+                        );
+                        _portalRotation += MathHelper.ToRadians(Main.rand.NextFloat(-25f, 25f));
+                    }
+
+                    SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistSpearThrustMaybe.Asset with
+                    {
+                        Pitch = Main.rand.NextFloatDirection() * 0.2f + 1.0f,
+                        Volume = 1.2f,
+                        MaxInstances = 50,
+                        SoundLimitBehavior = SoundLimitBehavior.ReplaceOldest
+                    }, Projectile.Center);
+
+                    SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistGoreFlingSquelch.Asset with
+                    {
+                        Pitch = Main.rand.NextFloatDirection() * 0.1f,
+                        Volume = 1.2f,
+                        MaxInstances = 40,
+                        SoundLimitBehavior = SoundLimitBehavior.IgnoreNew
+                    }, Projectile.Center);
                 }
                 break;
         }
@@ -236,7 +275,7 @@ public class CultistPortal : ModProjectile {
         var frameHeight = 86;
         var frameWidth = 48;
         var frameOffset = 0;
-        if(isShadowPortal) frameOffset = frameWidth;
+        frameOffset = frameWidth * portalVariant;
         var portalSource = new Rectangle(frameOffset, frame * frameHeight, frameWidth, frameHeight);
 
         Main.spriteBatch.Draw(
@@ -289,6 +328,8 @@ public class CultistPortal : ModProjectile {
                 break;
             case PortalType.Eyes:
                 break;
+            case PortalType.Knives:
+                break;
         }
 
         switch(PortalType) {
@@ -323,7 +364,8 @@ public class CultistPortal : ModProjectile {
             case PortalType.Spear:
                 break;
             case PortalType.Blood:
-               
+                break;
+            case PortalType.Knives:
                 break;
         }
 
@@ -365,6 +407,19 @@ public class CultistPortal : ModProjectile {
                 Projectile.Center - Main.screenPosition,
                 null,
                 Color.Red * 0.30f,
+                rotation,
+                glowTexture.Size() * 0.5f,
+                0.55f * scale * new Vector2(1.25f, 2.2f),
+                SpriteEffects.None,
+                0
+                );
+                break;
+            case PortalType.Knives:
+                Main.spriteBatch.Draw(
+                glowTexture,
+                Projectile.Center - Main.screenPosition,
+                null,
+                Color.Red * 0.15f,
                 rotation,
                 glowTexture.Size() * 0.5f,
                 0.55f * scale * new Vector2(1.25f, 2.2f),

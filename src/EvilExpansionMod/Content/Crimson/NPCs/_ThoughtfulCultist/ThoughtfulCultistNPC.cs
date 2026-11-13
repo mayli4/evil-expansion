@@ -280,7 +280,8 @@ public class ThoughtfulCultistNPC : ModNPC {
         var pendantTexture = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPendant.Asset.Value;
         var pendantGlowmaskTexture = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPendantGlowmask.Asset.Value;
         var chainTexture = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistChain.Asset.Value;
-        var pendantPulseTexture = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPulse.Asset.Value;
+        var pendantPulseTextureLarge = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPulse.Asset.Value;
+        var pendantPulseTextureSmall = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPulseSmall.Asset.Value;
 
         if(NPC.IsABestiaryIconDummy)
             return true;
@@ -311,13 +312,16 @@ public class ThoughtfulCultistNPC : ModNPC {
         var pendantOutlineColor = Color.Transparent;
         var pendantPosition = chainPoints[chainPoints.Length / 2];
 
-        var pulseFrameHeight = 408;
-        var pulseSource = new Rectangle(0, pulseFrameHeight, pendantPulseTexture.Width, pulseFrameHeight);
+        var pulseFrameHeightLarge = 408; // 408 large, 82 small
+        var pulseFrameHeightSmall = 82; // 408 large, 82 small
+        var pulseSourceLarge = new Rectangle(0, 0, pendantPulseTextureLarge.Width, pulseFrameHeightLarge);
+        var pulseSourceSmall = new Rectangle(0, 0, pendantPulseTextureSmall.Width, pulseFrameHeightSmall);
 
         float pulseProgress = _timer / 60;
         float pulseScale = (float)( pulseProgress < 0.8 ? 1f + ( 0.8f - pulseProgress) / 10f : 1f + (pulseProgress-0.8) * 2f ); //(float)( pulseProgress < 0.8 ? 1f + ( 0.8f - pulseProgress) / 10f : 1f + (pulseProgress-0.8) * 2f )
         float pulseOpacity = (float) ( pulseProgress < 0.7? (0.3f + pulseProgress): (1f - ((pulseProgress - 0.7f) / 0.3f)) );
-        Vector2 pulseOrigin = pulseSource.Size() / 2f;
+        Vector2 pulseOriginLarge = pulseSourceLarge.Size() / 2f;
+        Vector2 pulseOriginSmall = pulseSourceSmall.Size() / 2f;
 
         if(_timer < 60) {
             var t = MathF.Sin(MathHelper.Pi * _timer / 60f);
@@ -330,21 +334,24 @@ public class ThoughtfulCultistNPC : ModNPC {
                         pendantOutlineColor,
                         Color.Orange,
                         t);
-                    pulseSource.Y = pulseFrameHeight * 0;
+                    pulseSourceLarge.Y = pulseFrameHeightLarge * 0;
+                    pulseSourceSmall.Y = pulseFrameHeightSmall * 0;
                     break;
                 case CultistState.EyeAttack:
                     pendantOutlineColor = Color.Lerp(
                         pendantOutlineColor,
                         new Color(234, 90, 255),
                         t);
-                    pulseSource.Y = pulseFrameHeight * 1;
+                    pulseSourceLarge.Y = pulseFrameHeightLarge * 1;
+                    pulseSourceSmall.Y = pulseFrameHeightSmall * 1;
                     break;
                 case CultistState.BloodAttack:
                     pendantOutlineColor = Color.Lerp(
                         pendantOutlineColor,
                         Color.Red,
                         t);
-                    pulseSource.Y = pulseFrameHeight * 2;
+                    pulseSourceLarge.Y = pulseFrameHeightLarge * 2;
+                    pulseSourceSmall.Y = pulseFrameHeightSmall * 2;
                     break;
             }
             //Main.NewText("pulseSource" + pulseSource, Microsoft.Xna.Framework.Color.White);
@@ -418,17 +425,28 @@ public class ThoughtfulCultistNPC : ModNPC {
         spriteBatch.Draw(brainTexture, NPC.Center - screenPos, brainSource, drawColor, 0f, new Vector2(53, 55), 1f, SpriteEffects.None, 0f);
 
         if(_timer < 60) {
-           spriteBatch.Draw(
-               pendantPulseTexture,
-               chainPoints[chainPoints.Length / 2] - screenPos + new Vector2() * Main.rand.NextFloat(-50f,50f) * pulseOpacity,
-               pulseSource,
-               new Color(255, 255, 255, 255 * (pulseProgress > 0.7? 1f - pulseProgress : pulseProgress + 0.3f) ) * pulseOpacity,
-               pulseProgress,
-               pulseOrigin,
-               pulseScale,
-               SpriteEffects.None,
-               0f
-           );
+            spriteBatch.Draw(
+                pendantPulseTextureLarge,
+                chainPoints[chainPoints.Length / 2] - screenPos + new Vector2() * Main.rand.NextFloat(-50f, 50f) * pulseOpacity,
+                pulseSourceLarge,
+                new Color(255, 255, 255, 255 * (pulseProgress > 0.7 ? 1f - pulseProgress : pulseProgress + 0.3f)) * pulseOpacity,
+                pulseProgress,
+                pulseOriginLarge,
+                pulseScale,
+                SpriteEffects.None,
+                0f
+            );
+           // spriteBatch.Draw(
+           //    pendantPulseTextureSmall,
+           //    chainPoints[chainPoints.Length / 2] - screenPos + new Vector2() * Main.rand.NextFloat(-50f, 50f) * pulseOpacity,
+           //    pulseSourceSmall,
+           //    new Color(255, 255, 255, 255 * (pulseProgress > 0.7 ? 1f - pulseProgress : pulseProgress + 0.3f)) * pulseOpacity,
+           //    -pulseProgress * 2,
+           //    pulseOriginSmall,
+           //    pulseScale,
+           //    SpriteEffects.None,
+           //    0f
+           //);
         }
         return false;
     }

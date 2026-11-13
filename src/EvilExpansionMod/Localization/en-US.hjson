@@ -130,7 +130,12 @@ Mods: {
 
 			ThoughtfulPendantItem: {
 				DisplayName: Thoughtful Pendant
-				Tooltip: Has a chance to conjure Spear Portals around your cursor when you attack
+				Tooltip:
+					'''
+					Summons a little Thoughtless Cultist friend
+					The Cultist conjures knife-throwing portals around your cursor when excited enough
+					Knives pierce through enemies, leaving behind healing blood orbs
+					'''
 			}
 
 			ImputedFlameItem: {
@@ -915,6 +920,10 @@ Mods: {
 			PusDeath.DisplayName: Pus Death
 			WailingTelegraphProjectile.DisplayName: Wailing Telegraph Projectile
 			WailingFireball.DisplayName: Wailing Fireball
+			ThoughtfulPendantChargeBar.DisplayName: Thoughtful Pendant Charge Bar
+			ThoughtfulOrbProjectile.DisplayName: Thoughtful Orb Projectile
+			ThoughtlessCultist.DisplayName: Thoughtless Cultist
+			PortalKnives.DisplayName: Portal Knives
 		}
 
 		Biomes: {

@@ -200,7 +200,7 @@ public class CultistPortal : ModProjectile {
                 break;
 
             case PortalType.Knives:
-                portalVariant = 2;
+                portalVariant = 0;
                 if(Main.netMode != NetmodeID.MultiplayerClient && Projectile.timeLeft % 20 == 0 && Projectile.timeLeft > 40) {
                     float _portalRotation = 0;
                     for(int i = 0; i < (int)Main.rand.Next(3, 5); i++) {

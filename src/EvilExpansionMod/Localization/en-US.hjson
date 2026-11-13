@@ -133,8 +133,8 @@ Mods: {
 				Tooltip:
 					'''
 					Summons a little Thoughtless Cultist friend
-					The Cultist conjures knife-throwing portals around your cursor when excited enough
-					Knives pierce through enemies, leaving behind healing blood orbs
+					The Cultist conjures knife-throwing portals around your cursor when sufficiently excited
+					Knives pierce through enemies, producing healing blood orbs
 					'''
 			}
 

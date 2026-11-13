@@ -22,7 +22,7 @@ public class ThoughtfulPendantPlayer : ModPlayer {
     public int DamageDealt = 0; // Tracks damage dealt
     private int DamageWearOff = 0; // Decreases stored damage over time
     public bool IsChargeBarPresent = false; // Tracks if the charge bar is present
-    public int attackCooldown = 60; // Number of frames before damage can accumulate again
+    public int attackCooldown; // Number of frames before damage can accumulate again
 
     public float Progress => Math.Min((float)DamageDealt / DamageThreshold, 1f); // Progress towards activation
 
@@ -84,11 +84,11 @@ public class ThoughtfulPendantPlayer : ModPlayer {
             DamageDealt = 1; // Basically ignore damage dealt during CD
         }
         //IsChargeBarPresent = false;
-        Main.NewText("DamageDealt" + DamageDealt, Microsoft.Xna.Framework.Color.White);
-        Main.NewText("attackCooldown" + attackCooldown, Microsoft.Xna.Framework.Color.White);
-        Main.NewText("Progress" + Progress, Microsoft.Xna.Framework.Color.White);
-        Main.NewText("IsChargeBarPresent" + IsChargeBarPresent, Microsoft.Xna.Framework.Color.White);
-        Main.NewText("IsCultistPresent" + IsCultistPresent, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("DamageDealt" + DamageDealt, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("attackCooldown" + attackCooldown, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("Progress" + Progress, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("IsChargeBarPresent" + IsChargeBarPresent, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("IsCultistPresent" + IsCultistPresent, Microsoft.Xna.Framework.Color.White);
     }
 }
 
@@ -122,8 +122,8 @@ public class ThoughtlessCultist : ModProjectile {
         pulseTimer = 0;
     }
     public override void AI() {
-        Main.NewText("attackTimer" + attackTimer, Microsoft.Xna.Framework.Color.White);
-        Main.NewText("pulseTimer" + pulseTimer, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("attackTimer" + attackTimer, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("pulseTimer" + pulseTimer, Microsoft.Xna.Framework.Color.White);
         Player player = Main.player[Projectile.owner];
         var modPlayer = player.GetModPlayer<ThoughtfulPendantPlayer>();
 
@@ -160,13 +160,29 @@ public class ThoughtlessCultist : ModProjectile {
         if(player.dead || !modPlayer.HasThoughtfulPendantAccessory || modPlayer.DamageDealt <= 0 || attackTimer == 0) { // If player dead, unequipped, or no damage stored, or attack done performing, stop drawing the bar
             modPlayer.IsChargeBarPresent = false;
         }
-        else if (modPlayer.attackCooldown <= 0)modPlayer.IsChargeBarPresent = true; // Otherwise, draw it
+        else if (modPlayer.attackCooldown <= 0)modPlayer.IsChargeBarPresent = true; // Otherwise, draw it if cooldown is over
 
         if(modPlayer.Progress == 1) { // Attack!
             if(attackTimer == -1) {
                 mouseDirection = (Main.MouseWorld - player.Center).SafeNormalize(Vector2.UnitX);
                 attackTimer = attackTimerMax;
-                modPlayer.attackCooldown = 60; // This is where CD is determined
+                modPlayer.attackCooldown = 1; // This is where CD is determined
+
+                SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistPendantActivate.Asset with
+                {
+                    //Pitch = Main.rand.NextFloatDirection() * 0.5f,
+                    PitchRange = (-0.2f, 0.2f),
+                    Volume = 1.5f,
+                },
+                Projectile.Center);
+
+                SoundEngine.PlaySound(SoundID.DD2_GhastlyGlaiveImpactGhost with
+                {
+                    //Pitch = Main.rand.NextFloatDirection() * 0.5f,
+                    PitchRange = (-1.2f, -0.2f),
+                    Volume = 1.5f,
+                },
+                Projectile.Center);
             }
             if(attackTimer == 0) {
                 modPlayer.DamageDealt = 1;
@@ -195,7 +211,7 @@ public class ThoughtlessCultist : ModProjectile {
                         ai0: (float)PortalType.Knives,
                         ai1: 80
                     );
-                    _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
+                    _portalRotation += Main.rand.NextFloat(0.25f, 1f) * MathF.PI;
                 }
             }
             attackTimer--;
@@ -287,7 +303,7 @@ public class ThoughtlessCultist : ModProjectile {
                 Projectile.position - Main.screenPosition + new Vector2() * Main.rand.NextFloat(0f, 0f) * pulseOpacity + 2f * Main.rand.NextVector2Unit() * t,
                 pulseSource,
                 new Color(255, 255, 255, 255 * (pulseProgress > 0.7 ? 1f - pulseProgress : pulseProgress + 0.5f)) * pulseOpacity,
-                pulseProgress * 2,
+                pulseProgress,
                 pulseOrigin,
                 pulseScale,
                 SpriteEffects.None,

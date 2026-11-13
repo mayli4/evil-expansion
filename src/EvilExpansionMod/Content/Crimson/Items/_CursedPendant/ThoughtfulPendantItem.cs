@@ -5,6 +5,7 @@ using EvilExpansionMod.Utilities;
 using Microsoft.CodeAnalysis;
 using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
+using Microsoft.Xna.Framework.Input;
 using ReLogic.Content;
 using System;
 using System.Collections.Generic;
@@ -84,7 +85,7 @@ public class PortalKnives : ModProjectile {
         ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
     }
     public override void SetDefaults() {
-        Projectile.width = 26 * 2;
+        Projectile.width = 25 * 2;
         Projectile.height = 8 * 2;
         Projectile.hostile = false;
         Projectile.friendly = true;
@@ -92,7 +93,7 @@ public class PortalKnives : ModProjectile {
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
         Projectile.penetrate = 2;
-        Projectile.timeLeft = 60 * 5;
+        Projectile.timeLeft = 60 * 8;
 
         Projectile.aiStyle = -1;
         Projectile.usesLocalNPCImmunity = true;
@@ -109,20 +110,21 @@ public class PortalKnives : ModProjectile {
 
         Projectile.frame = Main.rand.Next(0, 2 + 1);
         Projectile.rotation = Projectile.velocity.ToRotation();
-        if(Projectile.position.X < player.position.X) leftOfPlayer = true;
-        if(Projectile.position.Y < player.position.Y) abovePlayer = true;
+        if(Projectile.position.X < Main.MouseWorld.X) leftOfPlayer = true;
+        if(Projectile.position.Y < Main.MouseWorld.Y) abovePlayer = true;
     }
     public override void AI() {
-        Terraria.Player player = Main.player[Projectile.owner];
-
         if(Projectile.timeLeft < 60 * 2 ||
-            leftOfPlayer && Projectile.position.X > player.position.X ||
-            !leftOfPlayer && Projectile.position.X < player.position.X ||
-            abovePlayer && Projectile.position.Y > player.position.Y ||
-            !abovePlayer && Projectile.position.Y < player.position.Y
+            (leftOfPlayer && Projectile.position.X > Main.MouseWorld.X ||
+            !leftOfPlayer && Projectile.position.X < Main.MouseWorld.X) &&
+            (abovePlayer && Projectile.position.Y > Main.MouseWorld.Y ||
+            !abovePlayer && Projectile.position.Y < Main.MouseWorld.Y)
             ) Projectile.tileCollide = true;
-
-        if(Projectile.timeLeft <= 60f) {
+        //Main.NewText("Projectile.position.X" + Projectile.position.X, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("Main.MouseWorld.X" + Main.MouseWorld.X, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("Projectile.position.Y " + Projectile.position.Y, Microsoft.Xna.Framework.Color.White);
+        //Main.NewText("Main.MouseWorld.Y" + Main.MouseWorld.Y, Microsoft.Xna.Framework.Color.White);
+        if(Projectile.timeLeft <= 60) {
             Projectile.Opacity = MathHelper.Lerp(1, 0, (60f - Projectile.timeLeft) / 60f); // Timeleft = 60, Opcaity = 1, Timeleft = 0, Opacity = 0,
         }
     }
@@ -181,10 +183,10 @@ public class PortalKnives : ModProjectile {
                 Vector2 drawPos = Projectile.oldPos[k] - Main.screenPosition + Projectile.Size / 2f + new Vector2(0f, Projectile.gfxOffY);
 
                 float progress = (Projectile.oldPos.Length - k) / (float)Projectile.oldPos.Length;
-                Color afterimageColor = Color.Red * progress * 0.6f;
+                Color afterimageColor = Color.Red * progress * 0.3f;
 
-                //afterimageColor.A = 20; // Afterimage is fullbright
-                afterimageColor.A = (byte)Main.rand.Next(0, 75); // Afterimage is fullbright
+                afterimageColor.A = 20; // Afterimage is fullbright
+                //afterimageColor.A = (byte)Main.rand.Next(0, 75); // Afterimage is fullbright
 
                 Main.EntitySpriteDraw(
                     texture,
@@ -193,7 +195,7 @@ public class PortalKnives : ModProjectile {
                     afterimageColor,
                     Projectile.oldRot[k],
                     drawOrigin,
-                    Projectile.scale * 0.5f,
+                    Projectile.scale * 0.4f,
                     SpriteEffects.None,
                     0
                 );
@@ -218,7 +220,7 @@ public class PortalKnives : ModProjectile {
 public class ThoughtfulOrbProjectile : ModProjectile {
     public override string Texture => Assets.Images.Crimson.Items.CursedPendant.PendantOrb.KEY;
 
-    readonly static int MaxTimeLeft = 60 * 15;
+    readonly static int MaxTimeLeft = 60 * 10;
     public Player Owner => Main.player[Projectile.owner];
     public override void SetDefaults() {
         Projectile.width = 24;
@@ -233,7 +235,7 @@ public class ThoughtfulOrbProjectile : ModProjectile {
     }
     bool Closeenough = false;
     public override void OnSpawn(IEntitySource source) {
-        Projectile.timeLeft = (int)(MaxTimeLeft + Main.rand.NextFloat(-60f, 60f));
+        Projectile.timeLeft = (int)(MaxTimeLeft + Main.rand.NextFloat(-60f * 5, 60f * 0));
         Projectile.scale = Main.rand.NextFloat(0.85f, 1.1f);
         SoundEngine.PlaySound(SoundID.NPCHit25 with { Volume = 0.5f, PitchRange = (0.7f, 1.3f) }, Projectile.Center);
     }
@@ -259,7 +261,7 @@ public class ThoughtfulOrbProjectile : ModProjectile {
                 owner.velocity.SafeNormalize(Vector2.Zero),
                 0.5f
             ) * 14f;
-            owner.Heal(Main.rand.Next(2, 4 + 1));
+            owner.Heal(Main.rand.Next(1, 3 + 1)); // Healing
             Projectile.netUpdate = true;
             SoundEngine.PlaySound(SoundID.Item3 with { Volume = 0.8f, PitchRange = (0.7f, 1.3f) }, Projectile.Center);
             Projectile.Kill();

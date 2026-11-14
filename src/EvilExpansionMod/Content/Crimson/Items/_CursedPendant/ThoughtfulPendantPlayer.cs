@@ -32,7 +32,7 @@ public class ThoughtfulPendantPlayer : ModPlayer {
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
         if(HasThoughtfulPendantAccessory) {
             if(target.type == NPCID.TargetDummy || target.immortal) {
-                DamageDealt += damageDone * 0; // Accumulation reduced when hitting dummies, etc.
+                DamageDealt += damageDone * 0; // Accumulation modifier when hitting dummies, etc.
             }
             else DamageDealt += damageDone >= 60 ? (30 + damageDone / 2) : (60);
         }
@@ -67,7 +67,7 @@ public class ThoughtfulPendantPlayer : ModPlayer {
             DamageWearOff = 0;
         }
         else if(DamageDealt > 0 && DamageWearOff == 0 && Progress < 1) { // Stored damage is continually lost
-            DamageDealt -= 3;
+            DamageDealt -= 2;
             DamageWearOff = (int) (60 * 0.1); // 10 times per second
         }
         if(!IsCultistPresent(Player)) {
@@ -96,6 +96,7 @@ public class ThoughtfulPendantPlayer : ModPlayer {
 }
 
 public class ThoughtlessCultist : ModProjectile {
+    const int ANIMATION_SPEED = 6;
     private int attackTimer;
     private int pulseTimer;
     private int attackTimerMax = 30; // How many frames the attack will be performed for
@@ -105,8 +106,8 @@ public class ThoughtlessCultist : ModProjectile {
     Vector2 mouseDirection;
     public override string Texture => Assets.Images.Crimson.Items.CursedPendant.ThoughtlessCultist.KEY;
     public override void SetDefaults() {
-        Projectile.width = 0;
-        Projectile.height = 0;
+        Projectile.width = 30;
+        Projectile.height = 42;
         Projectile.aiStyle = -1;
         Projectile.penetrate = -1;
         Projectile.ignoreWater = true;
@@ -115,6 +116,8 @@ public class ThoughtlessCultist : ModProjectile {
         Projectile.hostile = false;
         Projectile.DamageType = DamageClass.Default;
         Projectile.timeLeft = int.MaxValue;
+
+        Main.projFrames[Projectile.type] = 4;
     }
 
     public override void OnSpawn(IEntitySource source) {
@@ -123,6 +126,8 @@ public class ThoughtlessCultist : ModProjectile {
         if (modPlayer.Progress == 1) modPlayer.DamageDealt = 1;
         attackTimer = -1;
         pulseTimer = 0;
+
+        Projectile.frame = 0;
     }
     public override void AI() {
         //Main.NewText("attackTimer" + attackTimer, Microsoft.Xna.Framework.Color.White);
@@ -135,21 +140,33 @@ public class ThoughtlessCultist : ModProjectile {
             return;
         }
 
+        // Animate it
+        Projectile.frameCounter++;
+        if(Projectile.frameCounter >= ANIMATION_SPEED) {
+            Projectile.frameCounter = 0;
+            Projectile.frame++;
+            if(Projectile.frame > 3) {
+                Projectile.frame = 0;
+            }
+        }
+        //Main.NewText("Projectile.frame" + Projectile.frame, Microsoft.Xna.Framework.Color.White);
+
         // Player tracking code that I fucking stole from the Blood Warden's .cs file
         var distanceToOwner = Projectile.Distance(player.Center);
 
         Projectile.direction = (player.Center.X < Projectile.Center.X) ? -1 : 1;
         Projectile.spriteDirection = Projectile.direction;
 
-        var targetPosition = player.Center + new Vector2(
-            player.direction == 1 ? 80f : -80f,
+        var targetPosition1 = player.Center + new Vector2(
+            player.direction == 1 ? 4 * 16f : -4 * 16f,
             MathF.Sin(Main.GameUpdateCount * 0.05f + Projectile.whoAmI * 0.1f) * 10f - 30f);
+        Vector2 targetPosition2 = Vector2.Lerp(targetPosition1, Main.MouseWorld, 0.04f);
 
-        Vector2 vectorToTarget = targetPosition - Projectile.Center;
+        Vector2 vectorToTarget = targetPosition2 - Projectile.Center;
         float distance = vectorToTarget.Length();
 
         if(distance > 20f) {
-            Projectile.velocity = Vector2.Lerp(Projectile.velocity *= 1.05f, vectorToTarget / distance * 10f, 0.1f);
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity *= 1.05f, vectorToTarget / distance * 15f, 0.1f);
         }
         else {
             Projectile.velocity *= 0.95f;
@@ -201,7 +218,7 @@ public class ThoughtlessCultist : ModProjectile {
             if(attackTimer % 30 == 0) {
                 for(int i = 0; i < (int)Main.rand.Next(1, 3); i++) {
                     Vector2 summonPosition = Main.MouseWorld;
-                    var position = summonPosition - 30 * 16f * _portalRotation.ToRotationVector2();
+                    var position = Vector2.Lerp(summonPosition - 30 * 16f * _portalRotation.ToRotationVector2(), Projectile.position, 0.35f);
                     var direction = position.DirectionTo(summonPosition);
 
                     Projectile.NewProjectile(
@@ -228,8 +245,24 @@ public class ThoughtlessCultist : ModProjectile {
         var texture = TextureAssets.Projectile[Type].Value;
 
         var stretchMax = 0.4f;
-        var stretch = stretchMax / MathF.Max(Projectile.velocity.Length() * 0.8f, 1f);
+        var stretch = stretchMax / MathF.Max(Projectile.velocity.Length() * 0.3f, 1f);
         float stretchAmount = stretchMax - stretch;
+
+        // SHAKING
+        float goingFuckingCrazy = modPlayer.Progress > 0.5 ? (modPlayer.Progress > 0.9 ? Math.Min(modPlayer.Progress * modPlayer.Progress, 1.5f) : modPlayer.Progress / 1.5f) : 0f;
+        float shakey = Main.rand.NextFloat(-1.5f, 1.5f) * goingFuckingCrazy;
+        float shakex = Main.rand.NextFloat(-2.5f, 2.5f) * goingFuckingCrazy;
+
+        // Respect framing
+        int frameHeight = texture.Height / Main.projFrames[Projectile.type];
+        Rectangle sourceRectangle = new Rectangle(
+            0,
+            Projectile.frame * frameHeight,
+            texture.Width,
+            frameHeight
+        );
+        Vector2 drawOrigin = new Vector2(texture.Width / 2f, frameHeight / 2f);
+        Vector4 source = new Vector4(0f, Projectile.frame * frameHeight, texture.Width, frameHeight);
 
         // Squash X and stretch Y when moving vertically, or vice-versa based on velocity direction
         Vector2 velocityDir = Projectile.velocity.SafeNormalize(Vector2.Zero);
@@ -240,16 +273,19 @@ public class ThoughtlessCultist : ModProjectile {
             1f + stretchAmount * verticalBias
         ) * Projectile.scale;
 
+        var effects = Projectile.spriteDirection == 1 ? SpriteEffects.FlipHorizontally : SpriteEffects.None;
+
         Graphics.Begin()
             .DrawTexture(new()
             {
                 Texture = texture,
-                Position = Projectile.Center - Main.screenPosition,
+                Position = Projectile.Center + new Vector2(-shakex, -shakey) - Main.screenPosition,
                 Color = lightColor * Projectile.Opacity,
-                Rotation = 0f, // Keeps sprite upright
-                Origin = texture.Size() / 2f,
-                Scale = directionalScale,
-                SpriteEffects = SpriteEffects.None, // No upside-down flipping
+                Rotation = 0, // Face left! Or right!
+                Source = source,
+                Origin = drawOrigin,
+                Scale = directionalScale * (attackTimer >= attackTimerMax - 3 ? 1.3f : 1f), // "Whoomps" outwards to give the attack a little more visual oomph
+                SpriteEffects = effects
             })
             .End();
 
@@ -257,18 +293,14 @@ public class ThoughtlessCultist : ModProjectile {
         Texture2D chargeFront = Assets.Images.Crimson.Items.CursedPendant.CursedPendantChargebarFront.Asset.Value;
         Texture2D chargeBack = Assets.Images.Crimson.Items.CursedPendant.CursedPendantChargebarBack.Asset.Value;
         int backBarWidth = 12;
-        int backBarHeight = 46;
+        int backBarHeight = 38;
         int frontBarWidth = 12;
-        int frontBarHeight = 46;
+        int frontBarHeight = 38;
 
         int DamageDealtOffset = modPlayer.DamageDealt + modPlayer.DamageThreshold / 10;
 
-        float goingFuckingCrazy = modPlayer.Progress > 0.9 ? Math.Min(modPlayer.Progress * modPlayer.Progress, 1f) : 0f;
-        float shakey = Main.rand.NextFloat(-1.5f, 1.5f) * goingFuckingCrazy;
-        float shakex = Main.rand.NextFloat(-2.5f, 2.5f) * goingFuckingCrazy;
-
         Vector2 pivotPoint = new(backBarWidth / 2f, backBarHeight / 2f);
-        Vector2 position = new Vector2(32 + shakex, 0 + shakey) + Projectile.position - Main.screenPosition;
+        Vector2 position = new Vector2(40 + shakex, 16 + shakey) + Projectile.position - Main.screenPosition;
         Vector2 frontPos = position - pivotPoint;
         int offsetHeight = frontBarHeight - (int)(frontBarHeight * Math.Min(((float)DamageDealtOffset) / modPlayer.DamageThreshold, 1f));
         int readingHeight = (int)(frontBarHeight * Math.Min(((float)DamageDealtOffset) / modPlayer.DamageThreshold, 1f));
@@ -303,7 +335,7 @@ public class ThoughtlessCultist : ModProjectile {
 
             Main.spriteBatch.Draw(
                 pendantPulseTexture,
-                Projectile.position - Main.screenPosition + new Vector2() * Main.rand.NextFloat(0f, 0f) * pulseOpacity + 2f * Main.rand.NextVector2Unit() * t,
+                Projectile.position - Main.screenPosition + 2f * Main.rand.NextVector2Unit() * t + new Vector2(15.2f, 22f),
                 pulseSource,
                 new Color(255, 255, 255, 255 * (pulseProgress > 0.7 ? 1f - pulseProgress : pulseProgress + 0.5f)) * pulseOpacity,
                 pulseProgress,

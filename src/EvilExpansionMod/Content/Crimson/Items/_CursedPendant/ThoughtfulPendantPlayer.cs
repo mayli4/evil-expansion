@@ -31,7 +31,10 @@ public class ThoughtfulPendantPlayer : ModPlayer {
     }
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
         if(HasThoughtfulPendantAccessory) {
-            DamageDealt += damageDone;
+            if(target.type == NPCID.TargetDummy || target.immortal) {
+                DamageDealt += damageDone * 0; // Accumulation reduced when hitting dummies, etc.
+            }
+            else DamageDealt += damageDone >= 60 ? (30 + damageDone / 2) : (60);
         }
     }
     public override void OnHurt (Player.HurtInfo info) {
@@ -206,7 +209,7 @@ public class ThoughtlessCultist : ModProjectile {
                         position,
                         direction,
                         ModContent.ProjectileType<FriendlyCultistPortal>(),
-                        (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(35),
+                        (int)player.GetTotalDamage(DamageClass.Magic).ApplyTo(40),
                         0.2f,
                         ai0: (float)PortalType.Knives,
                         ai1: 80

@@ -85,15 +85,17 @@ public class PortalKnives : ModProjectile {
         ProjectileID.Sets.TrailingMode[Projectile.type] = 2;
     }
     public override void SetDefaults() {
-        Projectile.width = 25 * 2;
-        Projectile.height = 8 * 2;
+        Projectile.width = 12 * 2;
+        Projectile.height = 12 * 2;
+        //Projectile.width = 25 * 2;
+        //Projectile.height = 8 * 2;
         Projectile.hostile = false;
         Projectile.friendly = true;
         Projectile.DamageType = DamageClass.Magic;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
         Projectile.penetrate = 2;
-        Projectile.timeLeft = 60 * 8;
+        Projectile.timeLeft = 60 * 10;
 
         Projectile.aiStyle = -1;
         Projectile.usesLocalNPCImmunity = true;
@@ -124,7 +126,7 @@ public class PortalKnives : ModProjectile {
         //Main.NewText("Main.MouseWorld.X" + Main.MouseWorld.X, Microsoft.Xna.Framework.Color.White);
         //Main.NewText("Projectile.position.Y " + Projectile.position.Y, Microsoft.Xna.Framework.Color.White);
         //Main.NewText("Main.MouseWorld.Y" + Main.MouseWorld.Y, Microsoft.Xna.Framework.Color.White);
-        if(Projectile.timeLeft <= 60) {
+        if(Projectile.timeLeft <= 60 * 2) {
             Projectile.Opacity = MathHelper.Lerp(1, 0, (60f - Projectile.timeLeft) / 60f); // Timeleft = 60, Opcaity = 1, Timeleft = 0, Opacity = 0,
         }
     }
@@ -133,7 +135,7 @@ public class PortalKnives : ModProjectile {
         float angleOffset = Main.rand.NextFloat(-MathHelper.ToRadians(40f), MathHelper.ToRadians(40f));
         Projectile.NewProjectile(
             player.GetSource_FromThis(),
-            target.position,
+            target.Center,
             Projectile.velocity * angleOffset * 0.5f,
             ModContent.ProjectileType<ThoughtfulOrbProjectile>(),
             0,
@@ -201,11 +203,12 @@ public class PortalKnives : ModProjectile {
                 );
             }
         }
-
+        Vector2 forwardOffset = Projectile.rotation.ToRotationVector2() * 12f;
+        Vector2 offsetPos = Projectile.Center - Main.screenPosition + forwardOffset;
         // Knife itself
         Main.EntitySpriteDraw(
             texture,
-            Projectile.Center - Main.screenPosition,
+            offsetPos,
             sourceRectangle,
             lightColor * fadeOut,
             Projectile.rotation,
@@ -235,7 +238,7 @@ public class ThoughtfulOrbProjectile : ModProjectile {
     }
     bool Closeenough = false;
     public override void OnSpawn(IEntitySource source) {
-        Projectile.timeLeft = (int)(MaxTimeLeft + Main.rand.NextFloat(-60f * 5, 60f * 0));
+        Projectile.timeLeft = (int)(MaxTimeLeft + Main.rand.NextFloat(60f * 0, 60f * 5));
         Projectile.scale = Main.rand.NextFloat(0.85f, 1.1f);
         SoundEngine.PlaySound(SoundID.NPCHit25 with { Volume = 0.5f, PitchRange = (0.7f, 1.3f) }, Projectile.Center);
     }

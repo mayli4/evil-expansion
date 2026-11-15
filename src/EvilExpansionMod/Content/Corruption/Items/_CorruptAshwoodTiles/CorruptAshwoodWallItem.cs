@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Corruption.Tiles;
 
-namespace EvilExpansionMod.Content.Corruption;
+namespace EvilExpansionMod.Content.Corruption.Items._CorruptAshwoodTiles;
 
 internal class CorruptAshwoodWall : ModWall {
     public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshwoodWall.KEY;
@@ -16,9 +16,9 @@ internal class CorruptAshwoodWall : ModWall {
 
         Main.tileBlockLight[Type] = true;
 
-        DustType = DustID.Blood;
+        DustType = DustID.Corruption;
 
-        AddMapEntry(new Color(48, 18, 15));
+        AddMapEntry(new Color(46, 45, 41));
     }
 }
 internal sealed class CorruptAshwoodWallItem : ModItem {

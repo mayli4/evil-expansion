@@ -5,29 +5,29 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
-using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Crimson.Tiles;
+using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Corruption.Tiles;
 
-namespace EvilExpansionMod.Content.Crimson;
+namespace EvilExpansionMod.Content.Corruption.Items._CorruptAshwoodTiles;
 
-internal class CharredBloodwoodFence : ModWall {
-    public override string Texture => Assets.Images.Crimson.Tiles.CharredBloodwoodFence.KEY;
+internal class CorruptAshwoodFence : ModWall {
+    public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshwoodFence.KEY;
     public override void SetStaticDefaults() {
         Main.wallHouse[Type] = true;
 
         Main.tileBlockLight[Type] = true;
 
-        DustType = DustID.Blood;
+        DustType = DustID.Corruption;
 
-        AddMapEntry(new Color(67, 21, 19));
+        AddMapEntry(new Color(51, 51, 67));
     }
 }
-internal sealed class CharredBloodwoodFenceItem : ModItem {
-    public override string Texture => Assets.Images.Crimson.Tiles.CharredBloodwoodFenceItem.KEY;
+internal sealed class CorruptAshwoodFenceItem : ModItem {
+    public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshwoodFenceItem.KEY;
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 400;
     }
     public override void SetDefaults() {
-        Item.DefaultToPlaceableWall(ModContent.WallType<CharredBloodwoodFence>());
+        Item.DefaultToPlaceableWall(ModContent.WallType<CorruptAshwoodFence>());
         Item.width = 16;
         Item.height = 16;
         Item.value = Item.sellPrice();
@@ -42,7 +42,7 @@ internal sealed class CharredBloodwoodFenceItem : ModItem {
     }
     public override void AddRecipes() {
         CreateRecipe(4)
-            .AddIngredient<CharredBloodwoodItem>(1)
+            .AddIngredient<CorruptAshwoodItem>(1)
             .AddTile(TileID.WorkBenches)
             .Register();
     }

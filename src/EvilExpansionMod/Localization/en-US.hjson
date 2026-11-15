@@ -123,14 +123,19 @@ Mods: {
 				DisplayName: Stinkfly
 				Tooltip:
 					'''
-					Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
+					Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 					'Used in perfume, for some reason!'
 					'''
 			}
 
 			ThoughtfulPendantItem: {
 				DisplayName: Thoughtful Pendant
-				Tooltip: Has a chance to conjure Spear Portals around your cursor when you attack
+				Tooltip:
+					'''
+					Summons a little Thoughtless Cultist friend
+					It stores the pain you inflict on others within itself, which it uses to conjure knife-throwing portals
+					Cultist Knives pierce through enemies, producing healing blood orbs
+					'''
 			}
 
 			ImputedFlameItem: {
@@ -145,13 +150,13 @@ Mods: {
 					'''
 					Slowly grows a corrupt planetoid
 					Planetoids that grow too large explode violently
-					'Definitely DON’T use purification powder on these…'
+					'Definitely DON’T use purification powder on it…'
 					'''
 			}
 
 			NormalRevolverItem: {
-				DisplayName: Normal Revolver
-				Tooltip: Summons a baby planetoid that follows you around
+				DisplayName: Purified Spawner
+				Tooltip: Summons a little planetoid that follows you around
 			}
 
 			LamethrowerItem: {
@@ -160,7 +165,7 @@ Mods: {
 					'''
 					Coats enemies and surfaces alike with incendiary ichor, inflicting a multitude of debuffs
 					Enemies suffer reduced defense and take extra damage when set ablaze
-					Overcharge the weapon to make it hurt...
+					Overcharge the weapon to blast enemies apart with a kidney stone boulder
 					'''
 			}
 
@@ -170,7 +175,7 @@ Mods: {
 					'''
 					Your summons will focus struck enemies
 					Has a {0}% chance to cage enemies on hit
-					Caged enemies take {1}% increased damage from minions
+					Caged enemies take {1}% increased summon damage
 					'''
 			}
 
@@ -262,13 +267,13 @@ Mods: {
 				Tooltip:
 					'''
 					It's volatile
-					Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
+					Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 					'''
 			}
 
 			LavaLizardItem: {
 				DisplayName: Lava Lizard
-				Tooltip: Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
+				Tooltip: Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 			}
 
 			LanternBatBannerItem: {
@@ -314,7 +319,7 @@ Mods: {
 				DisplayName: Gulpy
 				Tooltip:
 					'''
-					The yoyo takes bites out of enemies
+					The yoyo takes bites out of enemies, increasing its attack speed
 					Repeated bites cause it to vomit out a spray of half-digested gore
 					'My little Gulpy...'
 					'''
@@ -325,7 +330,7 @@ Mods: {
 				Tooltip:
 					'''
 					It's volatile
-					Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
+					Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 					'''
 			}
 
@@ -338,7 +343,6 @@ Mods: {
 				DisplayName: Polyp Ore
 				Tooltip:
 					'''
-					f
 					Its surface is wreathed in cursed energy
 					Burns you more severely when touched without special protection
 					'''
@@ -384,7 +388,7 @@ Mods: {
 
 			EaterOfSoilItem: {
 				DisplayName: Eater of Soil
-				Tooltip: Feels like it would make a tasty treat... if only you could "extract" the meat somehow...
+				Tooltip: Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 			}
 
 			EvilMeatloaf: {
@@ -535,7 +539,7 @@ Mods: {
 			}
 
 			BloodplateHookItem: {
-				DisplayName: Bloodplate Fishing Hook
+				DisplayName: Bloodplated Fishing Hook
 				Tooltip:
 					'''
 					While fishing, forms a blood shield which impales enemies and absorbs incoming damage
@@ -550,6 +554,20 @@ Mods: {
 					'''
 					While fishing, releases cursed ghosts from the water that chase after enemies
 					The hook reacts to danger, releasing more ghosts when you are threatened
+					'''
+			}
+
+			SoulplatedHookItem: {
+				DisplayName: Soulplated Fishing Hook
+				Tooltip:
+					'''
+					While fishing:
+					-Releases cursed ghosts from the water that chase after enemies
+					The hook reacts to danger, releasing more ghosts when you are threatened
+
+					-Forms a blood shield which impales enemies and absorbs incoming damage
+					Getting hurt damages the shield
+					The shield will need time to regenerate after being broken
 					'''
 			}
 
@@ -593,7 +611,7 @@ Mods: {
 			}
 
 			CharredBloodwoodWorkbenchItem: {
-				DisplayName: Charred Bloodwood Workbench Item
+				DisplayName: Charred Bloodwood Workbench
 				Tooltip: ""
 			}
 
@@ -623,7 +641,7 @@ Mods: {
 			}
 
 			CharredBloodwoodCandleItem: {
-				DisplayName: Charred Bloodwood Candle Item
+				DisplayName: Charred Bloodwood Candle
 				Tooltip: ""
 			}
 
@@ -703,7 +721,7 @@ Mods: {
 			}
 
 			CorruptAshwoodCandleItem: {
-				DisplayName: Corrupt Ashwood Candle Item
+				DisplayName: Corrupt Ashwood Candle
 				Tooltip: ""
 			}
 
@@ -778,17 +796,17 @@ Mods: {
 			}
 
 			CorruptAshwoodFenceItem: {
-				DisplayName: Corrupt Ashwood Fence Item
+				DisplayName: Corrupt Ashwood Fence
 				Tooltip: ""
 			}
 
 			CorruptAshwoodPlatformItem: {
-				DisplayName: Corrupt Ashwood Platform Item
+				DisplayName: Corrupt Ashwood Platform
 				Tooltip: ""
 			}
 
 			CorruptAshwoodWallItem: {
-				DisplayName: Corrupt Ashwood Wall Item
+				DisplayName: Corrupt Ashwood Wall
 				Tooltip: ""
 			}
 		}
@@ -821,15 +839,12 @@ Mods: {
 
 		Projectiles: {
 			DevilOWarStingerProjectile.DisplayName: Devil O War Stinger
-			HellbatSpit.DisplayName: Hellbat Spit
-			HellbatSpitProjectile.DisplayName: Hellbat Spit
 			TerrorBatSpit.DisplayName: Terror Bat Spit
 			SpiritFireball.DisplayName: Spirit Fireball
 			CursehoundMace.DisplayName: Cursehound Mace
 			MaceCrack.DisplayName: Mace Crack
 			MaceShard.DisplayName: Mace Shard
 			EffigyRootProjectile.DisplayName: Effigy Root Projectile
-			CursedFog.DisplayName: Cursed Fog
 			CultistPortal.DisplayName: Cultist Portal
 			MaceDebris.DisplayName: Mace Debris
 			StalactiteProjectile.DisplayName: Stalactite
@@ -903,27 +918,33 @@ Mods: {
 			IchorCompustion.DisplayName: Ichor Compustion
 			KidneyStone.DisplayName: Kidney Stone
 			PusDeath.DisplayName: Pus Death
+			WailingTelegraphProjectile.DisplayName: Wailing Telegraph Projectile
+			WailingFireball.DisplayName: Wailing Fireball
+			ThoughtfulPendantChargeBar.DisplayName: Thoughtful Pendant Charge Bar
+			ThoughtfulOrbProjectile.DisplayName: Thoughtful Orb Projectile
+			ThoughtlessCultist.DisplayName: Thoughtless Cultist
+			PortalKnives.DisplayName: Portal Knives
 		}
 
 		Biomes: {
 			UnderworldCorruptionBiome: {
-				DisplayName: Underworld Corruption Biome
-				TownNPCDialogueName: The Underworld Corruption Biome
+				DisplayName: Corrupt Underworld Biome
+				TownNPCDialogueName: The Corrupt Underworld Biome
 			}
 
 			UnderworldCorruption: {
-				DisplayName: Underworld Corruption
-				TownNPCDialogueName: The Underworld Corruption
+				DisplayName: Corrupt Underworld
+				TownNPCDialogueName: The Corrupt Underworld
 			}
 
 			UnderworldCrimsonBiome: {
-				DisplayName: Underworld Crimson Biome
-				TownNPCDialogueName: The Underworld Crimson Biome
+				DisplayName: Crimson Underworld Biome
+				TownNPCDialogueName: The Crimson Underworld Biome
 			}
 
 			UnderworldCrimson: {
-				DisplayName: Underworld Crimson
-				TownNPCDialogueName: the Underworld Crimson
+				DisplayName: Crimson Underworld
+				TownNPCDialogueName: the Crimson Underworld
 			}
 		}
 

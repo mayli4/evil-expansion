@@ -128,7 +128,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
                 pus++;
             }
             if(pus > 140) overchargeTimer = 140;
-            currentMultiple = (pus / 10) * 10;
+            currentMultiple = (pus / 10) * 10; // Mana drains every 10 frames of charging ( 14 * 10 mana to max )
         }
         if(pus == 140 && overchargeTimer <= 80 && killTimer == 60) { // Overcharge increments to a maximum of 80 in the same manner
             if(overchargeTimer == 0) lastTriggeredMultiple = 0;
@@ -136,26 +136,48 @@ public class LamethrowerHeldProjectile : ModProjectile {
                 overchargeTimer++;
             }
             if(overchargeTimer > 80) overchargeTimer = 80;
-            currentMultiple = (overchargeTimer / 10) * 10;
-        }
-
-        if(Projectile.owner == Main.myPlayer) { // Mana drain every 10 frames of charging ( 14 mana to max, 22 to overcharge)
-            int manaCost = 1;
-            if(player.statMana >= manaCost && killTimer == 60 && currentMultiple > lastTriggeredMultiple) {
-                player.statMana -= manaCost;
-                //player.ManaEffect(-manaCost);
-                lastTriggeredMultiple = currentMultiple;
-            }
-            else if(player.statMana < manaCost) {
-                pus = 0;
-                overchargeTimer = 0;
-            }
+            currentMultiple = (overchargeTimer / 10) * 10; // Mana drains every 10 frames of charging ( + 8 * 10 to overcharge)
         }
 
         Vector2 spawnPosition = Projectile.Center + rotationVector * new Vector2(80, 80);
 
+        if(Projectile.owner == Main.myPlayer) { // Mana drains here
+            int manaCost = (int)(player.HeldItem.mana * player.manaCost);
+            if(player.statMana >= manaCost && killTimer == 60 && currentMultiple > lastTriggeredMultiple) {
+                player.statMana -= manaCost;
+                SoundEngine.PlaySound(SoundID.Item3 with { Volume = 0.2f, Pitch = Main.rand.NextFloat(-0.7f, -0.4f) + ((float)pus / 140) + ((float)overchargeTimer / 80) });
+                //player.ManaEffect(-manaCost);
+                lastTriggeredMultiple = currentMultiple;
+            }
+            else if(player.statMana < manaCost && killTimer == 60) { // No mana
+                for(int i = 0; i < 2 * attackSpeedMultiplier; i++) {
+                    if(pus > 0) pus -= 1;
+                    if(overchargeTimer > 0) overchargeTimer -= 1;
+                }
+                SoundEngine.PlaySound(SoundID.LiquidsWaterLava with { Volume = 0.1f * (1 + (float)pus / 140), Pitch = Main.rand.NextFloat(-1f, -0.5f) + ( (float)pus / 70 ) });
+                Dust dust = Dust.NewDustPerfect(
+                    spawnPosition + new Vector2(Main.rand.NextFloat(-4f, 4f), Main.rand.NextFloat(-4f, 4f)),
+                    DustID.Smoke,
+                    new Vector2 (0,-2) * Main.rand.NextFloat(0f, 1.5f),
+                    Main.rand.Next(50, 255),
+                    default,
+                    Scale: Main.rand.NextFloat(0.8f, 1.0f)
+
+                );
+                Dust dustt = Dust.NewDustPerfect(
+                    spawnPosition + new Vector2(Main.rand.NextFloat(-4f, 4f), Main.rand.NextFloat(-4f, 4f)),
+                    DustID.ManaRegeneration,
+                    new Vector2(0, -2) * Main.rand.NextFloat(0f, 0.5f),
+                    Main.rand.Next(0, 100),
+                    default,
+                    Scale: Main.rand.NextFloat(0.4f, 1f) * (0.5f + (float)pus / 280)
+
+                );
+            }
+        }
+
         if (pus == 140 && chargeSfx == 0) { // Charged cue
-            SoundEngine.PlaySound(SoundID.Item3 with { Volume = 0.4f, Pitch = Main.rand.NextFloat(-0.7f, -0.4f) });
+            SoundEngine.PlaySound(SoundID.Item16 with { Volume = 0.4f, Pitch = Main.rand.NextFloat(-0.7f, -0.4f) });
             for(int i = 0; i < 5; i++) {
                 Vector2 dustVelocity = rotationVector.RotatedByRandom(MathHelper.ToRadians(60)) * Main.rand.NextFloat(0.1f, 1f);
                 Dust dust = Dust.NewDustPerfect(
@@ -214,14 +236,14 @@ public class LamethrowerHeldProjectile : ModProjectile {
             }
 
             if(overchargeTimer != 80) {
-                for(int i = 0; i < ( 1 + pus / 10); i++) {
+                for(int i = 0; i < ( 1 + pus / 10); i++) { // 1-15 shots depending on charge
                     if(Main.myPlayer != Projectile.owner) return;
                     Projectile.NewProjectile(
                         Projectile.GetSource_FromThis(),
                         spawnPosition,
                         Main.rand.NextFloat(4f, 7f) * rotationVector * MathHelper.PiOver2 * (1 + (float)pus / 140), // Scales with charge
                         ModContent.ProjectileType<Glop>(),
-                        Projectile.damage / 4,
+                        Projectile.damage, // base damage
                         Projectile.knockBack,
                         Projectile.owner
                     );
@@ -240,12 +262,12 @@ public class LamethrowerHeldProjectile : ModProjectile {
                     spawnPosition,
                     20f * rotationVector * MathHelper.PiOver2,
                     ModContent.ProjectileType<KidneyStone>(),
-                    Projectile.damage * 8, // Pow! Yes, the stone does 280 damage at base, yes I think this is balanced, it takes ages for the player to fire an overcharged shot
-                    10f,
+                    Projectile.damage * 24, // Pow! Yes, the stone does 480 damage at base, yes I think this is balanced, shooting this takes 220 mana and 20 years of chargeup time
+                    Projectile.knockBack * 3f,
                     Projectile.owner
                 );
 
-                for(int i = 0; i < (20); i++) {
+                for(int i = 0; i < 20; i++) { // 20 shots
                     if(Main.myPlayer != Projectile.owner) return;
                     SoundEngine.PlaySound(SoundID.NPCHit8 with { Volume = 0.8f } with { PitchRange = (0.4f, 1f) });
                     Projectile.NewProjectile(
@@ -253,7 +275,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
                         spawnPosition,
                         Main.rand.NextFloat(5f, 16f) * rotationVector * MathHelper.PiOver2,
                         ModContent.ProjectileType<Glop>(),
-                        Projectile.damage / 4,
+                        Projectile.damage,
                         Projectile.knockBack,
                         Projectile.owner
                     );
@@ -313,7 +335,7 @@ public class LamethrowerHeldProjectile : ModProjectile {
         Vector2 pivotPoint = new(backBarWidth / 2f, backBarHeight / 2f);
         Vector2 position = new Vector2(0 + shakex, 32 + shakey) + Owner.Bottom  - Main.screenPosition;
         Vector2 frontPos = position - pivotPoint;
-        Rectangle frontCrop = new(0, 0, (int) (frontBarWidth * Math.Min( (pus + 10f) / 140f, 1f) ), frontBarHeight); 
+        Rectangle frontCrop = new(0, 0, (int) (frontBarWidth * Math.Min( (pus + 14f) / 140f, 1f) ), frontBarHeight); 
 
         Main.EntitySpriteDraw(chargeBack, position , null, Color.White * (int)(killTimer / (60f)), 0f, pivotPoint, 1f, SpriteEffects.None);
         Main.EntitySpriteDraw(chargeFront, frontPos, frontCrop, Color.Lerp(Color.White, Color.Red, overchargeTimer / 80f) * (int)(killTimer / 60f), 0, Vector2.Zero, 1, SpriteEffects.None);

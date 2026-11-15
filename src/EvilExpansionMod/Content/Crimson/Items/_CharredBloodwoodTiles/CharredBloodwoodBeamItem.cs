@@ -1,5 +1,4 @@
-﻿using EvilExpansionMod.Content.Crimson;
-using Microsoft.Xna.Framework;
+﻿using Microsoft.Xna.Framework;
 using Microsoft.Xna.Framework.Graphics;
 using System.Collections.Generic;
 using Terraria;
@@ -8,9 +7,9 @@ using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
 
-namespace EvilExpansionMod.Content.Corruption;
+namespace EvilExpansionMod.Content.Crimson.Items._CharredBloodwoodTiles;
 
-public class CharredBloodwoodBeam : ModTile {
+public class CharredBloodwoodBeamTile : ModTile {
     public override string Texture => Assets.Images.Crimson.Tiles.CharredBloodwoodBeamTile.KEY;
 
     public override void SetStaticDefaults() {
@@ -29,7 +28,7 @@ public class CharredBloodwoodBeamItem : ModItem {
     public override string Texture => Assets.Images.Crimson.Tiles.CharredBloodwoodBeamItem.KEY;
 
     public override void SetDefaults() {
-        Item.DefaultToPlaceableTile(ModContent.TileType<CharredBloodwoodBeam>());
+        Item.DefaultToPlaceableTile(ModContent.TileType<CharredBloodwoodBeamTile>());
         Item.width = 16;
         Item.height = 16;
         Item.value = 0;

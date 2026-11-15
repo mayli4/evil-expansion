@@ -116,7 +116,8 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
             if(_charge >= MaxCharge) {
                 if(Overcharge == 0) {
-                    SoundEngine.PlaySound(SoundID.Item20);
+                    SoundEngine.PlaySound(SoundID.Tink with { Volume = 0.5f, PitchRange = (-0.5f, 0f) }); // Maxmana is vanilla standard, but sound even more game-y....
+                    SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f , PitchRange = (0.5f, 1f) });
                 }
             }
         }

@@ -13,7 +13,7 @@ namespace EvilExpansionMod.Content.Misc.Furniture.CorruptAshwoodFurniture;
 
 public class CorruptAshwoodCandelabraTile : CandelabraTile {
     public override string Texture => Assets.Images.Furniture.CorruptAshwoodFurniture.CorruptAshwoodCandelabraTile.KEY;
-    public override Asset<Texture2D> FlameTexture => ModContent.Request<Texture2D>(Texture + "_Glow");
+
 };
 
 public class CorruptAshwoodCandelabra : CandelabraItem<CorruptAshwoodCandelabraTile> {

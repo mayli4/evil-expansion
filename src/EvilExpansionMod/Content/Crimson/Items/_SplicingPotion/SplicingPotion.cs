@@ -5,7 +5,7 @@ using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Microsoft.Xna.Framework;
-using EvilExpansionMod.Content.Misc;
+using EvilExpansionMod.Content.Particles;
 
 namespace EvilExpansionMod.Content.Crimson;
 

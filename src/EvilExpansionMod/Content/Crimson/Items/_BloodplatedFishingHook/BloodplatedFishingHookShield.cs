@@ -69,7 +69,7 @@ public class BloodplateHookShield : ModProjectile {
         }
         else {
             if(modPlayer._plateTier == 0) {
-                player.AddBuff(ModContent.BuffType<BloodPlatedBroken>(), 45 * 60); //Inflict debuff if sh. durab. = 0
+                player.AddBuff(ModContent.BuffType<BloodPlatedBroken>(), 30 * 60); //Inflict debuff if sh. durab. = 0
             }
             Projectile.Kill(); //Kill the projectile if the player is not actively fishing or shield durability is 0
         }

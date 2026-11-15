@@ -9,7 +9,7 @@ using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
-namespace EvilExpansionMod.Content.Misc;
+namespace EvilExpansionMod.Content.Particles;
 public class EvilSplatter : ModProjectile {
     private bool isCrimson;
     private int randomVisualVariant;

@@ -78,7 +78,7 @@ public class TerrorBatNPC : ModNPC {
         NPC.width = 40;
         NPC.height = 30;
         NPC.lifeMax = 152;
-        NPC.damage = 40;
+        NPC.damage = 60;
         NPC.defense = 10;
         NPC.value = 100 * 2;
         NPC.noTileCollide = false;
@@ -362,8 +362,8 @@ public class TerrorBatNPC : ModNPC {
                 NPC.Center,
                 shootDirection * 8f,
                 ModContent.ProjectileType<TerrorBatSpit>(),
-                (int)(NPC.damage * 0.125f / difficultyScaler),
-                //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! To compensate, it is divided by 8 instead of 4.
+                (int)(NPC.damage / 6 / 2 /difficultyScaler), // 1/6th damage
+                //For the projectile damage, I have no idea why it deals double the value of the damage given by the above equation! Compensate accordingly
                 0.5f,
                 Main.myPlayer,
                 ai0:0

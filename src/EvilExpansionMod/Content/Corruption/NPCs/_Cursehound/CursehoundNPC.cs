@@ -71,19 +71,20 @@ public sealed class CursehoundNPC : ModNPC {
     public override void SetStaticDefaults() {
         var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
         {
-            Position = new Vector2(50f, 50f),
-            PortraitPositionXOverride = 20f,
+            Position = new Vector2(85f, 40f),
+            PortraitPositionXOverride = 50f,
             PortraitPositionYOverride = 40f,
         };
         NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
-        ContentSamples.NpcBestiaryRarityStars[Type] = 3;
+        ContentSamples.NpcBestiaryRarityStars[Type] = 4;
         Main.npcFrameCount[Type] = 29;
-    }
 
+        ItemID.Sets.KillsToBanner[BannerItem] = 25;
+    }
     public override void SetDefaults() {
         (NPC.width, NPC.height) = (125, 100);
 
-        NPC.lifeMax = 2950;
+        NPC.lifeMax = 3260;
         NPC.damage = 30;
         NPC.defense = 25;
         NPC.value = Item.buyPrice(gold: 1, silver: 50);
@@ -95,15 +96,15 @@ public sealed class CursehoundNPC : ModNPC {
         NPC.HitSound = SoundID.NPCHit1;
         NPC.DeathSound = SoundID.NPCDeath60;
 
-        ItemID.Sets.KillsToBanner[BannerItem] = 25;
-        SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
-
         NPC.buffImmune[BuffID.CursedInferno] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
+        NPC.buffImmune[BuffID.Confused] = true;
         NPC.lavaImmune = true;
 
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<CursehoundBannerItem>();
+
+        SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
     }
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
         if(Main.expertMode) {

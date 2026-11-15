@@ -7,7 +7,7 @@ using Terraria.ModLoader;
 using Terraria.ObjectData;
 using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Corruption.Tiles;
 
-namespace EvilExpansionMod.Content.Corruption;
+namespace EvilExpansionMod.Content.Corruption.Items._CorruptAshwoodTiles;
 
 public class CorruptAshwoodPlatformItem : ModItem {
     public override string Texture => Assets.Images.Corruption.Items.CorruptAshwoodPlatformItem.KEY;
@@ -52,9 +52,9 @@ internal sealed class CorruptAshwoodPlatformTile : ModTile {
 
     //TileID.Sets.RoomNeeds.CountsAsDoor[Type] = true; (This, does not even work)
 
-    AddMapEntry(new Color(138, 38, 35));
+    AddMapEntry(new Color(103, 104, 138));
 
-    DustType = DustID.Blood;
+    DustType = DustID.Corruption;
     AdjTiles = [TileID.Platforms];
     VanillaFallbackOnModDeletion = TileID.Platforms;
 

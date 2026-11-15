@@ -8,7 +8,7 @@ using Terraria.ObjectData;
 
 namespace EvilExpansionMod.Content.Corruption;
 
-public class OvergrownCorruptAshFoliage : ModTile {
+public class CorruptAshFoliage : ModTile {
     public override string Texture => Assets.Images.Corruption.Tiles.OvergrownCorruptAshFoliage.KEY;
 
     public override void SetStaticDefaults() {
@@ -19,7 +19,7 @@ public class OvergrownCorruptAshFoliage : ModTile {
 
         TileID.Sets.SwaysInWindBasic[Type] = true;
         TileMaterials.SetForTileId(Type, TileMaterials._materialsByName["Plant"]);
-        TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<OvergrownCorruptAsh>()];
+        TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<CorruptAshGrass>()];
 
         DustType = DustID.Corruption;
         HitSound = SoundID.Grass;
@@ -43,7 +43,7 @@ public class OvergrownCorruptAshFoliage : ModTile {
         if(tileBelow.HasTile && !tileBelow.BottomSlope) {
             type = tileBelow.TileType;
         }
-        if(type == ModContent.TileType<OvergrownCorruptAsh>() || type == Type) {
+        if(type == ModContent.TileType<CorruptAshGrass>() || type == Type) {
             return true;
         }
         WorldGen.KillTile(i, j);

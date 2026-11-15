@@ -111,14 +111,14 @@ public sealed class CursedSpiritNPC : ModNPC {
         NPC.width = 38;
         NPC.height = 38;
         NPC.lifeMax = MaxLife;
-        NPC.defense = 28;
+        NPC.defense = Main.expertMode ? (int)38 : (int)28;
         NPC.value = 450;
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
         NPC.knockBackResist = 0.05f;
         NPC.friendly = false;
-        NPC.damage = 40;
+        NPC.damage = 50;
 
         NPC.HitSound = SoundID.NPCHit23;
 

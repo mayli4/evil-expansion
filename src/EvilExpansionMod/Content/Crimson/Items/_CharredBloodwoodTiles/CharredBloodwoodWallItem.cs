@@ -5,12 +5,12 @@ using Terraria.ID;
 using Terraria.Localization;
 using Terraria.ModLoader;
 using Terraria.ObjectData;
-using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Corruption.Tiles;
+using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Crimson.Tiles;
 
-namespace EvilExpansionMod.Content.Corruption;
+namespace EvilExpansionMod.Content.Crimson.Items._CharredBloodwoodTiles;
 
-internal class CorruptAshwoodFence : ModWall {
-    public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshwoodFence.KEY;
+internal class CharredBloodwoodWall : ModWall {
+    public override string Texture => Assets.Images.Crimson.Tiles.CharredBloodwoodWall.KEY;
     public override void SetStaticDefaults() {
         Main.wallHouse[Type] = true;
 
@@ -18,16 +18,16 @@ internal class CorruptAshwoodFence : ModWall {
 
         DustType = DustID.Blood;
 
-        AddMapEntry(new Color(67, 21, 19));
+        AddMapEntry(new Color(48, 18, 15));
     }
 }
-internal sealed class CorruptAshwoodFenceItem : ModItem {
-    public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshwoodFenceItem.KEY;
+internal sealed class CharredBloodwoodWallItem : ModItem {
+    public override string Texture => Assets.Images.Crimson.Items.CharredBloodwoodWallItem.KEY;
     public override void SetStaticDefaults() {
         Item.ResearchUnlockCount = 400;
     }
     public override void SetDefaults() {
-        Item.DefaultToPlaceableWall(ModContent.WallType<CorruptAshwoodFence>());
+        Item.DefaultToPlaceableWall(ModContent.WallType<CharredBloodwoodWall>());
         Item.width = 16;
         Item.height = 16;
         Item.value = Item.sellPrice();
@@ -42,7 +42,7 @@ internal sealed class CorruptAshwoodFenceItem : ModItem {
     }
     public override void AddRecipes() {
         CreateRecipe(4)
-            .AddIngredient<CorruptAshwoodItem>(1)
+            .AddIngredient<CharredBloodwoodItem>(1)
             .AddTile(TileID.WorkBenches)
             .Register();
     }

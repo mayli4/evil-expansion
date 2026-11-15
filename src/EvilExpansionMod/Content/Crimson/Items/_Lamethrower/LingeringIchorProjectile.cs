@@ -27,11 +27,11 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
         Projectile.tileCollide = false;
         Projectile.ignoreWater = true;
         Projectile.penetrate = -1;
-        Projectile.timeLeft = 300;
+        Projectile.timeLeft = 600;
         Projectile.DamageType = DamageClass.Ranged;
 
         Projectile.usesIDStaticNPCImmunity = true;
-        Projectile.idStaticNPCHitCooldown = 15;
+        Projectile.idStaticNPCHitCooldown = 10; // Hits enemies up to 6 times per second
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
@@ -47,16 +47,16 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.IchorTorch);
         }
 
-        if (Compustiontimer != 210){
+        if (Compustiontimer != 510){
             Compustiontimer++;
 
         }
-        if(Compustiontimer == 100) {
+        if(Compustiontimer == 400) {
             SoundStyle ignite = new SoundStyle($"EvilExpansionMod/Assets/Sounds/LameThrower/MinecraftFlintnSteel");
             SoundEngine.PlaySound(ignite, Projectile.position);
         }
 
-        if(Compustiontimer >= 100) {
+        if(Compustiontimer >= 400) {
 
             if(Main.rand.NextBool(5)) {
 
@@ -74,12 +74,12 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
                 particle.Spawn(Projectile.Left - Main.rand.NextVector2Circular(10, 0), randomVelocity, smokeColor, scale, lifetime);
             }
 
-            if(Main.rand.NextBool(300 / Compustiontimer) && Compustiontimer != 210) {
+            if(Main.rand.NextBool(600 / Compustiontimer) && Compustiontimer != 510) {
                 int dustIndex = Dust.NewDust(
                     Projectile.Left,
                     Projectile.width,
                     Projectile.height + -16,
-                    174,
+                    DustID.InfernoFork,
                     0,
                     -3f,
                     (int)Main.rand.NextFloat(0f, 100f),
@@ -90,7 +90,7 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
             }
         }
         
-        if(Compustiontimer == 209) { // Create "Compustion" projectiles
+        if(Compustiontimer == 509) { // Create "Compustion" projectiles
             //Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier((1), 0.10f));
             SoundEngine.PlaySound(SoundID.Item100 with {
                 Volume = 0.4f,
@@ -108,9 +108,9 @@ public class LingeringIchorProjectile : ModProjectile, ITileMask {
                 Projectile.NewProjectile(
                     Projectile.GetSource_FromThis(),
                     Projectile.Center + new Vector2(0, 0),
-                    new Vector2(Main.rand.NextFloat(-1f, 1f), -Main.rand.NextFloat(10f, 1f)),
+                    new Vector2(Main.rand.NextFloat(-1f, 1f), -Main.rand.NextFloat(12f, 1f)),
                     ModContent.ProjectileType<IchorCompustion>(),
-                    Projectile.damage * 4, // (listed damage)
+                    Projectile.damage * 3, // Triple damage
                     Projectile.knockBack,
                     Projectile.owner
                 );
@@ -166,7 +166,7 @@ public class IchorCompustion : ModProjectile {
     
     public override void SetDefaults() {
         Projectile.width = 16 * 2;
-        Projectile.height = 16 * 10;
+        Projectile.height = 16 * 12;
         Projectile.friendly = true;
         Projectile.hostile = false;
         Projectile.DamageType = DamageClass.Ranged;
@@ -179,7 +179,7 @@ public class IchorCompustion : ModProjectile {
         Projectile.alpha = 0;
 
         Projectile.usesIDStaticNPCImmunity = true;
-        Projectile.idStaticNPCHitCooldown = 6;
+        Projectile.idStaticNPCHitCooldown = 6; // Hits enemies up to 10 times per second
         //Projectile.usesLocalNPCImmunity = true;
         //Projectile.localNPCHitCooldown = -1;
     }

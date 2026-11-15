@@ -7,8 +7,8 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Corruption;
 
-public class OvergrownCorruptAsh : ModTile {
-    public override string Texture => Assets.Images.Corruption.Tiles.OvergrownCorruptAshTile.KEY;
+public class CorruptAshGrass : ModTile {
+    public override string Texture => Assets.Images.Corruption.Tiles.CorruptAshGrassTile.KEY;
 
     public override void SetStaticDefaults() {
         Main.tileSolid[Type] = true;
@@ -64,11 +64,15 @@ public class OvergrownCorruptAsh : ModTile {
                 WorldGen.ConvertTile(i, j, ModContent.TileType<CrimsonAshGrass>());
                 return;
             case BiomeConversionID.Corruption:
-                WorldGen.ConvertTile(i, j, ModContent.TileType<OvergrownCorruptAsh>());
+                WorldGen.ConvertTile(i, j, ModContent.TileType<CorruptAshGrass>());
                 return;
         }
     }
-
+    public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {
+        r = 0.25f;
+        g = 0.2f;
+        b = 0.45f;
+    }
     public override void RandomUpdate(int i, int j) {
         WorldGen.SpreadInfectionToNearbyTile(i, j, BiomeConversionID.Corruption);
 

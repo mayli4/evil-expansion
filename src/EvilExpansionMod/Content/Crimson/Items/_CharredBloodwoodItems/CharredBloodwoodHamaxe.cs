@@ -3,6 +3,7 @@ using Terraria;
 using Terraria.ID;
 using Terraria.ModLoader;
 using Terraria.Audio;
+using EvilExpansionMod.Content.Crimson.Items._CharredBloodwoodTiles;
 
 namespace EvilExpansionMod.Content.Crimson;
 public class CharredBloodwoodHamaxe : ModItem{

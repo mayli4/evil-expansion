@@ -9,7 +9,7 @@ using Terraria.ObjectData;
 
 namespace EvilExpansionMod.Content.Corruption;
 
-public class UnderworldCorruptVines : ModTile {
+public class CorruptHellVines : ModTile {
     public override string Texture => Assets.Images.Corruption.Tiles.UnderworldCorruptVines.KEY;
 
     public override void SetStaticDefaults() {
@@ -30,7 +30,7 @@ public class UnderworldCorruptVines : ModTile {
         TileObjectData.newTile.AnchorTop = new AnchorData(AnchorType.SolidTile | AnchorType.AlternateTile, 1, 0);
         TileObjectData.newTile.AnchorAlternateTiles = [Type];
 
-        TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<OvergrownCorruptAsh>()];
+        TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<CorruptAshGrass>()];
 
         DustType = DustID.Corruption;
 
@@ -54,7 +54,7 @@ public class UnderworldCorruptVines : ModTile {
                 return;
             case BiomeConversionID.Sand:
             case BiomeConversionID.Corruption:
-                WorldGen.ConvertTile(i, j, ModContent.TileType<UnderworldCorruptVines>());
+                WorldGen.ConvertTile(i, j, ModContent.TileType<CorruptHellVines>());
                 return;
 
         }
@@ -82,8 +82,8 @@ internal class UnderworldCorruptVinesGlobalTile : GlobalTile {
     private int _overgrownCorruptAsh;
 
     public override void SetStaticDefaults() {
-        _corruptVine = ModContent.TileType<UnderworldCorruptVines>();
-        _overgrownCorruptAsh = ModContent.TileType<OvergrownCorruptAsh>();
+        _corruptVine = ModContent.TileType<CorruptHellVines>();
+        _overgrownCorruptAsh = ModContent.TileType<CorruptAshGrass>();
     }
 
     // Random growth behavior:

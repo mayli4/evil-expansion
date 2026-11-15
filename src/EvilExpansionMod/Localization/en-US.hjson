@@ -835,6 +835,7 @@ Mods: {
 			EaterOfSoilHead.DisplayName: Eater of Soil
 			EaterOfSoilTail.DisplayName: Eater of Soil Tail
 			EaterOfSoilBody1.DisplayName: Eater of Soil Body1
+			EaterOfSoilBody2.DisplayName: Eater of Soil Body
 		}
 
 		Projectiles: {

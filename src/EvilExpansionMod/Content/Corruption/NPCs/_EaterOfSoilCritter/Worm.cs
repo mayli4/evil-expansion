@@ -173,6 +173,10 @@ public abstract class WormHead : Worm {
         // Defaults to just returning this NPC's whoAmI, since the tail segment uses the return value as its "following" NPC index
         return NPC.whoAmI;
     }
+    
+    protected virtual bool IsWormSegment(int type) {
+        return type == Type || type == BodyType || type == TailType;
+    }
 
     /// <summary>
     /// Spawns a body or tail segment of the worm.
@@ -249,14 +253,14 @@ public abstract class WormHead : Worm {
                 // Ensure that all of the segments could spawn.  If they could not, despawn the worm entirely
                 int count = 0;
                 foreach(var n in Main.ActiveNPCs) {
-                    if((n.type == Type || n.type == BodyType || n.type == TailType) && n.realLife == NPC.whoAmI)
+                    if(IsWormSegment(n.type) && n.realLife == NPC.whoAmI)
                         count++;
                 }
 
                 if(count != randomWormLength) {
                     // Unable to spawn all of the segments... kill the worm
                     foreach(var n in Main.ActiveNPCs) {
-                        if((n.type == Type || n.type == BodyType || n.type == TailType) && n.realLife == NPC.whoAmI) {
+                        if(IsWormSegment(n.type) && n.realLife == NPC.whoAmI) {
                             n.active = false;
                             n.netUpdate = true;
                         }

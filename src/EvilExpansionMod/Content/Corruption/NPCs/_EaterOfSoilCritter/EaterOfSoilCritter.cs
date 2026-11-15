@@ -15,6 +15,22 @@ internal class EaterOfSoilHead : WormHead {
     public override int BodyType => ModContent.NPCType<EaterOfSoilBody>();
     public override int TailType => ModContent.NPCType<EaterOfSoilTail>();
 
+    public override bool HasCustomBodySegments => true;
+
+    public override int SpawnBodySegments(int segmentCount) {
+        var source = NPC.GetSource_FromAI();
+        int latestNPC = NPC.whoAmI;
+        for(int i = 0; i < segmentCount; i++) {
+            int type = i == 1 ? ModContent.NPCType<EaterOfSoilBody>() : ModContent.NPCType<EaterOfSoilBody2>();
+            latestNPC = SpawnSegment(source, type, latestNPC);
+        }
+        return latestNPC;
+    }
+
+    protected override bool IsWormSegment(int type) {
+        return base.IsWormSegment(type) || type == ModContent.NPCType<EaterOfSoilBody2>();
+    }
+
     public override void SetStaticDefaults() {
         var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
         {
@@ -92,9 +108,9 @@ internal class EaterOfSoilHead : WormHead {
     }
 }
 
-internal class EaterOfSoilBody : WormBody {
-    public override string Texture => Assets.Images.Corruption.NPCs.EaterOfSoil.EaterOfSoilBody1.KEY;
-    
+    internal class EaterOfSoilBody : WormBody {
+        public override string Texture => Assets.Images.Corruption.NPCs.EaterOfSoil.EaterOfSoilBody1.KEY;
+
     public override void SetStaticDefaults() {
         NPCID.Sets.NPCBestiaryDrawModifiers value = new()
         {
@@ -133,6 +149,7 @@ internal class EaterOfSoilBody : WormBody {
 
     public override void Init() {
         EaterOfSoilHead.CommonWormInit(this);
+        NPC.altTexture = Main.npc[(int)NPC.ai[1]].type == ModContent.NPCType<EaterOfSoilHead>() ? (byte)0 : (byte)1;
     }
 
     public override void OnSpawn(IEntitySource source) {
@@ -150,6 +167,10 @@ internal class EaterOfSoilBody : WormBody {
             Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("EaterOfSoilGore" + i).Type);
         }
     }
+}
+
+internal class EaterOfSoilBody2 : EaterOfSoilBody {
+    public override string Texture => Assets.Images.Corruption.NPCs.EaterOfSoil.EaterOfSoilBody2.KEY;
 }
 
 internal class EaterOfSoilTail : WormTail {

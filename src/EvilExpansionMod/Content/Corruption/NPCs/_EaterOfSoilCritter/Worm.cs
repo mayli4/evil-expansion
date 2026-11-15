@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content;
+
 public enum WormSegmentType {
     /// <summary>
     /// The head segment for the worm.  Only one "head" is considered to be active for any given worm
@@ -241,7 +242,8 @@ public abstract class WormHead : Worm {
                 }
 
                 // Spawn the tail segment
-                int who = SpawnSegment(source, TailType, latestNPC);
+                SpawnSegment(source, TailType, latestNPC);
+
                 NPC.netUpdate = true;
 
                 // Ensure that all of the segments could spawn.  If they could not, despawn the worm entirely
@@ -250,6 +252,7 @@ public abstract class WormHead : Worm {
                     if((n.type == Type || n.type == BodyType || n.type == TailType) && n.realLife == NPC.whoAmI)
                         count++;
                 }
+
                 if(count != randomWormLength) {
                     // Unable to spawn all of the segments... kill the worm
                     foreach(var n in Main.ActiveNPCs) {
@@ -536,7 +539,7 @@ public abstract class WormBody : Worm {
         if(Main.netMode != NetmodeID.MultiplayerClient) {
             // Some of these conditions are possible if the body/tail segment was spawned individually
             // Kill the segment if the segment NPC it's following is no longer valid
-            if(following is null || !following.active || following.friendly || following.townNPC) {
+            if(following is null || !following.active || following.friendly || following.townNPC || following.lifeMax <= 5) {
                 worm.NPC.life = 0;
                 worm.NPC.HitEffect(0, 10);
                 worm.NPC.active = false;

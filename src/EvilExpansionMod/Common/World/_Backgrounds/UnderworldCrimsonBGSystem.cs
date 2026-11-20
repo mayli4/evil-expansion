@@ -16,7 +16,7 @@ namespace EvilExpansionMod.Common.World;
 //this is still pretty bad, and most of it is adapted vanilla code, but its workable
 
 public class UnderworldCrimsonBGSystem : ModSystem {
-    public Asset<Texture2D>[] BackgroundTextures = new Asset<Texture2D>[5];
+    public Asset<Texture2D>[] BackgroundTextures = new Asset<Texture2D>[6];
 
     private static float _fadeOpacity;
     private const float fade_speed = 0.05f;
@@ -110,10 +110,9 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                         break;
                     case 3:
                     case 2:
-                    case 1:
                         customTextureIndex = 3;
                         break;
-                    case 0:
+                    case 1:
                         customTextureIndex = 4;
                         break;
                     default:
@@ -159,6 +158,9 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                     num7 = 6f;
                     break;
                 case 4:
+                    num7 = 4f;
+                    break;
+                case 5:
                     num7 = 2f;
                     break;
                 default:
@@ -192,10 +194,13 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                 num8 = newScaleFactorForLayer2;
                 break;
             case 3:
-                zero.Y -= 32f;
+                zero.Y -= 170f;
                 break;
             case 4:
-                zero.Y += 958f;
+                zero.Y -= 30f;
+                break;
+            case 5:
+                zero.Y += 700f;
                 break;
         }
 

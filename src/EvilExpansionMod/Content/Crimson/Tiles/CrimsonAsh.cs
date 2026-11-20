@@ -81,5 +81,6 @@ public class CrimsonAshItem : ModItem {
         Item.autoReuse = true;
         Item.useAnimation = 15;
         Item.useTime = 10;
+        Item.ResearchUnlockCount = 100;
     }
 }

@@ -64,7 +64,6 @@ public class MeatPrisonBody : ModItem {
     }
 
     public override void UpdateEquip(Player player) {
-        player.moveSpeed += 0.05f;
         player.GetDamage(DamageClass.Summon) += 0.10f;
         player.maxMinions += 1;
     }

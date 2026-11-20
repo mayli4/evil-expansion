@@ -1,29 +1,38 @@
-﻿using System;
+﻿using Microsoft.Xna.Framework;
+using Terraria;
+using Terraria.Enums;
+using Terraria.ID;
+using Terraria.Localization;
+using Terraria.ModLoader;
+using Terraria.ObjectData;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Terraria;
-using Terraria.ID;
-using Terraria.ModLoader;
 using static EvilExpansionMod.Core.AssetReferences.Assets.Images.Corruption.Tiles;
 
 namespace EvilExpansionMod.Content.Corruption.Tiles;
 
-internal class Coarsebrickwall : ModWall {
+internal class CoarseBrickWall : ModWall {
     public override string Texture => Assets.Images.Corruption.Tiles.CoarseBrickWall.KEY;
 
     public override void SetStaticDefaults() {
+        Main.wallHouse[Type] = true;
+
         Main.tileBlockLight[Type] = true;
 
+        DustType = DustID.Demonite;
+
+        AddMapEntry(new Color(10, 27, 34));
     }
 }
 
-internal sealed class CoarsebrickwallItem : ModItem {
+internal sealed class CoarseBrickWallItem : ModItem {
     public override string Texture => Assets.Images.Corruption.Tiles.CoarseBrickWallItem.KEY;
 
     public override void SetDefaults() {
-        Item.DefaultToPlaceableWall(ModContent.WallType<Coarsebrickwall>());
+        Item.DefaultToPlaceableWall(ModContent.WallType<CoarseBrickWall>());
         Item.width = 16;
         Item.height = 16;
         Item.value = 5;

@@ -34,8 +34,8 @@ public class PusBottleNPC : ModNPC {
         NPC.aiStyle = -1;
         NPC.friendly = false;
         NPC.damage = 0;
-        NPC.lifeMax = 320;
-        NPC.defense = 14;
+        NPC.lifeMax = 790;
+        NPC.defense = 28;
         NPC.knockBackResist = 0f;
         NPC.value = 0f;
 
@@ -48,6 +48,14 @@ public class PusBottleNPC : ModNPC {
 
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         database.Entries.Remove(bestiaryEntry);
+    }
+    public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
+        if(Main.expertMode) {
+            NPC.defense = 32;
+        }
+        if(Main.masterMode) {
+            NPC.defense = 36;
+        }
     }
 
     public override void AI() {
@@ -108,9 +116,8 @@ public class PusBottleNPC : ModNPC {
             }
         }
     }
-
+    float difficultyScaler = Main.expertMode ? (Main.masterMode ? 2f : 1.5f) : 1f;
     private void FirePus() {
-        float difficultyScaler = Main.expertMode ? (Main.masterMode ? 2f : 1.5f) : 1f;
         var amount = Main.rand.Next(3, 6) * difficultyScaler;
 
         SquishTimer = _maxSquishTime;
@@ -123,12 +130,13 @@ public class PusBottleNPC : ModNPC {
             Projectile.NewProjectile(
                 NPC.GetSource_FromThis(),
                 shootPosition,
-                velocity * Main.rand.NextFloat(0.75f, 1.25f * difficultyScaler),
+                velocity * Main.rand.NextFloat(0.75f, Main.expertMode ? 2.5f : 1.75f),
                 ModContent.ProjectileType<PusGlob>(),
-                (int)(ParentNPCID != -1 && Main.npc[ParentNPCID].active ? Main.npc[ParentNPCID].damage * 0.75f : 10),
+                //(int) ( (ParentNPCID != -1 && Main.npc[ParentNPCID].active ? Main.npc[ParentNPCID].damage * 1f : 10) * (Main.expertMode ? 0.5f : 1f) ),
+                (int) (66 * (Main.expertMode ? 0.5f : 1f)),
                 0.5f,
                 Main.myPlayer,
-                ai2: 2f
+                ai2: Main.rand.NextFloat(1.5f, 2f)
             );
         }
         for(int i = 0; i < Main.rand.NextFloat(2f, 4f); i++) {
@@ -146,7 +154,7 @@ public class PusBottleNPC : ModNPC {
     public override void OnKill() {
         if(Main.netMode == NetmodeID.Server) return;
 
-        int pusImpCount = Main.rand.Next(2, 4);
+        int pusImpCount = Main.expertMode ? Main.rand.Next(4, 5) : Main.rand.Next(3, 4);
         for(int i = 0; i < pusImpCount; i++) {
             float speed = Main.rand.NextFloat(4f, 7f);
             Vector2 velocity = new Vector2(Main.rand.NextFloat(-0.8f, 0.8f), -1f).SafeNormalize(Vector2.UnitY) * speed;
@@ -161,7 +169,7 @@ public class PusBottleNPC : ModNPC {
                 0,
                 0f,
                 1f,
-                ai2: 2f
+                ai2: 4f
             );
         }
     }

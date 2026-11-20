@@ -19,7 +19,7 @@ internal sealed class CurseknightsHelm : ModItem {
     public static int HelmOff;
     public static bool HelmExploded;
 
-    public static float DifficultylessDebuff => Main.expertMode ? (Main.masterMode ? 0.4f : 0.5f) : 1f; // Expert and master mode multiply debuff time... need to counteract this
+    public static float DifficultylessDebuff => Main.expertMode ? (Main.masterMode ? 0.4f : 0.5f) : 1f; // To counteract Expert and master mode's multiplied debuff time
 
     public override void Load() {
         EquipLoader.AddEquipTexture(Mod, Assets.Images.Corruption.Items.CurseknightsHelm.CurseknightsHelmOn_Head.KEY, EquipType.Head, this, name: "OnCurseknightsHelm");
@@ -31,22 +31,42 @@ internal sealed class CurseknightsHelm : ModItem {
         Item.height = 30;
         Item.accessory = true;
         Item.rare = ItemRarityID.Pink;
-        Item.value = Item.sellPrice(gold: 1);
+        Item.value = Item.sellPrice(gold: 1, silver: 30);
         Item.defense = 10;
         HelmOn = EquipLoader.GetEquipSlot(Mod, "OnCurseknightsHelm", EquipType.Head);
         HelmOff = EquipLoader.GetEquipSlot(Mod, "OffCurseknightsHelm", EquipType.Head);
         HelmExploded = false;
     }
+    public override bool PreDrawInInventory(SpriteBatch spriteBatch, Vector2 position, Rectangle frame, Color drawColor, Color itemColor, Vector2 origin, float scale) {
+        // Change this path to your separate larger inventory texture or use the main texture
+        Texture2D texture = ModContent.Request<Texture2D>("EvilExpansionMod/Assets/Images/Corruption/Items/CurseknightsHelm/CurseknightsHelmItem").Value;
 
+        // Multiply the scale factor (e.g., 1.5f for 50% larger)
+        float customScale = scale * 1.25f;
+
+        spriteBatch.Draw(
+            texture,
+            position,
+            null,
+            drawColor,
+            0f,
+            origin,
+            customScale,
+            SpriteEffects.None,
+            0f
+        );
+
+        return false; // Return false to stop the default engine drawing
+    }
     public override void UpdateAccessory(Player player, bool hideVisual) {
         var modPlayer = player.GetModPlayer<CurseknightsHelmPlayer>();
-        modPlayer.IsWearingHelm = true; // this keeps setting the accessory being equipped... a little inefficient, oh well
+        modPlayer.IsWearingHelm = true; // This keeps setting the accessory being equipped... a little inefficient, oh well
         modPlayer.HideVisual = hideVisual;
 
         var healthThreshold = player.statLifeMax2 / 2;
         modPlayer.IsBelowThreshold = player.statLife < healthThreshold;
 
-        if(false) { // if HP >50%
+        if(!modPlayer.IsBelowThreshold) { // if HP >50%
             if(HelmExploded && modPlayer.ActiveReformParticles <= 0) {
                 //SoundEngine.PlaySound(SoundID.Item29 with { Volume = 0.8f, Pitch = -0.2f }, player.position);
 

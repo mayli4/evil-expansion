@@ -100,11 +100,13 @@ internal sealed class BloodParticle : BaseParticle<BloodParticle> {
                 2
             );
 
+            Color lightingColor = Lighting.GetColor(Position.ToTileCoordinates());
+
             spritebatch.Draw(
                 TextureAssets.MagicPixel.Value,
                 currentDrawPos,
                 new Rectangle(0, 0, 1, 1),
-                new Color(106, 32, 20) * fadeOut,
+                (new Color(106, 32, 20) * fadeOut).MultiplyRGB(lightingColor),
                 rot,
                 new Vector2(0f, 0.5f),
                 trailScale,

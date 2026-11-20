@@ -65,7 +65,17 @@ public sealed class PusGlob : ModProjectile {
         }
     }
     public override void OnKill(int timeLeft) {
+        if(SpawnedByGrub == 1f) {
+            NPC.NewNPC(
+                Projectile.GetSource_FromThis(),
+                (int)Projectile.Center.X + Main.rand.Next(-10, 10),
+                (int)Projectile.Center.Y + Main.rand.Next(-10, 10),
+                ModContent.NPCType<PusImpNPC>()
+            );
+            SoundEngine.PlaySound(SoundID.Item16 with { PitchRange = (-1.5f, -0.5f) }, Projectile.position);
+        }
         if(Projectile.lavaWet) {
+            
             SoundEngine.PlaySound(SoundID.LiquidsWaterLava with { PitchVariance = 0.5f }, Projectile.position);
             for(int i = 0; i < 4; i++) {
                 var dustPos = Projectile.position + Main.rand.NextVector2Circular(10f, 60f) + new Vector2(0f, -5f);
@@ -118,18 +128,20 @@ public sealed class PusGlob : ModProjectile {
     }
 
     public override bool OnTileCollide(Vector2 oldVelocity) {
-        SoundEngine.PlaySound(SoundID.Item17, Projectile.position);
-
-        SpawnPusCreep();
-
-        if(SpawnedByGrub == 1f) {
-            NPC.NewNPC(
-                Projectile.GetSource_FromThis(),
-                (int)Projectile.Center.X + Main.rand.Next(-10, 10),
-                (int)Projectile.Center.Y + Main.rand.Next(-10, 10),
-                ModContent.NPCType<PusImpNPC>()
-            );
+        if(!Projectile.lavaWet) {
+            SoundEngine.PlaySound(SoundID.Item17, Projectile.position);
+            SoundEngine.PlaySound(SoundID.Item151 with { Volume = 0.1f, Pitch = Main.rand.NextFloat(1f, 2f) }, Projectile.position);
+            SpawnPusCreep();
         }
+        //if(SpawnedByGrub == 1f) {
+        //    NPC.NewNPC(
+        //        Projectile.GetSource_FromThis(),
+        //        (int)Projectile.Center.X + Main.rand.Next(-10, 10),
+        //        (int)Projectile.Center.Y + Main.rand.Next(-10, 10),
+        //        ModContent.NPCType<PusImpNPC>()
+        //    );
+        //    SoundEngine.PlaySound(SoundID.Item16, Projectile.position);
+        //}
 
         if(!hasCollided) {
             hasCollided = true;
@@ -158,6 +170,8 @@ public sealed class PusGlob : ModProjectile {
         var outlineColor = new Color(161, 131, 78).MultiplyRGB(lightColor);
 
         var middleColor = Color.Lerp(color, Color.Black, 0.3f);
+
+        Color glowColor = Color.White * 0.3f;
 
         Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
             .SetTexture(0, Assets.Images.Sample.Noise2.Asset.Value)
@@ -225,7 +239,7 @@ public sealed class PusCreepProjectile : ModProjectile, ITileMask {
             Projectile.alpha = 0;
         }
 
-        if(Main.rand.NextBool(4)) {
+        if(Main.rand.NextBool(5)) {
             var particle = SmokeParticle.Pool.RequestParticle();
 
             Vector2 randomVelocity = new Vector2(
@@ -234,10 +248,10 @@ public sealed class PusCreepProjectile : ModProjectile, ITileMask {
             );
 
             Color smokeColor = Color.Lerp(Color.White, Color.Black, Main.rand.NextFloat());
-            float scale = Main.rand.NextFloat(0.1f, 1.2f);
-            int lifetime = Main.rand.Next(20, 60);
+            float scale = Main.rand.NextFloat(0.2f, 1.0f);
+            int lifetime = Main.rand.Next(20, 40);
 
-            particle.Spawn(Projectile.Center + Main.rand.NextVector2Circular(15, 45), randomVelocity, smokeColor, scale, lifetime);
+            particle.Spawn(Projectile.Center - Main.rand.NextVector2Circular(10, 0), randomVelocity, smokeColor, scale, lifetime);
         }
     }
 

@@ -1,0 +1,247 @@
+using EvilExpansionMod.Common.Graphics;
+using Microsoft.Xna.Framework;
+using Microsoft.Xna.Framework.Graphics;
+using System;
+using Terraria;
+using Terraria.Audio;
+using Terraria.DataStructures;
+using Terraria.GameContent;
+using Terraria.ID;
+using Terraria.ModLoader;
+using static Daybreak.Common.Features.Hooks.GlobalItemHooks;
+
+namespace EvilExpansionMod.Content.Crimson;
+
+public class BloodplateHookShield : ModProjectile {
+    public override string Texture => Assets.Images.Crimson.Items.BloodplateHook.BloodplateHookShield.KEY;
+    private const int JAB_DURATION = 5;
+    private const float MAX_SCALE_INCREASE = 0.25f;
+    float baseScale = 1.0f;
+    bool conjureAnimationDone = false;
+    bool initialSpawn = false;
+    float conjureAcceleration = 0.15f;
+    public override void SetDefaults() {
+        Projectile.width = 174;
+        Projectile.height = 174;
+        Projectile.friendly = true;
+        Projectile.hostile = false;
+        Projectile.penetrate = -1;
+        Projectile.tileCollide = false;
+        Projectile.ignoreWater = true;
+        Projectile.aiStyle = -1;
+        Projectile.timeLeft = 2;
+        Projectile.alpha = 0;
+        Projectile.scale = 1;
+
+        Projectile.usesLocalNPCImmunity = true;
+        Projectile.localNPCHitCooldown = JAB_DURATION;
+        Main.projFrames[Projectile.type] = 3;
+    }
+    public float JabTimer {
+        get => Projectile.ai[0];
+        set => Projectile.ai[0] = value;
+    }
+    public override void AI() {
+        Player player = Main.player[Projectile.owner];
+        var modPlayer = player.GetModPlayer<BloodplateHookPlayer>();
+
+        Vector2 vectorToTarget = player.Center - Projectile.Center; //Tracks player inperfectly
+        float distance = vectorToTarget.Length();
+
+        if(distance > 5f) {
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity *= 1.05f, vectorToTarget / distance * 10f, 0.1f);
+        }
+        else {
+            Projectile.velocity *= 0.9f;
+        }
+
+        if(Projectile.velocity.Length() < 0.1f) {
+            Projectile.velocity.Y += 0.05f * (float)Math.Sin(Main.GameUpdateCount * 0.1f);
+        }
+
+        Projectile.rotation += 0.002f;
+
+        if(modPlayer.IsActivelyFishingWithBloodplated(player) && modPlayer._plateTier > 0) {
+            Projectile.timeLeft = 2; //Keep the projectile alive while the player is actively fishing & shield durability above 0
+            if(modPlayer._plateTier == 3) Projectile.frame = 0;
+            else if(modPlayer._plateTier == 2) Projectile.frame = 1;
+            else if(modPlayer._plateTier == 1) Projectile.frame = 2;
+        }
+        else {
+            if(modPlayer._plateTier == 0) {
+                player.AddBuff(ModContent.BuffType<BloodPlatedBroken>(), 30 * 60); //Inflict debuff if sh. durab. = 0
+            }
+            Projectile.Kill(); //Kill the projectile if the player is not actively fishing or shield durability is 0
+        }
+
+        if(!conjureAnimationDone) { //Simply the "overshoot" animation visual of the shield being created
+            if(!initialSpawn) {
+                Projectile.rotation = Main.rand.NextFloat(0, 360);
+                Projectile.scale = 0;
+                initialSpawn = true;
+            }
+            if((int)Projectile.scale != (int)baseScale) {
+                if(Projectile.scale < baseScale*1.2) {
+                    Projectile.scale += conjureAcceleration;
+                    conjureAcceleration *= 1.25f;
+                }
+                else {
+                    Projectile.scale += conjureAcceleration;
+                    conjureAcceleration -= 20f;
+                }
+            }
+            else {
+                conjureAnimationDone = true;
+            }
+        }
+        else if(JabTimer > 0) {
+            JabTimer--;
+            float progress = 1f - (JabTimer / JAB_DURATION); // To keep track of where in the animation we are
+            float jabFactor = (float)System.Math.Sin(progress * MathHelper.Pi); // Smooth "scaling" from 1 to 0
+            Projectile.scale = baseScale + (MAX_SCALE_INCREASE * jabFactor);
+        }
+        else {
+            Projectile.scale = baseScale;
+        }
+
+        if(Main.rand.NextBool(12)) { // DUUUUUUUST DUST passive dust
+            Dust.NewDust(
+                player.position + Main.rand.NextVector2Circular(45, 45) + Main.rand.NextVector2Circular(45, 45),
+                2,
+                2,
+                DustID.Blood,
+                Main.rand.NextFloat(-2f, 2f),
+                Main.rand.NextFloat(-2f, 2f),
+                default,
+                default,
+                Main.rand.NextFloat(0.7f, 1.2f)
+            );
+        }
+    }
+    public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
+        Player player = Main.player[Projectile.owner];
+        var modPlayer = player.GetModPlayer<BloodplateHookPlayer>();
+        if(JabTimer <= 0) {
+            JabTimer = JAB_DURATION;
+
+            Projectile.netUpdate = true;
+        }
+        for(int i = 0; i < Main.rand.NextFloat(17f, 24f); i++) { // You can have a little blood dust on-hit as a treat
+            Dust.NewDust(
+                target.Center,
+                target.width,
+                target.height,
+                DustID.Blood,
+                Main.rand.NextFloat(-1f, 7f),
+                Main.rand.NextFloat(-7f, 1f),
+                default,
+                default,
+                Main.rand.NextFloat(0.7f, 1.2f)
+            );
+        }
+
+        Projectile.NewProjectile(
+            player.GetSource_FromAI(),
+            target.Center,
+            new Microsoft.Xna.Framework.Vector2(0f, 0f),
+            ModContent.ProjectileType<BloodExplosion>(),
+            0,
+            0.5f,
+            Main.myPlayer,
+            ai0: 0,
+            ai1: 0,
+            ai2: Main.rand.NextFloat(0.6f, 1f)
+        );
+    }
+    public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
+        Player player = Main.player[Projectile.owner];
+        Vector2 directionFromPlayer = target.Center - player.Center;
+
+        if(directionFromPlayer == Vector2.Zero) { // If they are exactly on top of each other, default to pushing right to prevent errors
+            directionFromPlayer = Vector2.UnitX;
+        }
+        modifiers.HitDirectionOverride = directionFromPlayer.X > 0f ? 1 : -1; // Knockback direction based on this vector, a positive horizontal direction knocks them right, negative knocks them left
+    }
+    public override bool? CanCutTiles() => JabTimer > 0;
+    public override bool PreKill(int timeLeft) { // Make gores on shatter or dust when de-conjured
+        Player player = Main.player[Projectile.owner];
+        var modPlayer = player.GetModPlayer<BloodplateHookPlayer>();
+
+        if(Main.dedServ) return true;
+        if(modPlayer._plateTier == 0) {
+            for(var ii = 0; ii < 2; ii++) {
+                var rotation = Main.rand.NextFloat();
+                for(var i = 0; i < 5; i++) {
+                    var direction = rotation.ToRotationVector2();
+                    Gore.NewGoreDirect(
+                        Projectile.GetSource_Death(),
+                        Projectile.Center + direction * 10f - new Vector2(8, 8),
+                        direction * Main.rand.NextFloat(6f, 9f) + Projectile.velocity,
+                        Mod.Find<ModGore>("BloodplateGore" + i).Type
+                    );
+
+                    rotation += MathF.PI * 2f / 3f + Main.rand.NextFloatDirection() * 0.2f;
+                }
+            }
+        }
+        return true;
+    }
+    public override void OnKill(int timeLeft) { // Make gores on shatter or dust when de-conjured
+        SoundEngine.PlaySound(SoundID.NPCDeath19 with { Volume = 0.8f, PitchRange = (-0.5f, 0f) }, Projectile.Center);
+
+        Player player = Main.player[Projectile.owner];
+        var modPlayer = player.GetModPlayer<BloodplateHookPlayer>();
+        for(var i = 0; i < 16; i++) {
+            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.BloodWater);
+        }
+        for(var i = 0; i < 16; i++) {
+            Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.Grubby,
+                    Main.rand.NextFloat(-2f, 2f),
+                    Main.rand.NextFloat(-2f, 2f),
+                    default,
+                    default,
+                    Main.rand.NextFloat(0.7f, 1f));
+        }
+        if(modPlayer._plateTier >= 0) {
+            for(int i = 0; i < Main.rand.NextFloat(40f, 50f); i++) { // Circle of blood dust
+                Dust.NewDust(
+                    player.position + Main.rand.NextVector2Circular(58, 58) + Main.rand.NextVector2Circular(58, 58),
+                    2,
+                    2,
+                    DustID.Blood,
+                    Main.rand.NextFloat(-2f, 2f),
+                    Main.rand.NextFloat(-2f, 2f),
+                    default,
+                    default,
+                    Main.rand.NextFloat(1.2f, 1.4f)
+                );
+            }
+        }
+    }
+    public override bool PreDraw(ref Color lightColor) {
+        Texture2D texture = ModContent.Request<Texture2D>(Texture).Value;
+
+        int frameHeight = texture.Height / Main.projFrames[Projectile.type];
+        Rectangle sourceRectangle = new Rectangle(
+            0,
+            Projectile.frame * frameHeight,
+            texture.Width,
+            frameHeight
+        );
+
+        Vector2 drawOrigin = new Vector2(texture.Width / 2f, frameHeight / 2f);
+        float fadeOut = (255f - Projectile.alpha) / 255f; // If Alpha = 255, fadeOut = 0, if Alpha = 0, fadeOut = 1
+        Main.EntitySpriteDraw(
+            texture,
+            Projectile.Center - Main.screenPosition,
+            sourceRectangle,
+            lightColor * fadeOut,
+            Projectile.rotation,
+            drawOrigin,
+            Projectile.scale,
+            SpriteEffects.None
+        );
+
+        return false;
+    }
+}

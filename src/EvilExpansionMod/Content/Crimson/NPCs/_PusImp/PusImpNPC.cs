@@ -42,6 +42,7 @@ public class PusImpNPC : ModNPC {
     private int attackCooldownTimer;
     private int teleportCooldownTimer;
 
+    float difficultyScaler = Main.expertMode ? 0.5f : 1f; // Counteracting doubled proj. damage scaling on higher difficulties
     public override string Texture => Assets.Images.Crimson.NPCs.PusImp.PusImpNPC.KEY;
 
     public Player Target => Main.player[NPC.target];
@@ -53,7 +54,8 @@ public class PusImpNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 2;
         NPC.height = 38;
-        NPC.lifeMax = 100;
+        NPC.lifeMax = 80;
+        NPC.defense = Main.expertMode ? 70 : 60;
         NPC.value = 250f;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
@@ -79,12 +81,21 @@ public class PusImpNPC : ModNPC {
     public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.2f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PusClumpItem>(), 1, 1, 3));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PusClumpItem>(), 2, 1, 2));
     }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
             new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.PusImpNPCBestiary.KEY),
         });
+    }
+    public override bool PreAI() {
+        bool inLava = Collision.LavaCollision(NPC.position, NPC.width, NPC.height);  //Making it float... floaty imp
+        if(inLava) {
+            if(NPC.velocity.Y > -1.5f) {
+                NPC.velocity.Y -= 0.5f;
+            }
+        }
+        return true;
     }
     public override void AI() {
         NPC.TargetClosest();
@@ -121,7 +132,7 @@ public class PusImpNPC : ModNPC {
             var mouthPosition = NPC.Center + new Vector2(NPC.direction * 10, -5);
 
             for(int i = 0; i < numberOfGlobs; i++) {
-                var vel = Helper.InitialVelocityRequiredToHitPosition(NPC.Center, Target.Center, 1f, 10f) * Main.rand.NextFloat(0.9f, 1.1f);
+                var vel = Helper.InitialVelocityRequiredToHitPosition(NPC.Center, Target.Center, 0.5f, 10f) * Main.rand.NextFloat(0.9f, 1.1f);
                 vel = vel.RotatedBy(Main.rand.NextFloat(-MathHelper.Pi / 10, MathHelper.Pi / 10));
 
                 Projectile.NewProjectile(
@@ -129,14 +140,14 @@ public class PusImpNPC : ModNPC {
                     mouthPosition,
                     vel,
                     ModContent.ProjectileType<PusGlob>(),
-                    12,
+                    (int) (35 * difficultyScaler),
                     3f,
                     Main.myPlayer,
-                    ai2: 1.3f
+                    ai2: Main.rand.NextFloat(0.5f, 1f)
                 );
 
                 for(var j = 0; j < 3; j++) {
-                    Dust.NewDustPerfect(mouthPosition + Main.rand.NextVector2Unit() * 5f, DustID.LavaMoss, vel * Main.rand.NextFloat(0.2f, 1.9f));
+                    Dust.NewDustPerfect(mouthPosition + Main.rand.NextVector2Unit() * 5f, DustID.IchorTorch, vel * Main.rand.NextFloat(0.01f, 0.5f), default, default, Main.rand.NextFloat(0.01f, 0.5f));
                 }
             }
             SoundEngine.PlaySound(SoundID.NPCDeath13 with { Pitch = Main.rand.NextFloat(0.5f, 0.8f) }, NPC.Center);
@@ -151,7 +162,7 @@ public class PusImpNPC : ModNPC {
         Timer++;
         NPC.velocity.X = 0;
 
-        if(Timer >= Main.rand.Next(120, 240)) {
+        if(Timer >= Main.rand.Next(120, 240) * difficultyScaler) { // Attacks and moves twice as fast on expert+
             var canAttack = attackCooldownTimer <= 0;
             var canTeleport = teleportCooldownTimer <= 0;
             var lineOfSight = Collision.CanHitLine(NPC.position, NPC.width, NPC.height, Target.position, Target.width, Target.height);
@@ -199,7 +210,7 @@ public class PusImpNPC : ModNPC {
 
         while(attempts < 50 && !foundSpot) {
             attempts++;
-            float teleportX = Target.Center.X + Main.rand.NextFloat(-teleport_range / 2, teleport_range / 2);
+            float teleportX = Target.Center.X + Main.rand.NextFloat(-teleport_range * 1, teleport_range * 1);
             float teleportY = Target.position.Y;
 
             var tileX = (int)(teleportX / 16f);
@@ -252,17 +263,17 @@ public class PusImpNPC : ModNPC {
         switch(CurrentState) {
             case State.Idle:
                 NPC.frameCounter++;
-                if(NPC.frameCounter >= 8) {
+                if(NPC.frameCounter >= 6) {
                     NPC.frameCounter = 0;
                     NPC.frame.Y += frameHeight;
-                    if(NPC.frame.Y / frameHeight >= 5) {
+                    if(NPC.frame.Y / frameHeight >= 4) {
                         NPC.frame.Y = 0 * frameHeight;
                     }
                 }
                 break;
 
             case State.Spitting:
-                NPC.frame.Y = (5 + (int)(Timer / (spit_time / 4f))) * frameHeight;
+                NPC.frame.Y = (4 + (int)(Timer / (spit_time / 4f))) * frameHeight;
                 if(NPC.frame.Y / frameHeight > 8) {
                     NPC.frame.Y = 8 * frameHeight;
                 }

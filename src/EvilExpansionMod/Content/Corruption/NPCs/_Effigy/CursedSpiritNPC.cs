@@ -111,14 +111,14 @@ public sealed class CursedSpiritNPC : ModNPC {
         NPC.width = 38;
         NPC.height = 38;
         NPC.lifeMax = MaxLife;
-        NPC.defense = 28;
+        NPC.defense = Main.expertMode ? (int)38 : (int)28;
         NPC.value = 450;
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
         NPC.knockBackResist = 0.05f;
         NPC.friendly = false;
-        NPC.damage = 40;
+        NPC.damage = 50;
 
         NPC.HitSound = SoundID.NPCHit23;
 
@@ -133,12 +133,12 @@ public sealed class CursedSpiritNPC : ModNPC {
     }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-        return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.25f : 0;
+        return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.20f : 0;
     }
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>(), 2, 1, 2));
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 2, 1, 2));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>(), 2, 1, 3));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ImputedFlameItem>(), 2, 1, 1));
     }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange([
@@ -318,7 +318,17 @@ public sealed class CursedSpiritNPC : ModNPC {
             case ExploderState.Exploding:
                 UpdateLookDirection(_lookDirection);
                 _lookOffset *= 0.95f;
-
+                if (Timer == (int)(ExploderExplosionTime / 1.5)) {
+                    SoundEngine.PlaySound(SoundID.Item151, NPC.Center);
+                }
+                if (Timer > ExploderExplosionTime / 2) {
+                    for(int i = 0; i < 2; i++) {
+                        var ember = GlowEmberParticle.NewParticle(NPC.Center + Main.rand.NextVector2Circular(15, 15), Main.rand.NextVector2Circular(11, 11), Main.rand.NextFloat(0.1f, 1f), GhostColor1 with { A = 0 }, Color.White with { A = 0 });
+                        ember.Randomness *= 2f;
+                        ember.LossPerSecond *= 3f;
+                        ParticleEngine.PARTICLES.Add(ember);
+                    }
+                }
                 if(Timer > ExploderExplosionTime) {
                     const int ExplosionRange = 300;
                     if(Main.netMode != NetmodeID.MultiplayerClient) {
@@ -370,7 +380,15 @@ public sealed class CursedSpiritNPC : ModNPC {
 
                 NPC.velocity *= 0.98f;
 
-                Dust.NewDust(NPC.Center + Main.rand.NextVector2Circular(15, 15) + Main.rand.NextVector2Circular(15, 15), 2, 2, DustID.CursedTorch, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-3f, 3f), 0, new Color(207, 255, 0));
+                Dust.NewDust(
+                    NPC.Center + Main.rand.NextVector2Circular(15, 15) + Main.rand.NextVector2Circular(15, 15),
+                    2,
+                    2,
+                    DustID.CursedTorch,
+                    Main.rand.NextFloat(-3f, 3f),
+                    Main.rand.NextFloat(-3f, 3f),
+                    0,
+                    new Color(207, 255, 0));
                 var particle = SmokeParticle.Pool.RequestParticle();
 
                 Vector2 randomVelocity = new Vector2(
@@ -869,7 +887,7 @@ public class SpiritContactExplosion : ModProjectile {
         Projectile.aiStyle = -1;
         Main.projFrames[Projectile.type] = 7;
     }
-    public override void AI() {
+    public override void OnSpawn(IEntitySource source) {
         if(Projectile.ai[0] == 1) {
             Projectile.hostile = true;
         }
@@ -882,7 +900,8 @@ public class SpiritContactExplosion : ModProjectile {
         else {
             Projectile.friendly = false;
         }
-        // Visuals: Create dust explosion effects here
+    }
+    public override void AI() {
         for(int i = 0; i < 5; i++) {
             Dust.NewDust(Projectile.position, Projectile.width, Projectile.height, DustID.CursedTorch, Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-3f, 3f), 255, new Color(207, 255, 0));
         }

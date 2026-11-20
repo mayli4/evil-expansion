@@ -21,4 +21,9 @@
         </Reference>
     </ItemGroup>
 
+    <ItemGroup>
+      <Folder Include="Assets\Images\Furniture\CharredBloodwoodFurniture\" />
+      <Folder Include="Content\Furniture\" />
+    </ItemGroup>
+
 </Project>

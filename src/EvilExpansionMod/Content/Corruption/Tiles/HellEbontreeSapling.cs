@@ -27,7 +27,7 @@ public class HellEbontreeSapling : ModTile {
         TileObjectData.newTile.CoordinateHeights = new[] { 16, 18 };
         TileObjectData.newTile.CoordinateWidth = 16;
         TileObjectData.newTile.CoordinatePadding = 2;
-        TileObjectData.newTile.AnchorValidTiles = new[] { ModContent.TileType<OvergrownCorruptAsh>() };
+        TileObjectData.newTile.AnchorValidTiles = new[] { ModContent.TileType<CorruptAshGrass>() };
         TileObjectData.newTile.StyleHorizontal = true;
         TileObjectData.newTile.DrawFlipHorizontal = true;
         TileObjectData.newTile.LavaPlacement = LiquidPlacement.Allowed;

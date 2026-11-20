@@ -23,8 +23,8 @@ public class CorruptedBlockbreakerItem : ModItem {
         Item.useTime = 1;
         Item.useAnimation = 8;
         Item.useStyle = ItemUseStyleID.Shoot;
-        Item.knockBack = 0.5f;
-        Item.value = Item.buyPrice(gold: 12, silver: 60);
+        Item.knockBack = 3f;
+        Item.value = Item.buyPrice(gold: 1, silver: 60);
         Item.rare = ItemRarityID.LightRed;
         Item.UseSound = SoundID.Item23;
         Item.shoot = ModContent.ProjectileType<CorruptedBlockbreakerProjectile>();
@@ -40,7 +40,10 @@ public class CorruptedBlockbreakerItem : ModItem {
         tooltips.Find(t => t.Name == "Speed").Text = "Ridiculously fast speed";
     }
     public override void AddRecipes() {
-
+        CreateRecipe()
+            .AddIngredient(ModContent.ItemType<PolypBarItem>(), 8)
+            .AddTile(TileID.Anvils)
+            .Register();
     }
 }
 

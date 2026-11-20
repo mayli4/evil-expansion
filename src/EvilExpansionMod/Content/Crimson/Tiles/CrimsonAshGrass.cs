@@ -14,6 +14,7 @@ public class CrimsonAshGrass : ModTile {
         Main.tileSolid[Type] = true;
         Main.tileBlockLight[Type] = true;
         Main.tileBlendAll[Type] = true;
+        Main.tileLighted[Type] = true;
 
         this.Merge(ModContent.TileType<CrimsonAsh>(), TileID.Grass);
         TileID.Sets.Grass[Type] = true;
@@ -25,8 +26,8 @@ public class CrimsonAshGrass : ModTile {
         Main.tileMerge[TileID.Ash][Type] = true;
         Main.tileMerge[Type][ModContent.TileType<CrimsonAsh>()] = true;
         Main.tileMerge[ModContent.TileType<CrimsonAsh>()][Type] = true;
-        Main.tileMerge[Type][ModContent.TileType<OvergrownCorruptAsh>()] = true;
-        Main.tileMerge[ModContent.TileType<OvergrownCorruptAsh>()][Type] = true;
+        Main.tileMerge[Type][ModContent.TileType<CorruptAshGrass>()] = true;
+        Main.tileMerge[ModContent.TileType<CorruptAshGrass>()][Type] = true;
         Main.tileMerge[Type][TileID.ObsidianBrick] = true;
         Main.tileMerge[TileID.ObsidianBrick][Type] = true;
         Main.tileMerge[Type][TileID.HellstoneBrick] = true;
@@ -64,11 +65,15 @@ public class CrimsonAshGrass : ModTile {
                 WorldGen.ConvertTile(i, j, ModContent.TileType<CrimsonAshGrass>());
                 return;
             case BiomeConversionID.Corruption:
-                WorldGen.ConvertTile(i, j, ModContent.TileType<OvergrownCorruptAsh>());
+                WorldGen.ConvertTile(i, j, ModContent.TileType<CorruptAshGrass>());
                 return;
         }
     }
-
+    public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {
+        r = 0.4f;
+        g = 0.1f;
+        b = 0.1f;
+    }
     public override void RandomUpdate(int i, int j) {
         WorldGen.SpreadInfectionToNearbyTile(i, j, BiomeConversionID.Crimson);
 
@@ -94,7 +99,7 @@ public class CrimsonAshGrass : ModTile {
         //try place foliage
         if(WorldGen.genRand.NextBool(10) && !tileAbove.HasTile && tileAbove.LiquidAmount < 80) {
             if(!tile.BottomSlope && !tile.TopSlope && !tile.IsHalfBlock && !tile.TopSlope) {
-                tileAbove.TileType = (ushort)ModContent.TileType<CrimsonFoliage>();
+                tileAbove.TileType = (ushort)ModContent.TileType<CrimsonAshFoliage>();
                 tileAbove.HasTile = true;
                 tileAbove.TileFrameY = 0;
                 tileAbove.TileFrameX = (short)(WorldGen.genRand.Next(8) * 18);

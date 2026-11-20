@@ -12,7 +12,7 @@ Mods: {
 			}
 
 			DevilOWarHeartPickup: {
-				DisplayName: Heart
+				DisplayName: Fluid-filled Heart
 				Tooltip: ""
 			}
 
@@ -59,7 +59,11 @@ Mods: {
 			HeadPounderItem: {
 				DisplayName: Head Pounder
 				Damage: 1-{0} melee damage
-				Tooltip: Striking the earth at full power unleashes a burst of corrupt mass
+				Tooltip:
+					'''
+					Striking the earth at full power unleashes a burst of corrupt mass
+					Overcharge the attack to increase the range of the burst
+					'''
 			}
 
 			HellbringerBody: {
@@ -78,7 +82,11 @@ Mods: {
 					Increases summon damage by 5%
 					Increases your max number of minions by 1
 					'''
-				SetBonus: "{0}% chance to spawn a shadow orb on hit that summons a Corruptling when touched"
+				SetBonus:
+					'''
+					{0}% chance to spawn a shadow orb on hit that summons a Corruptling when touched
+					Corruptlings ignore 20 points of enemy Defense
+					'''
 			}
 
 			HellbringerLegs: {
@@ -115,14 +123,19 @@ Mods: {
 				DisplayName: Stinkfly
 				Tooltip:
 					'''
-					Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
+					Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 					'Used in perfume, for some reason!'
 					'''
 			}
 
 			ThoughtfulPendantItem: {
 				DisplayName: Thoughtful Pendant
-				Tooltip: Has a chance to conjure Spear Portals around your cursor when you attack
+				Tooltip:
+					'''
+					Summons a little Thoughtless Cultist friend
+					It stores the pain you inflict on others within itself, which it uses to conjure knife-throwing portals
+					Cultist Knives pierce through enemies, producing healing blood orbs
+					'''
 			}
 
 			ImputedFlameItem: {
@@ -135,23 +148,24 @@ Mods: {
 				Damage: 1-{0} magic damage
 				Tooltip:
 					'''
-					Creates a planetoid which slowly grows in size
+					Slowly grows a corrupt planetoid
 					Planetoids that grow too large explode violently
-					'Definitely DON’T use purification powder on these…'
+					'Definitely DON’T use purification powder on it…'
 					'''
 			}
 
 			NormalRevolverItem: {
-				DisplayName: Normal Revolver
-				Tooltip: Summons a baby planetoid that follows you around
+				DisplayName: Purified Spawner
+				Tooltip: Summons a little planetoid that follows you around
 			}
 
 			LamethrowerItem: {
 				DisplayName: Lamethrower
 				Tooltip:
 					'''
-					Coats enemies and surfaces alike with flaming ichor, inflicting a multitude of debuffs
+					Coats enemies and surfaces alike with incendiary ichor, inflicting a multitude of debuffs
 					Enemies suffer reduced defense and take extra damage when set ablaze
+					Overcharge the weapon to blast enemies apart with a kidney stone boulder
 					'''
 			}
 
@@ -161,7 +175,7 @@ Mods: {
 					'''
 					Your summons will focus struck enemies
 					Has a {0}% chance to cage enemies on hit
-					Caged enemies take {1}% increased damage from minions
+					Caged enemies take {1}% increased summon damage
 					'''
 			}
 
@@ -169,6 +183,7 @@ Mods: {
 				DisplayName: Spam on a Stick
 				Tooltip:
 					'''
+					The heavy flailhead creates shockwaves on impact
 					Drop it onto enemies to deal crushing damage
 					'Home grown!'
 					'''
@@ -176,7 +191,11 @@ Mods: {
 
 			MeatAxeItem: {
 				DisplayName: Carrion Cleaver
-				Tooltip: The gashes it creates shred enemies rapidly
+				Tooltip:
+					'''
+					Creates bloody gashes that shred foes
+					Enemies caught in the attack have their Defense temporarily reduced by 20 points
+					'''
 			}
 
 			CorruptedBlockbreakerItem: {
@@ -238,8 +257,8 @@ Mods: {
 				DisplayName: Crytapete
 				Tooltip:
 					'''
-					Summons crytapetes that ride atop your head
-					They randomly start crying, dousing enemies with bursts of damaging tears
+					Summons Crytapetes that ride atop your head
+					Crytapetes cry uncontrollably when they feel overwhelmed
 					'''
 			}
 
@@ -248,13 +267,13 @@ Mods: {
 				Tooltip:
 					'''
 					It's volatile
-					Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
+					Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 					'''
 			}
 
 			LavaLizardItem: {
 				DisplayName: Lava Lizard
-				Tooltip: Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
+				Tooltip: Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 			}
 
 			LanternBatBannerItem: {
@@ -300,7 +319,7 @@ Mods: {
 				DisplayName: Gulpy
 				Tooltip:
 					'''
-					The yoyo takes bites out of enemies
+					The yoyo takes bites out of enemies, increasing its attack speed
 					Repeated bites cause it to vomit out a spray of half-digested gore
 					'My little Gulpy...'
 					'''
@@ -311,7 +330,7 @@ Mods: {
 				Tooltip:
 					'''
 					It's volatile
-					Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
+					Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 					'''
 			}
 
@@ -343,11 +362,6 @@ Mods: {
 					'''
 			}
 
-			SpamOnAStickItem: {
-				DisplayName: Spam On A Stick Item
-				Tooltip: ""
-			}
-
 			CharredBloodwoodWallItem: {
 				DisplayName: Charred Bloodwood Wall
 				Tooltip: ""
@@ -374,7 +388,7 @@ Mods: {
 
 			EaterOfSoilItem: {
 				DisplayName: Eater of Soil
-				Tooltip: Feels like it would make a tasty meal... if only you could "extract" the meat somehow...
+				Tooltip: Feels like it would make a tasty treat... if only the meat could be "extracted" somehow...
 			}
 
 			EvilMeatloaf: {
@@ -397,13 +411,402 @@ Mods: {
 				Tooltip: ""
 			}
 
-			CoarsebrickwallItem: {
+			CorruptAshwoodBody: {
+				DisplayName: Corrupt Ashwood Breastplate
+				Tooltip: ""
+			}
+
+			CorruptAshwoodBow: {
+				DisplayName: Corrupt Ashwood Bow
+				Tooltip: Wreaths wooden arrows in cursed flames
+			}
+
+			CorruptAshwoodHead: {
+				DisplayName: Corrupt Ashwood Helmet
+				Tooltip: ""
+				SetBonus:
+					'''
+					2 defense
+					Bony spines shoot out of your body when you are hurt
+					'''
+			}
+
+			CorruptAshwoodLegs: {
+				DisplayName: Corrupt Ashwood Greaves
+				Tooltip: ""
+			}
+
+			CorruptAshwoodSword: {
+				DisplayName: Corrupt Ashwood Sword
+				Tooltip: Direct hits cause bony spines to shoot out of the target's body
+			}
+
+			CharredBloodwoodBody: {
+				DisplayName: Charred Bloodwood Breastplate
+				Tooltip: ""
+			}
+
+			CharredBloodwoodBow: {
+				DisplayName: Charred Bloodwood Bow
+				Tooltip: Coats wooden arrows with ichor
+			}
+
+			CharredBloodwoodHead: {
+				DisplayName: Charred Bloodwood Helmet
+				Tooltip: ""
+				SetBonus:
+					'''
+					2 defense
+					Bloody spines shoot out of your body when you are hurt
+					'''
+			}
+
+			CharredBloodwoodLegs: {
+				DisplayName: Charred Bloodwood Greaves
+				Tooltip: ""
+			}
+
+			CharredBloodwoodSword: {
+				DisplayName: Charred Bloodwood Sword
+				Tooltip: Direct hits cause bloody spines to shoot out of the target's body
+			}
+
+			SucsGoodmanItem: {
+				DisplayName: Sucs Goodman
+				Tooltip:
+					'''
+					'Haunting...'
+					'T. Whan Wauff'
+					'''
+			}
+
+			VictorySignItem: {
+				DisplayName: Victory Sign
+				Tooltip: "'T. Whan Wauff'"
+			}
+
+			SydneyWithTheHeadOfTobiasItem: {
+				DisplayName: Sydney with the Head of Tobias
+				Tooltip: "'T. Whan Wauff'"
+			}
+
+			CorruptAshwoodHamaxe: {
+				DisplayName: Corrupt Ashwood Hamaxe
+				Tooltip: ""
+			}
+
+			DevouringPotionItem: {
+				DisplayName: Devouring Potion
+				Tooltip:
+					'''
+					Critical hits have a 30% chance to release small mana stars
+					'Souuul sucker!'
+					'''
+			}
+
+			DevouringPotionStarPickup: {
+				DisplayName: Small Star
+				Tooltip: ""
+			}
+
+			MaliciousFeederfishItem: {
+				DisplayName: Malicious Feederfish
+				Tooltip: ""
+			}
+
+			CharredBloodwoodHamaxe: {
+				DisplayName: Charred Bloodwood Hamaxe
+				Tooltip: ""
+			}
+
+			MarrowanaItem: {
+				DisplayName: Marrowana
+				Tooltip: ""
+			}
+
+			SplicingPotionHeartPickup: {
+				DisplayName: Small Heart
+				Tooltip: ""
+			}
+
+			SplicingPotionItem: {
+				DisplayName: Splicing Potion
+				Tooltip:
+					'''
+					Critical hits have a 30% chance to release small life hearts
+					'...blood is fuel...'
+					'''
+			}
+
+			BloodplateHookItem: {
+				DisplayName: Bloodplated Fishing Hook
+				Tooltip:
+					'''
+					While fishing, forms a blood shield which impales enemies and absorbs incoming damage
+					Getting hurt damages the shield
+					The shield will need time to regenerate after being broken
+					'''
+			}
+
+			WailingHookItem: {
+				DisplayName: Soulsucking Fishing Hook
+				Tooltip:
+					'''
+					While fishing, releases cursed ghosts from the water that chase after enemies
+					The hook reacts to danger, releasing more ghosts when you are threatened
+					'''
+			}
+
+			SoulplatedHookItem: {
+				DisplayName: Soulplated Fishing Hook
+				Tooltip:
+					'''
+					While fishing:
+					-Releases cursed ghosts from the water that chase after enemies
+					The hook reacts to danger, releasing more ghosts when you are threatened
+
+					-Forms a blood shield which impales enemies and absorbs incoming damage
+					Getting hurt damages the shield
+					The shield will need time to regenerate after being broken
+					'''
+			}
+
+			KnowThyEnemy: {
+				DisplayName: Know Thy Enemy
+				Tooltip:
+					'''
+					Unlocks the Bestiary in its entirety
+					"How did you get here?"
+					'''
+			}
+
+			CharredBloodwoodPlatformItem: {
+				DisplayName: Charred Bloodwood Platform
+				Tooltip: ""
+			}
+
+			CharredBloodwoodBeamItem: {
+				DisplayName: Charred Bloodwood Beam
+				Tooltip: ""
+			}
+
+			CorruptAshwoodBeamItem: {
+				DisplayName: Corrupt Ashwood Beam
+				Tooltip: ""
+			}
+
+			CoarseBrickWallItem: {
 				DisplayName: Coarse Brick Wall
 				Tooltip: ""
 			}
 
-			MattebrickwallItem: {
+			MatteBrickWallItem: {
 				DisplayName: Matte Brick Wall
+				Tooltip: ""
+			}
+
+			CharredBloodwoodFenceItem: {
+				DisplayName: Charred Bloodwood Fence
+				Tooltip: ""
+			}
+
+			CharredBloodwoodWorkbenchItem: {
+				DisplayName: Charred Bloodwood Workbench
+				Tooltip: ""
+			}
+
+			CharredBloodwoodWorkbench: {
+				DisplayName: Charred Bloodwood Workbench
+				Tooltip: ""
+			}
+
+			CharredBloodwoodBathtub: {
+				DisplayName: Charred Bloodwood Bathtub
+				Tooltip: ""
+			}
+
+			CharredBloodwoodBed: {
+				DisplayName: Charred Bloodwood Bed
+				Tooltip: ""
+			}
+
+			CharredBloodwoodBookcase: {
+				DisplayName: Charred Bloodwood Bookcase
+				Tooltip: ""
+			}
+
+			CharredBloodwoodCandelabra: {
+				DisplayName: Charred Bloodwood Candelabra
+				Tooltip: ""
+			}
+
+			CharredBloodwoodCandleItem: {
+				DisplayName: Charred Bloodwood Candle
+				Tooltip: ""
+			}
+
+			CharredBloodwoodChair: {
+				DisplayName: Charred Bloodwood Chair
+				Tooltip: ""
+			}
+
+			CharredBloodwoodChandelier: {
+				DisplayName: Charred Bloodwood Chandelier
+				Tooltip: ""
+			}
+
+			CharredBloodwoodChest: {
+				DisplayName: Charred Bloodwood Chest
+				Tooltip: ""
+			}
+
+			CharredBloodwoodClock: {
+				DisplayName: Charred Bloodwood Clock
+				Tooltip: ""
+			}
+
+			CharredBloodwoodDresser: {
+				DisplayName: Charred Bloodwood Dresser
+				Tooltip: ""
+			}
+
+			CharredBloodwoodLamp: {
+				DisplayName: Charred Bloodwood Lamp
+				Tooltip: ""
+			}
+
+			CharredBloodwoodLantern: {
+				DisplayName: Charred Bloodwood Lantern
+				Tooltip: ""
+			}
+
+			CharredBloodwoodSink: {
+				DisplayName: Charred Bloodwood Sink
+				Tooltip: ""
+			}
+
+			CharredBloodwoodSofa: {
+				DisplayName: Charred Bloodwood Sofa
+				Tooltip: ""
+			}
+
+			CharredBloodwoodTable: {
+				DisplayName: Charred Bloodwood Table
+				Tooltip: ""
+			}
+
+			CharredBloodwoodToilet: {
+				DisplayName: Charred Bloodwood Toilet
+				Tooltip: ""
+			}
+
+			CorruptAshwoodBathtub: {
+				DisplayName: Corrupt Ashwood Bathtub
+				Tooltip: ""
+			}
+
+			CorruptAshwoodBed: {
+				DisplayName: Corrupt Ashwood Bed
+				Tooltip: ""
+			}
+
+			CorruptAshwoodBookcase: {
+				DisplayName: Corrupt Ashwood Bookcase
+				Tooltip: ""
+			}
+
+			CorruptAshwoodCandelabra: {
+				DisplayName: Corrupt Ashwood Candelabra
+				Tooltip: ""
+			}
+
+			CorruptAshwoodCandleItem: {
+				DisplayName: Corrupt Ashwood Candle
+				Tooltip: ""
+			}
+
+			CorruptAshwoodChair: {
+				DisplayName: Corrupt Ashwood Chair
+				Tooltip: ""
+			}
+
+			CorruptAshwoodChandelier: {
+				DisplayName: Corrupt Ashwood Chandelier
+				Tooltip: ""
+			}
+
+			CorruptAshwoodChest: {
+				DisplayName: Corrupt Ashwood Chest
+				Tooltip: ""
+			}
+
+			CorruptAshwoodClock: {
+				DisplayName: Corrupt Ashwood Clock
+				Tooltip: ""
+			}
+
+			CorruptAshwoodDresser: {
+				DisplayName: Corrupt Ashwood Dresser
+				Tooltip: ""
+			}
+
+			CorruptAshwoodLamp: {
+				DisplayName: Corrupt Ashwood Lamp
+				Tooltip: ""
+			}
+
+			CorruptAshwoodLantern: {
+				DisplayName: Corrupt Ashwood Lantern
+				Tooltip: ""
+			}
+
+			CorruptAshwoodSink: {
+				DisplayName: Corrupt Ashwood Sink
+				Tooltip: ""
+			}
+
+			CorruptAshwoodSofa: {
+				DisplayName: Corrupt Ashwood Sofa
+				Tooltip: ""
+			}
+
+			CorruptAshwoodTable: {
+				DisplayName: Corrupt Ashwood Table
+				Tooltip: ""
+			}
+
+			CorruptAshwoodToilet: {
+				DisplayName: Corrupt Ashwood Toilet
+				Tooltip: ""
+			}
+
+			CorruptAshwoodWorkbench: {
+				DisplayName: Corrupt Ashwood Workbench
+				Tooltip: ""
+			}
+
+			CharredBloodwoodDoor: {
+				DisplayName: Charred Bloodwood Door
+				Tooltip: ""
+			}
+
+			CorruptAshwoodDoor: {
+				DisplayName: Corrupt Ashwood Door
+				Tooltip: ""
+			}
+
+			CorruptAshwoodFenceItem: {
+				DisplayName: Corrupt Ashwood Fence
+				Tooltip: ""
+			}
+
+			CorruptAshwoodPlatformItem: {
+				DisplayName: Corrupt Ashwood Platform
+				Tooltip: ""
+			}
+
+			CorruptAshwoodWallItem: {
+				DisplayName: Corrupt Ashwood Wall
 				Tooltip: ""
 			}
 		}
@@ -432,19 +835,17 @@ Mods: {
 			EaterOfSoilHead.DisplayName: Eater of Soil
 			EaterOfSoilTail.DisplayName: Eater of Soil Tail
 			EaterOfSoilBody1.DisplayName: Eater of Soil Body1
+			EaterOfSoilBody2.DisplayName: Eater of Soil Body
 		}
 
 		Projectiles: {
 			DevilOWarStingerProjectile.DisplayName: Devil O War Stinger
-			HellbatSpit.DisplayName: Hellbat Spit
-			HellbatSpitProjectile.DisplayName: Hellbat Spit
 			TerrorBatSpit.DisplayName: Terror Bat Spit
 			SpiritFireball.DisplayName: Spirit Fireball
 			CursehoundMace.DisplayName: Cursehound Mace
 			MaceCrack.DisplayName: Mace Crack
 			MaceShard.DisplayName: Mace Shard
 			EffigyRootProjectile.DisplayName: Effigy Root Projectile
-			CursedFog.DisplayName: Cursed Fog
 			CultistPortal.DisplayName: Cultist Portal
 			MaceDebris.DisplayName: Mace Debris
 			StalactiteProjectile.DisplayName: Stalactite
@@ -476,9 +877,8 @@ Mods: {
 			LamethrowerHeldProjectile.DisplayName: Lamethrower Held Projectile
 			SlippedWhipProjectile.DisplayName: Slipped Whip Projectile
 			SlippedWhipCageProjectile.DisplayName: Slipped Whip Cage Projectile
-			SpamOnAStickProjectile.DisplayName: Spam On A Stick
 			MeatAxeHeldProjectile.DisplayName: Meat Axe
-			SpamonAStickProjectile.DisplayName: Spamon A Stick
+			SpamonAStickProjectile.DisplayName: Spam on a Stick
 			CorruptedBlockbreakerProjectile.DisplayName: Corrupt Blockbreaker
 			CrimsonDrillProjectile.DisplayName: Crimson Drill
 			CrytapeteFlame.DisplayName: Crytapete Flame
@@ -500,27 +900,52 @@ Mods: {
 			MarrowEyeRingProjectile.DisplayName: Marrow Eye Ring Projectile
 			FriendlyCultistPortal.DisplayName: Friendly Cultist Portal
 			LavaTelegraphProjectile.DisplayName: Lava Telegraph Projectile
+			EvilWoodSpike.DisplayName: Evil Wood Spike
+			BloodWoodSpike.DisplayName: Blood Wood Spike
+			BloodplateHookShield.DisplayName: Bloodplate Hook Shield
+			EvilSplatter.DisplayName: Evil Splatter
+			BloodExplosion.DisplayName: Blood Explosion
+			SpamOnAStickCrit.DisplayName: Spam On A Stick Crit
+			SpamOnAStickShockwave.DisplayName: Spam On A Stick Shockwave
+			HeadPounderCharge.DisplayName: Head Pounder Charge
+			HeadPounderChargeShine.DisplayName: Head Pounder Charge Shine
+			MeatSplatter.DisplayName: Meat Splatter
+			SpamOnAStickProjectile.DisplayName: Spam On A Stick Projectile
+			TerrorBatSpitDeath.DisplayName: Terror Bat Spit Death
+			CrytapeteSplatter.DisplayName: Crytapete Splatter
+			TearDeath.DisplayName: Tear Death
+			PlanetoidDebris.DisplayName: Planetoid Debris
+			Glop.DisplayName: Glop
+			IchorCompustion.DisplayName: Ichor Compustion
+			KidneyStone.DisplayName: Kidney Stone
+			PusDeath.DisplayName: Pus Death
+			WailingTelegraphProjectile.DisplayName: Wailing Telegraph Projectile
+			WailingFireball.DisplayName: Wailing Fireball
+			ThoughtfulPendantChargeBar.DisplayName: Thoughtful Pendant Charge Bar
+			ThoughtfulOrbProjectile.DisplayName: Thoughtful Orb Projectile
+			ThoughtlessCultist.DisplayName: Thoughtless Cultist
+			PortalKnives.DisplayName: Portal Knives
 		}
 
 		Biomes: {
 			UnderworldCorruptionBiome: {
-				DisplayName: Underworld Corruption Biome
-				TownNPCDialogueName: The Underworld Corruption Biome
+				DisplayName: Corrupt Underworld Biome
+				TownNPCDialogueName: The Corrupt Underworld Biome
 			}
 
 			UnderworldCorruption: {
-				DisplayName: Underworld Corruption
-				TownNPCDialogueName: The Underworld Corruption
+				DisplayName: Corrupt Underworld
+				TownNPCDialogueName: The Corrupt Underworld
 			}
 
 			UnderworldCrimsonBiome: {
-				DisplayName: Underworld Crimson Biome
-				TownNPCDialogueName: The Underworld Crimson Biome
+				DisplayName: Crimson Underworld Biome
+				TownNPCDialogueName: The Crimson Underworld Biome
 			}
 
 			UnderworldCrimson: {
-				DisplayName: Underworld Crimson
-				TownNPCDialogueName: the Underworld Crimson
+				DisplayName: Crimson Underworld
+				TownNPCDialogueName: the Crimson Underworld
 			}
 		}
 
@@ -535,10 +960,13 @@ Mods: {
 			HellShadetree.MapEntry: Hell Shadetree
 			PolypOreTile.MapEntry: Polyp Ore
 			CartilageOreTile.MapEntry: Cartilage Ore
+			SucsGoodmanTile.MapEntry: Sucs Goodman
+			SydneyWithTheHeadOfTobiasTile.MapEntry: Sydney With The Head Of Tobias
+			VictorySignTile.MapEntry: Victory Sign
 		}
 
 		Bestiary: {
-			StinkflyCritterBestiary: Flies that make themselves at home in the warm, nutrition-rich environment of the Crimson-infested underworld.
+			StinkflyCritterBestiary: Flies that make themselves at home in the warm, nutrition-rich environment of the Crimson-infested underworld, with a particular affinity towards pus.
 			PusSlugCritterBestiary: Slow and dumb, these slugs defend themselves by secreting acidic mucus... stay away!
 			CursedCanaryCritterBestiary: Lower concentrations of Imputed Flame can sometimes manifest as these docile critters. Cute, but mind the heat!
 			EaterOfSoilCritterBestiary: Newly birthed, these juvenile worms of the Corruption are far too small to pose a legitimate threat to anybody.
@@ -553,7 +981,7 @@ Mods: {
 			LanternBatNPCBestiary: The lower caste of the Crimson occult have had their mind and bodies warped, forced to serve their masters as Lantern Bats.
 			MarrowEyeNPCBestiary: Failed attempts at creating artificial Crimson Altars have resulted in these grotesque amalgmations of energy-infused flesh.
 			PusImpNPCBestiary: An unholy mixture of Crimson bile and hell energy, these hollow imitations of hell's denizens only serve as extensions of the Crimson's will.
-			StinkgrubNPCBestiary: Simple cavedwellers, engorged by the Crimson. These hardy grubs often migrate deeper underground in search of nutrients.
+			StinkgrubNPCBestiary: Simple cavedwellers, engorged by the Crimson. These hardy grubs are popular among the Crimson occult for use as carriers of the immobile Pus Demons.
 		}
 
 		Buffs: {
@@ -590,6 +1018,53 @@ Mods: {
 			EvilMeatloafDebuff: {
 				DisplayName: Meatloaf Poisoning
 				Description: Losing life... ever so slowly...
+			}
+
+			DevouringPotionBuff: {
+				DisplayName: Devouring
+				Description: 30% chance to create small mana stars on crit
+			}
+
+			SplicingPotionBuff: {
+				DisplayName: Splicing
+				Description: 30% chance to create small life hearts on crit
+			}
+
+			BloodPlatedHealthy: {
+				DisplayName: Blood Plated
+				Description:
+					'''
+					The Bloodplate Shield protects you
+					Reduces the next instance of damage by 90%
+					'''
+			}
+
+			BloodPlatedDamaged1: {
+				DisplayName: Blood Plated
+				Description:
+					'''
+					The Bloodplate Shield is mildly worn
+					Reduces the next instance of damage by 60%
+					'''
+			}
+
+			BloodPlatedDamaged2: {
+				DisplayName: Blood Plated
+				Description:
+					'''
+					The Bloodplate Shield is breaking apart
+					Reduces the next instance of damage by 30%
+					'''
+			}
+
+			BloodPlatedBroken: {
+				DisplayName: Bloodplate Shield Cooldown
+				Description: The Bloodplate Shield has been broken!
+			}
+
+			MeatAxeDebuff: {
+				DisplayName: Cleaved
+				Description: Greatly reduced defense
 			}
 		}
 

@@ -34,7 +34,7 @@ public class HellbringerGlobalNPC : GlobalNPC {
                 Projectile.NewProjectile(
                     player.GetSource_FromThis(),
                     npc.Center,
-                    npc.Center.DirectionTo(player.Center).RotatedByRandom(MathHelper.PiOver4 * 0.6f) * 14f,
+                    npc.Center.DirectionTo(player.Center).RotatedByRandom(MathHelper.PiOver4 * 2f) * 14f,
                     ModContent.ProjectileType<ShadowOrbProjectile>(),
                     HellbringerHead.CorruptlingDamage,
                     0.5f,

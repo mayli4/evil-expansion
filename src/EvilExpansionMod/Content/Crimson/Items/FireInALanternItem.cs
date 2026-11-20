@@ -168,7 +168,7 @@ public class FireInALanternFlame : ModProjectile {
         Projectile.alpha = 255;
 
         Projectile.usesLocalNPCImmunity = true;
-        Projectile.localNPCHitCooldown = 20;
+        Projectile.localNPCHitCooldown = 10;
     }
 
     public override void AI() {
@@ -185,7 +185,7 @@ public class FireInALanternFlame : ModProjectile {
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
-        target.AddBuff(BuffID.OnFire, 60);
+        target.AddBuff(BuffID.OnFire3, Main.rand.Next(1,4) * 60);
     }
 
     public override bool PreDraw(ref Color lightColor) {

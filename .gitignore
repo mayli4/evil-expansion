@@ -11,3 +11,13 @@ obj/
 
 # User-specific files.
 *.user
+.DS_Store
+.DS_Store
+src/EvilExpansionMod/.DS_Store
+src/EvilExpansionMod/Assets/.DS_Store
+src/EvilExpansionMod/Assets/Images/Crimson/Tiles/.DS_Store
+src/EvilExpansionMod/Assets/Images/Crimson/.DS_Store
+src/EvilExpansionMod/Assets/Images/.DS_Store
+src/EvilExpansionMod/Assets/.DS_Store
+src/EvilExpansionMod/.DS_Store
+src/.DS_Store

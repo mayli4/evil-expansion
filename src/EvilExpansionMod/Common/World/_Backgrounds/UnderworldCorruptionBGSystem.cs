@@ -155,6 +155,9 @@ internal sealed class UnderworldCorruptionBgSystem : ModSystem {
                 case 3:
                     num7 = 6f;
                     break;
+                case 4:
+                    num7 = 4f;
+                    break;
                 case 5:
                     num7 = 2f;
                     break;
@@ -183,13 +186,13 @@ internal sealed class UnderworldCorruptionBgSystem : ModSystem {
                 zero.Y += 160;
                 break;
             case 3:
-                zero.Y += 240f;
+                zero.Y += 290f;
                 break;
             case 4:
-                zero.Y += 150f;
+                zero.Y += 350f;
                 break;
             case 5:
-                zero.Y += 1120f;
+                zero.Y += 980f;
                 break;
         }
 

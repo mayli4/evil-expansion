@@ -38,7 +38,7 @@ public sealed class CorruptFoliage : ModTile {
         TileObjectData.newTile.StyleHorizontal = true;
         TileObjectData.newTile.RandomStyleRange = StyleRange;
 
-        TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<OvergrownCorruptAsh>()];
+        TileObjectData.newTile.AnchorValidTiles = [ModContent.TileType<CorruptAshGrass>()];
         AddMapEntry(new(104, 156, 7));
 
         TileObjectData.addTile(Type);
@@ -59,7 +59,7 @@ public sealed class CorruptFoliage : ModTile {
         if(tileBelow.HasTile && !tileBelow.BottomSlope) {
             type = tileBelow.TileType;
         }
-        if(type == ModContent.TileType<OvergrownCorruptAsh>() || type == Type) {
+        if(type == ModContent.TileType<CorruptAshGrass>() || type == Type) {
             return true;
         }
         WorldGen.KillTile(i, j);

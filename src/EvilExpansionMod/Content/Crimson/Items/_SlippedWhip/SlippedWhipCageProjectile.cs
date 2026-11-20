@@ -170,7 +170,7 @@ public class RibcagedNPC : GlobalNPC {
     public override bool PreAI(NPC npc) => !npc.HasBuff<RibcagedNPCDebuff>();
 
     public override void ModifyHitByProjectile(NPC npc, Projectile projectile, ref NPC.HitModifiers modifiers) {
-        if(!npc.HasBuff<RibcagedNPCDebuff>() && !(projectile.npcProj || projectile.trap || projectile.IsMinionOrSentryRelated)) return;
+        if(!npc.HasBuff<RibcagedNPCDebuff>() || !(projectile.npcProj || projectile.trap || projectile.IsMinionOrSentryRelated)) return;
 
         var tagMultiplier = ProjectileID.Sets.SummonTagDamageMultiplier[projectile.type];
         modifiers.ScalingBonusDamage += SlippedWhipItem.CageMinionDamageMultiplier * tagMultiplier;

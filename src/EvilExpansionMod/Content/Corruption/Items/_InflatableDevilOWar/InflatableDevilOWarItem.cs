@@ -236,7 +236,7 @@ public class InflatableDevilOWarProjectile : ModProjectile {
                     .DrawTrail(
                         _stringTrailPositions,
                         static _ => 2f,
-                        _ => Lighting.GetColor(player.position.ToTileCoordinates())
+                        _ => Lighting.GetColor(player.position.ToTileCoordinates()) * 0.75f
                     );
             }
         }

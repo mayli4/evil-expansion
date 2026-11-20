@@ -7,6 +7,7 @@ using Terraria.ID;
 using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content;
+
 public enum WormSegmentType {
     /// <summary>
     /// The head segment for the worm.  Only one "head" is considered to be active for any given worm
@@ -172,6 +173,10 @@ public abstract class WormHead : Worm {
         // Defaults to just returning this NPC's whoAmI, since the tail segment uses the return value as its "following" NPC index
         return NPC.whoAmI;
     }
+    
+    protected virtual bool IsWormSegment(int type) {
+        return type == Type || type == BodyType || type == TailType;
+    }
 
     /// <summary>
     /// Spawns a body or tail segment of the worm.
@@ -241,19 +246,21 @@ public abstract class WormHead : Worm {
                 }
 
                 // Spawn the tail segment
-                int who = SpawnSegment(source, TailType, latestNPC);
+                SpawnSegment(source, TailType, latestNPC);
+
                 NPC.netUpdate = true;
 
                 // Ensure that all of the segments could spawn.  If they could not, despawn the worm entirely
                 int count = 0;
                 foreach(var n in Main.ActiveNPCs) {
-                    if((n.type == Type || n.type == BodyType || n.type == TailType) && n.realLife == NPC.whoAmI)
+                    if(IsWormSegment(n.type) && n.realLife == NPC.whoAmI)
                         count++;
                 }
+
                 if(count != randomWormLength) {
                     // Unable to spawn all of the segments... kill the worm
                     foreach(var n in Main.ActiveNPCs) {
-                        if((n.type == Type || n.type == BodyType || n.type == TailType) && n.realLife == NPC.whoAmI) {
+                        if(IsWormSegment(n.type) && n.realLife == NPC.whoAmI) {
                             n.active = false;
                             n.netUpdate = true;
                         }
@@ -536,7 +543,7 @@ public abstract class WormBody : Worm {
         if(Main.netMode != NetmodeID.MultiplayerClient) {
             // Some of these conditions are possible if the body/tail segment was spawned individually
             // Kill the segment if the segment NPC it's following is no longer valid
-            if(following is null || !following.active || following.friendly || following.townNPC) {
+            if(following is null || !following.active || following.friendly || following.townNPC || following.lifeMax <= 5) {
                 worm.NPC.life = 0;
                 worm.NPC.HitEffect(0, 10);
                 worm.NPC.active = false;

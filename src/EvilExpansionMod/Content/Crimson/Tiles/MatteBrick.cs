@@ -14,6 +14,7 @@ public class MatteBrick : ModTile {
         Main.tileMergeDirt[Type] = true;
         Main.tileBlockLight[Type] = true;
         Main.tileSolid[Type] = true;
+        Main.tileBrick[Type] = true;
 
         TileID.Sets.BlockMergesWithMergeAllBlockOverride[Type] = true;
         Main.tileMerge[Type][TileID.Ash] = true;
@@ -31,14 +32,8 @@ public class MatteBrick : ModTile {
         Main.tileMerge[Type][TileID.Grass] = true;
         Main.tileMerge[TileID.Grass][Type] = true;
 
-        AddMapEntry(new Color(100, 37, 62));
+        AddMapEntry(new Color(76, 33, 38));
     }
-
-    public override bool IsTileBiomeSightable(int i, int j, ref Color sightColor) {
-        sightColor = Color.Yellow;
-        return true;
-    }
-
 }
 public class MatteBrickItem : ModItem {
     public override string Texture => Assets.Images.Crimson.Tiles.MatteBrickItem.KEY;

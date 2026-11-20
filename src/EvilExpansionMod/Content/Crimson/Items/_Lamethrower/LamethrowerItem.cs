@@ -1,4 +1,5 @@
-﻿using Terraria;
+﻿using System.Collections.Generic;
+using Terraria;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -13,10 +14,10 @@ public class LamethrowerItem : ModItem {
     }
 
     public override void SetDefaults() {
-        Item.damage = 8;
+        Item.damage = 20;
         Item.crit = 4;
-        Item.DamageType = DamageClass.Ranged;
-        Item.knockBack = 0.025f;
+        Item.DamageType = DamageClass.Magic;
+        Item.knockBack = 2f;
 
         Item.width = 68;
         Item.height = 46;
@@ -25,7 +26,7 @@ public class LamethrowerItem : ModItem {
         Item.useStyle = ItemUseStyleID.Shoot;
 
         Item.value = Item.sellPrice(gold: 1, silver: 2);
-        Item.rare = ItemRarityID.Pink;
+        Item.rare = ItemRarityID.LightRed;
 
         Item.noUseGraphic = true;
         Item.noMelee = true;
@@ -33,11 +34,10 @@ public class LamethrowerItem : ModItem {
         Item.noUseGraphic = true;
         Item.shoot = ModContent.ProjectileType<LamethrowerHeldProjectile>();
         Item.shootSpeed = 6f;
+        Item.mana = 10; // For the "meat" of mana consumption please consult the held projectile code
 
         Item.channel = true;
-        Item.useTurn = false;
-
-        Item.UseSound = SoundID.Item100;
+        //Item.useTurn = true; // Surprisingly, having it be "false" gets rid of a bug: wherein pets and other visual things will jitter erratically when you aim in the opposite direction of movement whilst this is true
     }
 
     public override bool CanUseItem(Player player) {
@@ -53,4 +53,8 @@ public class LamethrowerItem : ModItem {
             .AddTile(TileID.MythrilAnvil)
             .Register();
     }
+
+    //public override void
 }
+
+

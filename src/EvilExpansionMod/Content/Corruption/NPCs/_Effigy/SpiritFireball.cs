@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Linq;
 using Terraria;
+using Terraria.GameContent;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -28,14 +29,22 @@ public class SpiritFireball : ModProjectile {
         Projectile.height = 16;
         Projectile.hostile = true;
         Projectile.friendly = false;
-        Projectile.DamageType = DamageClass.Ranged;
+        Projectile.DamageType = DamageClass.Default;
         Projectile.tileCollide = false;
         Projectile.ignoreWater = false;
         Projectile.timeLeft = MaxTimeLeft;
+        Projectile.penetrate = -1;
+        //Projectile.alpha = 255;
 
         Projectile.aiStyle = -1;
     }
+    public override bool CanHitPlayer(Player target) {
+        return true;
+    }
 
+    public override void OnHitPlayer(Player target, Player.HurtInfo info) {
+        target.AddBuff(BuffID.CursedInferno, 60 * 1);
+    }
     public override void AI() {
         _trailPositions ??= [.. Enumerable.Repeat(Projectile.Center, 6)];
         var i = _trailPositions.Length - 1;

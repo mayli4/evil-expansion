@@ -24,12 +24,20 @@ public class HeadPounderHeldProjectile : ModProjectile {
     readonly static int PostChargeFrames = 15;
     readonly static int MaxCharge = 60;
 
-    int _charge;
+    float _charge;
     bool _hitCheck;
     bool _hit;
     float _outlineAlpha;
 
     float ChargeProgress => MathF.Min((float)_charge / MaxCharge, 1f);
+    float Overcharge = 0;
+    float spikeMultiplier = 0;
+
+    private bool hasCreatedOverchargeFlash1 = false;
+    private bool hasCreatedOverchargeFlash2 = false;
+
+    private SlotId chargeSoundSlot = SlotId.Invalid;
+
     Vector2 RotationVector => (Projectile.rotation - MathF.PI / 4f).ToRotationVector2() * new Vector2(Owner.direction, 0.5f);
     Vector2[] _trailPositions;
 
@@ -102,12 +110,14 @@ public class HeadPounderHeldProjectile : ModProjectile {
             Projectile.timeLeft = PostChargeFrames;
             Projectile.rotation = -3.5f * MathF.PI / 4f - ChargeProgress * MathF.PI / 4f;
 
-            _charge += 1;
+            _charge += 1 * ((Main.player[Projectile.owner].GetAttackSpeed(DamageClass.Melee)) + (Main.player[Projectile.owner].GetAttackSpeed(DamageClass.Generic)) - 1);
+            //Main.NewText("Projectile.speed" + ((Main.player[Projectile.owner].GetAttackSpeed(DamageClass.Melee)) + (Main.player[Projectile.owner].GetAttackSpeed(DamageClass.Generic)) - 1 ), Microsoft.Xna.Framework.Color.White);
             _outlineAlpha = MathF.Pow(ChargeProgress, 2);
 
             if(_charge >= MaxCharge) {
-                if(_charge == MaxCharge) {
-                    SoundEngine.PlaySound(SoundID.Tink);
+                if(Overcharge == 0) {
+                    SoundEngine.PlaySound(SoundID.Tink with { Volume = 0.5f, PitchRange = (-0.5f, 0f) }); // Maxmana is vanilla standard, but sound even more game-y....
+                    SoundEngine.PlaySound(SoundID.Item20 with { Volume = 0.5f , PitchRange = (0.5f, 1f) });
                 }
             }
         }
@@ -142,7 +152,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                             },
                             Projectile.position
                         );
-
+                        hitCenter.Y += 8f;
                         Projectile.NewProjectile(
                             Projectile.GetSource_FromThis(),
                             hitCenter - Vector2.UnitY * 5,
@@ -169,7 +179,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
                                 ColorStart = dustColorStart,
                                 ColorFade = dustColorFade,
                                 Spin = 0.03f,
-                                InitialScale = Main.rand.NextFloat(0.75f, 1.5f)
+                                InitialScale = Main.rand.NextFloat(0.75f, 1.35f)
                             };
 
                             var newDust = Dust.NewDustPerfect(
@@ -184,8 +194,18 @@ public class HeadPounderHeldProjectile : ModProjectile {
                             newDust.customData = newDustData;
                         }
 
-                        for(int i = 0; i < 5; i++) {
-                            Dust.NewDust(hitPosition, hitSize, hitSize, DustID.Stone);
+                        for(int i = 0; i < 5 * Overcharge; i++) {
+                            Vector2 burstVelocity = new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-6f, -0.5f)); // More charge = crazier dust burst
+                            int ds = Dust.NewDust(hitPosition, hitSize, hitSize, DustID.Stone);
+                            Main.dust[ds].velocity = Vector2.Max(burstVelocity * Overcharge * 0.3f, burstVelocity);
+                            Main.dust[ds].scale = Math.Max(Main.rand.NextFloat(0.05f * Overcharge, 0.3f * Overcharge), 0.6f);
+                        }
+                        for(int i = 0; i < Math.Max(4 * Overcharge, 7); i++) {
+                            Vector2 burstVelocity = new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-8f, -4f)); // Likewise
+                            int dc = Dust.NewDust(hitPosition, hitSize, hitSize, DustID.CursedTorch);
+                            Main.dust[dc].velocity = Vector2.Max(burstVelocity * Overcharge * 0.3f, burstVelocity);
+                            Main.dust[dc].scale = Math.Max(Main.rand.NextFloat(0.05f * Overcharge, 0.3f * Overcharge), 0.6f);
+                            //Main.dust[d].noGravity = true;
                         }
 
                         Helper.ForEachNPCInRange(hitCenter, 80f, npc =>
@@ -200,13 +220,17 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
                         Main.instance.CameraModifiers.Add(new ExplosionShakeCameraModifier(13f, 0.6f));
 
+                        if(Overcharge >= 5) Overcharge = 20;
+                        int Spikemultiplier = (int)Overcharge * 3;
+
                         CoroutineSystem.Start(SpawnSpikesRoutine(
                             Projectile.GetSource_FromAI(),
                             hitCenter,
                             Owner.direction,
                             Projectile.damage,
                             Projectile.knockBack * 2f,
-                            Projectile.owner
+                            Projectile.owner,
+                            Spikemultiplier
                          ));
                         _hit = true;
                     }
@@ -218,7 +242,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
                 }
 
-                Projectile.rotation = _hit ? 0
+                Projectile.rotation = _hit ? 0.25f // End rotation I think... 0 is just 0 degrees, but higher numbers rotate it clockwise,
                     : (1f - MathF.Pow(progress - (1f + progressHit), 2)) * MathF.PI / 2f;
             }
         }
@@ -236,6 +260,129 @@ public class HeadPounderHeldProjectile : ModProjectile {
         }
         _trailPositions[0] = trailLastPosition;
     }
+    public override void PostAI() { // Reserving PostAI for overcharge visuals now
+        if(ChargeProgress >= 1 && Owner.channel) {
+            if(chargeSoundSlot == SlotId.Invalid || !SoundEngine.TryGetActiveSound(chargeSoundSlot, out _)) {
+
+                SoundStyle loopingAudio = SoundID.Item15;
+
+                loopingAudio.Volume = 0.4f + Overcharge * 0.2f;
+                loopingAudio.Pitch = -0.5f + Overcharge * 0.2f;
+
+                // Play the sound and remember WHICH slot it occupies
+                chargeSoundSlot = SoundEngine.PlaySound(loopingAudio, Projectile.Center);
+
+                SoundStyle loopingAudio2 = SoundID.Item24;
+
+                loopingAudio2.Volume = 0.6f + Overcharge * 0.2f;
+                loopingAudio2.Pitch = 0.0f + Overcharge * 0.4f;
+
+                // Play the sound and remember WHICH slot it occupies
+                chargeSoundSlot = SoundEngine.PlaySound(loopingAudio2, Projectile.Center);
+
+                if(Overcharge < 5) {
+                    Overcharge += 0.5f * ((Main.player[Projectile.owner].GetAttackSpeed(DamageClass.Melee)) + (Main.player[Projectile.owner].GetAttackSpeed(DamageClass.Generic)) - 1); // Charge speed
+                    if(Overcharge <= 4.5) {
+                        Projectile.NewProjectile(
+                            Main.player[Projectile.owner].GetSource_FromAI(),
+                            Projectile.Center + Main.rand.NextVector2Circular(2f, 2f) + Vector2.UnitY * 20.7f + Vector2.UnitX * -59.5f * new Vector2(Owner.direction, 1f),
+                            new Vector2(0f, 0f),
+                            ModContent.ProjectileType<HeadPounderCharge>(),
+                            0,
+                            0,
+                            Main.myPlayer,
+                            ai0: Main.rand.NextFloat(1f, 1.3f),
+                            ai1: 0.01f
+                        );
+                    }
+                    if(Overcharge >= 1) {
+                        if(!hasCreatedOverchargeFlash1) {
+                            Projectile.NewProjectile(
+                                Main.player[Projectile.owner].GetSource_FromAI(),
+                                Projectile.Center + Vector2.UnitY * 20.7f + Vector2.UnitX * -59.5f * new Vector2(Owner.direction, 1f),
+                                new Vector2(0f, 0f),
+                                ModContent.ProjectileType<HeadPounderChargeShine>(),
+                                0,
+                                0,
+                                Main.myPlayer,
+                                ai0: 0f,
+                                ai1: 0.1f,
+                                ai2: 0
+                            );
+                            hasCreatedOverchargeFlash1 = true;
+                        }
+                    }
+                }
+                else { // Smoke
+                    var dustPos = Projectile.Center + Main.rand.NextVector2Circular(15f, 22f)
+                        + Vector2.UnitY * 9f + Vector2.UnitX * -70f * new Vector2(Owner.direction, 1f);
+
+                    var dustColorStart = new Color(133, 122, 94);
+                    var dustColorFade = dustColorStart * 0.4f;
+
+                    var newDustData = new Smoke.Data()
+                    {
+                        InitialLifetime = 40,
+                        ElapsedFrames = 0,
+                        InitialOpacity = Main.rand.NextFloat(0.2f, 0.4f),
+                        ColorStart = dustColorStart,
+                        ColorFade = dustColorFade,
+                        Spin = Main.rand.NextFloat(0.00f, 0.01f),
+                        InitialScale = Main.rand.NextFloat(0.2f, 0.8f)
+                    };
+
+                    var newDust = Dust.NewDustPerfect(
+                        dustPos,
+                        ModContent.DustType<Smoke>(),
+                        new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-6f, -0.5f)),
+                        0,
+                        newColor: Color.White,
+                        newDustData.InitialScale
+                    );
+
+                    newDust.customData = newDustData;
+
+                    //Shine spawn and sfx etc.
+                    if(!hasCreatedOverchargeFlash2) {
+                        Projectile.NewProjectile(
+                            Main.player[Projectile.owner].GetSource_FromAI(),
+                            Projectile.Center + Vector2.UnitY * 20.7f + Vector2.UnitX * -59.5f * new Vector2(Owner.direction, 1f),
+                            new Vector2(0f, 0f),
+                            ModContent.ProjectileType<HeadPounderChargeShine>(),
+                            0,
+                            0,
+                            Main.myPlayer,
+                            ai0: 1.4f,
+                            ai1: 0.1f,
+                            ai2: 1
+                        );
+                        hasCreatedOverchargeFlash2 = true;
+                    }
+                }
+            }
+            else {
+                // OPTIONAL: Update the sound's position so it moves smoothly with the player
+                if(SoundEngine.TryGetActiveSound(chargeSoundSlot, out var activeSound)) {
+                    activeSound.Position = Projectile.Center;
+                }
+            }
+        }
+        else {
+            // If they are no longer charging, stop the loop safely
+            StopChargeSound();
+        }
+    }
+
+    private void StopChargeSound() {
+        // If we have a valid slot, locate it and shut it down cleanly
+        if(chargeSoundSlot != SlotId.Invalid) {
+            if(SoundEngine.TryGetActiveSound(chargeSoundSlot, out var activeSound)) {
+                activeSound.Stop();
+            }
+            // Reset the tracker variable
+            chargeSoundSlot = SlotId.Invalid;
+        }
+    }
 
     static IEnumerator SpawnSpikesRoutine(
         IEntitySource source,
@@ -243,11 +390,12 @@ public class HeadPounderHeldProjectile : ModProjectile {
         int direction,
         int damage,
         float knockback,
-        int owner
+        int owner,
+        int spikeMultiplier
     ) {
         var x = position.X;
         var tileY = (int)position.Y >> 4;
-        for(var i = 0; i < 7; i++) {
+        for(var i = 0; i < 6 + spikeMultiplier; i++) {
             x += Main.rand.NextFloat(40f, 60f) * direction;
             if(Collision.SolidTiles(new(x, tileY * 16), 1, 1)) {
                 for(var j = 1; j < 100; j++) {
@@ -268,7 +416,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
             var projectile = Projectile.NewProjectileDirect(
                 source,
-                new(x, tileY * 16f + 8f),
+                new(x, tileY * 16f + 8f - 2f),
                 Vector2.Zero,
                 ModContent.ProjectileType<PounderSpike>(),
                 damage,
@@ -298,6 +446,7 @@ public class HeadPounderHeldProjectile : ModProjectile {
 
     public override void ModifyHitNPC(NPC target, ref NPC.HitModifiers modifiers) {
         var modifier = MathF.Pow(ChargeProgress, 2);
+        if(modifier < 0.1) modifier = 0.1f;
         modifiers.Knockback *= modifier;
         modifiers.SourceDamage *= modifier;
     }
@@ -308,34 +457,40 @@ public class HeadPounderHeldProjectile : ModProjectile {
         var rotation = (Projectile.rotation + MathF.PI / 4f) * Owner.direction;
         Vector2 origin = new(offset - 5f, texture.Height - offset);
 
-        var trailColor = new Color(96, 91, 206) * _outlineAlpha * 0.4f;
+        var trailColor = new Color(174, 203, 5) * _outlineAlpha * 0.4f;
 
         Graphics.BeginPixelated(Graphics.WorldTransformMatrix)
+               .DrawTexture(new()
+               {
+                   Texture = texture,
+                   Position = Projectile.position,
+                   Color = lightColor,
+                   Rotation = rotation,
+                   Origin = Owner.direction == -1 ? new Vector2(texture.Width - origin.X, origin.Y) : origin,
+                   Scale = Vector2.One * Projectile.scale,
+                   SpriteEffects = Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
+               })
+            .ApplyOutline(trailColor * _outlineAlpha)
             .SetTexture(TextureAssets.MagicPixel.Value)
             .DrawTrail(
                 _trailPositions.Select(p => p + Projectile.position).ToArray(),
-                static t => (1.25f - t) * 20f,
-                _ => trailColor
+                static t => (1.25f - t) * 20f ,
+                t => Color.Lerp(trailColor, new Color(0, 0, 0, 0), t)
+            )
+            .DrawTrail(
+                _trailPositions.Select(p => p + Projectile.position).ToArray(),
+                static t => (1.25f - t) * 25f,
+                t => Color.Lerp(trailColor, new Color(0, 0, 0, 0), t)
             )
             .SetSamplerState(SamplerState.PointClamp)
-            .DrawTexture(new()
-            {
-                Texture = texture,
-                Position = Projectile.position,
-                Color = lightColor,
-                Rotation = rotation,
-                Origin = Owner.direction == -1 ? new Vector2(texture.Width - origin.X, origin.Y) : origin,
-                Scale = Vector2.One * Projectile.scale,
-                SpriteEffects = Owner.direction == 1 ? SpriteEffects.None : SpriteEffects.FlipHorizontally
-            })
-            .ApplyOutline(trailColor)
-            .ApplyOutline(new Color(230, 255, 5) * _outlineAlpha)
+         
+            //.ApplyOutline(new Color(5, 30, 0, 0) * _outlineAlpha) didy
             .End();
 
         var tintFlashFrames = 15;
         var tintColor = Color.Transparent;
         if(Owner.channel) {
-            tintColor = Color.White
+            tintColor = Color.Yellow
                 * MathF.Max(1f - MathF.Pow(2f * MathF.Max(_charge - MaxCharge + tintFlashFrames / 2, 0) / tintFlashFrames - 1f, 2), 0f);
         }
 

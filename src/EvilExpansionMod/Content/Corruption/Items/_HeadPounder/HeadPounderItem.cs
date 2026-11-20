@@ -1,5 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using EvilExpansionMod.Content.Tiles.Banners;
+using ReLogic.Utilities;
+using System.Collections.Generic;
 using Terraria;
+using Terraria.Audio;
 using Terraria.GameContent.Creative;
 using Terraria.ID;
 using Terraria.ModLoader;
@@ -10,22 +13,22 @@ public class HeadPounderItem : ModItem {
     public override string Texture => Assets.Images.Corruption.Items.HeadPounder.HeadPounderItem.KEY;
 
     public override void SetStaticDefaults() {
-        CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 3;
+        CreativeItemSacrificesCatalog.Instance.SacrificeCountNeededByItemId[Type] = 1;
     }
 
     public override void SetDefaults() {
-        Item.damage = 162;
+        Item.damage = 142;
         Item.crit = 0;
         Item.DamageType = DamageClass.Melee;
         Item.knockBack = 8;
 
         Item.width = Item.height = 80;
 
-        Item.useTime = Item.useAnimation = 30;
+        Item.useTime = Item.useAnimation = 10;
         Item.useStyle = -1;
 
-        Item.value = Item.sellPrice(gold:1);
-        Item.rare = ItemRarityID.LightRed;
+        Item.value = Item.sellPrice(gold:2);
+        Item.rare = ItemRarityID.Pink;
 
         Item.noUseGraphic = true;
         Item.noMelee = true;
@@ -42,7 +45,6 @@ public class HeadPounderItem : ModItem {
     //    tooltips.Find(t => t.Name == "Damage").Text =
     //        Mod.GetLocalization($"{LocalizationCategory}.{nameof(HeadPounderItem)}.Damage").Format(Item.damage);
     //}
-
     public override bool CanUseItem(Player player) {
         return player.ownedProjectileCounts[Item.shoot] == 0;
     }
@@ -50,6 +52,8 @@ public class HeadPounderItem : ModItem {
     public override void AddRecipes()
         => CreateRecipe()
             .AddIngredient(ModContent.ItemType<PolypBarItem>(), 18)
+            .AddIngredient(ModContent.ItemType<CursehoundBannerItem>(), 1)
             .AddTile(TileID.Anvils)
             .Register();
 }
+

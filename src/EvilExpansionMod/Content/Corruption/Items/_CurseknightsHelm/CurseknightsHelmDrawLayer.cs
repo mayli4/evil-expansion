@@ -22,7 +22,10 @@ internal class CurseknightsHelmDrawLayer : PlayerDrawLayer {
     }
 
     public override void Unload() {
-        _targetLease.Dispose();
+        Main.QueueMainThreadAction(() =>
+        {
+            _targetLease.Dispose();
+        });
     }
 
     public override Position GetDefaultPosition() => new AfterParent(PlayerDrawLayers.Head);

@@ -17,7 +17,7 @@ public class ShadowOrbProjectile : ModProjectile {
     readonly static int MaxTimeLeft = 360;
     ref float FlashAlpha => ref Projectile.ai[0];
     bool Hit { get => Projectile.ai[1] == 1; set => Projectile.ai[1] = value ? 1 : 0; }
-
+    public Player Owner => Main.player[Projectile.owner];
     public override void SetDefaults() {
         Projectile.width = 24;
         Projectile.height = 24;
@@ -53,6 +53,8 @@ public class ShadowOrbProjectile : ModProjectile {
 
         return true;
     }
+
+    bool Closeenough = false;
     public override void AI() {
         if(Projectile.timeLeft == MaxTimeLeft) {
             SoundEngine.PlaySound(SoundID.Item106, Projectile.Center);
@@ -126,6 +128,18 @@ public class ShadowOrbProjectile : ModProjectile {
             }
 
             SoundEngine.PlaySound(SoundID.Item27, Projectile.Center);
+        }
+
+        // We implement a little QOL player tracking. For gamefeel purposes
+        var distanceToOwner = Projectile.Distance(Owner.Center);
+
+        Vector2 vectorToTarget = Owner.Center - Projectile.Center;
+        float distance = vectorToTarget.Length();
+        if (distance <= 120f && distance >= 10f && !Hit) {
+            Closeenough = true;
+        }
+        if (Closeenough && !Hit) {
+            Projectile.velocity = Vector2.Lerp(Projectile.velocity *= 1.1f, vectorToTarget / distance * 10f, 0.1f);
         }
     }
 

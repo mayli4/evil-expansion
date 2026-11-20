@@ -60,7 +60,7 @@ public class MarrowEyeNPC : ModNPC {
         NPC.knockBackResist = 0f;
         NPC.friendly = false;
         NPC.damage = 222;
-        NPC.defense = 2;
+        NPC.defense = 11;
 
         NPC.HitSound = SoundID.NPCHit23;
         NPC.DeathSound = SoundID.NPCDeath1;
@@ -78,7 +78,7 @@ public class MarrowEyeNPC : ModNPC {
     public override float SpawnChance(NPCSpawnInfo spawnInfo) => spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.2f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 1, 4));
     }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
@@ -87,11 +87,14 @@ public class MarrowEyeNPC : ModNPC {
     }
     public override void ApplyDifficultyAndPlayerScaling(int numPlayers, float balance, float bossAdjustment) {
         if(Main.expertMode) {
-            NPC.defense = 4;
+            NPC.defense = 22;
         }
         if(Main.masterMode) {
-            NPC.defense = 6;
+            NPC.defense = 33;
         }
+    }
+    public override bool CanHitPlayer(Player target, ref int cooldownSlot) {
+        return false; // Prevents the NPC from dealing any contact damage to players
     }
     public override void HitEffect(NPC.HitInfo hit) {
         if(Main.netMode == NetmodeID.Server || NPC.life > 0) return;
@@ -249,7 +252,7 @@ public class MarrowEyeNPC : ModNPC {
 
                 if(IsTargetValid(400f)) {
                     State = State.Waking;
-                    SoundEngine.PlaySound(Assets.Sounds.MarrowEye.MarrowEyeChargeup.Asset, NPC.Center);
+                    SoundEngine.PlaySound(Assets.Sounds.MarrowEye.MarrowEyeChargeup.Asset with { Volume = 0.6f }, NPC.Center);
                 }
                 break;
             case State.Waking:

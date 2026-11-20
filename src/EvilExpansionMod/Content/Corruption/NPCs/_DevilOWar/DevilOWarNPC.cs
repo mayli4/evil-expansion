@@ -32,8 +32,8 @@ public sealed class DevilOWarNPC : ModNPC {
 
     public Player Target => Main.player[NPC.target];
 
-    private const int FOLLOW_RANGE = 16 * 64;
-    public const int CHARGING_RADIUS = 26 * 10;
+    private const int FOLLOW_RANGE = 16 * 15;
+    public const int CHARGING_RADIUS = 16 * 17;
     private const int ATTACK_COOLDOWN = 60 * 1;
     public const int STINGER_DURATION_MAX = 60 * 30;
     public const int MAX_DRAIN_FOR_LEVEL = 160;
@@ -58,12 +58,13 @@ public sealed class DevilOWarNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 36;
         NPC.height = 36;
-        NPC.lifeMax = 780;
+        NPC.lifeMax = 1180;
+        NPC.defense = 20;
         NPC.value = NPC.value = Item.buyPrice(silver: 15);
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;
         NPC.noGravity = true;
-        NPC.knockBackResist = 0.05f;
+        NPC.knockBackResist = 0.01f;
         NPC.friendly = false;
 
         NPC.HitSound = SoundID.NPCHit13;
@@ -116,7 +117,7 @@ public sealed class DevilOWarNPC : ModNPC {
         spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.2f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
-        npcLoot.Add(ItemDropRule.Common(ItemID.Gel, 1, 3, 6));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<RawShadowScalesItem>(), 2, 1, 3));
         npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<InflatableDevilOWarItem>(), 50, 1, 1));
     }
 
@@ -187,17 +188,17 @@ public sealed class DevilOWarNPC : ModNPC {
             Pulsation = 0f;
             DrawScale = Vector2.One;
         }
-        float difficultyScaler = Main.expertMode ? 2f : 1f; //aggro range, move speed multiplied on Expert and higher
+        float difficultyScaler = Main.expertMode ? 1.5f : 1f; // Move speed multiplied on Expert and higher
         switch(CurrentState) {
             case State.Idle:
-                if(NPC.Center.Distance(Target!.Center) < FOLLOW_RANGE * difficultyScaler) {
+                if(NPC.Center.Distance(Target!.Center) < (FOLLOW_RANGE * NPC.lifeMax / NPC.life)) { // Aggro range increases as health decreases
                     NPC.velocity += 0.05f * NPC.Center.DirectionTo(Target.Center) * difficultyScaler;
-                    if(NPC.velocity.Length() > 2f * difficultyScaler) {
-                        NPC.velocity = Vector2.Normalize(NPC.velocity) * 2f * difficultyScaler;
+                    if(NPC.velocity.Length() > (2f + 1f * (NPC.lifeMax - NPC.life) / NPC.lifeMax) * difficultyScaler) { // Top speed increases as health decreases
+                        NPC.velocity = Vector2.Normalize(NPC.velocity) * (2f + 1f * (NPC.lifeMax - NPC.life) / NPC.lifeMax) * difficultyScaler;
                     }
                 }
                 else {
-                    NPC.velocity *= 0.98f;
+                    NPC.velocity *= 0.99f;
                 }
 
                 float bobbingFrequency = 0.05f;
@@ -206,6 +207,10 @@ public sealed class DevilOWarNPC : ModNPC {
 
                 if(StingerProjectileId == -1 && NPC.Center.Distance(Target.Center) < CHARGING_RADIUS) {
                     FireStinger();
+                    NPC.velocity -= NPC.velocity * 1.5f; // Recoil! Give that stinger firing action some oomph
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item5, NPC.position);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.Item42 with { Volume = 0.15f }, NPC.position);
+                    Terraria.Audio.SoundEngine.PlaySound(SoundID.NPCDeath22 with { Volume = 0.3f }, NPC.position);
                     CurrentState = State.Charging;
                 }
                 break;
@@ -215,10 +220,10 @@ public sealed class DevilOWarNPC : ModNPC {
                     if(!stinger.IsRetracting) {
                         NPC.velocity += 0.1f * NPC.Center.DirectionTo(Target!.Center);
                         if(NPC.velocity.Length() > 1.5f) {
-                            NPC.velocity = Vector2.Normalize(NPC.velocity) * 1.5f * difficultyScaler;
+                            NPC.velocity = Vector2.Normalize(NPC.velocity);
                         }
 
-                        if(NPC.Center.Distance(Target.Center) >= CHARGING_RADIUS + 16 * 2) {
+                        if(NPC.Center.Distance(Target.Center) >= CHARGING_RADIUS + 16 * 5) {
                             RetractStinger();
                         }
                     }

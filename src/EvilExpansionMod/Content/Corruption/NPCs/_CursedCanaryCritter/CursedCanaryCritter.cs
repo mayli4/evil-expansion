@@ -1,3 +1,6 @@
+using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Particles;
+using EvilExpansionMod.Content.Projectiles;
 using EvilExpansionMod.Content.Items.Food;
 using Microsoft.Xna.Framework;
 using System;
@@ -19,16 +22,12 @@ public sealed class CursedCanaryCritter : ModNPC {
     Player Target => Main.player[NPC.target];
 
     bool ValidTarget => Target != null && Target.active;
-
-    private int _dustTimer = 0;
-
     public override void SetStaticDefaults() {
         Main.npcFrameCount[Type] = 17;
         Main.npcCatchable[Type] = true;
 
         NPCID.Sets.CountsAsCritter[Type] = true;
-        NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = true;
-        NPCID.Sets.TownCritter[Type] = true;
+        NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = false;
     }
 
     public override void SetDefaults() {
@@ -61,32 +60,28 @@ public sealed class CursedCanaryCritter : ModNPC {
     public override void PostAI() {
         NPC.TargetClosest(false);
 
-        var range = 340;
+        var range = 16 * 20;
         var targetInRange = ValidTarget && Target.Center.DistanceSQ(NPC.Center) < (range * range);
 
         Lighting.AddLight(NPC.Center, 0.77f, 1f, 0.56f);
 
-        _dustTimer++;
-        if(_dustTimer >= Main.rand.NextFloat(10, 100)) // Spawns every x ticks
-        {
-            if(Main.netMode != NetmodeID.Server) {
-                int dustIndex = Dust.NewDust(
-                    NPC.position,
-                    NPC.width,
-                    NPC.height,
-                    DustID.CursedTorch,
-                    0f, 0f,
-                    100,
-                    default,
-                    Main.rand.NextFloat(0.5f, 1.5f)
-                );
-                Main.dust[dustIndex].noGravity = false;
-            }
-            _dustTimer = 0;
+        if (Main.rand.NextBool(10)){
+            int dustIndex = Dust.NewDust(
+                NPC.position,
+                NPC.width,
+                NPC.height,
+                DustID.CursedTorch,
+                0f, 0f,
+                100,
+                default,
+                Main.rand.NextFloat(0.5f, 1.5f)
+            );
+            Main.dust[dustIndex].noGravity = false;
         }
+
         switch(State) {
             case 0:
-            case 1:
+            case 1: // Idle, on tiles
                 NPC.noGravity = false;
                 NPC.noTileCollide = false;
                 NPC.velocity.X = 0f;
@@ -97,7 +92,7 @@ public sealed class CursedCanaryCritter : ModNPC {
                     NPC.velocity.Y += NPC.gravity;
                 }
 
-                if(targetInRange) {
+                if(targetInRange || NPC.wet) {
                     State = 2;
                     Timer = 0;
 
@@ -107,7 +102,7 @@ public sealed class CursedCanaryCritter : ModNPC {
                 }
 
                 if(Timer <= 0f) {
-                    Timer = Main.rand.Next(60, 180);
+                    Timer = Main.rand.Next(60, 60 * 10); // Wait for 1- 10 seconds
                     State = Main.rand.Next(2);
 
                     NPC.direction = Main.rand.NextBool() ? 1 : -1;
@@ -120,7 +115,7 @@ public sealed class CursedCanaryCritter : ModNPC {
                 }
                 break;
 
-            case 2:
+            case 2: // Flying about
                 NPC.noGravity = false;
                 NPC.noTileCollide = false;
 
@@ -141,10 +136,13 @@ public sealed class CursedCanaryCritter : ModNPC {
                     break;
                 }
 
-                if(NPC.collideX) {
-                    NPC.velocity.X = -NPC.velocity.X;
-                    NPC.direction *= -1;
-                }
+                //if(NPC.collideX) {
+                //    NPC.velocity.X = -NPC.velocity.X;
+                //    NPC.spriteDirection = -NPC.spriteDirection;
+                //    NPC.direction *= -1;
+                //}
+
+                // Double negative!
 
                 var hasTilesBelow = false;
                 var i = (int)(NPC.Center.X / 16f);
@@ -155,28 +153,53 @@ public sealed class CursedCanaryCritter : ModNPC {
 
                 if(hasTilesBelow) NPC.velocity.Y -= Main.rand.NextFloat() * 1.15f;
 
-                var flyDirection = ValidTarget ? Math.Sign(NPC.Center.X - Target.Center.X) : NPC.spriteDirection;
-                NPC.velocity.X += flyDirection * 0.1f;
+                //var flyDirection = ValidTarget ? Math.Sign(NPC.Center.X - Target.Center.X) : NPC.spriteDirection;
+                //NPC.velocity.X += flyDirection * 0.1f;
+                //NPC.spriteDirection = flyDirection;
 
-                NPC.spriteDirection = flyDirection;
+                // ??? These lines of code just completely fail at their job, sorry. Fix below
+
+                NPC.spriteDirection = NPC.velocity.X >=0 ? 1 : -1;
+                NPC.velocity.X += NPC.spriteDirection * 0.1f;
+                if (NPC.velocity.Y < 0) NPC.velocity.Y *= 1.1f;
                 NPC.velocity *= 0.998f;
                 break;
         }
     }
 
     public override void OnKill() {
-        Projectile.NewProjectile(
-            NPC.GetSource_FromAI(),
-            NPC.Center,
-            Vector2.Zero,
-            ModContent.ProjectileType<SpiritContactExplosion>(),
-            80,
-            0.5f,
-            Main.myPlayer,
-            ai0: 1,
-            ai1: 1
-            );
+        //Projectile.NewProjectile(
+        //    NPC.GetSource_FromAI(),
+        //    NPC.Center,
+        //    Vector2.Zero,
+        //    ModContent.ProjectileType<SpiritContactExplosion>(),
+        //    Main.expertMode ? 40 : 80,
+        //    0.5f,
+        //    Main.myPlayer,
+        //    ai0: 1,
+        //    ai1: 1
+        //    );
         SoundEngine.PlaySound(SoundID.DD2_ExplosiveTrapExplode with { Volume = 1f }, NPC.Center);
+
+        if(Main.netMode != NetmodeID.MultiplayerClient) {
+            ExplosionProjectile.New(
+                NPC.GetSource_Death(),
+                NPC.Center,
+                Main.expertMode ? 40 : 80,
+                Color.Yellow,
+                Color.LightGoldenrodYellow,
+                size: 16 * 10,
+                timeLeft: 35,
+                friendly: true,
+                hostile: true
+            );
+            for(int i = 0; i < 15; i++) {
+                var ember = GlowEmberParticle.NewParticle(NPC.Center + Main.rand.NextVector2Circular(15, 15), Main.rand.NextVector2Circular(11, 11), Main.rand.NextFloat(1f, 2f), Color.YellowGreen, Color.White);
+                ember.Randomness *= 2f;
+                ember.LossPerSecond *= 4f;
+                ParticleEngine.PARTICLES.Add(ember);
+            }
+        }
     }
 
     public override void FindFrame(int frameHeight) {

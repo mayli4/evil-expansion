@@ -19,9 +19,17 @@ public class MarrowLazerProjectile : ModProjectile {
     static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
     public static readonly int DisappearFrames = 16;
 
+    //Color mainColor = new(18, 0, 27);
+    //Color secondaryColor = new(26, 23, 145);
+    //Color highlightColor = new(255, 10, 255);
+
     Color mainColor = new(21, 8, 30);
-    Color secondaryColor = new(253, 60, 179);
-    Color highlightColor = new(255, 215, 240);
+    Color secondaryColor = new(253, 20, 179);
+    Color highlightColor = new(255, 120, 240);
+
+    //Color mainColor = new(21, 8, 30);
+    //Color secondaryColor = new(253, 60, 179);
+    //Color highlightColor = new(255, 215, 240);
 
     int hitCd;
 
@@ -41,7 +49,7 @@ public class MarrowLazerProjectile : ModProjectile {
     public static readonly SoundStyle LaserLoopSound = new(Assets.Sounds.MarrowEye.MarrowEyeLoopedLaser.KEY)
     {
         IsLooped = true,
-        Volume = 0.8f,
+        Volume = 0.6f,
         PitchVariance = 0f,
     };
 

@@ -14,19 +14,22 @@ using Terraria.GameContent.Bestiary;
 using Terraria.GameContent.ItemDropRules;
 using Terraria.ID;
 using Terraria.ModLoader;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace EvilExpansionMod.Content.Crimson;
 
 enum CultistState {
     FlyToTarget,
     SpearAttack,
-    EyeAttack
+    EyeAttack,
+    BloodAttack,
 }
 
 public class ThoughtfulCultistNPC : ModNPC {
     public override string Texture => Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistBrain.KEY;
     Player Target => Main.player[NPC.target];
     static float DifficultyScaler => Main.expertMode ? (Main.masterMode ? 3f : 2f) : 1f;
+    int CurrentAttack = 1;
     CultistState State => Unsafe.BitCast<float, CultistState>(NPC.ai[0]);
 
     float _timer;
@@ -35,14 +38,28 @@ public class ThoughtfulCultistNPC : ModNPC {
 
     void ChangeState(CultistState state) {
         NPC.ai[0] = Unsafe.BitCast<CultistState, float>(state);
-        _timer = 0;
+        //Main.NewText("NPC.ai[0]" + NPC.ai[0], Microsoft.Xna.Framework.Color.White);
+        if (NPC.ai[0] != 0) _timer = 0; // Timer starts from 0 every time ATTACK IS INITIATED (previously, when state was changed)
         NPC.netUpdate = true;
     }
+    public override void SetStaticDefaults() {
+        var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
+        {
+            CustomTexturePath = Assets.Images.Crimson.NPCs.ThoughtfulCultist.ThoughtfulCultist_Bestiary.KEY, //Custom texture for the Bestiary
+            Position = new Vector2(1f, 50f),
+            PortraitPositionXOverride = 0f,
+            PortraitPositionYOverride = 40f
+        };
+        NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
+        ContentSamples.NpcBestiaryRarityStars[Type] = 4;
 
+        ItemID.Sets.KillsToBanner[BannerItem] = 25;
+    }
     public override void SetDefaults() {
         NPC.width = 38;
         NPC.height = 38;
-        NPC.lifeMax = 970;
+        NPC.lifeMax = 2430;
+        NPC.defense = Main.expertMode ? (int)15 : (int)10;
         NPC.value = Item.buyPrice(gold: 1, silver: 50);
         NPC.noTileCollide = true;
         NPC.aiStyle = -1;
@@ -53,33 +70,22 @@ public class ThoughtfulCultistNPC : ModNPC {
 
         NPC.HitSound = SoundID.NPCHit23;
 
-        ItemID.Sets.KillsToBanner[BannerItem] = 25;
-        SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
-
-        NPC.buffImmune[BuffID.CursedInferno] = true;
+        NPC.buffImmune[BuffID.Ichor] = true;
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
 
         Banner = NPC.type;
         BannerItem = ModContent.ItemType<ThoughtfulCultistBannerItem>();
-    }
-    public override void SetStaticDefaults() {
-        var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
-        {
-            CustomTexturePath = Assets.Images.Crimson.NPCs.ThoughtfulCultist.ThoughtfulCultist_Bestiary.KEY, //Custom texture for the Bestiary
-            Position = new Vector2(30f, 50f),
-            PortraitPositionXOverride = 0f,
-            PortraitPositionYOverride = 40f
-        };
-        NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
-        ContentSamples.NpcBestiaryRarityStars[Type] = 3;
-    }
 
-    public override float SpawnChance(NPCSpawnInfo spawnInfo) => Main.hardMode && spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.1f : 0;
+        SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
+    }
+   
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) => Main.hardMode && spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.05f : 0;
 
     public override void ModifyNPCLoot(NPCLoot npcLoot) {
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 2, 4));
-        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ThoughtfulPendantItem>(), 50, 1, 1));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<PusClumpItem>(), 1, 1, 2));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<BoneSlicesItem>(), 1, 3, 5));
+        npcLoot.Add(ItemDropRule.Common(ModContent.ItemType<ThoughtfulPendantItem>(), 10, 1, 1));
     }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {
@@ -88,8 +94,8 @@ public class ThoughtfulCultistNPC : ModNPC {
     }
     public override void OnSpawn(IEntitySource source) {
         ChangeState(CultistState.FlyToTarget);
+        CurrentAttack = Main.rand.Next(2, 4);
     }
-
     public override void AI() {
         NPC.TargetClosest();
         var directionToTarget = Vector2.Zero;
@@ -103,60 +109,98 @@ public class ThoughtfulCultistNPC : ModNPC {
         switch(State) {
             case CultistState.FlyToTarget:
                 if(distanceToTarget > 400) {
-                    NPC.velocity += directionToTarget * 0.15f;
+                    NPC.velocity += directionToTarget * 0.2f;
                     NPC.velocity *= 0.97f;
                 }
-                else if(Main.netMode != NetmodeID.MultiplayerClient && _timer > 120) {
-                    if(Main.rand.NextBool()) {
+                else if(Main.netMode != NetmodeID.MultiplayerClient && _timer > 240) { // Start attack when in range and timer > 240
+                    if(CurrentAttack == 1) {
                         _portalRotation = Main.rand.NextFloat(0, -MathF.PI);
+                        ChangeState(CultistState.SpearAttack);
+                        CurrentAttack = 2;
+                    }
+                    else if(CurrentAttack == 2) {
+                        _portalRotation = Main.rand.NextFloat(0, 2 * MathF.PI);
                         ChangeState(CultistState.EyeAttack);
+                        CurrentAttack = 3;
                     }
                     else {
-                        _portalRotation = Main.rand.NextFloat(0, 2 * MathF.PI);
-                        ChangeState(CultistState.SpearAttack);
+                        _portalRotation = Main.rand.NextFloat(0, 4 * MathF.PI);
+                        ChangeState(CultistState.BloodAttack);
+                        CurrentAttack = 1;
                     }
+
+                    SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistPendantActivate.Asset with
+                    {
+                        //Pitch = Main.rand.NextFloatDirection() * 0.5f,
+                        PitchRange = (-0.2f, 0.2f),
+                        Volume = 2f,
+                    },
+                    NPC.Center);
+
+                    SoundEngine.PlaySound(SoundID.DD2_GhastlyGlaiveImpactGhost with
+                    {
+                        //Pitch = Main.rand.NextFloatDirection() * 0.5f,
+                        PitchRange = (-1.2f, -0.2f),
+                        Volume = 2f,
+                    },
+                    NPC.Center);
                 }
+                //ChangeState(CultistState.SpearAttack); // For testing purposes
                 break;
             case CultistState.SpearAttack:
                 NPC.velocity *= 0.98f;
-                if(Target == null || _timer > 150) {
+
+                if(_timer > 60 / DifficultyScaler && (int)_timer % (Main.expertMode ? 6f : 12f) == 0) { // If timer is above 60 frames / difficultyscaler, every 12 frames, or 6 frames on expert+
+                    Vector2 vel = Target.velocity;
+                    var rotationOffset = (float)Math.Pow(DifficultyScaler, 1) * Main.rand.Next(0, 50);
+                    var position = Target.Center - (105f + (float)(rotationOffset)) * _portalRotation.ToRotationVector2() + (vel);
+                    var direction = position.DirectionTo(Target.Center);
+                    Projectile.NewProjectile(
+                        NPC.GetSource_FromAI(),
+                        position,
+                        direction,
+                        ModContent.ProjectileType<CultistPortal>(),
+                        35, // 70, 140, 210
+                        0.2f,
+                        ai0: (float)PortalType.Spear,
+                        ai1: 112
+                    );
+                    _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
+                }
+
+                if(Target == null || _timer > 150) { // Stop attack when timer is above 150
                     ChangeState(CultistState.FlyToTarget);
                     break;
                 }
 
-                if(_timer > 60 / DifficultyScaler && (int)_timer % 30 == 0) {
-                    for(int i = 0; i < (int)DifficultyScaler; i++) {
-                        var rotationOffset = Main.rand.Next(0, 20) * DifficultyScaler * DifficultyScaler;
-                        var position = Target.Center - (105f + rotationOffset) * _portalRotation.ToRotationVector2();
-                        var direction = position.DirectionTo(Target.Center);
-                        Projectile.NewProjectile(
-                            NPC.GetSource_FromAI(),
-                            position,
-                            direction,
-                            ModContent.ProjectileType<CultistPortal>(),
-                            20,
-                            0.2f,
-                            ai0: (float)PortalType.Spear,
-                            ai1: 112);
-
-                        _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
-                        SoundEngine.PlaySound(SoundID.AbigailSummon with
-                        {
-                            Pitch = Main.rand.NextFloatDirection() * 0.6f,
-                            Volume = 0.8f,
-                        }, position);
-                    }
-                }
+                //if(_timer > 60 / DifficultyScaler && (int)_timer % (30f) == 0) { // If timer is above 60 frames / difficultyscaler, every 30 frames
+                //    Vector2 vel = Target.velocity;
+                //    var rotationOffset = (float)Math.Pow(DifficultyScaler, 1) * Main.rand.Next(0, 50);
+                //    for(var i = 1; i < DifficultyScaler + 1; i++) {
+                //        var position = Target.Center - (105f + (float)(rotationOffset)) * _portalRotation.ToRotationVector2() + (vel);
+                //        var direction = position.DirectionTo(Target.Center);
+                //        Projectile.NewProjectile(
+                //            NPC.GetSource_FromAI(),
+                //            position,
+                //            direction,
+                //            ModContent.ProjectileType<CultistPortal>(),
+                //            35, // 70, 140, 210
+                //            0.2f,
+                //            ai0: (float)PortalType.Spear,
+                //            ai1: 112
+                //        );
+                //        _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
+                //    }
+                //}
 
                 var moveDirection = NPC.DirectionTo(Target.Center).RotatedBy(MathF.PI / 4f);
                 NPC.velocity += moveDirection * 0.075f;
 
                 break;
-            case CultistState.EyeAttack:
+            case CultistState.BloodAttack:
                 NPC.velocity *= 0.98f;
-                if(Target == null) {
-                }
-                else if(_timer > 60 / DifficultyScaler && (int)_timer % 30 == 0) {
+
+                if(_timer > 60 / DifficultyScaler && (int)_timer % 30 == 0) { // If timer is above 60 frames / difficultyscaler, every 30 frames
                     var position = Target.Center + _portalRotation.ToRotationVector2() * Main.rand.NextFloat(300, 400);
                     var direction = position.DirectionTo(Target.Center);
                     Projectile.NewProjectile(
@@ -164,21 +208,38 @@ public class ThoughtfulCultistNPC : ModNPC {
                         position,
                         direction,
                         ModContent.ProjectileType<CultistPortal>(),
-                        20,
+                        25,
                         0.2f,
                         ai0: (float)PortalType.Blood,
                         ai1: 336
                     );
-
                     _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
-                    SoundEngine.PlaySound(SoundID.AbigailSummon with
-                    {
-                        Pitch = Main.rand.NextFloatDirection() * 0.6f - 1.0f,
-                        Volume = 0.8f,
-                    }, position);
                 }
 
-                if(_timer > 120) {
+                if(_timer > 120) { // Stop attack when timer is above 120
+                    ChangeState(CultistState.FlyToTarget);
+                }
+                break;
+            case CultistState.EyeAttack:
+                NPC.velocity *= 0.98f;
+
+                if(_timer > 60 / DifficultyScaler && (int)_timer % 30 == 0) { // If timer is above 60 frames / difficultyscaler, every 30 frames
+                    var position = Target.Center + _portalRotation.ToRotationVector2() * Main.rand.NextFloat(300, 400);
+                    var direction = position.DirectionTo(Target.Center);
+                    Projectile.NewProjectile(
+                        NPC.GetSource_FromAI(),
+                        position,
+                        direction,
+                        ModContent.ProjectileType<CultistPortal>(),
+                        25,
+                        0.2f,
+                        ai0: (float)PortalType.Eyes,
+                        ai1: 224
+                    );
+                    _portalRotation += Main.rand.NextFloat(0.25f, 0.5f) * MathF.PI;
+                }
+
+                if(_timer > 120) { // Stop attack when timer is above 120
                     ChangeState(CultistState.FlyToTarget);
                 }
                 break;
@@ -219,6 +280,8 @@ public class ThoughtfulCultistNPC : ModNPC {
         var pendantTexture = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPendant.Asset.Value;
         var pendantGlowmaskTexture = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPendantGlowmask.Asset.Value;
         var chainTexture = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistChain.Asset.Value;
+        var pendantPulseTextureLarge = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPulse.Asset.Value;
+        var pendantPulseTextureSmall = Assets.Images.Crimson.NPCs.ThoughtfulCultist.CultistPulseSmall.Asset.Value;
 
         if(NPC.IsABestiaryIconDummy)
             return true;
@@ -249,10 +312,21 @@ public class ThoughtfulCultistNPC : ModNPC {
         var pendantOutlineColor = Color.Transparent;
         var pendantPosition = chainPoints[chainPoints.Length / 2];
 
+        var pulseFrameHeightLarge = 408; // 408 large, 82 small
+        var pulseFrameHeightSmall = 82; // 408 large, 82 small
+        var pulseSourceLarge = new Rectangle(0, 0, pendantPulseTextureLarge.Width, pulseFrameHeightLarge);
+        var pulseSourceSmall = new Rectangle(0, 0, pendantPulseTextureSmall.Width, pulseFrameHeightSmall);
+
+        float pulseProgress = _timer / 60;
+        float pulseScale = (float)( pulseProgress < 0.8 ? 1f + ( 0.8f - pulseProgress) / 10f : 1f + (pulseProgress-0.8) * 2f ); //(float)( pulseProgress < 0.8 ? 1f + ( 0.8f - pulseProgress) / 10f : 1f + (pulseProgress-0.8) * 2f )
+        float pulseOpacity = (float) ( pulseProgress < 0.7? (0.3f + pulseProgress): (1f - ((pulseProgress - 0.7f) / 0.3f)) );
+        Vector2 pulseOriginLarge = pulseSourceLarge.Size() / 2f;
+        Vector2 pulseOriginSmall = pulseSourceSmall.Size() / 2f;
+
         if(_timer < 60) {
             var t = MathF.Sin(MathHelper.Pi * _timer / 60f);
 
-            pendantPosition += 1f * Main.rand.NextVector2Unit() * t;
+            pendantPosition += 5f * Main.rand.NextVector2Unit() * t;
 
             switch(State) {
                 case CultistState.SpearAttack:
@@ -260,14 +334,31 @@ public class ThoughtfulCultistNPC : ModNPC {
                         pendantOutlineColor,
                         Color.Orange,
                         t);
+                    pulseSourceLarge.Y = pulseFrameHeightLarge * 0;
+                    pulseSourceSmall.Y = pulseFrameHeightSmall * 0;
                     break;
                 case CultistState.EyeAttack:
                     pendantOutlineColor = Color.Lerp(
                         pendantOutlineColor,
+                        new Color(234, 90, 255),
+                        t);
+                    pulseSourceLarge.Y = pulseFrameHeightLarge * 1;
+                    pulseSourceSmall.Y = pulseFrameHeightSmall * 1;
+                    break;
+                case CultistState.BloodAttack:
+                    pendantOutlineColor = Color.Lerp(
+                        pendantOutlineColor,
                         Color.Red,
-                        MathF.Sin(MathF.PI * _timer / 60));
+                        t);
+                    pulseSourceLarge.Y = pulseFrameHeightLarge * 2;
+                    pulseSourceSmall.Y = pulseFrameHeightSmall * 2;
                     break;
             }
+            //Main.NewText("pulseSource" + pulseSource, Microsoft.Xna.Framework.Color.White);
+            //Main.NewText("pulseSource.Y" + pulseSource.Y, Microsoft.Xna.Framework.Color.White);
+            //Main.NewText("pulseProgress" + pulseProgress, Microsoft.Xna.Framework.Color.White);
+            //Main.NewText("pulseScale" + pulseScale, Microsoft.Xna.Framework.Color.White);
+            //Main.NewText("pulseOpacity" + pulseOpacity, Microsoft.Xna.Framework.Color.White);
         }
 
         Graphics.Begin(Graphics.WorldTransformMatrix)
@@ -332,6 +423,31 @@ public class ThoughtfulCultistNPC : ModNPC {
             0f);
 
         spriteBatch.Draw(brainTexture, NPC.Center - screenPos, brainSource, drawColor, 0f, new Vector2(53, 55), 1f, SpriteEffects.None, 0f);
+
+        if(_timer < 60) {
+            spriteBatch.Draw(
+                pendantPulseTextureLarge,
+                chainPoints[chainPoints.Length / 2] - screenPos + new Vector2() * Main.rand.NextFloat(-50f, 50f) * pulseOpacity,
+                pulseSourceLarge,
+                new Color(255, 255, 255, 255 * (pulseProgress > 0.7 ? 1f - pulseProgress : pulseProgress + 0.3f)) * pulseOpacity,
+                pulseProgress,
+                pulseOriginLarge,
+                pulseScale,
+                SpriteEffects.None,
+                0f
+            );
+           // spriteBatch.Draw(
+           //    pendantPulseTextureSmall,
+           //    chainPoints[chainPoints.Length / 2] - screenPos + new Vector2() * Main.rand.NextFloat(-50f, 50f) * pulseOpacity,
+           //    pulseSourceSmall,
+           //    new Color(255, 255, 255, 255 * (pulseProgress > 0.7 ? 1f - pulseProgress : pulseProgress + 0.3f)) * pulseOpacity,
+           //    -pulseProgress * 2,
+           //    pulseOriginSmall,
+           //    pulseScale,
+           //    SpriteEffects.None,
+           //    0f
+           //);
+        }
         return false;
     }
 }

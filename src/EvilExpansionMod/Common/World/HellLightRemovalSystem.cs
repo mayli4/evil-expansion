@@ -25,11 +25,11 @@ internal sealed class HellLightRemovalSystem : ModSystem {
                 lightColor = underworldCorruptLightColor;
             }
             if((!tile.HasTile || tile.IsHalfBlock || !Main.tileNoSunLight[tile.TileType]) && tile.LiquidAmount < byte.MaxValue) {
-                lightColor = underworldCorruptLightColor;
+                lightColor = underworldCorruptLightColor/1.5f;
             }
 
             if(!tile.HasTile) {
-                lightColor = underworldCorruptLightColor;
+                lightColor = underworldCorruptLightColor/1.5f;
             }
         }
 
@@ -38,11 +38,11 @@ internal sealed class HellLightRemovalSystem : ModSystem {
                 lightColor = underworldCrimsonLightColor;
             }
             if((!tile.HasTile || tile.IsHalfBlock || !Main.tileNoSunLight[tile.TileType]) && tile.LiquidAmount < byte.MaxValue) {
-                lightColor = underworldCrimsonLightColor;
+                lightColor = underworldCrimsonLightColor/2;
             }
 
             if(!tile.HasTile) {
-                lightColor = underworldCrimsonLightColor;
+                lightColor = underworldCrimsonLightColor/2;
             }
         }
     }

@@ -543,11 +543,16 @@ public abstract class WormBody : Worm {
         if(Main.netMode != NetmodeID.MultiplayerClient) {
             // Some of these conditions are possible if the body/tail segment was spawned individually
             // Kill the segment if the segment NPC it's following is no longer valid
-            if(following is null || !following.active || following.friendly || following.townNPC || following.lifeMax <= 5) {
+            if(following is null || !following.active || following.townNPC) {
                 worm.NPC.life = 0;
                 worm.NPC.HitEffect(0, 10);
                 worm.NPC.active = false;
             }
+            //if(following is null || !following.active || following.friendly || following.townNPC || following.lifeMax <= 5) { // REVISING this to make it such that segments can follow friendly NPCs / critters, etc.
+            //    worm.NPC.life = 0;
+            //    worm.NPC.HitEffect(0, 10);
+            //    worm.NPC.active = false;
+            //}
         }
 
         if(following is not null) {

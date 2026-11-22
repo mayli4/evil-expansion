@@ -1,4 +1,5 @@
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Corruption;
 using EvilExpansionMod.Content.Dusts;
 using EvilExpansionMod.Content.Items.Food;
 using Microsoft.Xna.Framework;
@@ -51,7 +52,22 @@ public sealed class PusSlugCritter : ModNPC {
     }
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-        return spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>() ? 0.6f : 0f;
+        if(spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>()) {
+            if(spawnInfo.Water) return 0f;
+            if(spawnInfo.SpawnTileType == TileID.ObsidianBrick ||
+                spawnInfo.SpawnTileType == TileID.HellstoneBrick)
+            {
+                return 0.6f;
+            }
+            if (spawnInfo.SpawnTileType == ModContent.TileType<CrimsonAsh>() ||
+                spawnInfo.SpawnTileType == ModContent.TileType<CorruptAsh>() ||
+                spawnInfo.PlayerInTown ||
+                spawnInfo.PlayerSafe)
+            {
+                return 0.2f;
+            }
+        }
+        return 0f;
     }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {

@@ -1,4 +1,5 @@
 using EvilExpansionMod.Content.Biomes;
+using EvilExpansionMod.Content.Corruption;
 using EvilExpansionMod.Content.Items.Food;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -100,6 +101,8 @@ public sealed class LavaLizardCritter : ModNPC {
         NPC.aiStyle = -1;
         //NPC.friendly = true;
 
+        NPC.rarity = 1;
+
         NPC.DeathSound = SoundID.NPCDeath1;
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCrimsonBiome>().Type];
@@ -107,9 +110,15 @@ public sealed class LavaLizardCritter : ModNPC {
 
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
         if(spawnInfo.Player.InModBiome<UnderworldCrimsonBiome>()) {
-            if(spawnInfo.SpawnTileType == TileID.Ash || spawnInfo.SpawnTileType == TileID.Ebonstone || spawnInfo.SpawnTileType == TileID.Crimstone) {
-                if(spawnInfo.Water) return 0f;
-                return 0.3f;
+            if(spawnInfo.Water) return 0f;
+            if(spawnInfo.SpawnTileType == TileID.ObsidianBrick ||
+                spawnInfo.SpawnTileType == TileID.HellstoneBrick ||
+                spawnInfo.SpawnTileType == ModContent.TileType<CrimsonAshGrass>() ||
+                spawnInfo.SpawnTileType == ModContent.TileType<CorruptAshGrass>() ||
+                spawnInfo.PlayerInTown ||
+                spawnInfo.PlayerSafe)
+            {
+            return 0.6f;
             }
         }
         return 0f;
@@ -154,7 +163,7 @@ public sealed class LavaLizardCritter : ModNPC {
                         NPC.velocity.X = 0;
                         NPC.netUpdate = true;
                         forceDig += 1;
-                        Main.NewText("forceIdle" + forceDig, Microsoft.Xna.Framework.Color.White);
+                        //Main.NewText("forceIdle" + forceDig, Microsoft.Xna.Framework.Color.White);
                         if(forceDig > 3) CurrentState = State.Burrowing;
 
                     }

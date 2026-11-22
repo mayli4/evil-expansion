@@ -1,3 +1,4 @@
+using EvilExpansionMod.Content.Crimson;
 using EvilExpansionMod.Content.Items.Food;
 using Microsoft.Xna.Framework;
 using Terraria;
@@ -11,7 +12,6 @@ namespace EvilExpansionMod.Content.Corruption;
 
 internal class EaterOfSoilHead : WormHead {
     public override string Texture => Assets.Images.Corruption.NPCs.EaterOfSoil.EaterOfSoilHead.KEY;
-    
     public override int BodyType => ModContent.NPCType<EaterOfSoilBody>();
     public override int TailType => ModContent.NPCType<EaterOfSoilTail>();
 
@@ -35,24 +35,25 @@ internal class EaterOfSoilHead : WormHead {
         var drawModifier = new NPCID.Sets.NPCBestiaryDrawModifiers()
         {
             CustomTexturePath = Assets.Images.Corruption.NPCs.EaterOfSoil.EaterOfSoil_Bestiary.KEY,
-            Position = new Vector2(4f, 2f),
+            Position = new Vector2(0f, 12f),
             PortraitPositionXOverride = 0f,
-            PortraitPositionYOverride = -5f,
+            PortraitPositionYOverride = 12f,
         };
         NPCID.Sets.NPCBestiaryDrawOffset.Add(NPC.type, drawModifier);
         Main.npcCatchable[Type] = true;
         NPCID.Sets.CountsAsCritter[Type] = true;
+        NPCID.Sets.TakesDamageFromHostilesWithoutBeingFriendly[Type] = false;
     }
 
     public override void SetDefaults() {
-        NPC.width = 10;
-        NPC.height = 10;
+        NPC.width = 8;
+        NPC.height = 8;
         NPC.damage = 0;
         NPC.aiStyle = -1;
         NPC.defense = 0;
-        NPC.lifeMax = 6;
-        NPC.HitSound = SoundID.NPCHit4;
-        NPC.DeathSound = SoundID.NPCDeath6 with { Volume = 0.8f };
+        NPC.lifeMax = 5;
+        NPC.HitSound = SoundID.NPCHit1;
+        NPC.DeathSound = SoundID.NPCDeath1 with { Volume = 0.8f };
         NPC.catchItem = ModContent.ItemType<EaterOfSoilItem>();
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
@@ -66,8 +67,22 @@ internal class EaterOfSoilHead : WormHead {
         NPC.behindTiles = true;
         NPC.knockBackResist = 0f;
         NPC.friendly = false;
-    }
 
+        NPC.rarity = 1;
+    }
+    public override float SpawnChance(NPCSpawnInfo spawnInfo) {
+        if(spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>()) {
+            if(spawnInfo.SpawnTileType == TileID.ObsidianBrick ||
+                spawnInfo.SpawnTileType == TileID.HellstoneBrick ||
+                spawnInfo.SpawnTileType == ModContent.TileType<CrimsonAshGrass>() ||
+                spawnInfo.SpawnTileType == ModContent.TileType<CorruptAshGrass>() ||
+                spawnInfo.PlayerInTown ||
+                spawnInfo.PlayerSafe) {
+                return 0.6f;
+            }
+        }
+        return 0f;
+    }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange([
             new FlavorTextBestiaryInfoElement(Mods.EvilExpansionMod.Bestiary.EaterOfSoilCritterBestiary.KEY),
@@ -75,8 +90,8 @@ internal class EaterOfSoilHead : WormHead {
     }
 
     public override void Init() {
-        MinSegmentLength = 10;
-        MaxSegmentLength = 10;
+        MinSegmentLength = 5;
+        MaxSegmentLength = 5;
 
         CommonWormInit(this);
     }
@@ -123,14 +138,14 @@ internal class EaterOfSoilHead : WormHead {
     }
 
     public override void SetDefaults() {
-        NPC.width = 10;
-        NPC.height = 10;
+        NPC.width = 8;
+        NPC.height = 8;
         NPC.damage = 0;
         NPC.aiStyle = -1;
         NPC.defense = 0;
-        NPC.lifeMax = 6;
-        NPC.HitSound = SoundID.NPCHit4;
-        NPC.DeathSound = SoundID.NPCDeath6 with { Volume = 0.8f };
+        NPC.lifeMax = 5;
+        NPC.HitSound = SoundID.NPCHit1;
+        NPC.DeathSound = SoundID.NPCDeath1 with { Volume = 0.8f };
         NPC.catchItem = ModContent.ItemType<EaterOfSoilItem>();
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];
@@ -188,14 +203,14 @@ internal class EaterOfSoilTail : WormTail {
     }
 
     public override void SetDefaults() {
-        NPC.width = 10;
-        NPC.height = 10;
+        NPC.width = 8;
+        NPC.height = 8;
         NPC.damage = 0;
         NPC.aiStyle = -1;
         NPC.defense = 0;
-        NPC.lifeMax = 6;
-        NPC.HitSound = SoundID.NPCHit4;
-        NPC.DeathSound = SoundID.NPCDeath6 with { Volume = 0.8f };
+        NPC.lifeMax = 5;
+        NPC.HitSound = SoundID.NPCHit1;
+        NPC.DeathSound = SoundID.NPCDeath1 with { Volume = 0.8f };
         NPC.catchItem = ModContent.ItemType<EaterOfSoilItem>();
 
         SpawnModBiomes = [ModContent.GetInstance<UnderworldCorruptionBiome>().Type];

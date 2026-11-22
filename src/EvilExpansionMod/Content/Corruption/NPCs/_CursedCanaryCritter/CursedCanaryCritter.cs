@@ -1,7 +1,8 @@
 using EvilExpansionMod.Common.Graphics;
+using EvilExpansionMod.Content.Crimson;
+using EvilExpansionMod.Content.Items.Food;
 using EvilExpansionMod.Content.Particles;
 using EvilExpansionMod.Content.Projectiles;
-using EvilExpansionMod.Content.Items.Food;
 using Microsoft.Xna.Framework;
 using System;
 using Terraria;
@@ -48,9 +49,21 @@ public sealed class CursedCanaryCritter : ModNPC {
         NPC.buffImmune[BuffID.OnFire] = true;
         NPC.lavaImmune = true;
     }
-
     public override float SpawnChance(NPCSpawnInfo spawnInfo) {
-        return spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>() ? 0.2f : 0f;
+        if(spawnInfo.Player.InModBiome<UnderworldCorruptionBiome>()) {
+            if(spawnInfo.Water) return 0f;
+            if(spawnInfo.SpawnTileType == TileID.ObsidianBrick ||
+                spawnInfo.SpawnTileType == TileID.HellstoneBrick) {
+                return 0.6f;
+            }
+            if(spawnInfo.SpawnTileType == ModContent.TileType<CrimsonAsh>() ||
+                spawnInfo.SpawnTileType == ModContent.TileType<CorruptAsh>() ||
+                spawnInfo.PlayerInTown ||
+                spawnInfo.PlayerSafe) {
+                return 0.2f;
+            }
+        }
+        return 0f;
     }
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
         bestiaryEntry.Info.AddRange(new IBestiaryInfoElement[] {

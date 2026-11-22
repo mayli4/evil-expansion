@@ -15,7 +15,7 @@ public class CrimsonDrillItem : ModItem {
     }
 
     public override void SetDefaults() {
-        Item.damage = 27;
+        Item.damage = 29;
         Item.DamageType = DamageClass.MeleeNoSpeed;
         Item.width = 20;
         Item.height = 12;
@@ -32,7 +32,7 @@ public class CrimsonDrillItem : ModItem {
         Item.noMelee = true;
         Item.noUseGraphic = true;
         Item.channel = true;
-        Item.tileBoost = -3;
+        Item.tileBoost = -2;
 
         Item.pick = 110;
     }

@@ -54,7 +54,7 @@ public sealed class StinkgrubNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 32;
         NPC.height = 20;
-        NPC.lifeMax = 1084;
+        NPC.lifeMax = 942;
         NPC.defense = 18;
         NPC.value = Item.buyPrice(silver: 10);
         NPC.noTileCollide = false;

@@ -186,7 +186,7 @@ public class ThoughtlessCultist : ModProjectile {
             if(attackTimer == -1) {
                 mouseDirection = (Main.MouseWorld - player.Center).SafeNormalize(Vector2.UnitX);
                 attackTimer = attackTimerMax;
-                modPlayer.attackCooldown = 1; // This is where CD is determined
+                modPlayer.attackCooldown = 20; // This is where CD is determined
 
                 SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistPendantActivate.Asset with
                 {

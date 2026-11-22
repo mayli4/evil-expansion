@@ -53,8 +53,8 @@ public class BloodplateHookPlayer : ModPlayer {
                             player.Center,
                             new Microsoft.Xna.Framework.Vector2(0f, 0f),
                             ModContent.ProjectileType<BloodplateHookShield>(),
-                            66,
-                            14,
+                            44,
+                            18,
                             Main.myPlayer
                             );
 

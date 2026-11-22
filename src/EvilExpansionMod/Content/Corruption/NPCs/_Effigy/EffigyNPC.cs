@@ -49,7 +49,7 @@ public sealed class EffigyNPC : ModNPC {
         NPC.width = 80;
         NPC.height = 140;
 
-        NPC.lifeMax = 640;
+        NPC.lifeMax = 1180;
         NPC.value = 250f;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;

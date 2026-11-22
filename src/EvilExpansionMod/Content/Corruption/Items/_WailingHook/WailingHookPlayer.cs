@@ -55,7 +55,7 @@ public class WailingHookPlayer : ModPlayer {
         }
 
         // Increment the timer, with the amount scaling with enemy count
-        float enemyBonus = (float)Math.Log(1 + nearbyEnemyCount) * 50.0f;
+        float enemyBonus = (float)Math.Log(1 + nearbyEnemyCount * 1.5) * 50.0f;
         _spawnTimer += 1 + enemyBonus;
         if (_spawnTimer < 120)
             return;
@@ -75,7 +75,7 @@ public class WailingHookPlayer : ModPlayer {
                     Vector2.Zero,
                     ModContent.ProjectileType<WailingTelegraphProjectile>(),
                     0,
-                    5f,
+                    7f,
                     Main.myPlayer,
                     ai0: 45 / (float)(1 + Math.Pow(enemyBonus, 0.1)),
                     ai1: 16
@@ -234,7 +234,7 @@ public class WailingFireball : ModProjectile {
     public override void AI() {
         //Main.NewText("Projectile.Opacity" + Projectile.Opacity, Microsoft.Xna.Framework.Color.White);
         //Main.NewText("Projectile.Center" + Projectile.Center, Microsoft.Xna.Framework.Color.White);
-        float maxDetectRadius = 16 * 80f;
+        float maxDetectRadius = 16 * 40f;
         float projSpeed = 16f;
 
         if (Projectile.timeLeft <= 60f) {

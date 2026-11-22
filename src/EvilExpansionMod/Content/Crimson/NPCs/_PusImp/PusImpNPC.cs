@@ -54,8 +54,8 @@ public class PusImpNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 2;
         NPC.height = 38;
-        NPC.lifeMax = 80;
-        NPC.defense = Main.expertMode ? 70 : 60;
+        NPC.lifeMax = 102;
+        NPC.defense = Main.expertMode ? 60 : 50;
         NPC.value = 250f;
         NPC.noTileCollide = false;
         NPC.aiStyle = -1;

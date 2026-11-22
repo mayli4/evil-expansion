@@ -19,8 +19,6 @@ public class MeatPrisonHead : ModItem {
         Item.value = Item.sellPrice(silver: 90);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 9;
-
-        Item.DamageType = DamageClass.Summon;
     }
 
     public override void AddRecipes() {
@@ -59,12 +57,11 @@ public class MeatPrisonBody : ModItem {
         Item.value = Item.sellPrice(gold: 1);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 14;
-
-        Item.DamageType = DamageClass.Summon;
     }
 
     public override void UpdateEquip(Player player) {
         player.GetDamage(DamageClass.Summon) += 0.10f;
+        player.moveSpeed += 0.05f;
         player.maxMinions += 1;
     }
 
@@ -95,8 +92,6 @@ public class MeatPrisonLegs : ModItem {
         Item.value = Item.sellPrice(silver: 60);
         Item.rare = ItemRarityID.LightRed;
         Item.defense = 5;
-
-        Item.DamageType = DamageClass.Summon;
     }
 
     public override void UpdateEquip(Player player) {
@@ -145,7 +140,7 @@ public sealed class MeatPrisonPlayer : ModPlayer {
                     Player.Center,
                     Vector2.Zero,
                     ModContent.ProjectileType<BloodWarden>(),
-                    (int)Player.GetDamage(DamageClass.Summon).ApplyTo(30),
+                    (int)Player.GetDamage(DamageClass.Summon).ApplyTo(27), // Damage set here
                     0f,
                     Player.whoAmI
                 );

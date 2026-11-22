@@ -15,9 +15,6 @@ public sealed class UnderworldCorruptionBiome : ModBiome, IHasCustomLavaBiome {
 
     public override int Music => MusicID.UndergroundCorruption;
 
-
-
-
     public ModLavaStyle ModLavaStyle => ModContent.GetInstance<UnderworldCorruptLavaStyle>();
 
     public override bool IsBiomeActive(Player player) {
@@ -27,11 +24,10 @@ public sealed class UnderworldCorruptionBiome : ModBiome, IHasCustomLavaBiome {
 }
 
 public sealed class UnderglowCorruption : ModSystem {
-
     public override void ModifyLightingBrightness(ref float brightness) {
         Player player = Main.LocalPlayer;
         if(Main.LocalPlayer.InModBiome<UnderworldCorruptionBiome>()) {
-            brightness += 0.04f;
+            brightness += -0.04f;
         }
     }
 }

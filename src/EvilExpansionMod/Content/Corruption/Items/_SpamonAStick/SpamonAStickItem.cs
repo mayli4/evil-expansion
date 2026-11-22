@@ -439,7 +439,7 @@ public class SpamOnAStickProjectile : ModProjectile {
             modifiers.SourceDamage *= 1f;
 
         if(CurrentAIState is AIState.Dropping) {
-        modifiers.SourceDamage *= 3f;
+        modifiers.SourceDamage *= 2.5f;
         modifiers.SetCrit();
         }
 

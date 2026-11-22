@@ -38,6 +38,7 @@ public sealed class DevilOWarNPC : ModNPC {
     public const int STINGER_DURATION_MAX = 60 * 30;
     public const int MAX_DRAIN_FOR_LEVEL = 160;
     private const int TENATCLE_SEGMENT_COUNT = 8;
+    private float AGGRESSION = 0;
 
     public Vector2 DrawScale = Vector2.One;
     public float Pulsation;
@@ -58,7 +59,7 @@ public sealed class DevilOWarNPC : ModNPC {
     public override void SetDefaults() {
         NPC.width = 36;
         NPC.height = 36;
-        NPC.lifeMax = 1180;
+        NPC.lifeMax = 640;
         NPC.defense = 20;
         NPC.value = NPC.value = Item.buyPrice(silver: 15);
         NPC.noTileCollide = false;
@@ -105,6 +106,8 @@ public sealed class DevilOWarNPC : ModNPC {
         for(int i = 0; i < tentacleWaveDirections.Length; i++) {
             tentacleWaveDirections[i] = Main.rand.NextFloat(MathHelper.TwoPi);
         }
+
+        AGGRESSION = Main.rand.NextFloat(-1f, 2f);
     }
     
     public override void SetBestiary(BestiaryDatabase database, BestiaryEntry bestiaryEntry) {
@@ -201,9 +204,35 @@ public sealed class DevilOWarNPC : ModNPC {
                     NPC.velocity *= 0.99f;
                 }
 
+                float separationRadius = 16 * 4f; // Code that makes them space each other apart
+                float pushStrength = 0.05f;
+
+                for(int i = 0; i < Main.maxNPCs; i++) {
+                    NPC other = Main.npc[i];
+
+                    if(other.active && i != NPC.whoAmI && other.type == NPC.type) {
+                        float distance = Vector2.Distance(NPC.Center, other.Center); // Distance between two eyeballs
+
+                        if(distance < separationRadius) {
+                            if(distance == 0) {
+                                NPC.velocity += Main.rand.NextVector2Circular(0.5f, 0.5f);
+                            }
+                            else {
+                                Vector2 pushDirection = Vector2.Normalize(NPC.Center - other.Center);
+                                NPC.velocity += pushDirection * pushStrength;
+                            }
+                        }
+                    }
+                }
+
                 float bobbingFrequency = 0.05f;
                 float bobbingAmplitude = 0.02f;
+                //float bobbingFrequency = 0.01f;
+                //float bobbingAmplitude = 0.01f * Main.rand.NextFloat(0.9f, 1.1f);
                 NPC.velocity.Y += MathF.Sin(Main.GameUpdateCount * bobbingFrequency + NPC.whoAmI * 0.2f) * bobbingAmplitude;
+
+                NPC.velocity.Y += (Target.position.Y > NPC.position.Y + 16f * 4f ? Main.rand.NextFloat(-0.03f, 0.035f) : Main.rand.NextFloat(-0.035f, 0.03f)) * AGGRESSION;
+                NPC.velocity.X += ( Target.position.X > NPC.position.X? Main.rand.NextFloat(-0.03f, 0.035f) : Main.rand.NextFloat(-0.035f, 0.03f) ) * AGGRESSION;
 
                 if(StingerProjectileId == -1 && NPC.Center.Distance(Target.Center) < CHARGING_RADIUS) {
                     FireStinger();

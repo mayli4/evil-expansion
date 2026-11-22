@@ -65,7 +65,8 @@ public sealed class BloodWarden : ModProjectile {
         Projectile.localNPCHitCooldown = ATTACK_ANIMATION_SPEED * 2;
         Projectile.manualDirectionChange = true;
 
-        Projectile.damage = 28;
+        Projectile.damage = 23;
+        // Note: Damage in set in the Newprojectile, in the MeatPrisonArmor file. This does nothing
 
         Projectile.DamageType = DamageClass.Summon;
     }

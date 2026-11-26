@@ -1,9 +1,11 @@
-﻿using EvilExpansionMod.Content.Misc.Furniture.CorruptAshwoodFurniture;
+﻿using EvilExpansionMod.Content.Corruption.Items._CorruptAshwoodTiles;
+using EvilExpansionMod.Content.Misc.Furniture.CorruptAshwoodFurniture;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Terraria.ID;
 
 namespace EvilExpansionMod.Content.Misc.Furniture.CorruptAshwoodFurniture;
 
@@ -13,4 +15,10 @@ public class CorruptAshwoodChairTile : ChairTile<CorruptAshwoodChair> {
 
 public class CorruptAshwoodChair : ChairItem<CorruptAshwoodChairTile> {
     public override string Texture => Assets.Images.Furniture.CorruptAshwoodFurniture.CorruptAshwoodChairItem.KEY;
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient<CorruptAshwoodItem>(4)
+            .AddTile(TileID.WorkBenches)
+            .Register();
+    }
 };

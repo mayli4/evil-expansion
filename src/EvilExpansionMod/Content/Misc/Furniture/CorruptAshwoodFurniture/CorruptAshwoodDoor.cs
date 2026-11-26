@@ -1,12 +1,13 @@
-﻿using EvilExpansionMod.Content.Misc.Furniture.CorruptAshwoodFurniture;
+﻿using EvilExpansionMod.Content.Corruption.Items._CorruptAshwoodTiles;
+using EvilExpansionMod.Content.Misc.Furniture.CorruptAshwoodFurniture;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Terraria.ID;
 
 namespace EvilExpansionMod.Content.Misc.Furniture.CorruptAshwoodFurniture;
-
 
 public class CorruptAshwoodClosedDoorTile : ClosedDoorTile<CorruptAshwoodOpenDoorTile, CorruptAshwoodDoor> {
     public override string Texture => Assets.Images.Furniture.CorruptAshwoodFurniture.CorruptAshwoodDoorTile_Closed.KEY;
@@ -17,4 +18,10 @@ public class CorruptAshwoodOpenDoorTile : OpenDoorTile<CorruptAshwoodClosedDoorT
 
 public class CorruptAshwoodDoor : BathtubItem<CorruptAshwoodClosedDoorTile> {
     public override string Texture => Assets.Images.Furniture.CorruptAshwoodFurniture.CorruptAshwoodDoorItem.KEY;
+    public override void AddRecipes() {
+        CreateRecipe()
+            .AddIngredient<CorruptAshwoodItem>(6)
+            .AddTile(TileID.WorkBenches)
+            .Register();
+    }
 };

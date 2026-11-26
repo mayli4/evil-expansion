@@ -141,6 +141,28 @@ public class ShadowOrbProjectile : ModProjectile {
         if (Closeenough && !Hit) {
             Projectile.velocity = Vector2.Lerp(Projectile.velocity *= 1.1f, vectorToTarget / distance * 10f, 0.1f);
         }
+
+        // Pushes each other away
+        float separationRadius = 16 * 2f; // Code that makes them space each other apart
+        float pushStrength = 0.05f;
+
+        for(int i = 0; i < Main.maxProjectiles; i++) {
+            Projectile other = Main.projectile[i];
+
+            if(other.active && i != Projectile.whoAmI && other.type == Projectile.type) {
+                float distanceKin = Vector2.Distance(Projectile.Center, other.Center); // Distance between two eyeballs
+
+                if(distanceKin < separationRadius) {
+                    if(distanceKin == 0) {
+                        Projectile.velocity += Main.rand.NextVector2Circular(0.5f, 0.5f);
+                    }
+                    else {
+                        Vector2 pushDirection = Vector2.Normalize(Projectile.Center - other.Center);
+                        Projectile.velocity += pushDirection * pushStrength;
+                    }
+                }
+            }
+        }
     }
 
     public override bool PreDraw(ref Color lightColor) {

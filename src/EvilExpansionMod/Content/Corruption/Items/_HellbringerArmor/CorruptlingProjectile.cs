@@ -16,6 +16,10 @@ public class CorruptlingProjectile : ModProjectile {
     readonly static float AttackRadius = 2000;
     int TypeIndex => (int)Projectile.ai[0];
 
+    public override void SetStaticDefaults() {
+        ProjectileID.Sets.MinionTargettingFeature[Projectile.type] = true;
+        Main.projPet[Projectile.type] = true; // Denotes that this projectile is a pet or minion
+    }
     public override void SetDefaults() {
         Projectile.width = 40;
         Projectile.height = 40;
@@ -28,6 +32,9 @@ public class CorruptlingProjectile : ModProjectile {
         Projectile.aiStyle = -1;
         Projectile.ArmorPenetration = 20;
 
+        Projectile.minion = true; // Benefits from tag damage and triggers whip effects
+        Projectile.minionSlots = 0f;
+
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = 10;
         //Projectile.usesIDStaticNPCImmunity = true;
@@ -35,7 +42,12 @@ public class CorruptlingProjectile : ModProjectile {
 
         Projectile.SetAISlotNPC(1, null);
     }
-
+    public override bool? CanCutTiles() {
+        return false;
+    }
+    public override bool MinionContactDamage() {
+        return true;
+    }
     public override void AI() {
         var target = Projectile.GetAISlotNPC(1);
         Vector2 directionToTarget;
@@ -55,6 +67,27 @@ public class CorruptlingProjectile : ModProjectile {
 
         Projectile.velocity = Vector2.Lerp(Projectile.velocity, directionToTarget * 10f, 0.02f);
         Projectile.rotation += Math.Min(Projectile.velocity.X * 0.05f, 0.15f);
+
+        float separationRadius = 16 * 2f; // Code that makes them space each other apart
+        float pushStrength = 0.05f;
+
+        for(int i = 0; i < Main.maxProjectiles; i++) {
+            Projectile other = Main.projectile[i];
+
+            if(other.active && i != Projectile.whoAmI && other.type == Projectile.type) {
+                float distance = Vector2.Distance(Projectile.Center, other.Center); // Distance between two eyeballs
+
+                if(distance < separationRadius) {
+                    if(distance == 0) {
+                        Projectile.velocity += Main.rand.NextVector2Circular(0.5f, 0.5f);
+                    }
+                    else {
+                        Vector2 pushDirection = Vector2.Normalize(Projectile.Center - other.Center);
+                        Projectile.velocity += pushDirection * pushStrength;
+                    }
+                }
+            }
+        }
     }
 
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {

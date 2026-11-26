@@ -21,17 +21,15 @@ public sealed class UnderworldCrimsonBiome : ModBiome, IHasCustomLavaBiome {
         var underworld = player.ZoneUnderworldHeight;
         return EvilTileCountSystem.InUnderworldCrimson && underworld;
     }
-
-
 }
 
 public sealed class UnderglowCrimson : ModSystem {
-        public override void ModifyLightingBrightness(ref float brightness) {
+    public override void ModifyLightingBrightness(ref float brightness) {
         Player player = Main.LocalPlayer;
         if(Main.LocalPlayer.InModBiome<UnderworldCrimsonBiome>()) {
-            brightness += 0.04f;
+            brightness -= 0.04f;
+        }
     }
-}
 }
 
 

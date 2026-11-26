@@ -92,7 +92,7 @@ public class CartilageOreTile : ModTile {
         if(!player.fireWalk) {
             player.AddBuff(BuffID.Burning, 10, false);
         }
-        player.AddBuff(BuffID.Ichor, 10, false);
+        player.AddBuff(BuffID.Ichor, 60 * 20, false);
     }
 
     public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {

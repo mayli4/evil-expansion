@@ -99,7 +99,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
 
             DrawCrimsonUnderworldLayer(flat, screenOffset, pushUp, 0);
 
-            for(int layerTextureIndex = 5; layerTextureIndex >= 0; layerTextureIndex--) {
+            for(int layerTextureIndex = 6; layerTextureIndex >= 0; layerTextureIndex--) {
                 int customTextureIndex;
                 switch(layerTextureIndex) {
                     case 5:
@@ -109,11 +109,13 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                         customTextureIndex = 2;
                         break;
                     case 3:
-                    case 2:
                         customTextureIndex = 3;
                         break;
-                    case 1:
+                    case 2:
                         customTextureIndex = 4;
+                        break;
+                    case 1:
+                        customTextureIndex = 5;
                         break;
                     default:
                         continue;
@@ -158,7 +160,7 @@ public class UnderworldCrimsonBGSystem : ModSystem {
                     num7 = 6f;
                     break;
                 case 4:
-                    num7 = 4f;
+                    num7 = 4.75f;
                     break;
                 case 5:
                     num7 = 2f;
@@ -182,25 +184,33 @@ public class UnderworldCrimsonBGSystem : ModSystem {
 
         switch(textureArrayIndex) {
             case 0:
-                zero.Y -= 0f;
-                num8 = 1.3f;
+                zero.Y += -200f;
+                //zero.Y += -400f;
+                num8 = 1f;
+                //num8 = 1f;
                 break;
             case 1:
-                zero.Y += 10f;
+                zero.Y += -100f;
                 break;
             case 2:
-                zero.Y += 100;
+                zero.Y += 175f;
                 zero.Y -= heightChange * 0.5f;
                 num8 = newScaleFactorForLayer2;
                 break;
             case 3:
-                zero.Y -= 170f;
+                zero.Y += 60f;
+                //zero.Y += -170f;
                 break;
             case 4:
-                zero.Y -= 30f;
+                zero.Y += 120f;
+                //zero.Y += -150f;
                 break;
             case 5:
-                zero.Y += 700f;
+                zero.Y += 350f;
+                //zero.Y += 410f;
+                break;
+            case 6:
+                zero.Y += 600f;
                 break;
         }
 

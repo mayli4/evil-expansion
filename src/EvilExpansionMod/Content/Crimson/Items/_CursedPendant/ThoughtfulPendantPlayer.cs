@@ -167,6 +167,12 @@ public class ThoughtlessCultist : ModProjectile {
 
         if(distance > 20f) {
             Projectile.velocity = Vector2.Lerp(Projectile.velocity *= 1.05f, vectorToTarget / distance * 15f, 0.1f);
+            if(distance > 16f * 200) {
+                Projectile.velocity = Vector2.Lerp(Projectile.velocity *= 1.05f, vectorToTarget / distance * 15f, 0.1f);
+            }
+            if(distance > 16f * 400) {
+                Projectile.position = player.Center;
+            }
         }
         else {
             Projectile.velocity *= 0.95f;
@@ -186,7 +192,7 @@ public class ThoughtlessCultist : ModProjectile {
             if(attackTimer == -1) {
                 mouseDirection = (Main.MouseWorld - player.Center).SafeNormalize(Vector2.UnitX);
                 attackTimer = attackTimerMax;
-                modPlayer.attackCooldown = 20; // This is where CD is determined
+                modPlayer.attackCooldown = 40; // This is where CD is determined
 
                 SoundEngine.PlaySound(Assets.Sounds.ThoughtfulCultist.CultistPendantActivate.Asset with
                 {
@@ -284,7 +290,7 @@ public class ThoughtlessCultist : ModProjectile {
                 Rotation = 0, // Face left! Or right!
                 Source = source,
                 Origin = drawOrigin,
-                Scale = directionalScale * (attackTimer >= attackTimerMax - 3 ? 1.3f : 1f), // "Whoomps" outwards to give the attack a little more visual oomph
+                Scale = directionalScale * (attackTimer >= attackTimerMax - 3 ? 1.35f : 1f), // "Whoomps" outwards to give the attack a little more visual oomph
                 SpriteEffects = effects
             })
             .End();

@@ -29,8 +29,8 @@ public class SlippedWhipProjectile : ModProjectile {
         Projectile.extraUpdates = 1;
         Projectile.usesLocalNPCImmunity = true;
         Projectile.localNPCHitCooldown = -1;
-        Projectile.WhipSettings.Segments = 10;
-        Projectile.WhipSettings.RangeMultiplier = 1f;
+        Projectile.WhipSettings.Segments = 14;
+        Projectile.WhipSettings.RangeMultiplier = 1.2f;
     }
 
     private float Timer {
@@ -97,7 +97,7 @@ public class SlippedWhipProjectile : ModProjectile {
         Main.player[Projectile.owner].MinionAttackTargetNPC = target.whoAmI;
         Projectile.damage = (int)(Projectile.damage * 0.9f); // multihit penalty
 
-        if(Main.rand.NextFloat() < SlippedWhipItem.CageSpawnChance) {
+        if(Main.rand.NextFloat() < SlippedWhipItem.CageSpawnChance && !target.boss) { // If rolled positive AND target is not a boss
             var actualTarget = target.whoAmI;
             if(target.realLife >= 0 && Main.npc[target.realLife] != null && Main.npc[target.realLife].active) {
                 actualTarget = target.realLife;

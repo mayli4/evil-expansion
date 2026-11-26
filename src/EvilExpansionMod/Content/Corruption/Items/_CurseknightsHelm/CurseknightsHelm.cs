@@ -6,6 +6,7 @@ using Microsoft.Xna.Framework.Graphics;
 using System;
 using Terraria;
 using Terraria.Audio;
+using Terraria.DataStructures;
 using Terraria.Graphics.CameraModifiers;
 using Terraria.Graphics.Renderers;
 using Terraria.ID;
@@ -55,7 +56,6 @@ internal sealed class CurseknightsHelm : ModItem {
             SpriteEffects.None,
             0f
         );
-
         return false; // Return false to stop the default engine drawing
     }
     public override void UpdateAccessory(Player player, bool hideVisual) {
@@ -89,7 +89,7 @@ internal sealed class CurseknightsHelm : ModItem {
             }
         }
         else {
-            if(player.HasBuff(BuffID.CursedInferno)) {
+            if(player.HasBuff(BuffID.CursedInferno) || player.HasBuff(ModContent.BuffType<WeakCursedInferno>())) {
                 player.AddBuff(ModContent.BuffType<CursedWrath>(), int.MaxValue, false);
             }
 
@@ -179,12 +179,75 @@ public class CursedWrath : ModBuff {
         // Apply ongoing effects while the buff is active on the player
         player.GetDamage(DamageClass.Generic) += 0.5f;
         player.GetAttackSpeed(DamageClass.Generic) += 0.75f;
-        if(!player.HasBuff(BuffID.CursedInferno)) {
+        if( (!player.HasBuff(BuffID.CursedInferno) && !player.HasBuff(ModContent.BuffType<WeakCursedInferno>())) ||
+            !player.GetModPlayer<CurseknightsHelmPlayer>().IsWearingHelm ||
+            !player.GetModPlayer<CurseknightsHelmPlayer>().IsBelowThreshold
+            ) {
             player.ClearBuff(ModContent.BuffType<CursedWrath>());
         }
     }
 }
+public class WeakCursedInferno : ModBuff {
+    public override string Texture => Assets.Images.Corruption.Items.CurseknightsHelm.CurseknightsHelmDebuff.KEY;
+    public override void SetStaticDefaults() {
+        // Marks this as a debuff (cannot be right-clicked off, persists through Nurse if needed, etc.)
+        Main.debuff[Type] = true;
+        Main.pvpBuff[Type] = true;
+        Main.buffNoSave[Type] = true;
 
+        // Optional: Make it last longer in Expert/Master mode just like vanilla Cursed Inferno
+        BuffID.Sets.LongerExpertDebuff[Type] = true;
+    }
+
+    public override void Update(Player player, ref int buffIndex) {
+        // Activate the custom debuff flag on our ModPlayer
+        player.GetModPlayer<WeakCursedInfernoPlayer>().weakCursedInferno = true;
+    }
+}
+public class WeakCursedInfernoPlayer : ModPlayer { // Modplayer for the debuff
+    public bool weakCursedInferno;
+    public override void ResetEffects() {
+        weakCursedInferno = false;
+    }
+    public override void UpdateBadLifeRegen() {
+        if(weakCursedInferno) {
+            //// Stop any positive natural health regeneration
+            //if(Player.lifeRegen > 0)
+            //    Player.lifeRegen = 0;
+
+            //// Reset regen timer so natural healing doesn't build up
+            //Player.lifeRegenTime = 0;
+
+            // 1 lifeRegen = 0.5 HP/sec
+            Player.lifeRegen -= 16;
+        }
+    }
+    public override void DrawEffects(PlayerDrawSet drawInfo, ref float r, ref float g, ref float b, ref float a, ref bool fullBright) {
+        if(weakCursedInferno) {
+            if(Main.rand.NextBool(4) && drawInfo.shadow == 0f) {
+                int dust = Dust.NewDust(
+                    Player.position - new Vector2(2f, 2f),
+                    Player.width + 4,
+                    Player.height + 4,
+                    DustID.CursedTorch,
+                    Player.velocity.X * 0.4f,
+                    Player.velocity.Y * 0.4f,
+                    100,
+                    default,
+                    1.75f
+                );
+                Main.dust[dust].noGravity = true;
+                Main.dust[dust].velocity *= 1.8f;
+                Main.dust[dust].velocity.Y -= 0.5f;
+                drawInfo.DustCache.Add(dust);
+            }
+            // Adds the subtle green lighting tint to the player sprite
+            r *= 0.95f;
+            b *= 0.8f;
+            //fullBright = true;
+        }
+    }
+}
 [PoolCapacity(30)]
 public class ShardGoricle : BaseParticle<ShardGoricle> {
     public Player TargetPlayer;

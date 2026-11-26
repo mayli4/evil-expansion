@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework;
 using System.Linq;
 using Terraria;
+using Terraria.DataStructures;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -45,16 +46,15 @@ public class CurseknightsHelmPlayer : ModPlayer {
                 : CurseknightsHelm.HelmOn;
         }
     }
-
     public override void OnHurt(Player.HurtInfo hurtInfo) { // Inflictng +8s Cursed Inferno when above HP threshold
         if(IsWearingHelm && !IsBelowThreshold) {
-            int buffIndex = Player.FindBuffIndex(BuffID.CursedInferno);
+            int buffIndex = Player.FindBuffIndex(ModContent.BuffType<WeakCursedInferno>());
             if(buffIndex != -1) {
                 int timeLeftInTicks = Player.buffTime[buffIndex];
-                Player.AddBuff(BuffID.CursedInferno, (int)((8 * 60 + timeLeftInTicks) * CurseknightsHelm.DifficultylessDebuff), false);
+                Player.AddBuff(ModContent.BuffType<WeakCursedInferno>(), (int)((8 * 60 + timeLeftInTicks) * CurseknightsHelm.DifficultylessDebuff), false);
             }
             else {
-                Player.AddBuff(BuffID.CursedInferno, (int)(8 * 60 * CurseknightsHelm.DifficultylessDebuff), false);
+                Player.AddBuff(ModContent.BuffType<WeakCursedInferno>(), (int)(8 * 60 * CurseknightsHelm.DifficultylessDebuff), false);
             }
 
             for(int i = 0; i < 5; i++) { //On-hit VFX goes here

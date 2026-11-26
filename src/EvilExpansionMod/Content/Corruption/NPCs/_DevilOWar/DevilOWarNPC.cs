@@ -231,7 +231,7 @@ public sealed class DevilOWarNPC : ModNPC {
                 //float bobbingAmplitude = 0.01f * Main.rand.NextFloat(0.9f, 1.1f);
                 NPC.velocity.Y += MathF.Sin(Main.GameUpdateCount * bobbingFrequency + NPC.whoAmI * 0.2f) * bobbingAmplitude;
 
-                NPC.velocity.Y += (Target.position.Y > NPC.position.Y + 16f * 4f ? Main.rand.NextFloat(-0.03f, 0.035f) : Main.rand.NextFloat(-0.035f, 0.03f)) * AGGRESSION;
+                NPC.velocity.Y += (Target.position.Y > NPC.position.Y + 16f * 4f ? Main.rand.NextFloat(-0.03f, 0.035f) : Main.rand.NextFloat(-0.035f, 0.03f)) * Math.Abs(AGGRESSION);
                 NPC.velocity.X += ( Target.position.X > NPC.position.X? Main.rand.NextFloat(-0.03f, 0.035f) : Main.rand.NextFloat(-0.035f, 0.03f) ) * AGGRESSION;
 
                 if(StingerProjectileId == -1 && NPC.Center.Distance(Target.Center) < CHARGING_RADIUS) {

@@ -141,7 +141,7 @@ public sealed class CursehoundMace : ModProjectile {
             SoundEngine.PlaySound(SoundID.NPCHit52 with { Volume = 0.8f });
 
             for(int i = 0; i < 18; i++) {
-                Vector2 burstVelocity = new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-6f, -0.5f)); // More charge = crazier dust burst
+                Vector2 burstVelocity = new Vector2(Main.rand.NextFloat(-3f, 3f), Main.rand.NextFloat(-6f, -0.5f)); // Impact dust, copied from the Pounder
                 int ds = Dust.NewDust(Projectile.Center, Projectile.width, Projectile.height, DustID.Stone);
                 Main.dust[ds].velocity = Vector2.Max(burstVelocity * 1.2f, burstVelocity);
                 Main.dust[ds].scale = Math.Max(Main.rand.NextFloat(0.45f, 0.27f), 0.6f);
@@ -170,7 +170,7 @@ public sealed class CursehoundMace : ModProjectile {
             Projectile.NewProjectile(
                 Projectile.GetSource_FromThis(),
                 Projectile.Center,
-                -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * Main.rand.NextFloat(6f, 12f) * (Main.expertMode ? 1.3f : 1f),
+                -Vector2.UnitY.RotatedByRandom(MathHelper.PiOver4 * 0.7f) * Main.rand.NextFloat(6f, 18f) * (Main.expertMode ? 1.3f : 1f),
                 ModContent.ProjectileType<MaceDebris>(),
                 Projectile.damage / 3,
                 0,

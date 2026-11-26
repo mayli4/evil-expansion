@@ -78,7 +78,7 @@ internal class EaterOfSoilHead : WormHead {
                 spawnInfo.SpawnTileType == ModContent.TileType<CorruptAshGrass>() ||
                 spawnInfo.PlayerInTown ||
                 spawnInfo.PlayerSafe) {
-                return 0.6f;
+                return 0.2f;
             }
         }
         return 0f;

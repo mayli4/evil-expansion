@@ -137,14 +137,6 @@ public sealed class CursehoundNPC : ModNPC {
             Gore.NewGoreDirect(NPC.GetSource_Death(), NPC.Center, Main.rand.NextVector2Circular(2, 2), Mod.Find<ModGore>("CursehoundGore" + i).Type);
         }
     }
-
-    public override bool ModifyCollisionData(Rectangle victimHitbox, ref int immunityCooldownSlot, ref MultipliableFloat damageMultiplier, ref Rectangle npcHitbox) {
-        // I'll try making this the hurtbox
-        npcHitbox = new Rectangle(0, 0, 150, 150); // Unsure as to any of this works
-
-        return base.ModifyCollisionData(victimHitbox, ref immunityCooldownSlot, ref damageMultiplier, ref npcHitbox);
-    }
-
     private SlotId activeSoundSlot;
     public override void AI() {
         NPC.TargetClosest(false);
@@ -480,7 +472,7 @@ public sealed class CursehoundNPC : ModNPC {
                 velocity.X * 1.9f,
                 velocity.Y / 1.9f,
                 ModContent.ProjectileType<CursehoundMace>(),
-                (int)(NPC.damage * 0.5f),
+                90 / 2,
                 5f,
                 Main.myPlayer,
                 (int)CursehoundMace.State.Launched,
@@ -563,11 +555,11 @@ public sealed class CursehoundNPC : ModNPC {
                     spawnPos,
                     Vector2.Zero,
                     ModContent.ProjectileType<LavaTelegraphProjectile>(),
-                    30,
+                    0,
                     0f,
                     Main.myPlayer,
                     ai0: telegraphDuration,
-                    ai1: 20
+                    ai1: 40 / 2 // Damage
                 );
             }
         }
@@ -590,7 +582,7 @@ public sealed class CursehoundNPC : ModNPC {
                             spawnPosition,
                             Vector2.Zero,
                             ModContent.ProjectileType<StalactiteProjectile>(),
-                            NPC.damage / 2,
+                            90 / 2,
                             2f,
                             Main.myPlayer
                         );

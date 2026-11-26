@@ -28,7 +28,6 @@ public sealed class StalactiteProjectile : ModProjectile {
         Projectile.timeLeft = 300;
         Projectile.friendly = false;
         Projectile.hostile = true;
-        Projectile.damage = 30;
         Projectile.penetrate = 1;
         Projectile.aiStyle = -1;
         Projectile.ignoreWater = false;

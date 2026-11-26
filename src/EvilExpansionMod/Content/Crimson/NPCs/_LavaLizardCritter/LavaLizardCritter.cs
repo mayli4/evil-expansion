@@ -118,7 +118,7 @@ public sealed class LavaLizardCritter : ModNPC {
                 spawnInfo.PlayerInTown ||
                 spawnInfo.PlayerSafe)
             {
-            return 0.6f;
+            return 0.4f;
             }
         }
         return 0f;

@@ -9,11 +9,11 @@ using Terraria.ID;
 
 namespace EvilExpansionMod.Content.Misc.Furniture.CharredBloodwoodFurniture;
 
-public class CharredBloodwoodWorkbenchTile : WorkbenchTile {
+public class CharredBloodwoodWorkBenchTile : WorkBenchTile {
     public override string Texture => Assets.Images.Furniture.CharredBloodwoodFurniture.CharredBloodwoodWorkBenchTile.KEY;
 };
 
-public class CharredBloodwoodWorkbench : WorkbenchItem<CharredBloodwoodWorkbenchTile> {
+public class CharredBloodwoodWorkBench : WorkBenchItem<CharredBloodwoodWorkBenchTile> {
     public override string Texture => Assets.Images.Furniture.CharredBloodwoodFurniture.CharredBloodwoodWorkBenchItem.KEY;
     public override void AddRecipes() {
         CreateRecipe()

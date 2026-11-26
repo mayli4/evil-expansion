@@ -9,11 +9,11 @@ using Terraria.ID;
 
 namespace EvilExpansionMod.Content.Misc.Furniture.CorruptAshwoodFurniture;
 
-public class CorruptAshwoodWorkbenchTile : WorkbenchTile {
+public class CorruptAshwoodWorkBenchTile : WorkBenchTile {
     public override string Texture => Assets.Images.Furniture.CorruptAshwoodFurniture.CorruptAshwoodWorkBenchTile.KEY;
 };
 
-public class CorruptAshwoodWorkbench : WorkbenchItem<CorruptAshwoodWorkbenchTile> {
+public class CorruptAshwoodWorkBench : WorkBenchItem<CorruptAshwoodWorkBenchTile> {
     public override string Texture => Assets.Images.Furniture.CorruptAshwoodFurniture.CorruptAshwoodWorkBenchItem.KEY;
     public override void AddRecipes() {
         CreateRecipe()

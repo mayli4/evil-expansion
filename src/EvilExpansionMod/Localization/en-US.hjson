@@ -84,7 +84,7 @@ Mods: {
 					'''
 				SetBonus:
 					'''
-					{0}% chance to spawn a shadow orb on hit that summons a Corruptling when touched
+					{0}% chance to spawn a shadow orb on hit that summons a Corruptling minion when touched
 					Corruptlings ignore 20 points of enemy Defense
 					'''
 			}
@@ -174,7 +174,7 @@ Mods: {
 				Tooltip:
 					'''
 					Your summons will focus struck enemies
-					Has a {0}% chance to cage enemies on hit
+					Has a {0}% chance to cage non-boss enemies on hit
 					Caged enemies take {1}% increased summon damage
 					'''
 			}
@@ -244,6 +244,11 @@ Mods: {
 			}
 
 			CorruptAshwoodItem: {
+				DisplayName: Corrupt Ashwood
+				Tooltip: ""
+			}
+
+			CharredBloodwoodItem: {
 				DisplayName: Charred Bloodwood
 				Tooltip: ""
 			}
@@ -331,7 +336,7 @@ Mods: {
 
 			PolypBarItem: {
 				DisplayName: Polyp Bar
-				Tooltip: It pulses rhythmically
+				Tooltip: "'Pulses rhythmically'"
 			}
 
 			PolypOreItem: {
@@ -345,7 +350,7 @@ Mods: {
 
 			CartilageBarItem: {
 				DisplayName: Cartilage Bar
-				Tooltip: Boiling blood seeps out of it
+				Tooltip: "'Boiling blood seeps out of it'"
 			}
 
 			CartilageOreItem: {
@@ -357,8 +362,8 @@ Mods: {
 					'''
 			}
 
-			CorruptAshwoodWallItem: {
-				DisplayName: Corrupt Ashwood Wall
+			CharredBloodwoodWallItem: {
+				DisplayName: Charred Bloodwood Wall
 				Tooltip: ""
 			}
 
@@ -375,7 +380,7 @@ Mods: {
 				DisplayName: Curseknight's Helm
 				Tooltip:
 					'''
-					Taking damage sets you ablaze while above 50% life
+					Above 50% life, taking damage sets you ablaze
 					Repeated hits lengthen the debuff's duration
 					Below 50% life, increases damage and attack speed massively as long as Cursed Inferno is active
 					'''
@@ -407,16 +412,46 @@ Mods: {
 			}
 
 			CorruptAshwoodBody: {
-				DisplayName: Charred Bloodwood Breastplate
+				DisplayName: Corrupt Ashwood Breastplate
 				Tooltip: ""
 			}
 
 			CorruptAshwoodBow: {
+				DisplayName: Corrupt Ashwood Bow
+				Tooltip: Wreaths wooden arrows in cursed flames
+			}
+
+			CorruptAshwoodHead: {
+				DisplayName: Corrupt Ashwood Helmet
+				Tooltip: ""
+				SetBonus:
+					'''
+					2 defense
+					Bony spines shoot out of your body when you are hurt
+					'''
+			}
+
+			CorruptAshwoodLegs: {
+				DisplayName: Corrupt Ashwood Greaves
+				Tooltip: ""
+			}
+
+			CorruptAshwoodSword: {
+				DisplayName: Corrupt Ashwood Sword
+				Tooltip: Direct hits cause bony spines to shoot out of the target's body
+			}
+
+			CharredBloodwoodBody: {
+				DisplayName: Charred Bloodwood Breastplate
+				Tooltip: ""
+			}
+
+			CharredBloodwoodBow: {
 				DisplayName: Charred Bloodwood Bow
 				Tooltip: Coats wooden arrows with ichor
 			}
 
-			CorruptAshwoodHead: {
+			CharredBloodwoodHead: {
 				DisplayName: Charred Bloodwood Helmet
 				Tooltip: ""
 				SetBonus:
@@ -426,12 +461,12 @@ Mods: {
 					'''
 			}
 
-			CorruptAshwoodLegs: {
+			CharredBloodwoodLegs: {
 				DisplayName: Charred Bloodwood Greaves
 				Tooltip: ""
 			}
 
-			CorruptAshwoodSword: {
+			CharredBloodwoodSword: {
 				DisplayName: Charred Bloodwood Sword
 				Tooltip: Direct hits cause bloody spines to shoot out of the target's body
 			}
@@ -456,7 +491,7 @@ Mods: {
 			}
 
 			CorruptAshwoodHamaxe: {
-				DisplayName: Charred Bloodwood Hamaxe
+				DisplayName: Corrupt Ashwood Hamaxe
 				Tooltip: ""
 			}
 
@@ -476,6 +511,11 @@ Mods: {
 
 			MaliciousFeederfishItem: {
 				DisplayName: Malicious Feederfish
+				Tooltip: ""
+			}
+
+			CharredBloodwoodHamaxe: {
+				DisplayName: Charred Bloodwood Hamaxe
 				Tooltip: ""
 			}
 
@@ -513,7 +553,7 @@ Mods: {
 				Tooltip:
 					'''
 					While fishing, releases cursed ghosts from the water that chase after enemies
-					The hook reacts to danger, releasing more ghosts when you are threatened
+					The hook reacts to danger, releasing more ghosts the more danger you are in
 					'''
 			}
 
@@ -521,13 +561,11 @@ Mods: {
 				DisplayName: Soulplated Fishing Hook
 				Tooltip:
 					'''
-					While fishing:
-					-Releases cursed ghosts from the water that chase after enemies
-					The hook reacts to danger, releasing more ghosts when you are threatened
+					While fishing, releases cursed ghosts from the water that chase after enemies
+					The hook reacts to danger, releasing more ghosts the more danger you are in
 
-					-Forms a blood shield which impales enemies and absorbs incoming damage
-					Getting hurt damages the shield
-					The shield will need time to regenerate after being broken
+					While fishing, forms a blood shield which impales enemies and absorbs incoming damage
+					Getting hurt damages the shield, and the shield will need time to regenerate after being broken
 					'''
 			}
 
@@ -540,8 +578,13 @@ Mods: {
 					'''
 			}
 
-			CorruptAshwoodPlatformItem: {
-				DisplayName: Corrupt Ashwood Platform
+			CharredBloodwoodPlatformItem: {
+				DisplayName: Charred Bloodwood Platform
+				Tooltip: ""
+			}
+
+			CharredBloodwoodBeamItem: {
+				DisplayName: Charred Bloodwood Beam
 				Tooltip: ""
 			}
 
@@ -560,18 +603,98 @@ Mods: {
 				Tooltip: ""
 			}
 
-			CorruptAshwoodFenceItem: {
-				DisplayName: Corrupt Ashwood Fence
+			CharredBloodwoodFenceItem: {
+				DisplayName: Charred Bloodwood Fence
 				Tooltip: ""
 			}
 
-			CorruptAshwoodWorkbenchItem: {
-				DisplayName: Charred Bloodwood Workbench
+			CharredBloodwoodWorkBenchItem: {
+				DisplayName: Charred Bloodwood Work Bench
+				Tooltip: Used for basic crafting
+			}
+
+			CharredBloodwoodWorkBench: {
+				DisplayName: Charred Bloodwood Work Bench
+				Tooltip: Used for basic crafting
+			}
+
+			CharredBloodwoodBathtub: {
+				DisplayName: Charred Bloodwood Bathtub
 				Tooltip: ""
 			}
 
-			CorruptAshwoodWorkbench: {
-				DisplayName: Corrupt Ashwood Workbench
+			CharredBloodwoodBed: {
+				DisplayName: Charred Bloodwood Bed
+				Tooltip: ""
+			}
+
+			CharredBloodwoodBookcase: {
+				DisplayName: Charred Bloodwood Bookcase
+				Tooltip: ""
+			}
+
+			CharredBloodwoodCandelabra: {
+				DisplayName: Charred Bloodwood Candelabra
+				Tooltip: ""
+			}
+
+			CharredBloodwoodCandleItem: {
+				DisplayName: Charred Bloodwood Candle
+				Tooltip: ""
+			}
+
+			CharredBloodwoodChair: {
+				DisplayName: Charred Bloodwood Chair
+				Tooltip: ""
+			}
+
+			CharredBloodwoodChandelier: {
+				DisplayName: Charred Bloodwood Chandelier
+				Tooltip: ""
+			}
+
+			CharredBloodwoodChest: {
+				DisplayName: Charred Bloodwood Chest
+				Tooltip: ""
+			}
+
+			CharredBloodwoodClock: {
+				DisplayName: Charred Bloodwood Clock
+				Tooltip: ""
+			}
+
+			CharredBloodwoodDresser: {
+				DisplayName: Charred Bloodwood Dresser
+				Tooltip: ""
+			}
+
+			CharredBloodwoodLamp: {
+				DisplayName: Charred Bloodwood Lamp
+				Tooltip: ""
+			}
+
+			CharredBloodwoodLantern: {
+				DisplayName: Charred Bloodwood Lantern
+				Tooltip: ""
+			}
+
+			CharredBloodwoodSink: {
+				DisplayName: Charred Bloodwood Sink
+				Tooltip: ""
+			}
+
+			CharredBloodwoodSofa: {
+				DisplayName: Charred Bloodwood Sofa
+				Tooltip: ""
+			}
+
+			CharredBloodwoodTable: {
+				DisplayName: Charred Bloodwood Table
+				Tooltip: ""
+			}
+
+			CharredBloodwoodToilet: {
+				DisplayName: Charred Bloodwood Toilet
 				Tooltip: ""
 			}
 
@@ -655,113 +778,8 @@ Mods: {
 				Tooltip: ""
 			}
 
-			CorruptAshwoodDoor: {
-				DisplayName: Corrupt Ashwood Door
-				Tooltip: ""
-			}
-
-			CorruptAshwoodPiano: {
-				DisplayName: Charred Bloodwood Piano
-				Tooltip: ""
-			}
-
-			CharredBloodwoodBody: {
-				DisplayName: Charred Bloodwood Body
-				Tooltip: ""
-			}
-
-			CharredBloodwoodBow: {
-				DisplayName: Charred Bloodwood Bow
-				Tooltip: ""
-			}
-
-			CharredBloodwoodHamaxe: {
-				DisplayName: Charred Bloodwood Hamaxe
-				Tooltip: ""
-			}
-
-			CharredBloodwoodHead: {
-				DisplayName: Charred Bloodwood Head
-				Tooltip: ""
-			}
-
-			CharredBloodwoodLegs: {
-				DisplayName: Charred Bloodwood Legs
-				Tooltip: ""
-			}
-
-			CharredBloodwoodSword: {
-				DisplayName: Charred Bloodwood Sword
-				Tooltip: ""
-			}
-
-			CharredBloodwoodBeamItem: {
-				DisplayName: Charred Bloodwood Beam Item
-				Tooltip: ""
-			}
-
-			CharredBloodwoodFenceItem: {
-				DisplayName: Charred Bloodwood Fence Item
-				Tooltip: ""
-			}
-
-			CharredBloodwoodItem: {
-				DisplayName: Charred Bloodwood Item
-				Tooltip: ""
-			}
-
-			CharredBloodwoodPlatformItem: {
-				DisplayName: Charred Bloodwood Platform Item
-				Tooltip: ""
-			}
-
-			CharredBloodwoodWallItem: {
-				DisplayName: Charred Bloodwood Wall Item
-				Tooltip: ""
-			}
-
-			CharredBloodwoodBathtub: {
-				DisplayName: Charred Bloodwood Bathtub
-				Tooltip: ""
-			}
-
-			CharredBloodwoodBed: {
-				DisplayName: Charred Bloodwood Bed
-				Tooltip: ""
-			}
-
-			CharredBloodwoodBookcase: {
-				DisplayName: Charred Bloodwood Bookcase
-				Tooltip: ""
-			}
-
-			CharredBloodwoodCandelabra: {
-				DisplayName: Charred Bloodwood Candelabra
-				Tooltip: ""
-			}
-
-			CharredBloodwoodCandleItem: {
-				DisplayName: Charred Bloodwood Candle Item
-				Tooltip: ""
-			}
-
-			CharredBloodwoodChair: {
-				DisplayName: Charred Bloodwood Chair
-				Tooltip: ""
-			}
-
-			CharredBloodwoodChandelier: {
-				DisplayName: Charred Bloodwood Chandelier
-				Tooltip: ""
-			}
-
-			CharredBloodwoodChest: {
-				DisplayName: Charred Bloodwood Chest
-				Tooltip: ""
-			}
-
-			CharredBloodwoodClock: {
-				DisplayName: Charred Bloodwood Clock
+			CorruptAshwoodWorkBench: {
+				DisplayName: Corrupt Ashwood WorkBench
 				Tooltip: ""
 			}
 
@@ -770,18 +788,23 @@ Mods: {
 				Tooltip: ""
 			}
 
-			CharredBloodwoodDresser: {
-				DisplayName: Charred Bloodwood Dresser
+			CorruptAshwoodDoor: {
+				DisplayName: Corrupt Ashwood Door
 				Tooltip: ""
 			}
 
-			CharredBloodwoodLamp: {
-				DisplayName: Charred Bloodwood Lamp
+			CorruptAshwoodFenceItem: {
+				DisplayName: Corrupt Ashwood Fence
 				Tooltip: ""
 			}
 
-			CharredBloodwoodLantern: {
-				DisplayName: Charred Bloodwood Lantern
+			CorruptAshwoodPlatformItem: {
+				DisplayName: Corrupt Ashwood Platform
+				Tooltip: ""
+			}
+
+			CorruptAshwoodWallItem: {
+				DisplayName: Corrupt Ashwood Wall
 				Tooltip: ""
 			}
 
@@ -790,28 +813,8 @@ Mods: {
 				Tooltip: ""
 			}
 
-			CharredBloodwoodSink: {
-				DisplayName: Charred Bloodwood Sink
-				Tooltip: ""
-			}
-
-			CharredBloodwoodSofa: {
-				DisplayName: Charred Bloodwood Sofa
-				Tooltip: ""
-			}
-
-			CharredBloodwoodTable: {
-				DisplayName: Charred Bloodwood Table
-				Tooltip: ""
-			}
-
-			CharredBloodwoodToilet: {
-				DisplayName: Charred Bloodwood Toilet
-				Tooltip: ""
-			}
-
-			CharredBloodwoodWorkbench: {
-				DisplayName: Charred Bloodwood Workbench
+			CorruptAshwoodPiano: {
+				DisplayName: Corrupt Ashwood Piano
 				Tooltip: ""
 			}
 		}
@@ -1017,6 +1020,15 @@ Mods: {
 					The flames empower you...
 					Increases damage by 50%
 					Increases attack speed by 75%
+					'''
+			}
+
+			WeakCursedInferno: {
+				DisplayName: Weak Cursed Inferno
+				Description:
+					'''
+					Losing life
+					This debuff does not disable natural life regeneration
 					'''
 			}
 

@@ -2181,7 +2181,7 @@ public abstract class ToiletItem<T> : FurnitureItem<T>
     where T : ModTile;
 #endregion
 
-#region Workbench (18)
+#region WorkBench (18)
 /*
 else if (item.createTile == 18) {
     if (item.placeStyle == 0)
@@ -2192,7 +2192,7 @@ else if (item.createTile == 18) {
 */
 
 // TODO: DustType, AddMapEntry
-public abstract class WorkbenchTile : FurnitureTile
+public abstract class WorkBenchTile : FurnitureTile
 {
     public override int VanillaTileType => TileID.WorkBenches;
 
@@ -2218,7 +2218,7 @@ public abstract class WorkbenchTile : FurnitureTile
     }
 }
 
-public abstract class WorkbenchItem<T> : FurnitureItem<T>
+public abstract class WorkBenchItem<T> : FurnitureItem<T>
     where T : ModTile
 {
     public override void SetDefaults()

@@ -817,6 +817,11 @@ Mods: {
 				DisplayName: Corrupt Ashwood Piano
 				Tooltip: ""
 			}
+
+			FlameInAnAirBallonedDevilOWarItem: {
+				DisplayName: Flame In An Air Balloned Devil O War Item
+				Tooltip: ""
+			}
 		}
 
 		NPCs: {
@@ -933,6 +938,7 @@ Mods: {
 			ThoughtfulOrbProjectile.DisplayName: Thoughtful Orb Projectile
 			ThoughtlessCultist.DisplayName: Thoughtless Cultist
 			PortalKnives.DisplayName: Portal Knives
+			AirBallonedDevilOWarProjectile.DisplayName: Air Balloned Devil O War Projectile
 		}
 
 		Biomes: {

@@ -11,6 +11,7 @@ using Terraria.ModLoader;
 
 namespace EvilExpansionMod.Content.Crimson;
 
+[AutoloadEquip(EquipType.Waist)]
 public class FireInALanternItem : ModItem {
     public override string Texture => Assets.Images.Crimson.Items.FlameInALanternItem.KEY;
 

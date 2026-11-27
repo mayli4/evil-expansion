@@ -59,8 +59,8 @@ public class SplicingPotionHeartPickup : ModItem {
 
     public override bool OnPickup(Player Player) {
         SoundEngine.PlaySound(SoundID.Grab, Player.Center);
-        Player.statLife += 3;
-        Player.HealEffect(3);
+        Player.statLife += 1;
+        Player.HealEffect(1);
 
         return false;
     }

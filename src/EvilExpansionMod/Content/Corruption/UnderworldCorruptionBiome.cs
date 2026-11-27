@@ -27,7 +27,7 @@ public sealed class UnderglowCorruption : ModSystem {
     public override void ModifyLightingBrightness(ref float brightness) {
         Player player = Main.LocalPlayer;
         if(Main.LocalPlayer.InModBiome<UnderworldCorruptionBiome>()) {
-            brightness += -0.04f;
+            brightness += -0.02f;
         }
     }
 }

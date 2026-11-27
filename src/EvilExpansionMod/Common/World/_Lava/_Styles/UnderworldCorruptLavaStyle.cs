@@ -32,8 +32,10 @@ public class UnderworldCorruptLavaStyle : ModLavaStyle {
     }
 
     public override void ModifyVertexColors(int x, int y, ref VertexColors colors) {
-        var colorA = new Color(255, 167, 60, 255) * 1.6f;
-        var colorB = new Color(144, 255, 60, 255) * 0.86f;
+        var colorA = new Color(205, 255, 0, 255) * 1f;
+        //var colorA = new Color(255, 167, 60, 255) * 1.6f;
+        var colorB = new Color(255, 255, 0, 255) * 3f;
+        //var colorB = new Color(144, 255, 60, 255) * 0.86f;
 
         var distanceFromBottom = Math.Max(Main.maxTilesY - y - 88f, 0f);
         var range = 35f;

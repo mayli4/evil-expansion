@@ -241,6 +241,7 @@ public class AirBallonedDevilOWarProjectile : ModProjectile {
         var headTextureOverlay = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBallonedDevilOWarHead_Overlay.Asset.Value;
         var headTextureGlow = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBallonedDevilOWarHead_Glow.Asset.Value;
         var insidesTexture = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBallonedDevilOWarBody.Asset.Value;
+        var headTextureUnder = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBallonedDevilOWarHead_Under.Asset.Value;
         var tentacleTexture = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBallonedDevilOWarTentacle.Asset.Value;
 
         bool flipped = Projectile.spriteDirection != -1;
@@ -286,6 +287,17 @@ public class AirBallonedDevilOWarProjectile : ModProjectile {
         float xx = Utils.RandomInt(ref randSeed, -10, 11) * 0.15f;
         float yy = Utils.RandomInt(ref randSeed, -10, 1) * 0.35f;
         var headOffset = new Vector2(0, -14 * Projectile.scale).RotatedBy(Projectile.rotation);
+
+
+        pipeline.DrawTexture(new()
+        {
+            Texture = headTextureUnder,
+            Position = Projectile.Center + headOffset,
+            Color = lightColor,
+            Rotation = Projectile.rotation,
+            Origin = origin,
+            SpriteEffects = spriteEffects,
+        });
 
         pipeline.DrawTexture(new()
         {

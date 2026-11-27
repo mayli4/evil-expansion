@@ -2342,6 +2342,55 @@ public abstract class ToiletTile<T> : ChairTile<T>
         TileObjectData.addTile(Type);
 #endregion
     }
+    public override void ModifySittingTargetInfo(int i, int j, ref TileRestingInfo info) {
+        Tile tile = Framing.GetTileSafely(i, j);
+        info.TargetDirection = -1;
+        if(tile.TileFrameX != 0) {
+            info.TargetDirection = 1; 
+        }
+        info.AnchorTilePosition.X = i; 
+        info.AnchorTilePosition.Y = j;
+        if(tile.TileFrameY % NextStyleHeight == 0) {
+            info.AnchorTilePosition.Y++; 
+        }
+        info.ExtraInfo.IsAToilet = true;
+    }
+
+    public override bool RightClick(int i, int j) {
+        Player player = Main.LocalPlayer;
+        if(player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance)) { 
+            player.GamepadEnableGrappleCooldown();
+            player.sitting.SitDown(player, i, j);
+        }
+        return true;
+    }
+
+    public override void MouseOver(int i, int j) {
+        Player player = Main.LocalPlayer;
+        if(!player.IsWithinSnappngRangeToTile(i, j, PlayerSittingHelper.ChairSittingMaxDistance)) {
+            return;
+        }
+        player.noThrow = 2;
+        player.cursorItemIconEnabled = true;
+        player.cursorItemIconID = ModContent.ItemType<T>();
+        if(Main.tile[i, j].TileFrameX / 18 < 1) {
+            player.cursorItemIconReversed = true;
+        }
+    }
+    public override void HitWire(int i, int j) {
+        // Spawn the toilet effect here when triggered by a signal
+        Tile tile = Main.tile[i, j];
+
+        int spawnX = i;
+        int spawnY = j - (tile.TileFrameY % NextStyleHeight) / 18;
+
+        Wiring.SkipWire(spawnX, spawnY);
+        Wiring.SkipWire(spawnX, spawnY + 1);
+
+        if(Wiring.CheckMech(spawnX, spawnY, 60)) {
+            Projectile.NewProjectile(Wiring.GetProjectileSource(spawnX, spawnY), spawnX * 16 + 8, spawnY * 16 + 12, 0f, 0f, ProjectileID.ToiletEffect, 0, 0f, Main.myPlayer);
+        }
+    }
 }
 
 public abstract class ToiletItem<T> : FurnitureItem<T>

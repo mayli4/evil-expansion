@@ -1029,6 +1029,9 @@ public abstract class ChestTile<T> : ModTile where T : ModItem {
         // We override KillMultiTile to handle additional logic other than the item drop. In this case, unregistering the Chest from the world
         Chest.DestroyChest(i, j);
     }
+    public override LocalizedText DefaultContainerName(int frameX, int frameY) {
+        return ModContent.GetInstance<T>().DisplayName;
+    }
     public override bool RightClick(int i, int j) {
         Player player = Main.LocalPlayer;
         Tile tile = Main.tile[i, j];
@@ -1073,9 +1076,6 @@ public abstract class ChestTile<T> : ModTile where T : ModItem {
             int chest = Chest.FindChest(left, top);
             if(chest != -1) {
                 Main.stackSplit = 600;
-                if(Main.chest[chest].name == string.Empty) {
-                    Main.chest[chest].name = "PlaceHolderNameHereRotonPleaseFixThanks";
-                }
                 if(chest == player.chest) {
                     player.chest = -1;
                     SoundEngine.PlaySound(SoundID.MenuClose);

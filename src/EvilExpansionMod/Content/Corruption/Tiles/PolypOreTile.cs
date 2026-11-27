@@ -97,9 +97,31 @@ public class PolypOreTile : ModTile {
     }
 
     public override void ModifyLight(int i, int j, ref float r, ref float g, ref float b) {
-        r = 0.24f;
-        g = 0.246f;
-        b = 0.42f;
+        bool exposedToAir =
+        IsAir(i, j - 1) || // Above
+        IsAir(i, j + 1) || // Below
+        IsAir(i - 1, j) || // Left
+        IsAir(i + 1, j);   // Right
+
+        if(exposedToAir) {
+            r = 0.2f;
+            g = 0.2f;
+            b = 0.45f;
+        }
+        else {
+            r = 0.14f;
+            g = 0.146f;
+            b = 0.22f;
+        }
+    }
+    private bool IsAir(int x, int y) {
+        // Out-of-bounds error prevention near world edges
+        if(!WorldGen.InWorld(x, y)) return false;
+
+        Tile tile = Main.tile[x, y];
+
+        // Has no active block OR is actuated
+        return !tile.HasTile || tile.IsActuated;
     }
     public override void EmitParticles(int i, int j, Tile tile, short tileFrameX, short tileFrameY, Color tileLight, bool visible) {
         if (Main.rand.NextBool(200)){

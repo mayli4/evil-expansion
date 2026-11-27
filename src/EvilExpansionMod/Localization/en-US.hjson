@@ -499,7 +499,7 @@ Mods: {
 				DisplayName: Devouring Potion
 				Tooltip:
 					'''
-					Critical hits have a 30% chance to release small mana stars
+					Critical hits have a 15% chance to release small mana stars
 					'Souuul sucker!'
 					'''
 			}
@@ -533,7 +533,7 @@ Mods: {
 				DisplayName: Splicing Potion
 				Tooltip:
 					'''
-					Critical hits have a 30% chance to release small life hearts
+					Critical hits have a 15% chance to release small life hearts
 					'...blood is fuel...'
 					'''
 			}
@@ -1039,12 +1039,12 @@ Mods: {
 
 			DevouringPotionBuff: {
 				DisplayName: Devouring
-				Description: 30% chance to create small mana stars on crit
+				Description: 15% chance to create small mana stars on crit
 			}
 
 			SplicingPotionBuff: {
 				DisplayName: Splicing
-				Description: 30% chance to create small life hearts on crit
+				Description: 15% chance to create small life hearts on crit
 			}
 
 			BloodPlatedHealthy: {

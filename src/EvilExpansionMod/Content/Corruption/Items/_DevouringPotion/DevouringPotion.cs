@@ -68,7 +68,7 @@ public class DevouringPotionBuffPlayer : ModPlayer {
     public override void OnHitNPC(NPC target, NPC.HitInfo hit, int damageDone) {
         base.OnHitNPC(target, hit, damageDone);
         if (critStar && hit.Crit && (Main.myPlayer == Player.whoAmI)) {
-            if (Main.rand.NextFloat() <= 0.3f) {
+            if (Main.rand.NextFloat() <= 0.15f) { // Chance
                 Item.NewItem(Player.GetSource_OnHit(target), target.getRect(), ModContent.ItemType<DevouringPotionStarPickup>(), 1, false, 0, true, false); 
                 
                 // Calculate direction pointing from the player to the NPC

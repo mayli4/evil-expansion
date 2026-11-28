@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using EvilExpansionMod.Common;
 using Terraria;
 using Terraria.DataStructures;
@@ -13,7 +14,13 @@ public class Soursop : ModItem {
         Item.ResearchUnlockCount = 5;
 
         ItemID.Sets.IsFood[Type] = true;
-        Main.RegisterItemAnimation(Type, new DrawAnimationVertical(2, 3) { NotActuallyAnimating = true });
+        Main.RegisterItemAnimation(Type, new DrawAnimationVertical(int.MaxValue, 3) { NotActuallyAnimating = true });
+
+        ItemID.Sets.FoodParticleColors[Type] = [
+                new Color(243, 243, 223),
+                new Color(187, 182, 155),
+                new Color(125, 168, 72)
+        ];
 
         ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.Ambrosia;
         Recipes.AddToGroup(RecipeGroupID.Fruit, Type);

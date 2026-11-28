@@ -1,3 +1,4 @@
+using Microsoft.Xna.Framework;
 using EvilExpansionMod.Common;
 using Terraria;
 using Terraria.DataStructures;
@@ -13,7 +14,13 @@ public class CarolinaReaper : ModItem {
         Item.ResearchUnlockCount = 5;
 
         ItemID.Sets.IsFood[Type] = true;
-        Main.RegisterItemAnimation(Type, new DrawAnimationVertical(2, 3) { NotActuallyAnimating = true });
+        Main.RegisterItemAnimation(Type, new DrawAnimationVertical(int.MaxValue, 3) { NotActuallyAnimating = true });
+
+        ItemID.Sets.FoodParticleColors[Type] = [
+                new Color(241, 83, 48),
+                new Color(167, 74, 85),
+                new Color(102, 36, 43)
+        ];
 
         ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.Ambrosia;
         Recipes.AddToGroup(RecipeGroupID.Fruit, Type);

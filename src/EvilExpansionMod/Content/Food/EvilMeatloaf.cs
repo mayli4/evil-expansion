@@ -1,4 +1,5 @@
 using EvilExpansionMod.Common;
+using Microsoft.Xna.Framework;
 using Terraria;
 using Terraria.DataStructures;
 using Terraria.ID;
@@ -15,7 +16,13 @@ public class EvilMeatloaf : ModItem {
         Item.ResearchUnlockCount = 5;
 
         ItemID.Sets.IsFood[Type] = true;
-        Main.RegisterItemAnimation(Type, new DrawAnimationVertical(2, 3) { NotActuallyAnimating = true });
+        Main.RegisterItemAnimation(Type, new DrawAnimationVertical(int.MaxValue, 3) { NotActuallyAnimating = true });
+
+        ItemID.Sets.FoodParticleColors[Type] = [
+                new Color(199, 169, 159),
+                new Color(167, 71, 80),
+                new Color(106, 45, 51)
+        ];
 
         ItemID.Sets.ShimmerTransformToItem[Type] = ItemID.Ambrosia;
     }

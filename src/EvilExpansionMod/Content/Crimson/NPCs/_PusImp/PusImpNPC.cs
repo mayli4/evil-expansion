@@ -97,6 +97,27 @@ public class PusImpNPC : ModNPC {
         }
         return true;
     }
+
+    public override void HitEffect(NPC.HitInfo hit) {
+        if (NPC.life <= 0) {
+            for(int i = 0; i < 150; i++) {
+                Dust dust = Dust.NewDustDirect(
+                    NPC.position,
+                    NPC.width,
+                    NPC.height,
+                    DustID.Dirt,
+                    0f,
+                    0f,
+                    Main.rand.Next(20, 200),
+                    default,
+                    Main.rand.NextFloat(0.5f, 2f)
+                );
+                dust.velocity *= Main.rand.NextFloat(0.5f, 3f);
+                dust.noGravity = true;
+            }
+        }
+
+    }
     public override void AI() {
         NPC.TargetClosest();
         if(Target.dead || !Target.active || Vector2.Distance(NPC.Center, Target.Center) > 1500f) {

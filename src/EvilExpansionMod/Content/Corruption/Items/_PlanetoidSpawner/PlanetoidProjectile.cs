@@ -11,6 +11,7 @@ using Terraria;
 using Terraria.Audio;
 using Terraria.DataStructures;
 using Terraria.GameContent;
+using Terraria.GameInput;
 using Terraria.ID;
 using Terraria.ModLoader;
 
@@ -95,6 +96,8 @@ public class PlanetoidProjectile : ModProjectile {
                 Projectile.damage *= 3;
 
                 Projectile.timeLeft = (int)( 60 * 10 * (GrowthTimer / GROWTH_TIME) ); // Not sure if this amounts to anything... smaller planetoids have a hard upper limit to how long they can roll for
+
+                if(Projectile.velocity.Y < -0.5f) Projectile.velocity.Y += -5f;
                 return;
             }
             else {
@@ -148,7 +151,7 @@ public class PlanetoidProjectile : ModProjectile {
 
             Projectile.rotation += Projectile.velocity.X * 0.05f;
 
-            if(player.channel) Projectile.Kill();
+            if(PlayerInput.Triggers.JustPressed.MouseRight) Projectile.Kill();
         }
         else if(State == 2f) { // Pre-explosion state
             //postDeathTimer = 1;

@@ -12,9 +12,8 @@ public sealed class UnderworldCrimsonBiome : ModBiome, IHasCustomLavaBiome {
     public override string Name => "UnderworldCrimson";
     public override string BestiaryIcon => Assets.Images.Misc.UnderworldCrimsonIcon.KEY;
     public override string BackgroundPath => Assets.Images.Backgrounds.UnderworldCrimson.UnderworldCrimsonMapBG.KEY;
-
+    public override string MapBackground => BackgroundPath;
     public override int Music => MusicID.UndergroundCrimson;
-
     public ModLavaStyle ModLavaStyle => ModContent.GetInstance<IchorLavaStyle>();
 
     public override bool IsBiomeActive(Player player) {

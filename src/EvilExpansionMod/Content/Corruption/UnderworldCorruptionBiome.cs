@@ -12,9 +12,8 @@ public sealed class UnderworldCorruptionBiome : ModBiome, IHasCustomLavaBiome {
     public override string Name => "UnderworldCorruption";
     public override string BestiaryIcon => Assets.Images.Misc.UnderworldCorruptionIcon.KEY;
     public override string BackgroundPath => Assets.Images.Backgrounds.UnderworldCorruption.UnderworldCorruptionMapBG.KEY;
-
+    public override string MapBackground => BackgroundPath;
     public override int Music => MusicID.UndergroundCorruption;
-
     public ModLavaStyle ModLavaStyle => ModContent.GetInstance<UnderworldCorruptLavaStyle>();
 
     public override bool IsBiomeActive(Player player) {

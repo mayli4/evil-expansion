@@ -106,8 +106,33 @@ public class MarrowEyeNPC : ModNPC {
             Mod.Find<ModGore>($"MarroweyeGore{i}").Type
         );
     }
+    public override int SpawnNPC(int tileX, int tileY) {
+        int floorY = tileY - 1; // tileY being the floor tile itself, start scanning 1 tile above
+        int ceilingY = floorY;
 
+        int maxSearchHeight = 50; // Cap
+        for (int y = floorY; y > floorY - maxSearchHeight; y--) {
+            if(y <= 10) { // In the impossible case that the enemy spawns at the top of the world... I guess..
+                ceilingY = y;
+                break;
+            }
+            Tile tile = Framing.GetTileSafely(tileX, y);
+            if (tile.HasTile && Main.tileSolid[tile.TileType]) {
+                ceilingY = y + 1; // Open tile just under the block
+                break;
+            }
+            ceilingY = y; // Null case?
+        }
+
+        int spawnTileY = (floorY + ceilingY) / 2; // Spawn point: Halfway
+
+        int spawnPosX = tileX * 16 + 8;
+        int spawnPosY = spawnTileY * 16 + 8;
+
+        return NPC.NewNPC(NPC.GetSource_NaturalSpawn(), spawnPosX, spawnPosY, Type);
+    }
     public override void OnSpawn(IEntitySource source) {
+        // Chain creation logic
         var ringCenter = NPC.Center - new Vector2(2f, 51f);
 
         var randomRotation = MathF.PI / 2f + Main.rand.NextFloatDirection() * MathF.PI / 6f;

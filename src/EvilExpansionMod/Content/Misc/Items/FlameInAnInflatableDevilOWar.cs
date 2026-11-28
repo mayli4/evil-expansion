@@ -13,7 +13,7 @@ using static EvilExpansionMod.Content.Crimson.FireInALanternItem;
 
 namespace EvilExpansionMod.Content.Misc.Items;
 
-public class FlameInAnAirBallonedDevilOWarItem : ModItem {
+public class FlameInAnAirBalloonedDevilOWarItem : ModItem {
     public override string Texture => Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.FlameInAnInflatableDevilOWarItem.KEY;
 
     private int _projectileID = -1;
@@ -34,7 +34,7 @@ public class FlameInAnAirBallonedDevilOWarItem : ModItem {
     }
     public override void UpdateVanity(Player player) {
         if(player.whoAmI == Main.myPlayer) {
-            if(_projectileID != -1 && Main.projectile[_projectileID].active && Main.projectile[_projectileID].owner == player.whoAmI && Main.projectile[_projectileID].type == ModContent.ProjectileType<AirBallonedDevilOWarProjectile>()) {
+            if(_projectileID != -1 && Main.projectile[_projectileID].active && Main.projectile[_projectileID].owner == player.whoAmI && Main.projectile[_projectileID].type == ModContent.ProjectileType<AirBalloonedDevilOWarProjectile>()) {
                 Main.projectile[_projectileID].timeLeft = 2;
                 Main.projectile[_projectileID].ai[0] = 0f;
                 Main.projectile[_projectileID].netUpdate = true;
@@ -44,7 +44,7 @@ public class FlameInAnAirBallonedDevilOWarItem : ModItem {
                     player.GetSource_Accessory(Item),
                     player.Center,
                     Vector2.Zero,
-                    ModContent.ProjectileType<AirBallonedDevilOWarProjectile>(),
+                    ModContent.ProjectileType<AirBalloonedDevilOWarProjectile>(),
                     0,
                     0f,
                     player.whoAmI,
@@ -60,7 +60,7 @@ public class FlameInAnAirBallonedDevilOWarItem : ModItem {
         player.GetJumpState<FireJump>().Enable();
 
         if(player.whoAmI == Main.myPlayer) {
-            if(_projectileID != -1 && Main.projectile[_projectileID].active && Main.projectile[_projectileID].owner == player.whoAmI && Main.projectile[_projectileID].type == ModContent.ProjectileType<AirBallonedDevilOWarProjectile>()) {
+            if(_projectileID != -1 && Main.projectile[_projectileID].active && Main.projectile[_projectileID].owner == player.whoAmI && Main.projectile[_projectileID].type == ModContent.ProjectileType<AirBalloonedDevilOWarProjectile>()) {
                 Main.projectile[_projectileID].timeLeft = 2;
                 Main.projectile[_projectileID].ai[0] = hideVisual ? 1f : 0f;
                 Main.projectile[_projectileID].netUpdate = true;
@@ -70,7 +70,7 @@ public class FlameInAnAirBallonedDevilOWarItem : ModItem {
                     player.GetSource_Accessory(Item),
                     player.Center,
                     Vector2.Zero,
-                    ModContent.ProjectileType<AirBallonedDevilOWarProjectile>(),
+                    ModContent.ProjectileType<AirBalloonedDevilOWarProjectile>(),
                     0,
                     0f,
                     player.whoAmI,
@@ -83,8 +83,8 @@ public class FlameInAnAirBallonedDevilOWarItem : ModItem {
 
 
 
-public class AirBallonedDevilOWarProjectile : ModProjectile {
-    public override string Texture => Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBallonedDevilOWarHead.KEY;
+public class AirBalloonedDevilOWarProjectile : ModProjectile {
+    public override string Texture => Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBalloonedDevilOWarHead.KEY;
 
     private Vector2[][] _tentacleTrailPositions;
     private float[] _tentacleWaveDirections;
@@ -238,11 +238,11 @@ public class AirBallonedDevilOWarProjectile : ModProjectile {
         PopulateTrailsForDrawing(Projectile.Center, lightColor, player);
 
         var headTexture = ModContent.Request<Texture2D>(Texture).Value;
-        var headTextureOverlay = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBallonedDevilOWarHead_Overlay.Asset.Value;
-        var headTextureGlow = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBallonedDevilOWarHead_Glow.Asset.Value;
-        var insidesTexture = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBallonedDevilOWarBody.Asset.Value;
-        var headTextureUnder = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBallonedDevilOWarHead_Under.Asset.Value;
-        var tentacleTexture = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBallonedDevilOWarTentacle.Asset.Value;
+        var headTextureOverlay = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBalloonedDevilOWarHead_Overlay.Asset.Value;
+        var headTextureGlow = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBalloonedDevilOWarHead_Glow.Asset.Value;
+        var insidesTexture = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBalloonedDevilOWarBody.Asset.Value;
+        var headTextureUnder = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBalloonedDevilOWarHead_Under.Asset.Value;
+        var tentacleTexture = Assets.Images.Misc.Items.FlameInAnInflatableDevilOWar.AirBalloonedDevilOWarTentacle.Asset.Value;
 
         bool flipped = Projectile.spriteDirection != -1;
         var spriteEffects = flipped ? SpriteEffects.FlipHorizontally : SpriteEffects.None;

@@ -367,8 +367,8 @@ Mods: {
 				Tooltip: ""
 			}
 
-			FlameInAnInflatableDevilOWarItem: {
-				DisplayName: Flame in an Inflatable Devil O' War
+			FlameInAnAirBalloonedDevilOWarItem: {
+				DisplayName: Flame In An Air Ballooned Devil O' War
 				Tooltip:
 					'''
 					Allows the user to double jump, emitting damaging flames
@@ -817,11 +817,6 @@ Mods: {
 				DisplayName: Corrupt Ashwood Piano
 				Tooltip: ""
 			}
-
-			FlameInAnAirBallonedDevilOWarItem: {
-				DisplayName: Flame In An Air Balloned Devil O War Item
-				Tooltip: ""
-			}
 		}
 
 		NPCs: {
@@ -938,7 +933,7 @@ Mods: {
 			ThoughtfulOrbProjectile.DisplayName: Thoughtful Orb Projectile
 			ThoughtlessCultist.DisplayName: Thoughtless Cultist
 			PortalKnives.DisplayName: Portal Knives
-			AirBallonedDevilOWarProjectile.DisplayName: Air Balloned Devil O War Projectile
+			AirBalloonedDevilOWarProjectile.DisplayName: Air Ballooned Devil O War Projectile
 		}
 
 		Biomes: {

@@ -151,7 +151,7 @@ public class PlanetoidProjectile : ModProjectile {
 
             Projectile.rotation += Projectile.velocity.X * 0.05f;
 
-            if(PlayerInput.Triggers.JustPressed.MouseRight) Projectile.Kill();
+            if(PlayerInput.Triggers.JustPressed.MouseLeft) Projectile.Kill();
         }
         else if(State == 2f) { // Pre-explosion state
             //postDeathTimer = 1;
